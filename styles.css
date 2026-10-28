@@ -1,86 +1,54 @@
-:root {
-  --bg: #07040e;
-  --phone: #100818;
-  --panel: #1c122aee;
-  --panel-solid: #1a1028;
-  --ink: #0a0610;
-  --neon-pink: #ff2d95;
-  --neon-cyan: #2de2ff;
-  --neon-gold: #ffd36a;
-  --neon-lime: #b8ff4a;
-  --cha-yellow: #ffcc33;
-  --cha-red: #e83a3a;
-  --text: #f7f0fa;
-  --muted: #b49ec4;
-  --danger: #ff5a6a;
-  --ok: #5dffb0;
-  --bar-bg: #2a1a38;
-  --frame: 390px;
-  --frame-h: 844px;
-  --ink-border: 3px solid #0a0610;
-  --comic-radius: 14px;
-}
+# 香江 Card Game · 直向切片 Demo（2026-10-24）
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+可點擊嘅垂直切片：標題 → 今世主頁 → 揀事件 → 編隊（3 張）→ 遇敵 → 自動戰 → 結算。
 
-html, body {
-  height: 100%;
-  background:
-    radial-gradient(ellipse at 50% 10%, #2a1048 0%, transparent 45%),
-    radial-gradient(ellipse at 80% 80%, #1a0830 0%, var(--bg) 55%);
-  color: var(--text);
-  font-family: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", "Heiti TC", sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
+## 點樣打開
 
-.page {
-  min-height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-}
+**最穩（推薦）**— 喺本資料夾開本機伺服器：
 
-/* Outer phone bezel */
-.phone {
-  width: min(100vw - 24px, var(--frame));
-  height: min(96vh, var(--frame-h));
-  aspect-ratio: 390 / 844;
-  max-height: 96vh;
-  background: #0a0612;
-  border: 3px solid #1a0a28;
-  border-radius: 32px;
-  box-shadow:
-    0 0 0 2px #ff2d9544,
-    0 0 0 5px #0a0610,
-    0 0 48px rgba(255, 45, 149, 0.28),
-    0 0 96px rgba(45, 226, 255, 0.12),
-    inset 0 0 80px rgba(0,0,0,0.5);
-  overflow: hidden;
-  position: relative;
-}
+```bash
+cd "/workspace/香江CardGame-試玩demo-lite"
+python3 -m http.server 8765
+```
 
-.phone::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 50;
-  border-radius: 30px;
-  box-shadow: inset 0 0 0 2px rgba(255,211,106,0.12);
-}
+然後瀏覽器開：http://127.0.0.1:8765/
 
-/* Shared screen — no vertical scrollbar anywhere in the phone frame */
-.screen {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  padding: 12px 12px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  position: relative;
-  background: #100818;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
+**亦可直接雙擊** `index.html`：資料已嵌入 `data.js`，`file://` 一般可用（唔使 fetch）。
+
+## 檔案
+
+| 檔案 | 說明 |
+|------|------|
+| `index.html` | 入口 |
+| `app.js` | 遊戲邏輯 |
+| `styles.css` | 港式霓虹／茶記風・直向手機框 |
+| `data.js` | 嵌入式切片資料（file:// 用） |
+| `data.json` | 同一份 JSON（可讀） |
+| `assets/` | 出戰卡 C01–C10 jpg stub ＋ C21–C250 PASS png／事件／敵人／技能／**裝備 EQP01–40** 圖 |
+
+## 切片內容
+
+- **人生 run**：第 1–4 年各 4 張事件揀一；結算後年紀＋1，可連續跑
+- **出戰卡池**：C01–C10（故事 stub jpg）＋ PASS 美術 **C21–C250**（共 240；預設非舖隊 C241 泥頭車／C244 纜車廂／C248 晨跑徑）；戰鬥卡口袋上限＝統率（max 15，唔跟年）；技能口袋公用全池唔跟年；開戰最多 3
+- **技能**：S01–S72；配技槽 4／5／6／7（跟稀有度）；全隊技能 ID 唯一
+- **事件**：10 張（後巷／天氣／人情／搵食／舊帳／交通／節慶／打機舖…）；戰／非戰混合
+- **敵人**：E01–E04；戰場 3v3
+
+## 戰鬥規則（簡）
+
+- 3v3；回合上限 40
+- 出手順序跟「速」；普攻 ≈ 攻；自帶必殺 ≈ 攻×1.5；裝備技橫幅輪轉 ≈ 攻×1.35
+- 我方血量 = 位格×20＋40
+- 敵全滅勝；我方全滅或回合超限敗；放棄＝敗
+- 「快啲」×1／×2／×4；無手動放招；點卡可暫停檢視
+
+## 注意
+
+- UI 繁體中文；產品名「香江 Card Game」保留
+- 唔使 Manus 額度；圖係現有資產副本
+
+## 裝備（2026-10-27）
+
+- 帳號 6 槽（頭／身／武／副／飾／足）`accountGear`，加乘套用**全體**出戰卡。
+- 池：EQP01–EQP40；稀有度 common／rare／legend（20／12／8）；升星 1→5，`effective = base + star_bonus*(star-1)`。
+- prep 左欄撳槽循環裝／卸；「升星」為已裝裝備＋1 星（至多 ★5）。
