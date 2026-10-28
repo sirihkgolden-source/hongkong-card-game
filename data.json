@@ -7070,6 +7070,74 @@
       "reward_xp": 3,
       "battle": null,
       "art": "assets/events/ev-yum-cha.jpg"
+    },
+    {
+      "id": "EV46",
+      "name": "缺劃燈箱",
+      "type": "主線",
+      "desc": "旺角騎樓下一支燈箱少了一劃。師傅蹲在梯上問你：今晚要不要幫忙扶穩？霓虹未完——缺劃仍閃。",
+      "reward_blurb": "霓虹未完・可遇敵",
+      "category": "main",
+      "rewards_preview": [
+        "+7 經驗",
+        "+24 膠幣",
+        "缺劃燈箱"
+      ],
+      "battle": "E03",
+      "reward_soul": 24,
+      "reward_xp": 7,
+      "art": "assets/events/ev-mtr-crowd.jpg",
+      "category_label": "主線",
+      "story_pack_id": "neon_mei_wan"
+    },
+    {
+      "id": "EV47",
+      "name": "雨夜燈海",
+      "type": "主線",
+      "desc": "驟雨打在燈箱上，街道映成碎玻璃。有人隔著雨簾喊你名字——雨夜燈海，霓虹未完續章。",
+      "reward_blurb": "霓虹未完・氣氛戰",
+      "category": "main",
+      "rewards_preview": [
+        "+7 經驗",
+        "+26 膠幣",
+        "雨夜燈海"
+      ],
+      "battle": "E04",
+      "reward_soul": 26,
+      "reward_xp": 7,
+      "art": "assets/events/ev-alley-wake.jpg",
+      "category_label": "主線",
+      "story_pack_id": "neon_mei_wan"
+    },
+    {
+      "id": "EV48",
+      "name": "燈管記憶",
+      "type": "打機舖",
+      "desc": "舊電器舖橱窗裏，半支霓虹管按節拍明滅。跟上亮起的鍵位，把缺劃補完——闖關領滿獎，失敗仍可繼續人生。",
+      "reward_blurb": "破關滿獎・失敗半獎・人生不停",
+      "art": "assets/events/ev-yum-cha.jpg",
+      "battle": null,
+      "reward_soul": 24,
+      "reward_xp": 6,
+      "reward_gold": 4,
+      "category": "minigame",
+      "category_label": "小遊戲",
+      "rewards_preview": [
+        "+24 膠幣",
+        "+6 經驗",
+        "幸運＋1"
+      ],
+      "attrs_delta": {
+        "luck": 1
+      },
+      "minigame": {
+        "kind": "memory_pads",
+        "rounds": 3,
+        "pad_count": 4,
+        "time_limit_sec": 35
+      },
+      "flag_on_win": "neon_tube_clear",
+      "story_pack_id": "neon_mei_wan"
     }
   ],
   "locale": {
@@ -10123,11 +10191,15 @@
     {
       "id": "neon_mei_wan",
       "name": "霓虹未完",
-      "blurb": "缺劃燈管仍閃著——之後再開此包。",
+      "blurb": "缺劃燈管仍閃——旺角雨巷、廟街燈箱帳，霓虹未完的一夜。",
       "cover": "assets/story-packs/neon-mei-wan.jpg",
-      "status": "coming_soon",
+      "status": "available",
       "legacy_pack": null,
-      "event_ids": []
+      "event_ids": [
+        "EV46",
+        "EV47",
+        "EV48"
+      ]
     }
   ],
   "factions": [

@@ -1,3 +1,12 @@
+## t327（2026-10-28 ~20:36 HKT）
+- **總導演：做故事包2** — `neon_mei_wan`「霓虹未完」`coming_soon` → **available**
+- 更新既有第二包列（唔新建第三包）：blurb／`event_ids: EV46–48`／`legacy_pack: null`／封面沿用 `neon-mei-wan.jpg`
+- 新增事件（接 EV45）：**EV46** 缺劃燈箱（主線・E03）、**EV47** 雨夜燈海（主線・E04）、**EV48** 燈管記憶（minigame／`memory_pads` 對齊 EV39；`flag_on_win: neon_tube_clear`）
+- 三則皆 `story_pack_id: neon_mei_wan`；四格加權經既有 `packBoostEventIds`；小遊戲注入優先當前包 minigame
+- 唔改：人生四揀一骨架、膠幣扭蛋價（1／10）、包1、t325 機圖
+- 改 `data.js`／`data.json`／`app.js`（minigame 包優先＋`machine-ref?v=t327-1`）／`index.html`（`?v=t327-1`）／STATUS／`_selftest_t327.js`
+- 桌面 DESKTOP-KFH3ACB **離線**——CopyFromBox 暫失敗；箱內檔已齊，上線後再推 `data.js`／`data.json`／`app.js`／`index.html`／`STATUS.md`／`_selftest_t327.js`
+
 ## t326（2026-10-28 ~05:46 HKT）
 - **總導演封測價**：扭蛋膠幣 **單抽＝1、十連＝10**（取代 15／135）
 - `gachaPriceSingle`／`gachaPriceTen`；UI 副標／掣價／扣費／不足判斷／滿星退回皆跟常數

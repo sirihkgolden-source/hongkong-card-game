@@ -747,9 +747,12 @@
       const mgPool = all.filter((e) => e && e.category === "minigame");
       if (mgPool.length) {
         const already = picked.some((e) => e && e.category === "minigame");
-        // demo-lite：約七成出現一格，方便驗收；唔覆蓋 main 優先
+        // demo-lite：約七成出現一格，方便驗收；唔覆蓋 main 優先；有故事包時優先該包 minigame
         if (!already && Math.random() < 0.7) {
-          const mg = mgPool[Math.floor(Math.random() * mgPool.length)];
+          const boostMg = packBoostEventIds(storyPackById(ensureActiveStoryPack()));
+          const mgPref = mgPool.filter((e) => boostMg.has(e.id));
+          const mgSrc = mgPref.length ? mgPref : mgPool;
+          const mg = mgSrc[Math.floor(Math.random() * mgSrc.length)];
           let ri = picked.length ? picked.length - 1 : 0;
           for (let i = picked.length - 1; i >= 0; i--) {
             if (picked[i] && picked[i].category !== "main") {
@@ -5661,7 +5664,7 @@
           "<em class=\"gm-neon-en\">／NEON</em>" +
         "</div>" +
         "<div class=\"gm-art-wrap\">" +
-          "<img class=\"gm-art\" src=\"assets/gacha/machine-ref.webp?v=t326-1\" width=\"281\" height=\"500\" alt=\"廟街霓虹扭蛋機\" draggable=\"false\" />" +
+          "<img class=\"gm-art\" src=\"assets/gacha/machine-ref.webp?v=t327-1\" width=\"281\" height=\"500\" alt=\"廟街霓虹扭蛋機\" draggable=\"false\" />" +
         "</div>" +
         /* 純 CSS 示意機保留 DOM 但 display:none（.gm-css-schematic）——方便日後回退 */
         "<div class=\"gm-css-schematic\" hidden>" +
