@@ -16,11 +16,91 @@
   const LIFE_SKILLS_CAP = 10;
   const L = DATA.locale || {};
 
+  document.addEventListener("error", (ev) => {
+    const img = ev.target;
+    if (!img || img.tagName !== "IMG") return;
+    if (img.dataset.artFallback === "1") return;
+    // t358：扭蛋機主視覺唔可以退到「卡名生成」佔位圖（會變成一個「廟」字圓圈）
+    // 載入失敗就顯示純 CSS 示意機，至少仍然係一部扭蛋機
+    if (img.classList && img.classList.contains("gm-art")) {
+      img.dataset.artFallback = "1";
+      const machine = img.closest && img.closest(".gacha-machine");
+      if (machine) machine.classList.add("gm-art-failed");
+      return;
+    }
+    img.dataset.artFallback = "1";
+    // 戰鬥卡／技能／裝備原圖未齊：退到「按卡名生成」嘅霓虹圖，比共用灰圖好辨識
+    const name = img.dataset.cardName || img.getAttribute("alt") || "";
+    const kind = img.dataset.cardKind || "";
+    if (name && kind !== "scene") {
+      img.src = cardGlyphDataUrl(name, kind);
+      return;
+    }
+    img.src = "assets/ui/card-fallback.svg";
+  }, true);
+
+  /* ---------- 卡片專屬佔位圖（無原檔時用；按名字定色／紋樣，離線生成 SVG） ---------- */
+  const _cardGlyphCache = Object.create(null);
+
+  function cardGlyphHash(str) {
+    let h = 2166136261;
+    const s = String(str || "");
+    for (let i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return h >>> 0;
+  }
+
+  /** 回傳 data:image/svg+xml URL；同一個名字結果穩定 */
+  function cardGlyphDataUrl(name, kind) {
+    const key = String(kind || "") + "|" + String(name || "");
+    if (_cardGlyphCache[key]) return _cardGlyphCache[key];
+    const h = cardGlyphHash(key);
+    const hues = [330, 195, 45, 265, 160, 15];
+    const hue = hues[h % hues.length];
+    const hue2 = (hue + 45 + (h % 60)) % 360;
+    const glyph = String(name || "").trim().slice(0, 1) || "卡";
+    const safe = glyph.replace(/[<>&"']/g, "");
+    const svg =
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 320" width="240" height="320">` +
+        `<defs>` +
+          `<linearGradient id="g" x1="0" y1="0" x2="0.4" y2="1">` +
+            `<stop offset="0" stop-color="hsl(${hue} 72% 26%)"/>` +
+            `<stop offset="0.55" stop-color="hsl(${hue2} 70% 15%)"/>` +
+            `<stop offset="1" stop-color="#0b0612"/>` +
+          `</linearGradient>` +
+          `<radialGradient id="s" cx="0.5" cy="0.42" r="0.58">` +
+            `<stop offset="0" stop-color="hsl(${hue} 95% 62%)" stop-opacity="0.55"/>` +
+            `<stop offset="1" stop-color="hsl(${hue} 95% 50%)" stop-opacity="0"/>` +
+          `</radialGradient>` +
+        `</defs>` +
+        `<rect width="240" height="320" fill="url(#g)"/>` +
+        `<rect width="240" height="320" fill="url(#s)"/>` +
+        `<g stroke="hsl(${hue} 90% 70%)" stroke-opacity="0.22" stroke-width="2">` +
+          `<path d="M-20 240 L120 60 L260 240"/>` +
+          `<path d="M-20 280 L120 110 L260 280"/>` +
+        `</g>` +
+        `<circle cx="120" cy="140" r="62" fill="none" stroke="hsl(${hue} 92% 66%)" stroke-width="4" stroke-opacity="0.85"/>` +
+        `<circle cx="120" cy="140" r="50" fill="#0b0612" fill-opacity="0.55"/>` +
+        `<text x="120" y="140" text-anchor="middle" dominant-baseline="central" ` +
+          `font-family="'Microsoft JhengHei','PingFang TC',sans-serif" font-size="64" font-weight="900" ` +
+          `fill="hsl(${hue} 96% 82%)">${safe}</text>` +
+        `<rect x="0" y="286" width="240" height="34" fill="#07040e" fill-opacity="0.78"/>` +
+        `<text x="120" y="308" text-anchor="middle" font-family="'Microsoft JhengHei','PingFang TC',sans-serif" ` +
+          `font-size="19" font-weight="800" fill="#ffe9a8">${String(name || "").replace(/[<>&"']/g, "").slice(0, 8)}</text>` +
+        `<rect x="3" y="3" width="234" height="314" fill="none" stroke="#0a0610" stroke-width="6"/>` +
+      `</svg>`;
+    const url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    _cardGlyphCache[key] = url;
+    return url;
+  }
+
   /** 極簡港式身世 stub（prep 後揀一次；四揀一 2增益＋2減益；微調六維） */
   const ORIGINS = [
     { id: "tea_apprentice", name: "茶記學徒", kind: "buff", blurb: "幸運＋2 · 軟事件膠幣＋10%", bonus_soul: 0.1, attrs: { luck: 2 }, art: "assets/events/ev-yum-cha.jpg" },
     { id: "walled_kid", name: "城寨細路", kind: "buff", blurb: "力量＋2 · 開戰物攻再＋1", bonus_atk: 1, attrs: { str: 2 }, art: "assets/events/ev-alley-wake.jpg" },
-    { id: "rooftop_youth", name: "天台夜青", kind: "debuff", blurb: "敏捷－2 · 壽命－5 · 夜夜熬夜傷身", attrs: { agi: -2, life: -5 }, art: "assets/story-packs/neon-mei-wan.jpg" },
+    { id: "rooftop_youth", name: "天台夜青", kind: "debuff", blurb: "敏捷－2 · 壽命－5 · 夜夜熬夜傷身", attrs: { agi: -2, life: -5 }, art: "assets/events/ev-rooftop-night.jpg" },
     { id: "paper_stall_kid", name: "報紙檔細路", kind: "debuff", blurb: "幸運－1 · 統率－1 · 街邊叫賣沒有人聽", attrs: { luck: -1, lead: -1 }, art: "assets/events/ev-mtr-crowd.jpg" },
   ];
   const originById = Object.fromEntries(ORIGINS.map((o) => [o.id, o]));
@@ -37,6 +117,9 @@
     if (!id) return null;
     return storyPacksList().find((p) => p.id === id) || null;
   }
+  /** 預設故事包：打工仔輓歌（可用時優先；否則退回第一個可用包） */
+  const DEFAULT_STORY_PACK_ID = "office_ballad";
+
   function ensureActiveStoryPack() {
     const packs = storyPacksList();
     const available = packs.filter((p) => p.status === "available");
@@ -44,7 +127,10 @@
       const cur = storyPackById(state.activeStoryPackId);
       if (cur && cur.status === "available") return state.activeStoryPackId;
     }
-    if (available.length >= 1) {
+    const preferred = storyPackById(DEFAULT_STORY_PACK_ID);
+    if (preferred && preferred.status === "available") {
+      state.activeStoryPackId = preferred.id;
+    } else if (available.length >= 1) {
       state.activeStoryPackId = available[0].id;
     } else {
       state.activeStoryPackId = null;
@@ -62,10 +148,454 @@
     return ids;
   }
 
-  /** 人生六維溫和 demo 預設（身世可 ±） */
+  /**
+   * 人生六維溫和 demo 預設（身世可 ±）。
+   * t368：壽命 70 → 100，配合新敵方曲線（飽和式成長 + 防禦上限），
+   * 實測可令玩家中位數達到 84 歲、38% 能活到 100 歲。
+   */
   function defaultAttrs() {
-    return { str: 12, agi: 10, intel: 8, luck: 8, lead: 5, life: 70 };
+    return { str: 12, agi: 10, intel: 8, luck: 8, lead: 8, life: 100 };
   }
+
+  /**
+   * t367 經濟修復（A）：戰鬥勝利基礎金幣。
+   * 修復前全 85 個事件只有 3 個有 reward_gold（總和 21），
+   * 而復活一張卡要 20–60 金幣 → 復活／強化機制在實戰中完全用唔到。
+   * 現在每場勝利都有基礎金幣，宿敵戰加倍，令「打贏 → 有錢 → 復活／強化」循環成立。
+   */
+  const BATTLE_WIN_GOLD = 12;
+  const BOSS_WIN_GOLD_MULT = 2;
+  function victoryGoldFor(ev) {
+    const boss = ev && ev.category === "special_battle";
+    return BATTLE_WIN_GOLD * (boss ? BOSS_WIN_GOLD_MULT : 1) + ((ev && ev.reward_gold) | 0);
+  }
+
+  /**
+   * t369：通用故事鏈引擎（tale chain）。
+   *
+   * 背景：原本只有「打工仔輓歌」有分支鏈，其餘 5 個故事包只是純文字氣氛模組
+   * （最弱的兩個連 beats 都冇）。現在建立通用引擎，令所有故事包都具備：
+   *   1. 多步分支（每步 2–3 個選擇）
+   *   2. **角色關係追蹤**（bond：對每個角色的關係值，影響後續對白與結局）
+   *   3. 弧線狀態（arc：角色由初始狀態變化，例如「由懷疑 → 信任」）
+   *   4. 選擇後果揭示（沿用 office 的 reveal 語意）
+   *
+   * 與 office 引擎的分別：
+   *   - 不綁死單一 pack（officePack 硬編碼 office_ballad）
+   *   - 有 bond／arc，能表達「角色弧線」
+   *   - 結局由「bond 總和 + route 分數」共同決定
+   */
+  function talePackById(packId) {
+    const p = storyPackById(packId);
+    return (p && Array.isArray(p.tale_chain) && p.tale_chain.length) ? p : null;
+  }
+
+  function isTaleNodeEvent(ev) {
+    return !!(ev && ev.tale_node);
+  }
+
+  function taleNodeById(id) {
+    if (!id) return null;
+    return (DATA.events || []).find((e) => e.id === id && e.tale_node) || null;
+  }
+
+  /** 取目前 active 故事包（若係 tale 包） */
+  function activeTalePack() {
+    const id = state.activeStoryPackId;
+    if (!id) return null;
+    return talePackById(id);
+  }
+
+  function taleStartNode(pack) {
+    const p = pack || activeTalePack();
+    if (!p) return null;
+    for (const id of p.tale_chain) {
+      const n = taleNodeById(id);
+      if (n) return n;
+    }
+    return null;
+  }
+
+  /** 開一條新故事鏈 */
+  function taleBeginRun(packId) {
+    const pack = talePackById(packId) || activeTalePack();
+    if (!pack) return null;
+    if (state.taleRun && state.taleRun.packId === pack.id) return state.taleRun;
+    const first = taleStartNode(pack);
+    if (!first) return null;
+    state.taleRun = {
+      packId: pack.id,
+      nodeId: first.id,
+      step: 1,
+      startAge: (pack.tale_start_age | 0) || 16,
+      route: {},
+      bond: {},        // characterId -> 關係值（-3..+3）
+      arc: {},         // characterId -> 目前弧線階段 key
+      chosen: [],
+      reveals: [],     // 每步的立即後果
+      reveal: null,
+    };
+    return state.taleRun;
+  }
+
+  function taleAge(run) {
+    const r = run || state.taleRun;
+    if (!r) return 16;
+    const pack = talePackById(r.packId);
+    const per = (pack && pack.tale_age_per_step) || 1;
+    return (r.startAge | 0) + Math.max(0, (r.step | 0) - 1) * per;
+  }
+
+  /** 角色出場時，由 bond 決定要用邊一句對白（弧線核心） */
+  function taleLineForCharacter(ch, run) {
+    const r = run || state.taleRun;
+    if (!ch || !r) return "";
+    const b = (r.bond[ch.id] | 0);
+    const stages = ch.arc_lines;
+    if (!stages) return ch.line || "";
+    if (b >= 2) return stages.warm || stages.neutral || "";
+    if (b <= -2) return stages.cold || stages.neutral || "";
+    return stages.neutral || "";
+  }
+
+  /** 角色關係標籤（顯示給玩家看） */
+  function taleBondLabel(b) {
+    const v = b | 0;
+    if (v >= 3) return "生死之交";
+    if (v >= 2) return "信得過";
+    if (v >= 1) return "有傾有講";
+    if (v === 0) return "點頭之交";
+    if (v >= -1) return "有啲芥蒂";
+    if (v >= -2) return "面阻阻";
+    return "反目";
+  }
+
+  /** 套用一個選擇 */
+  function taleApplyChoice(choiceIdx) {
+    const run = state.taleRun;
+    if (!run) return null;
+    const node = taleNodeById(run.nodeId);
+    if (!node) return null;
+    const choices = Array.isArray(node.tale_choices) ? node.tale_choices : [];
+    const pick = choices[choiceIdx | 0];
+    if (!pick) return null;
+
+    // 路線分數
+    const delta = pick.delta || {};
+    Object.keys(delta).forEach((k) => {
+      run.route[k] = (run.route[k] | 0) + (delta[k] | 0);
+    });
+    // 角色關係
+    const bond = pick.bond || {};
+    Object.keys(bond).forEach((cid) => {
+      run.bond[cid] = Math.max(-3, Math.min(3, (run.bond[cid] | 0) + (bond[cid] | 0)));
+    });
+    // 弧線階段推進
+    if (pick.arc && typeof pick.arc === "object") {
+      Object.keys(pick.arc).forEach((cid) => { run.arc[cid] = pick.arc[cid]; });
+    }
+
+    run.chosen.push({
+      nodeId: node.id,
+      nodeName: node.name,
+      choiceIdx: choiceIdx | 0,
+      text: pick.text || "",
+      bondNote: pick.bond_note || "",
+    });
+
+    // 立即後果（顯示俾玩家）
+    run.reveal = {
+      nodeName: node.name || "",
+      choiceText: pick.text || "",
+      outcome: pick.outcome || "",
+      bondNote: pick.bond_note || "",
+    };
+    return run.reveal;
+  }
+
+  /** 推進到下一節點；最後一步算結局 */
+  function taleAdvanceAfterChoice() {
+    const run = state.taleRun;
+    if (!run) return;
+    const pack = talePackById(run.packId);
+    const chain = (pack && pack.tale_chain) || [];
+    const idx = chain.indexOf(run.nodeId);
+    const isLast = idx >= 0 ? idx >= chain.length - 1 : true;
+
+    if (!isLast) {
+      const next = taleNodeById(chain[idx + 1]);
+      if (next) {
+        run.nodeId = next.id;
+        run.step = (run.step | 0) + 1;
+        return;
+      }
+    }
+    // 走完：算結局
+    const ending = taleResolveEnding(pack, run);
+    if (ending) {
+      if (!state.lifeFlags || typeof state.lifeFlags !== "object") state.lifeFlags = {};
+      state.lifeFlags["tale_ending_" + pack.id + "_" + ending.id] = 1;
+      state.taleEndAge = taleAge(run);
+      state.taleEndingId = ending.id;
+      state.selectedEvent = ending.event || null;
+      state.taleRun = null;
+      state.softNote = "";
+      state.screen = ending.event ? "soft" : "events";
+      return;
+    }
+    state.taleRun = null;
+    state.screen = "events";
+  }
+
+  /**
+   * 結局判定：關係門檻 → 路線**比例** → priority。
+   *
+   * t369b 修正二：原本用累加分數比較 route，但某個 route（例如 care）在選擇表出現
+   * 7–8 次、其他只 1–2 次，令帶該 route 的結局必然勝出（實測 5 條路線都得同一結局）。
+   * 現改為**比例**：該 route 分數 ÷ 該 route 在整條鏈的總可得分數。
+   * 這樣「玩家有幾投入呢條路線」才算數，唔會被出現次數支配。
+   */
+  function taleRouteTotals(pack) {
+    if (!pack.__routeTotals) {
+      const tot = {};
+      (pack.tale_chain || []).forEach((nid) => {
+        const n = taleNodeById(nid);
+        if (!n) return;
+        // 每個節點：每條 route 取該節點「最高可得分」
+        const perNode = {};
+        (n.tale_choices || []).forEach((c) => {
+          const d = (c && c.delta) || {};
+          Object.keys(d).forEach((k) => {
+            perNode[k] = Math.max(perNode[k] | 0, d[k] | 0);
+          });
+        });
+        Object.keys(perNode).forEach((k) => {
+          tot[k] = (tot[k] | 0) + perNode[k];
+        });
+      });
+      pack.__routeTotals = tot;
+    }
+    return pack.__routeTotals;
+  }
+
+  function taleResolveEnding(pack, run) {
+    if (!pack || !Array.isArray(pack.tale_endings)) return null;
+    const bonds = run.bond || {};
+    const routes = run.route || {};
+    const totalBond = Object.keys(bonds).reduce((a, k) => a + (bonds[k] | 0), 0);
+    const routeTotals = taleRouteTotals(pack);
+
+    // 1) 硬性門檻：唔滿足直接淘汰
+    const eligible = pack.tale_endings.filter((e) => {
+      if (typeof e.min_bond === "number" && totalBond < e.min_bond) return false;
+      if (typeof e.max_bond === "number" && totalBond > e.max_bond) return false;
+      if (e.require_bond && typeof e.require_bond === "object") {
+        const ok = Object.keys(e.require_bond).every(
+          (cid) => (bonds[cid] | 0) >= (e.require_bond[cid] | 0)
+        );
+        if (!ok) return false;
+      }
+      return true;
+    });
+
+    // 2) 路線比例 + 關係強度 + priority
+    let best = null;
+    let bestScore = -Infinity;
+    (eligible.length ? eligible : pack.tale_endings).forEach((e) => {
+      let score = 0;
+      if (e.route) {
+        const got = routes[e.route] | 0;
+        const total = routeTotals[e.route] | 0;
+        // 0..40：路線只是其中一個維度，唔可以壓過關係
+        score += total > 0 ? (got / total) * 40 : 0;
+      }
+      // 關係強度：門檻型結局（min_bond／max_bond／require_bond）本身就係關係結局，
+      // 要俾足夠基礎分，否則永遠輸給任何帶 route 的結局。
+      if (e.min_bond != null || e.max_bond != null || e.require_bond) {
+        score += 30;                       // 關係型結局基礎分
+        score += Math.abs(totalBond) * 1.5; // 關係越極端越強
+      } else {
+        score += totalBond * 0.3;
+      }
+      score -= e.priority | 0;
+      if (score > bestScore) {
+        bestScore = score;
+        best = e;
+      }
+    });
+    if (!best) return null;
+    const ev = best.event_id
+      ? (DATA.events || []).find((x) => x.id === best.event_id) || null
+      : null;
+    return { id: best.id, label: best.label, blurb: best.blurb, event: ev };
+  }
+
+  /* ---------- t364 故事包分支鏈（打工仔輓歌） ---------- */
+  /** 分支路線 key → 中文（唔向外顯示分數，只內部計） */
+  const OFFICE_ROUTE_KEYS = ["rich", "biz", "flat", "street", "scam"];
+  const OFFICE_ROUTE_LABEL = {
+    rich: "穩打穩紮",
+    biz: "做生意",
+    flat: "上樓成家",
+    street: "搏到盡",
+    scam: "博快錢",
+  };
+  /** 結局 id ↔ 路線 key */
+  const OFFICE_ENDING_BY_ROUTE = {
+    rich: "rich",
+    biz: "biz_fail",
+    flat: "flat",
+    street: "street",
+    scam: "scam",
+  };
+
+  function officePack() {
+    return storyPackById("office_ballad") || null;
+  }
+
+  function isOfficeChainEvent(ev) {
+    return !!(ev && ev.office_node);
+  }
+
+  function officeNodeById(id) {
+    if (!id) return null;
+    return (DATA.events || []).find((e) => e.id === id && e.office_node) || null;
+  }
+
+  function officeEndingEvent(routeKey) {
+    const endingId = OFFICE_ENDING_BY_ROUTE[routeKey];
+    if (!endingId) return null;
+    return (DATA.events || []).find((e) => e.office_ending === endingId) || null;
+  }
+
+  function officeEmptyRoute() {
+    const r = {};
+    OFFICE_ROUTE_KEYS.forEach((k) => { r[k] = 0; });
+    return r;
+  }
+
+  /** 起始節點：故事包第一個 office_node */
+  function officeStartNode() {
+    const pack = officePack();
+    if (!pack) return null;
+    const chain = Array.isArray(pack.office_chain) ? pack.office_chain : [];
+    for (const id of chain) {
+      const n = officeNodeById(id);
+      if (n) return n;
+    }
+    return officeNodeById(pack.office_entry) || null;
+  }
+
+  /** 開一條新分支鏈 */
+  function officeBeginRun() {
+    const first = officeStartNode();
+    if (!first) return null;
+    // 已經在鏈中：唔重設（避免重入時年齡／歷程被洗走）
+    if (state.officeRun && state.officeRun.packId === "office_ballad") {
+      return state.officeRun;
+    }
+    // t365：分支鏈用自己嘅年齡（18 歲入職 → 27 歲），唔改 state.age。
+    // 原因：呢個包係獨立故事模組，唔應該消耗／污染人生 run 的歲數（曾造成累積到 70 歲直接「壽命到限」）。
+    state.officeRun = {
+      packId: "office_ballad",
+      nodeId: first.id,
+      step: 1,
+      startAge: 18,
+      route: officeEmptyRoute(),
+      chosen: [],
+      /** 上一步選擇要顯示的隱藏後果（選完才揭示） */
+      reveal: null,
+    };
+    return state.officeRun;
+  }
+
+  /** 分支鏈內的年齡（唔影響 state.age） */
+  function officeAge(run) {
+    const r = run || state.officeRun;
+    if (!r) return 18;
+    return (r.startAge | 0) + Math.max(0, (r.step | 0) - 1);
+  }
+
+  /**
+   * 套用一個選擇：
+   *  - route 分數累加（隱藏，唔顯示畀玩家）
+   *  - 記錄 chosen，供結果頁回顧
+   *  - reveal 記住「剛剛揭示了什麼」，下次進入節點時顯示
+   */
+  function officeApplyChoice(choiceIdx) {
+    const run = state.officeRun;
+    if (!run) return null;
+    const node = officeNodeById(run.nodeId);
+    if (!node) return null;
+    const choices = Array.isArray(node.office_choices) ? node.office_choices : [];
+    const pick = choices[choiceIdx | 0];
+    if (!pick) return null;
+
+    // 累加分數（隱藏）
+    const delta = pick.delta || {};
+    OFFICE_ROUTE_KEYS.forEach((k) => {
+      run.route[k] = (run.route[k] | 0) + (delta[k] | 0);
+    });
+    run.chosen.push({
+      nodeId: node.id,
+      nodeName: node.name,
+      choiceIdx: choiceIdx | 0,
+      text: pick.text || "",
+    });
+    // 揭示文案：只講「你揀了什麼」，唔講分數／加減
+    run.reveal = {
+      nodeName: node.name || "",
+      choiceText: pick.text || "",
+      // 隱藏增益減益：選完才出現，且只顯示「傾向」而非數字
+      hint: officeChoiceHint(delta),
+    };
+    return run.reveal;
+  }
+
+  /**
+   * 由 delta 生成「隱藏後果」提示。
+   * 只講方向（例如「更似做生意嘅路」），永不顯示 +2／-1 之類數字，
+   * 避免玩家當成數值遊戲；也符合「沒有獎賞和升級」的設定。
+   */
+  function officeChoiceHint(delta) {
+    if (!delta || typeof delta !== "object") return "";
+    let bestKey = "";
+    let bestVal = 0;
+    OFFICE_ROUTE_KEYS.forEach((k) => {
+      const v = delta[k] | 0;
+      if (v > bestVal) {
+        bestVal = v;
+        bestKey = k;
+      }
+    });
+    if (!bestKey || bestVal <= 0) return "呢一步，冇特別改變。";
+    return "你行近咗「" + (OFFICE_ROUTE_LABEL[bestKey] || "") + "」呢條路。";
+  }
+
+  /** 由 route 分數決定結局 key；同分則依固定優先次序（避免隨機） */
+  function officeResolveRoute(route) {
+    const r = route || {};
+    let bestKey = OFFICE_ROUTE_KEYS[0];
+    let bestVal = -Infinity;
+    OFFICE_ROUTE_KEYS.forEach((k) => {
+      const v = r[k] | 0;
+      if (v > bestVal) {
+        bestVal = v;
+        bestKey = k;
+      }
+    });
+    return bestKey;
+  }
+
+  /** 抵達最後節點：算出結局事件 */
+  function officeFinishRun() {
+    const run = state.officeRun;
+    if (!run) return null;
+    const routeKey = officeResolveRoute(run.route);
+    const endingEv = officeEndingEvent(routeKey);
+    return { routeKey, endingEv };
+  }
+
   /** 六維公開名（UI 禁顯示 str／agi 等 key；t260） */
   const ATTR_LABEL = { str: "力量", agi: "敏捷", intel: "智力", luck: "幸運", lead: "統率", life: "壽命" };
   function formatAttrsDelta(delta) {
@@ -91,11 +621,38 @@
     attrs: defaultAttrs(),
     gold: 0,
     soul: SOUL_START,
+    /** 聲望：每日差事／任務賺取；只可在茶記買特殊卡；跨世保留 */
+    fame: 0,
+    /** 茶記已換過的特殊卡 id（唔可以重複買） */
+    teaShopBought: [],
+    /** 茶記：正在看詳情的特殊卡 id */
+    teaDetailId: null,
+    /** 茶記：兌換後待顯示的提示字 */
+    teaPendingNote: "",
     selectedEvent: null,
     /** 今世戰鬥卡口袋名單（prep 放入；唔等於當場出戰） */
     team: [...(DATA.default_team || [])].slice(0, TEAM_SIZE),
-    /** 本場出戰位（最多 TEAM_SIZE）；每次入 encounter 清空 */
+    /** 本場出戰位（最多 TEAM_SIZE）。有上次打贏的配置就沿用，唔使日日再揀 */
     deploy: [],
+    /** 上次戰鬥勝利時的出戰位（槽位對齊；陣亡／離隊的下次自動空出） */
+    lastWinDeploy: [],
+    /** 本場開打時的出戰位，只在打贏後寫入 lastWinDeploy */
+    battleFieldSnapshot: null,
+    /** 遇敵畫面：沿用上次上場但有空位時的提示字（玩家自行決定補位） */
+    deployHint: "",
+    /** 送卡事件：{ eventId, kind, offers, takenIdx, note, rewardApplied } */
+    cardGift: null,
+    /** t366：裝備強化攤 { done: null|{id,star} } */
+    gearUpgrade: null,
+    /** t366：戰鬥卡練功 { done: null|{id,lv,xp} } */
+    fighterTrain: null,
+    /** t366：復活陣亡卡 { done: null|{id,name} } */
+    fighterRevive: null,
+    /** 盟主卡池抽敵：同一場遇敵沿用名單 */
+    enemyRosterKey: "",
+    enemyRosterCache: null,
+    /** 盟友面板：按下時記住原本畫面，返回時回到該畫面 */
+    alliesReturnScreen: null,
     /** fighterId -> skillId[]（裝備中；同 ID 技能受帳號張數限制，demo 預設 1 張＝全隊唯一） */
     loadout: {},
     /** fighterId -> true：呢張卡今世已做過預設裝技；之後唔再 auto-fill（保留 null 格＝卸下） */
@@ -183,6 +740,21 @@
     factionChoiceResult: null,
     /** 小遊戲進行中／結果（唔入存檔） */
     minigame: null,
+    /**
+     * t365 故事包分支鏈（唔入存檔；離開即清）
+     * { packId, nodeId, step, startAge, route: {rich,biz,flat,street,scam}, chosen: [...] }
+     */
+    officeRun: null,
+    /** 分支結局達成時的分支年齡（只供結局面顯示） */
+    officeEndAge: 0,
+    /**
+     * t369 通用故事鏈（任何故事包可用）
+     * { packId, nodeId, step, startAge, route:{}, bond:{cid:val}, arc:{cid:stage}, chosen:[], reveal }
+     * bond 記錄玩家與每個角色的關係（-3..+3），是角色弧線的核心。
+     */
+    taleRun: null,
+    taleEndAge: 0,
+    taleEndingId: null,
     /** 每日任務：dateKey／progress／claimed（換日 reset；跨世保留） */
     daily: null,
     /** 跨世帳號統計（每日任務用） */
@@ -194,6 +766,8 @@
     speed: 1,
     /** 可選故事包（模組）；唔取代非線性人生骨架 */
     activeStoryPackId: null,
+    /** 玩家有冇主動揀過故事包 */
+    storyPackUserPicked: false,
     /** 故事包詳情頁正睇邊包 */
     storyPackDetailId: null,
     /** 魂焰扭蛋保底（帳號級跨世；persist） */
@@ -208,6 +782,18 @@
     /** 扭蛋演出階段：idle → coin → spin → egg_out → crack → reveal → result */
     gachaPhase: "idle",
   };
+
+  /* 茶記特殊卡同屬戰鬥卡；合併入同一批卡池，卡冊／選卡／戰鬥都認得 */
+  (function mergeTeaShopFighters() {
+    const list = Array.isArray(DATA.tea_shop_cards) ? DATA.tea_shop_cards : [];
+    if (!list.length) return;
+    const have = new Set((DATA.fighters || []).map((f) => f && f.id));
+    list.forEach((c) => {
+      if (!c || !c.id || have.has(c.id)) return;
+      DATA.fighters.push(c);
+      have.add(c.id);
+    });
+  })();
 
   const fighterById = Object.fromEntries(DATA.fighters.map((f) => [f.id, f]));
   const enemyById = Object.fromEntries(DATA.enemies.map((e) => [e.id, e]));
@@ -364,9 +950,19 @@
     const flavor = blurb ? `<div class="ht-flavor">${esc(blurb)}</div>` : "";
     return `<div class="ht-rich">${head.join("")}${slots}${flavor}</div>`;
   }
+  /** 敵方單位定義：可能係舊 enemy 定義，或卡池戰鬥卡（defId 為 C 開頭） */
+  function enemyUnitDef(unit) {
+    if (!unit) return null;
+    const key = unit.defId || unit.id || "";
+    if (fighterById[key]) return fighterById[key];
+    if (enemyById[key]) return enemyById[key];
+    // fallback：由 unit 自己（卡池卡會帶齊 skill/flavor/rarity）
+    return unit;
+  }
+
   function enemyHelpRichHtml(e) {
     if (!e) return null;
-    const def = enemyById[e.defId || e.id] || e;
+    const def = enemyUnitDef(e) || e;
     const name = e.name || def.name || "敵方";
     const atk = e.atk != null ? e.atk : def.atk;
     const spd = e.spd != null ? e.spd : def.spd;
@@ -646,6 +1242,34 @@
     return a;
   }
 
+  const COMMERCE_CATEGORIES = {
+    shop_equip: 1,
+    shop_fighter: 1,
+    shop_skill: 1,
+    card_trade: 1,
+    star_up: 1,
+    // t366：新增三類養成事件
+    gear_upgrade: 1,   // 裝備強化（直接＋星，唔燒同名卡）
+    fighter_train: 1,  // 戰鬥卡練功（＋卡經驗／等級）
+    fighter_revive: 1, // 復活陣亡戰鬥卡
+  };
+
+  /** 送卡事件：免費三選一（唔收金幣、唔換走己卡） */
+  const GIFT_CATEGORIES = { card_gift: 1, card_draw: 1 };
+
+  function isCommerceEvent(ev) {
+    return !!(ev && COMMERCE_CATEGORIES[ev.category]);
+  }
+
+  /**
+   * 出街頭 3 個自由年唔出商店／買賣。
+   * 之後亦要金幣夠最平一件（普通 15）先出，避免袋裡冇錢就遇到檔口。
+   */
+  function commerceEventsAllowed(year) {
+    if (freeEncounterYear(year) < 4) return false;
+    return (state.gold | 0) >= 15;
+  }
+
   /**
    * 每年四揀一：
    * - 自由年>=5 && 自由年%5===0 → 全從 special_battle（宿敵）池抽 4（不足則重複）
@@ -655,22 +1279,28 @@
    */
   function rollYearEvents(year) {
     const y = Math.max(1, year | 0);
+    const allowCommerce = commerceEventsAllowed(y);
     if ((state.yearEventYear | 0) === y && state.yearEventOffer && state.yearEventOffer.length === 4) {
-      return state.yearEventOffer
+      const cached = state.yearEventOffer
         .map((id) => (DATA.events || []).find((e) => e.id === id))
         .filter(Boolean);
+      if (cached.length === 4 && (allowCommerce || !cached.some(isCommerceEvent))) {
+        return cached;
+      }
+      state.yearEventOffer = [];
+      state.yearEventYear = 0;
     }
     const all = DATA.events || [];
     let picked = [];
     if (isSpecialBattleYear(y)) {
-      const pool = all.filter((e) => e.category === "special_battle");
-      const src = pool.length ? pool : all.filter((e) => e.battle);
+      const pool = all.filter((e) => e.category === "special_battle" && !eventExcludedFromYearPool(e));
+      const src = pool.length ? pool : all.filter((e) => e.battle && !eventExcludedFromYearPool(e));
       const sh = shuffleCopy(src);
       for (let i = 0; i < 4; i++) {
         picked.push(sh[i % Math.max(1, sh.length)]);
       }
     } else {
-      const pool = all.filter((e) => e.category !== "special_battle" && eventFactionEligible(e));
+      const pool = all.filter((e) => e.category !== "special_battle" && eventFactionEligible(e) && !eventExcludedFromYearPool(e) && (allowCommerce || !isCommerceEvent(e)));
       const byCat = {};
       pool.forEach((e) => {
         const c = e.category || "adventure";
@@ -747,12 +1377,9 @@
       const mgPool = all.filter((e) => e && e.category === "minigame");
       if (mgPool.length) {
         const already = picked.some((e) => e && e.category === "minigame");
-        // demo-lite：約七成出現一格，方便驗收；唔覆蓋 main 優先；有故事包時優先該包 minigame
+        // demo-lite：約七成出現一格，方便驗收；唔覆蓋 main 優先
         if (!already && Math.random() < 0.7) {
-          const boostMg = packBoostEventIds(storyPackById(ensureActiveStoryPack()));
-          const mgPref = mgPool.filter((e) => boostMg.has(e.id));
-          const mgSrc = mgPref.length ? mgPref : mgPool;
-          const mg = mgSrc[Math.floor(Math.random() * mgSrc.length)];
+          const mg = mgPool[Math.floor(Math.random() * mgPool.length)];
           let ri = picked.length ? picked.length - 1 : 0;
           for (let i = picked.length - 1; i >= 0; i--) {
             if (picked[i] && picked[i].category !== "main") {
@@ -806,8 +1433,19 @@
         if (picked.length) picked[ri] = pickX;
         else picked.push(pickX);
       };
-      injectLifeSide("card_trade", 0.4);
-      injectLifeSide("star_up", 0.4);
+      if (allowCommerce) {
+        injectLifeSide("card_trade", 0.4);
+        injectLifeSide("star_up", 0.4);
+        // t366：養成事件（裝備強化／戰鬥卡練功／復活）
+        injectLifeSide("gear_upgrade", 0.45);
+        injectLifeSide("fighter_train", 0.45);
+        // 復活：只有「有陣亡卡」時才有意義，交畀 pick 時過濾
+        injectLifeSide("fighter_revive", 0.5);
+      }
+      // 送卡：自由年約五成注入 1 格（免費、唔需要金幣，早期都出）
+      injectLifeSide("card_gift", 0.5);
+      // t366：抽卡事件（免費／低價抽，補充出戰卡池）
+      injectLifeSide("card_draw", 0.4);
     }
     picked = picked.slice(0, 4);
     state.yearEventOffer = picked.map((e) => e.id);
@@ -834,8 +1472,13 @@
     faction: "cat-faction",
     card_trade: "cat-trade",
     star_up: "cat-starup",
+    card_gift: "cat-gift",
+    // t366
+    gear_upgrade: "cat-starup",
+    fighter_train: "cat-gift",
+    fighter_revive: "cat-gift",
+    card_draw: "cat-gift",
   };
-
   function eventCategoryLabel(ev) {
     if (!ev) return "日常";
     if (ev.category === "special_battle") return ev.category_label || "宿敵";
@@ -967,6 +1610,16 @@
     }
   }
 
+  /** 差事獎勵 → 聲望（金幣獎勵換算成聲望；膠幣、經驗、幸運照舊） */
+  const MISSION_GOLD_TO_FAME = 0.5;
+
+  function missionFameGain(m) {
+    const r = (m && m.reward) || {};
+    const base = (r.fame | 0);
+    const fromGold = Math.round(((r.gold | 0) || 0) * MISSION_GOLD_TO_FAME);
+    return base + fromGold;
+  }
+
   function claimDailyMission(id) {
     ensureDaily();
     const m = dailyMissionList().find((x) => x.id === id);
@@ -976,7 +1629,8 @@
     if (cur < Math.max(1, m.target | 0)) return false;
     const r = m.reward || {};
     if (r.soul) state.soul = (state.soul | 0) + (r.soul | 0);
-    if (r.gold) state.gold = (state.gold | 0) + (r.gold | 0);
+    const fameGain = missionFameGain(m);
+    if (fameGain) state.fame = (state.fame | 0) + fameGain;
     if (r.xp) gainXp(r.xp | 0);
     if (r.luck_note) {
       if (!state.attrs) state.attrs = defaultAttrs();
@@ -990,7 +1644,8 @@
     const r = (m && m.reward) || {};
     const bits = [];
     if (r.soul) bits.push("膠幣+" + r.soul);
-    if (r.gold) bits.push("金幣+" + r.gold);
+    const fame = missionFameGain(m);
+    if (fame) bits.push("聲望+" + fame);
     if (r.xp) bits.push("經驗+" + r.xp);
     if (r.luck_note) bits.push("幸運＋1");
     return bits.join(" · ") || "—";
@@ -1033,23 +1688,38 @@
     return SHOP_PRICE_FALLBACK;
   }
 
+  /** t364：與店鋪共用同一張表，唔再各自一套叫法 */
   function shopRarityLabel(rarity) {
-    const key = String(rarity == null ? "" : rarity).trim();
-    if (!key) return "無法辨識";
-    const map = {
-      common: "普通",
-      rare: "稀有",
-      epic: "史詩",
-      legend: "最高級",
-      "普通": "普通",
-      "稀有": "稀有",
-      "史詩": "史詩",
-      "最高級": "最高級",
-      "傳奇": "最高級",
-    };
-    if (map[key]) return map[key];
+    const label = rarityLabelAny(rarity);
+    return label || "無法辨識";
+  }
+
+  /**
+   * t364：全站唯一稀有度名稱表。
+   * 以前分三套叫法（裝備說明「傳奇／稀有」、卡冊「最高級／史詩」、店鋪「最高級」），
+   * 同一張卡在不同畫面有三個名，玩家對不上。現一律以 data.rarities 的官方名為準。
+   */
+  const RARITY_LABELS = { common: "普通", rare: "稀有", epic: "史詩", legend: "最高級" };
+  const RARITY_ORDER = ["common", "rare", "epic", "legend"];
+
+  /** 把任何寫法（id／官方名／舊別名）正規化成官方名；認不出就原樣回傳 */
+  function rarityLabelAny(r) {
+    const key = String(r == null ? "" : r).trim();
+    if (!key) return "";
+    if (RARITY_LABELS[key]) return RARITY_LABELS[key];
+    if (RARITY_ORDER.indexOf(key) >= 0) return RARITY_LABELS[key];
     const low = key.toLowerCase();
-    return map[low] || "無法辨識";
+    if (RARITY_LABELS[low]) return RARITY_LABELS[low];
+    // 舊檔別名：傳奇＝最高級（t322 已拆 epic／legend，唔可以再混）
+    if (low === "legend" || key === "傳奇") return RARITY_LABELS.legend;
+    return key;
+  }
+
+  /** 由官方名／id 取英文 id（排序、class 用） */
+  function rarityIdOf(r) {
+    const label = rarityLabelAny(r);
+    const hit = RARITY_ORDER.find((id) => RARITY_LABELS[id] === label);
+    return hit || "common";
   }
 
   function shopTitleForCat(cat) {
@@ -1171,7 +1841,7 @@
       const match = slotId ? emptySlots.find((s) => s.id === slotId) : null;
       if (match) {
         state.accountGear[match.id] = pick.id;
-        bumpEquipStar(1);
+        // t364：裝上唔算升星（原本會虛報「裝備升星」任務進度）；升星只由卡冊按鈕觸發
         return `已裝上${match.label}槽`;
       }
       return "";
@@ -1366,7 +2036,18 @@
   }
 
   function lifeDoneFlag() {
-    return lifeOver() || state.year > MAX_YEARS || !!state.lifeWiped;
+    // 今世行到壽命，或出戰卡死光。唔再於第 15 年切斷。
+    return lifeOver() || !!state.lifeWiped;
+  }
+
+  function lifeEndBlurb() {
+    if (state.lifeWiped) return "出戰卡已死光——今世完結。";
+    return "壽命已到——今世歲數上限。";
+  }
+
+  function lifeEndName() {
+    if (state.lifeWiped) return "全軍覆沒";
+    return "壽命到限";
   }
 
   /** 戰中刷新／讀檔：視作敗北結算（無 live battle → 唔 lockDead；教學期 soft） */
@@ -1413,15 +2094,11 @@
 
   function ensureLifeDoneResult() {
     if (state.lastResult) return;
-    const wiped = !!state.lifeWiped;
-    const over = lifeOver();
     state.lastResult = {
       win: false,
       reward: 0,
-      rewardBlurb: wiped
-        ? "出戰卡已死光——今世完結。"
-        : (over ? "壽命已到——今世歲數上限。" : "人生切片已跑完。"),
-      eventName: wiped ? "全軍覆沒" : (over ? "壽命到限" : "切片完結"),
+      rewardBlurb: lifeEndBlurb(),
+      eventName: lifeEndName(),
       deadNames: [],
     };
   }
@@ -1461,27 +2138,38 @@
   }
 
   /** 從 30 排除本世已揀；本輪唔重複；不足 4 先允許重複未揀池 */
-  function rollFateOffer() {
+  /** 命運四揀一：保證 4 張、不重複（已揀過的優先避開） */
+  const FATE_OFFER_SIZE = 4;
+
+  function normalizeFateOffer(list) {
+    const src = Array.isArray(list) ? list : [];
     const picked = new Set(state.fatePicks || []);
-    let pool = FATES.filter((f) => f && f.id && !picked.has(f.id));
-    if (!pool.length) pool = FATES.slice();
-    const offer = [];
+    const out = [];
     const used = new Set();
-    const bag = shuffleInPlace(pool.slice());
-    for (const f of bag) {
-      if (offer.length >= 4) break;
-      if (used.has(f.id)) continue;
-      offer.push(f.id);
-      used.add(f.id);
+    const pushId = (id) => {
+      if (!id || used.has(id) || !fateById[id]) return;
+      used.add(id);
+      out.push(id);
+    };
+    src.forEach(pushId);
+    if (out.length >= FATE_OFFER_SIZE) return out.slice(0, FATE_OFFER_SIZE);
+    const fresh = shuffleInPlace(FATES.filter((f) => f && f.id && !picked.has(f.id) && !used.has(f.id)));
+    for (const f of fresh) {
+      pushId(f.id);
+      if (out.length >= FATE_OFFER_SIZE) break;
     }
-    // 不足 4：從未揀池（或全池）允許重複補滿
-    while (offer.length < 4) {
-      const src = pool.length ? pool : FATES;
-      if (!src.length) break;
-      const f = src[Math.floor(Math.random() * src.length)];
-      offer.push(f.id);
+    if (out.length < FATE_OFFER_SIZE) {
+      const all = shuffleInPlace(FATES.filter((f) => f && f.id && !used.has(f.id)));
+      for (const f of all) {
+        pushId(f.id);
+        if (out.length >= FATE_OFFER_SIZE) break;
+      }
     }
-    state.fateOffer = offer.slice(0, 4);
+    return out;
+  }
+
+  function rollFateOffer() {
+    state.fateOffer = normalizeFateOffer([]);
     return state.fateOffer;
   }
 
@@ -1565,7 +2253,7 @@
 
   function afterFateOrEventScreen() {
     if ((state.fateYearIndex | 0) < 3) {
-      if (!(state.fateOffer && state.fateOffer.length)) rollFateOffer();
+      state.fateOffer = normalizeFateOffer(state.fateOffer);
       return "fate";
     }
     return "events";
@@ -1591,8 +2279,13 @@
       attrs: cloneObj(state.attrs, defaultAttrs()),
       gold: state.gold | 0,
       soul: state.soul | 0,
+      fame: state.fame | 0,
+      teaShopBought: Array.isArray(state.teaShopBought) ? state.teaShopBought.slice() : [],
       battlesThisLife: state.battlesThisLife | 0,
+      /** 戰鬥播放速度偏好（1／2／4）；跨戰鬥、跨重開保留 */
+      battleSpeed: normalizeBattleSpeed(state.speed),
       team: Array.isArray(state.team) ? state.team.slice() : [],
+      lastWinDeploy: Array.isArray(state.lastWinDeploy) ? state.lastWinDeploy.slice(0, TEAM_SIZE) : [],
       loadout: cloneObj(state.loadout, {}),
       loadoutInited: cloneObj(state.loadoutInited, {}),
       lifeSkills: Array.isArray(state.lifeSkills) ? state.lifeSkills.slice() : state.lifeSkills,
@@ -1609,6 +2302,8 @@
       lifeFlags: cloneObj(state.lifeFlags, {}),
       factions: cloneObj(state.factions, {}),
       activeStoryPackId: state.activeStoryPackId || null,
+      /** 玩家有冇主動揀故事包（true 就唔會跟隨新預設） */
+      storyPackUserPicked: !!state.storyPackUserPicked,
       cardCounts: cloneObj(state.cardCounts, {}),
       demoSeedVersion: state.demoSeedVersion,
       fighterStars: cloneObj(state.fighterStars, {}),
@@ -1676,12 +2371,24 @@
       state.gold = Math.max(0, num(data.gold, 0) | 0);
       /* t324：讀檔跟舊值（可花光／歸零）；缺欄先用 SOUL_START。唔再 top-up ≥260 */
       state.soul = Math.max(0, num(data.soul, SOUL_START) | 0);
+      state.fame = Math.max(0, num(data.fame, 0) | 0);
+      state.teaShopBought = (Array.isArray(data.teaShopBought) ? data.teaShopBought : [])
+        .filter((id) => typeof id === "string" && id);
       state.battlesThisLife = Math.max(0, num(data.battlesThisLife, 0) | 0);
+      state.speed = normalizeBattleSpeed(num(data.battleSpeed, 1));
 
       const teamIn = Array.isArray(data.team) ? data.team : [];
       state.team = teamIn.filter((id) => id && fighterById[id]).slice(0, Math.max(TEAM_SIZE, 25));
       if (!state.team.length) {
         state.team = [...(DATA.default_team || [])].slice(0, TEAM_SIZE);
+      }
+      {
+        const remembered = Array.isArray(data.lastWinDeploy) ? data.lastWinDeploy : [];
+        state.lastWinDeploy = [];
+        for (let i = 0; i < TEAM_SIZE; i++) {
+          const id = remembered[i] || null;
+          state.lastWinDeploy[i] = (id && fighterById[id]) ? id : null;
+        }
       }
 
       const loadIn = (data.loadout && typeof data.loadout === "object") ? data.loadout : {};
@@ -1715,8 +2422,11 @@
       state.fatePicks = (Array.isArray(data.fatePicks) ? data.fatePicks : [])
         .filter((id) => id && fateById[id]);
       state.fateYearIndex = Math.max(0, Math.min(3, num(data.fateYearIndex, 0) | 0));
-      state.fateOffer = (Array.isArray(data.fateOffer) ? data.fateOffer : [])
-        .filter((id) => id && fateById[id]);
+      state.fateOffer = (state.fateYearIndex | 0) < 3
+        ? normalizeFateOffer(
+            (Array.isArray(data.fateOffer) ? data.fateOffer : []).filter((id) => id && fateById[id])
+          )
+        : (Array.isArray(data.fateOffer) ? data.fateOffer : []).filter((id) => id && fateById[id]);
       {
         const b = (data.fateBattleBonus && typeof data.fateBattleBonus === "object")
           ? data.fateBattleBonus : {};
@@ -1736,6 +2446,13 @@
       state.minigame = null;
       state.activeStoryPackId = (data.activeStoryPackId && storyPackById(data.activeStoryPackId))
         ? data.activeStoryPackId : null;
+      /* 舊存檔若仍停留在舊預設（初入香江）而玩家未主動改過，跟隨新預設打工仔輓歌 */
+      if (data.activeStoryPackId && data.storyPackUserPicked !== true
+          && data.activeStoryPackId !== DEFAULT_STORY_PACK_ID
+          && storyPackById(DEFAULT_STORY_PACK_ID)
+          && storyPackById(DEFAULT_STORY_PACK_ID).status === "available") {
+        state.activeStoryPackId = DEFAULT_STORY_PACK_ID;
+      }
 
       if (data.cardCounts && typeof data.cardCounts === "object") state.cardCounts = { ...data.cardCounts };
       if (data.demoSeedVersion != null) state.demoSeedVersion = data.demoSeedVersion;
@@ -1792,6 +2509,7 @@
       state.battle = null;
       state.selectedEvent = null;
       state.deploy = [];
+      state.deployHint = "";
       state.eventConfirmOpen = false;
       state.selectAllySlot = null;
       state.fighterDetailId = null;
@@ -1848,6 +2566,10 @@
     state.fateOffer = [];
     state.fateBattleBonus = { atk: 0, def: 0, hp: 0 };
     state.deploy = [];
+    state.deployHint = "";
+    state.lastWinDeploy = [];
+    state.battleFieldSnapshot = null;
+    state.cardGift = null;
     state.eventConfirmOpen = false;
     state.selectAllySlot = null;
     state.fighterDetailId = null;
@@ -1888,103 +2610,208 @@
     return (f.slots || 4) * 20 + 40;
   }
 
-  /** 敵方跟年加乘：血／攻 ×(1+(年−1)×0.12)；special_battle 再 ×1.35（t303 加難） */
+  /**
+   * t368：敵方跟年加乘（改為「先陡後緩」）。
+   *
+   * 問題：玩家攻擊力在 Lv5★5 後永遠封頂（約 38 點），完全唔再成長；
+   * 而敵方原本線性 += 0.065/年 無限上升 → 第 28 年（37 歲）必然打唔贏，
+   * 實測 100% 死於全軍覆沒，中位數只有 25 歲，永遠去唔到 70／100 歲。
+   *
+   * 修法：改用「飽和曲線」——前期成長快（保持壓力），後期趨平（追得上玩家上限）。
+   *   mult = 1 + GROWTH * (1 - e^(-(year-1)/K))
+   *   - 前 10 年仍接近線性（玩家仍有升級空間）
+   *   - 20 年後明顯放緩
+   *   - 最終上限 = 1 + ENEMY_GROWTH_CAP（唔會無限升）
+   */
+  const ENEMY_GROWTH_CAP = 1.35;   // 最終額外倍率上限（mult 最多 2.35）
+  const ENEMY_GROWTH_K = 14;       // 時間常數：越大越平緩
+
+  /**
+   * 宿敵倍率：1.35 → 1.05（t365 實測調校，每點 20 次平均）
+   * 宿敵年本身已是高難事件，額外加成只需輕微。
+   */
+  const ENEMY_SPECIAL_MULT = 1.05;
+
   function enemyScaleMult() {
     const year = Math.max(1, (state.year | 0) || 1);
-    let m = 1 + (year - 1) * 0.12;
+    const t = year - 1;
+    // 飽和曲線：前期近似線性，後期趨於上限
+    let m = 1 + ENEMY_GROWTH_CAP * (1 - Math.exp(-t / ENEMY_GROWTH_K));
     const ev = state.selectedEvent;
-    if (ev && ev.category === "special_battle") m *= 1.35;
+    if (ev && ev.category === "special_battle") m *= ENEMY_SPECIAL_MULT;
     return m;
   }
 
-  /** Demo encounter roster: up to 3 enemies, aligned with player slots. */
+  /** 敵方出戰卡：一律由戰鬥卡池抽（同玩家共用同一批卡） */
+  function enemyFighterPool() {
+    const all = (DATA.fighters || []).filter((f) => f && f.id);
+    const withArt = all.filter((f) => f.art && !String(f.art).includes("pending-manus"));
+    return withArt.length >= TEAM_SIZE ? withArt : all;
+  }
+
+  const ENEMY_RARITY_RANK = { 普通: 1, 稀有: 2, 史詩: 3, 最高級: 4 };
+
+  /**
+   * 敵方指定名單（仍然係卡池卡）：enemy 定義可帶 `lineup: [卡id…]`。
+   * 主題戰鬥（例如招牌拆遷）用得到嘅卡，唔會變成年份隨機抽到一堆無關嘅普通卡。
+   */
+  function enemyLineupCards(primary) {
+    const ids = (primary && Array.isArray(primary.lineup)) ? primary.lineup : [];
+    if (!ids.length) return [];
+    const inTeam = new Set(state.team || []);
+    const out = [];
+    ids.forEach((id) => {
+      const f = fighterById[id];
+      // 唔好出「自己打自己」：玩家口袋內的卡不入敵方指定名單
+      if (f && !inTeam.has(id) && out.length < TEAM_SIZE) out.push(f);
+    });
+    return out;
+  }
+
+  /** 依年份調整敵方卡池強度；優先配合敵人主題標籤，並避開玩家口袋 */
+  function pickEnemyFighterLineup(primary) {
+    const fixed = enemyLineupCards(primary);
+    if (fixed.length >= TEAM_SIZE) return fixed;
+
+    const pool = enemyFighterPool();
+    if (!pool.length) return fixed;
+    const year = Math.max(1, state.year | 0);
+    const maxRank = year <= 4 ? 1 : year <= 8 ? 2 : year <= 14 ? 3 : 4;
+    const inTeam = new Set(state.team || []);
+    const rankOf = (f) => ENEMY_RARITY_RANK[f.rarity] || 1;
+
+    let cands = pool.filter((f) => rankOf(f) <= maxRank && !inTeam.has(f.id));
+    if (cands.length < TEAM_SIZE) cands = pool.filter((f) => rankOf(f) <= maxRank);
+    if (cands.length < TEAM_SIZE) cands = pool.filter((f) => !inTeam.has(f.id));
+    if (cands.length < TEAM_SIZE) cands = pool.slice();
+
+    const tags = new Set(((primary && primary.tags) || []).concat(primary && primary.event_type ? [primary.event_type] : []));
+    const taken = new Set(fixed.map((f) => f.id));
+    const scored = cands
+      .filter((f) => !taken.has(f.id))
+      .map((f) => {
+        const own = (f.tags || []).filter((t) => tags.has(t)).length;
+        return { f, score: own * 10 + Math.random() * 6 };
+      });
+    scored.sort((a, b) => b.score - a.score);
+    const need = Math.max(0, TEAM_SIZE - fixed.length);
+    return fixed.concat(scored.slice(0, need).map((x) => x.f));
+  }
+
+  /** 同一場遇敵的敵方名單快取：確認視窗、編隊預覽、實際開打都用同一組 */
+  function encounterEnemyRoster(ev) {
+    if (!ev || !ev.battle) return [];
+    const key = (ev.id || "") + "|" + (ev.battle || "") + "|" + (state.year | 0) + "|" + (state.age | 0);
+    if (state.enemyRosterKey === key && Array.isArray(state.enemyRosterCache) && state.enemyRosterCache.length) {
+      // 回傳副本，避免預覽改動影響開打
+      return state.enemyRosterCache.map((u) => Object.assign({}, u, { statuses: [], hp: u.maxHp }));
+    }
+    const roster = buildEnemyRoster(ev.battle);
+    state.enemyRosterKey = key;
+    state.enemyRosterCache = roster.map((u) => Object.assign({}, u));
+    return roster.map((u) => Object.assign({}, u, { statuses: [], hp: u.maxHp }));
+  }
+
+  /** Demo encounter roster：敵方直接由戰鬥卡池出戰，數值跟年份縮放。 */
+  /**
+   * t365：敵方防禦常數。
+   * 修 P0 不公平：敵方單位一直冇 def／mdef 欄位，而 calcDamage 會讀
+   * `(target.def|0)||0` → 敵方永遠 0 防、玩家白扣 10–14 點，
+   * 令第 1 年敵方 10 攻只打出 1 傷（減傷 90%）。
+   * 現在敵方同玩家一樣有物防／魔防，並隨年份溫和成長。
+   */
+  const ENEMY_DEF_BASE = 7;          // 第 1 年基礎防
+  const ENEMY_DEF_CAP = 18;          // t368：防禦上限（原本無上限，第 60 年會升到 37，
+                                     //         令玩家固定 37 攻擊力完全打唔穿）
+  const ENEMY_DEF_PER_YEAR = 0.5;    // 每年 +0.5
+
+  /**
+   * t365：敵方攻擊整體係數。
+   * 敵方卡池 atk 只有 8–16（與玩家卡同源），但玩家有 力量12＋裝備攻＋Lv＋★ 疊加，
+   * 玩家防禦亦會由裝備升到 19。結果敵方 raw atk 28 對上防 19 只打出 9 傷（32%），
+   * 後期反而唔痛。這裡給敵方一個攻擊係數補回差距。
+   */
+  const ENEMY_ATK_SCALE = 0.85;
+
+  /**
+   * t365：敵方攻擊下限補償。
+   * 玩家防禦幾乎唔成長（agi 固定 10 → 物防 10），而 calcDamage 係「每點防減 1 傷，下限 1」，
+   * 所以敵方低攻時會被完全吃掉：第 1 年敵攻 10–11 對玩家防 10 → 只打出 1 傷（保留 10%）。
+   * 這令「新手無敵」——不是因為數值高，而是因為減傷公式喺低攻區吃掉一切。
+   *
+   * 補償設計：只在早期補，且隨年份遞減（玩家防禦靠裝備補回時就唔需要）。
+   * 曲線：第 1 年 +6、第 5 年 +4.2、第 10 年 +2、第 15 年後 0
+   */
+  const ENEMY_ATK_PIERCE_BASE = 5;
+  const ENEMY_ATK_PIERCE_DECAY = 0.4; // 每年遞減
+
+  function enemyAtkPierce() {
+    const year = Math.max(1, (state.year | 0) || 1);
+    return Math.max(0, ENEMY_ATK_PIERCE_BASE - (year - 1) * ENEMY_ATK_PIERCE_DECAY);
+  }
+
+  function enemyDefenceValue() {
+    const year = Math.max(1, (state.year | 0) || 1);
+    // t368：改用飽和曲線並加上硬上限，避免後期防禦高過玩家攻擊力
+    const raw = ENEMY_DEF_BASE + (year - 1) * ENEMY_DEF_PER_YEAR;
+    const soft = ENEMY_DEF_BASE + (ENEMY_DEF_CAP - ENEMY_DEF_BASE) * (1 - Math.exp(-(year - 1) / 18));
+    return Math.max(0, Math.round(Math.min(raw, soft, ENEMY_DEF_CAP)));
+  }
+
   function buildEnemyRoster(primaryId) {
     const primary = enemyById[primaryId];
     if (!primary) return [];
 
-    // Named demo lineups per primary encounter (reuse art when needed).
-    const templates = {
-      E01: [
-        { defId: "E01", id: "E01a", name: "後巷影", hp: 55, atk: 8, spd: 11, basic: "暗角刮", skill: "壁影閃", skill_cd: 4 },
-        { defId: "E01", id: "E01b", name: "後巷影", hp: 80, atk: 10, spd: 10, basic: "舊帳一擊", skill: "舊帳清算", skill_cd: 4 },
-        { defId: "E01", id: "E01c", name: "後巷影", hp: 55, atk: 8, spd: 9, basic: "巷尾撲", skill: "三重影", skill_cd: 4 },
-      ],
-      E02: [
-        { defId: "E02", id: "E02a", name: "到期罐頭客", hp: 100, atk: 12, spd: 9, basic: "罐蓋劈", skill: "過期噴霧", skill_cd: 4 },
-        { defId: "E01", id: "E02b", name: "後巷影", hp: 60, atk: 9, spd: 11, basic: "暗角刮", skill: "壁影閃", skill_cd: 4 },
-        { defId: "E03", id: "E02c", name: "逼爆潮", hp: 70, atk: 10, spd: 13, basic: "擠擁撞", skill: "潮湧", skill_cd: 3 },
-      ],
-      E03: [
-        { defId: "E03", id: "E03a", name: "逼爆潮", hp: 75, atk: 10, spd: 14, basic: "擠擁撞", skill: "潮湧", skill_cd: 3 },
-        { defId: "E03", id: "E03b", name: "逼爆潮", hp: 100, atk: 11, spd: 14, basic: "月台湧", skill: "逼爆全線", skill_cd: 4 },
-        { defId: "E03", id: "E03c", name: "逼爆潮", hp: 75, atk: 10, spd: 13, basic: "車門夾", skill: "潮湧", skill_cd: 3 },
-      ],
-      E04: [
-        { defId: "E04", id: "E04a", name: "舊帳・睇門口", hp: 160, atk: 15, spd: 11, basic: "睇場拳", skill: "舊帳清算", skill_cd: 4 },
-        { defId: "E02", id: "E04b", name: "到期罐頭客", hp: 80, atk: 11, spd: 9, basic: "罐蓋劈", skill: "過期噴霧", skill_cd: 4 },
-        { defId: "E01", id: "E04c", name: "後巷影", hp: 70, atk: 10, spd: 12, basic: "舊帳一擊", skill: "壁影閃", skill_cd: 4 },
-      ],
-    };
-
-    const list = templates[primaryId] || [
-      {
-        defId: primary.id,
-        id: primary.id + "a",
-        name: primary.name,
-        hp: Math.round(primary.hp * 0.7),
-        atk: Math.max(1, Math.round(primary.atk * 0.85)),
-        spd: primary.spd + 1,
-        basic: "舊帳一擊",
-        skill: "舊帳清算",
-        skill_cd: 4,
-      },
-      {
-        defId: primary.id,
-        id: primary.id + "b",
-        name: primary.name,
-        hp: primary.hp,
-        atk: primary.atk,
-        spd: primary.spd,
-        basic: "舊帳一擊",
-        skill: "舊帳清算",
-        skill_cd: 4,
-      },
-      {
-        defId: primary.id,
-        id: primary.id + "c",
-        name: primary.name,
-        hp: Math.round(primary.hp * 0.7),
-        atk: Math.max(1, Math.round(primary.atk * 0.85)),
-        spd: Math.max(1, primary.spd - 1),
-        basic: "舊帳一擊",
-        skill: "舊帳清算",
-        skill_cd: 4,
-      },
-    ];
-
+    const lineup = pickEnemyFighterLineup(primary);
     const mult = enemyScaleMult();
-    return list.slice(0, TEAM_SIZE).map((t) => {
-      const def = enemyById[t.defId] || primary;
-      const atk = Math.max(1, Math.round((t.atk | 0) * mult));
-      const hp = Math.max(1, Math.round((t.hp | 0) * mult));
-      const spd = Math.max(1, Math.round((t.spd | 0) * (1 + Math.max(0, ((state.year | 0) - 1) * 0.03))));
+    // 敵方用卡池卡，數值略收（唔好高過同等玩家卡太多）
+    const statScale = mult * 0.92;
+    const defence = enemyDefenceValue();
+    const pierce = enemyAtkPierce();
+
+    return lineup.map((f, idx) => {
+      const hp = Math.max(1, Math.round(fighterHp(f) * statScale));
+      // t365：加上攻擊係數與穿透補償，避免低年份被玩家固定防禦完全吃掉
+      const atk = Math.max(1, Math.round(((f.atk | 0) || 10) * statScale * ENEMY_ATK_SCALE + pierce));
+      const spd = Math.max(
+        1,
+        Math.round(((f.spd | 0) || 10) * (1 + Math.max(0, ((state.year | 0) - 1) * 0.02)))
+      );
       return {
         side: "enemy",
-        id: t.id,
-        defId: t.defId,
-        name: def.name, // 同名：唔用左／右／跟班後綴
+        id: primaryId + "_" + f.id + "_" + idx,
+        defId: f.id,
+        name: f.name,
         atk,
         spd,
-        basic: t.basic,
-        skill: t.skill,
-        skill_cd: t.skill_cd || 4,
-        art: def.art,
-        basic_power: fighterBasicPower(
-          t.basic_power != null ? t : def
-        ),
+        def: defence,
+        mdef: defence,
+        basic: f.basic || "首擊",
+        skill: f.skill || "自帶技",
+        skill_cd: f.skill_cd || 4,
+        skill_effect: f.skill_effect || "",
+        art: f.art,
+        basic_power: fighterBasicPower(f),
+        // 技能結算規格：跟玩家同一套（群攻／治療／斬殺都會生效）
+        dmg_mult: f.dmg_mult,
+        hits: f.hits,
+        target: f.target,
+        power: f.power,
+        splash_mult: f.splash_mult,
+        heal_mult: f.heal_mult,
+        support: f.support,
+        passive: f.passive,
+        execute_hp_pct: f.execute_hp_pct,
+        execute_mult: f.execute_mult,
+        hit_scales: f.hit_scales,
+        tags: f.tags || [],
+        rarity: f.rarity || "",
+        rarity_slang: f.rarity_slang || "",
+        flavor: f.flavor || f.blurb || "",
         maxHp: hp,
         hp,
         turnsTaken: 0,
+        skillCursor: 0,
         statuses: [],
         alive: true,
         _scaleMult: mult,
@@ -2063,12 +2890,21 @@
     if (hasStatus(attacker, "atk_down")) dmg = Math.round(dmg * 0.85);
     if (hasStatus(target, "shield")) dmg = Math.round(dmg * 0.7);
     if (hasStatus(target, "oil")) dmg = Math.round(dmg * 1.1);
-    // 物防／魔防：每點減 1 傷（下限 1）；魔攻技扣 mdef，其餘扣 def
+    // 物防／魔防：每點減 1 傷；魔攻技扣 mdef，其餘扣 def
     const flatDef =
       power === "magic"
         ? (target && (target.mdef | 0)) || 0
         : (target && (target.def | 0)) || 0;
-    dmg = Math.max(1, dmg - flatDef);
+    /*
+     * t365：防禦減傷上限 75%。
+     * 原本純 flat「每點防減 1 傷、下限 1」有結構缺陷：
+     * 低倍率技能（例如 dmg_mult 0.7）在低攻單位手上，經防御後必然見底變 1 傷，
+     * 令敵方技能普攻都只打 1 點（實測：敵攻 15 × 0.7 = 10，減玩家防 10 → 0 → 下限 1）。
+     * 現在防禦最多減掉 75%，保證至少 25% 穿透，雙方都唔會被「完全免疫」。
+     */
+    const maxReduction = Math.floor(dmg * 0.75);
+    const reduction = Math.min(flatDef, maxReduction);
+    dmg = dmg - reduction;
     return Math.max(1, dmg);
   }
 
@@ -2328,6 +3164,12 @@
     return lines.join("\n");
   }
 
+  /**
+   * t364：裝備說明大幅擴充。
+   * 改前只有 4 行（名／稀有度+星／四項數值／一句 flavor），玩家睇唔出：
+   * 邊個槽、加乘係全隊定個人、升星實際加幾多、同邊個主題卡配、有幾多張同名卡。
+   * 現在分「基本資料 / 數值（含升星預覽）/ 同名卡 / 主題 / 說明」五段。
+   */
   function equipHelpText(item, slotMeta) {
     if (!item) {
       const label = (slotMeta && slotMeta.label) || "裝備槽";
@@ -2337,24 +3179,107 @@
     const eff = effectiveEquipStats(item);
     const star = equipStarOf(item);
     const maxStar = Number(item.max_star) || 5;
+    const slot = GEAR_SLOTS.find((s) => s.id === (item.slot || (slotMeta && slotMeta.id)));
+    const slotLabel = (slot && slot.label) || (slotMeta && slotMeta.label) || "—";
+    const rare = rarityEquipLabel(item.rarity) || "—";
+    const count = albumCardCount(item.id);
     const starTxt = "★".repeat(star) + "☆".repeat(Math.max(0, maxStar - star));
-    const rare = rarityEquipLabel(item.rarity) || item.rarity || "";
-    const bits = [];
-    if (eff.atk) bits.push("攻+" + eff.atk);
-    if (eff.spd) bits.push("速+" + eff.spd);
-    if (eff.hp) bits.push("血+" + eff.hp);
-    if (eff.def) bits.push("防+" + eff.def);
-    const blurb = item.flavor || item.blurb || "";
+
     const lines = [`「${item.name || ""}」`];
-    lines.push(`${rare ? "稀有 " + rare + "｜" : ""}${starTxt}`);
-    if (bits.length) lines.push(bits.join(" "));
+    lines.push(`${rare}｜${slotLabel}槽｜${starTxt}`);
+
+    // 數值：底數 vs 目前（升星後）＋ 全隊加乘說明
+    const base = { atk: item.atk | 0, def: item.def | 0, hp: item.hp | 0, spd: item.spd | 0 };
+    const bit = (k, label) => {
+      const b = base[k];
+      const e = eff[k];
+      if (!b && !e) return "";
+      return e !== b ? `${label}+${e}（底 ${b}）` : `${label}+${e}`;
+    };
+    const stats = [bit("atk", "攻"), bit("def", "防"), bit("hp", "血"), bit("spd", "速")].filter(Boolean);
+    lines.push(stats.length ? `目前：${stats.join(" · ")}（全隊）` : "目前：尚未提供加乘");
+
+    // 升星預覽
+    const bonus = item.star_bonus_per_level || {};
+    const perStar = ["atk", "def", "hp", "spd"]
+      .filter((k) => (bonus[k] | 0) > 0)
+      .map((k) => `${({ atk: "攻", def: "防", hp: "血", spd: "速" })[k]}＋${bonus[k] | 0}`);
+    if (star < maxStar) {
+      lines.push(`每升 1 星：${perStar.length ? perStar.join(" · ") : "—"}｜下一星需同名卡 ${albumStarNeed(star)} 張（現有 ${count}）`);
+    } else {
+      lines.push(`已滿星 ★${maxStar}｜每星成長：${perStar.length ? perStar.join(" · ") : "—"}`);
+    }
+
+    // 主題配對
+    const tagName = equipTagLabel(item.tag_boost);
+    if (tagName) lines.push(`主題：${tagName}（裝備加乘本身不分卡種，全隊生效）`);
+
+    const blurb = item.flavor || item.blurb || "";
     if (blurb) lines.push(blurb);
     return lines.join("\n");
   }
 
+  /**
+   * t364：裝備 rich 說明（長按／卡冊用）。
+   * 純文字版仍然保留（toast／aria 用），但玩家實際睇到的係這個結構化版本：
+   * 標題 → 稀有度／槽／星 → 數值表（底數 → 現在）→ 升星成長 → 同名卡進度 → 主題 → flavor。
+   */
+  function equipHelpRichHtml(item, slotMeta) {
+    if (!item) return null;
+    const eff = effectiveEquipStats(item);
+    const base = { atk: item.atk | 0, def: item.def | 0, hp: item.hp | 0, spd: item.spd | 0 };
+    const star = equipStarOf(item);
+    const maxStar = Number(item.max_star) || 5;
+    const slot = GEAR_SLOTS.find((s) => s.id === (item.slot || (slotMeta && slotMeta.id)));
+    const slotLabel = (slot && slot.label) || (slotMeta && slotMeta.label) || "—";
+    const rare = rangeLabelSafe(item.rarity);
+    const count = albumCardCount(item.id);
+    const need = albumStarNeed(star);
+    const canUp = star < maxStar && count >= need;
+
+    const head = [
+      `<div class="ht-title">「${esc(item.name || "")}」</div>`,
+      `<div class="ht-line">${esc(rare)}｜${esc(slotLabel)}槽｜全隊加乘</div>`,
+      `<div class="ht-line ht-eq-starrow">${"★".repeat(star)}<span class="ht-eq-stardim">${"★".repeat(Math.max(0, maxStar - star))}</span> <span class="ht-eq-starnum">${star}／${maxStar}</span></div>`,
+    ];
+
+    // 數值表：底數 vs 現值
+    const rows = [["攻", "atk"], ["防", "def"], ["血", "hp"], ["速", "spd"]]
+      .filter(([, k]) => base[k] || eff[k])
+      .map(([label, k]) => {
+        const b = base[k];
+        const e = eff[k];
+        const grow = e - b;
+        return `<span class="ht-eq-stat"><b>${label}</b>${e}${grow > 0 ? `<i>（底 ${b} · 升星 +${grow}）</i>` : ""}</span>`;
+      });
+    if (rows.length) head.push(`<div class="ht-eq-stats">${rows.join("")}</div>`);
+
+    // 升星成長
+    const bonus = item.star_bonus_per_level || {};
+    const perStar = [["攻", "atk"], ["防", "def"], ["血", "hp"], ["速", "spd"]]
+      .filter(([, k]) => (bonus[k] | 0) > 0)
+      .map(([label, k]) => `${label}＋${bonus[k] | 0}`)
+      .join(" · ");
+    const starLine = star >= maxStar
+      ? `已滿星 ★${maxStar}｜每星成長：${perStar || "—"}`
+      : `每升 1 星：${perStar || "—"}｜下一星需同名卡 ${need} 張（現有 ${count}${canUp ? " · 可升" : ""}）`;
+    head.push(`<div class="ht-line">${esc(starLine)}</div>`);
+
+    const tagName = equipTagLabel(item.tag_boost);
+    if (tagName) head.push(`<div class="ht-line">主題：${esc(tagName)}（加乘不分卡種，全隊生效）</div>`);
+
+    const blurb = item.flavor || item.blurb || "";
+    const flavor = blurb ? `<div class="ht-flavor">${esc(blurb)}</div>` : "";
+    return `<div class="ht-rich">${head.join("")}${flavor}</div>`;
+  }
+
+  function rangeLabelSafe(r) {
+    return rarityLabelAny(r) || "—";
+  }
+
   function enemyHelpPayloadAttr(e) {
     if (!e) return "";
-    const def = enemyById[e.defId || e.id] || e;
+    const def = enemyUnitDef(e) || e;
     const payload = {
       id: e.id,
       defId: e.defId || e.id || def.id,
@@ -2376,7 +3301,7 @@
 
   function enemyHelpText(e) {
     if (!e) return "敵方卡";
-    const def = enemyById[e.defId || e.id] || e;
+    const def = enemyUnitDef(e) || e;
     const name = e.name || def.name || "敵方";
     const atk = e.atk != null ? e.atk : def.atk;
     const spd = e.spd != null ? e.spd : def.spd;
@@ -2422,7 +3347,7 @@
     "btn-ready": "準備出發——確認今世帶入的主人裝備＋戰鬥卡口袋＋技能（每世一次）。確認後先選身世，再進入人生命運（第1–3年），之後才一般遭遇。口袋最少 1 張。",
     "prep-fighter": "戰鬥卡：面板只顯示已選隊（大圖＋星）。點選面板／空位＋ →「選擇初始戰鬥卡」由已獲得戰鬥卡選入／剔出；上限＝統率（硬頂 25）。每場最多 3 張部署。長按查看卡內容。",
     "gear-slot": "帳號裝備（頭／身／武／副／飾／足）——點選槽位或「更換裝備」開啟「選擇初始裝備卡」；選擇裝上／取消卸下；數值加乘套用全體出戰卡。",
-    "btn-equip-star": "為已裝裝備各升 1 星（上限 5）；有效數值 = 底數 + 每星加成×(星-1)。",
+    "btn-equip-star": "裝備升星只可在卡冊進行：卡冊 → 裝備卡 → 點卡 → 「升星」（消耗同名卡）。扭蛋抽到重複卡只會累積張數，唔會自動升星。",
     "btn-fight": "開始戰鬥——全自動戰，可加速／放棄。",
     "btn-speed": "切換 ×1／×2／×3 播放速度。",
     "btn-forfeit": "放棄本場＝敗北結算後仍留故事流；只鎖定已經陣亡的出戰卡與其技能，仍存活的不鎖定。",
@@ -2430,10 +3355,11 @@
     "btn-again": "繼續故事——留在故事流，再進入今次遭遇。",
     "tab-life": "今世：人生 hub、開始／繼續人生。",
     "tab-book": "卡冊（收藏／升星）——戰鬥卡／技能卡／裝備卡。",
-    "tab-teahouse": "茶記：街市／商人向休閒福利據點（無廣告）。",
+    "tab-teahouse": "茶記：用聲望換特殊戰鬥卡；聲望由每日差事賺取。",
     "tab-jobs": "差事：每日任務板——宿敵／戰鬥／奇遇／升星等，每日重置。",
     "tab-more": "更多：設定等。",
-    "event-battle": "遇敵類事件——確認後編隊再開打。",
+    "event-battle": "遇敵類事件——已有上次打贏的上場就直接沿用再開打；未打贏過先編一次。",
+    "event-gift": "送卡——免費三選一（戰鬥卡／技能／裝備）；不用金幣、不用交出自己的卡；選一張即入袋。",
     "event-soft": "人情／搵食／節慶向——不必戰鬥，收取膠幣即可。",
     "event-minigame": "小遊戲關——點選後進入短場破關（約數十秒）。通過領滿獎；失敗半獎或輕懲，人生繼續、不會卡死。",
     "event-faction": "勢力支線——點選後短暫選邊（幫忙／中立／婉拒）。改今世好感（0–5），可換人情回報；人生不停、不會卡死。",
@@ -2441,7 +3367,7 @@
     "btn-equip-next": "配技完成——有戰鬥就入遇敵，否則返今次遭遇（故事流）。",
     "btn-unequip": "卸下此格技能。",
     "skill-pick": "今世技能口袋（最多 10）：點選更換在彈窗選取帶入人生的技能；之後出戰裝技只可以由這批選取。",
-    "deploy-slot": "出戰位——短按開啟選卡；已填則長按查看該出戰卡內容；空位＝＋選出戰卡。",
+    "deploy-slot": "出戰位——第一次（或上場已不能打）先選卡。打贏之後沿用該次配置，唔使日日再揀。短按可改這一格；長按查看卡內容。",
     "origin-pick": "選擇身世——四揀一（2×2 有圖）：兩張增益、兩張減益；揀一張套用六維加減，再進入人生命運。",
     "fate-pick": "人生命運——四揀一（增益／減益／混合）；揀一張結算後＋1歲。",
     "enemy-card": "敵方卡——長按查看攻／速／血、普攻／自帶與 flavor。",
@@ -2487,12 +3413,18 @@
     helpTipEl = tip;
 
     // t284：說明固定頂端置中（唔再跟 anchor 飄）
-    const hr = host.getBoundingClientRect();
-    const tw = tip.offsetWidth;
-    const left = Math.max(8, (hr.width - tw) / 2);
-    tip.style.left = left + "px";
-    tip.style.top = "10px";
+    // t361：rich 版由 CSS 決定寬度（接近全寬）並自行置中；其他版維持量測置中
     tip.classList.add("help-tip-top");
+    if (!opts.html) {
+      const hr = host.getBoundingClientRect();
+      const tw = tip.offsetWidth;
+      tip.style.left = Math.max(8, (hr.width - tw) / 2) + "px";
+    } else {
+      // rich：left/right 都由 CSS 控制（避免 offsetWidth 含邊框造成右邊溢出）
+      tip.style.left = "";
+      tip.style.right = "";
+    }
+    tip.style.top = "10px";
 
     helpTipTimer = setTimeout(() => hideHelpTip(), 20000); /* t282：卡牌說明 20 秒先收 */
 
@@ -2626,6 +3558,14 @@
 
   function resolveRichHelpHtml(el, key) {
     const rich = el.getAttribute("data-help-rich") || "";
+    if (rich === "gear" || key === "gear-slot") {
+      const gid = el.getAttribute("data-help-gid") || el.getAttribute("data-gear") || "";
+      // data-gear 可能係槽 id（head/body…）而唔係裝備 id：只有拿到真裝備才算 rich
+      const item = itemByIdLookup()[gid] || null;
+      if (!item) return null;
+      const slotMeta = GEAR_SLOTS.find((s) => s.id === item.slot) || null;
+      return equipHelpRichHtml(item, slotMeta);
+    }
     if (rich === "enemy" || key === "enemy-card") {
       const raw = el.getAttribute("data-help-payload");
       if (!raw) return null;
@@ -2723,6 +3663,131 @@
   }
 
 
+  /* t363：背景底圖保險（前序）
+     曾出現：瀏覽器仍用舊 styles.css（指向已搬到 _legacy-svg 的 bg-*.svg），
+     結果畫面只剩紫黑色幾何佔位圖，玩家見到「背景底圖缺失」。
+     CSS 正確時呢度完全唔會介入；只有實際載入的圖唔對（或載入失敗）才補上 inline style。
+     inline style 優先級高於外部 CSS，所以就算快取再舊都蓋得住。 */
+  const SCENE_BG = {
+    "bg-title": {
+      mask: "linear-gradient(180deg, rgba(8,4,16,0.18) 0%, rgba(8,4,16,0.3) 46%, rgba(8,4,16,0.8) 100%)",
+      file: "assets/ui/bg-title.jpg",
+      pos: "center 28%",
+    },
+    "bg-home": {
+      mask: "linear-gradient(180deg, rgba(8,4,16,0.22) 0%, rgba(8,4,16,0.14) 30%, rgba(8,4,16,0.6) 66%, rgba(8,4,16,0.9) 100%)",
+      file: "assets/ui/bg-home.jpg",
+      pos: "center 34%",
+    },
+    "bg-events": {
+      mask: "linear-gradient(180deg, rgba(8,4,16,0.34) 0%, rgba(8,4,16,0.26) 40%, rgba(8,4,16,0.76) 100%)",
+      file: "assets/ui/bg-events.jpg",
+      pos: "center 34%",
+    },
+    "bg-team": {
+      mask: "linear-gradient(180deg, rgba(8,4,16,0.36) 0%, rgba(8,4,16,0.26) 38%, rgba(8,4,16,0.8) 100%)",
+      file: "assets/ui/bg-team.jpg",
+      pos: "center 42%",
+    },
+    "bg-encounter": {
+      mask: "linear-gradient(180deg, rgba(8,4,16,0.32) 0%, rgba(8,4,16,0.24) 40%, rgba(8,4,16,0.78) 100%)",
+      file: "assets/ui/bg-encounter.jpg",
+      pos: "center 40%",
+    },
+    "bg-battle": {
+      mask: "linear-gradient(180deg, rgba(8,4,16,0.36) 0%, rgba(8,4,16,0.14) 38%, rgba(8,4,16,0.26) 60%, rgba(8,4,16,0.74) 100%)",
+      file: "assets/ui/bg-battle-scene.jpg",
+      pos: "center center",
+    },
+    "bg-result": {
+      mask: "linear-gradient(180deg, rgba(8,4,16,0.22) 0%, rgba(8,4,16,0.36) 46%, rgba(8,4,16,0.86) 100%)",
+      file: "assets/ui/bg-result.jpg",
+      pos: "center 36%",
+    },
+    "bg-soft": {
+      mask: "linear-gradient(180deg, rgba(8,4,16,0.3) 0%, rgba(8,4,16,0.72) 100%)",
+      file: "assets/ui/bg-events.jpg",
+      pos: "center 34%",
+    },
+  };
+
+  /** 純 CSS 霓虹夜景：背景圖真的拿不到時的最後防線（唔會似破圖方塊） */
+  const CSS_NIGHT_FALLBACK = [
+    "radial-gradient(ellipse at 50% 0%, rgba(255,45,149,0.30) 0%, transparent 55%)",
+    "radial-gradient(ellipse at 18% 38%, rgba(45,226,255,0.22) 0%, transparent 52%)",
+    "radial-gradient(ellipse at 82% 62%, rgba(255,204,51,0.16) 0%, transparent 55%)",
+    "linear-gradient(180deg, #1b0c2e 0%, #2a1040 34%, #160a24 68%, #0a0610 100%)",
+  ].join(", ");
+
+  /** 每張背景圖的實際載入狀態：true 成功／false 失敗／undefined 未驗證 */
+  const _bgLoadState = Object.create(null);
+
+  /** 主動驗證背景 JPG 真係載入得到（URL 對但檔案壞／404 都會露餡） */
+  function probeBgFile(file, done) {
+    if (typeof _bgLoadState[file] === "boolean") {
+      done(_bgLoadState[file]);
+      return;
+    }
+    const img = new Image();
+    let settled = false;
+    const finish = (okFlag) => {
+      if (settled) return;
+      settled = true;
+      _bgLoadState[file] = okFlag;
+      done(okFlag);
+    };
+    img.onload = () => finish(img.naturalWidth > 0 && img.naturalHeight > 0);
+    img.onerror = () => finish(false);
+    setTimeout(() => finish(false), 6000);
+    img.src = file;
+  }
+
+  /** 只有 CSS 實際指向的圖唔對時，才用 inline style 補回正確底圖 */
+  function ensureSceneBackground(root) {
+    if (!root || !root.classList) return;
+    // #screen 係長期同一個元素：每次入頁先清掉上一次可能留下的 inline 背景，
+    // 否則由「已修復」畫面切去正常畫面時會殘留住舊圖。
+    root.style.backgroundImage = "";
+    root.style.backgroundSize = "";
+    root.style.backgroundPosition = "";
+    root.style.backgroundRepeat = "";
+    root.style.backgroundColor = "";
+    try { delete root.dataset.bgRepaired; } catch (_) {}
+    let key = "";
+    root.classList.forEach((c) => {
+      if (!key && c.indexOf("bg-") === 0) key = c;
+    });
+    const spec = key && SCENE_BG[key];
+    if (!spec) return;
+    let cur = "";
+    try {
+      cur = getComputedStyle(root).backgroundImage || "";
+    } catch (_) {
+      cur = "";
+    }
+    const urlOk = cur.indexOf(spec.file) !== -1;
+
+    // CSS 已指向正確 JPG → 只需在背景圖載入失敗時退成純 CSS 夜景，唔會再出現破圖
+    if (urlOk && _bgLoadState[spec.file] !== false) return;
+
+    if (urlOk) {
+      // 圖檔本身壞／404：退成純 CSS 霓虹夜景（無需任何外部檔案）
+      root.style.backgroundImage = `${spec.mask}, ${CSS_NIGHT_FALLBACK}`;
+      try { root.dataset.bgRepaired = key + "-cssonly"; } catch (_) {}
+      return;
+    }
+
+    root.style.backgroundColor = "#0a0610";
+    root.style.backgroundImage = `${spec.mask}, url("${spec.file}")`;
+    root.style.backgroundSize = "cover, cover";
+    root.style.backgroundPosition = `${spec.pos}, ${spec.pos}`;
+    root.style.backgroundRepeat = "no-repeat, no-repeat";
+    // 記錄一次，方便排查（只記類別名，唔記整條資料）
+    try {
+      root.dataset.bgRepaired = key;
+    } catch (_) {}
+  }
+
   function render() {
     hideHelpTip();
     dismissForfeitConfirm();
@@ -2732,6 +3797,7 @@
       title: "bg-title",
       home: "bg-home",
       missions: "bg-home",
+      teaHouse: "bg-soft",
       storyPacks: "bg-home",
       storyPackDetail: "bg-home",
       album: "bg-home",
@@ -2739,9 +3805,16 @@
       soft: "bg-soft",
       minigame: "bg-soft",
       faction: "bg-soft",
+      office: "bg-soft",
+      tale: "bg-soft",
       shop: "bg-soft",
       trade: "bg-soft",
       starup: "bg-soft",
+      cardGift: "bg-soft",
+      gearup: "bg-soft",
+      train: "bg-soft",
+      revive: "bg-soft",
+      allies: "bg-soft",
       team: "bg-team",
       equip: "bg-team",
       prep: "bg-team",
@@ -2753,11 +3826,32 @@
       gacha: "bg-home",
     };
     root.className = "screen has-bg " + (bgMap[state.screen] || "");
+    root.dataset.screen = state.screen;
+    ensureSceneBackground(root);
+    // 背景圖非同步驗證：真係載入唔到就退成純 CSS 夜景（唔會再出現紫黑破圖方塊）
+    (() => {
+      let key = "";
+      root.classList.forEach((c) => {
+        if (!key && c.indexOf("bg-") === 0) key = c;
+      });
+      const spec = key && SCENE_BG[key];
+      if (!spec) return;
+      probeBgFile(spec.file, (okFlag) => {
+        if (okFlag) return;
+        // 只影響仍然顯示同一畫面嘅情況
+        const cur = screenEl();
+        if (cur !== root || !root.classList.contains(key)) return;
+        root.style.backgroundImage = `${spec.mask}, ${CSS_NIGHT_FALLBACK}`;
+        root.style.backgroundSize = "cover, cover";
+        try { root.dataset.bgRepaired = key + "-cssonly"; } catch (_) {}
+      });
+    })();
     const map = {
       title: viewTitle,
       home: viewHome,
       gacha: viewGacha,
       missions: viewMissions,
+      teaHouse: viewTeaHouse,
       storyPacks: viewStoryPacks,
       storyPackDetail: viewStoryPackDetail,
       album: viewAlbum,
@@ -2765,9 +3859,16 @@
       soft: viewSoft,
       minigame: viewMinigame,
       faction: viewFaction,
+      office: viewOffice,
+      tale: viewTale,
       shop: viewShop,
       trade: viewTrade,
       starup: viewStarUp,
+      cardGift: viewCardGift,
+      gearup: viewGearUpgrade,
+      train: viewFighterTrain,
+      revive: viewFighterRevive,
+      allies: viewAlliesPanel,
       prep: viewPrep,
       team: viewPrep,
       equip: viewPrep,
@@ -2808,10 +3909,34 @@
   }
 
 
+  /** 差事獎勵 → 小標籤 HTML */
+  function missionRewardChips(m) {
+    const r = (m && m.reward) || {};
+    const out = [];
+    if (r.soul) out.push(`<span class="dm-chip soul">膠幣 +${r.soul | 0}</span>`);
+    const fame = missionFameGain(m);
+    if (fame) out.push(`<span class="dm-chip fame">聲望 +${fame}</span>`);
+    if (r.xp) out.push(`<span class="dm-chip xp">經驗 +${r.xp | 0}</span>`);
+    if (r.luck_note) out.push(`<span class="dm-chip luck">幸運 +1</span>`);
+    return out.join("") || `<span class="dm-chip xp">—</span>`;
+  }
+
   function viewMissions(root) {
     ensureDaily();
     const list = dailyMissionList();
     const d = state.daily;
+    const total = list.length;
+    let doneCount = 0;
+    let claimable = 0;
+    list.forEach((m) => {
+      const cur = d.progress[m.id] | 0;
+      const tgt = Math.max(1, m.target | 0);
+      if (cur >= tgt) {
+        doneCount += 1;
+        if (!d.claimed[m.id]) claimable += 1;
+      }
+    });
+
     const rows = list.map((m) => {
       const cur = d.progress[m.id] | 0;
       const tgt = Math.max(1, m.target | 0);
@@ -2824,7 +3949,7 @@
       } else if (done) {
         btn = `<button type="button" class="btn small gold dm-claim" data-mid="${esc(m.id)}">領獎</button>`;
       } else {
-        btn = `<button type="button" class="btn small ghost dm-claim" disabled>未完成</button>`;
+        btn = `<button type="button" class="btn small ghost dm-claim" disabled>${cur > 0 ? "進行中" : "未開始"}</button>`;
       }
       return `
         <div class="dm-row${claimed ? " claimed" : ""}${done && !claimed ? " ready" : ""}" data-mid="${esc(m.id)}">
@@ -2832,31 +3957,44 @@
             <div class="dm-name">${esc(m.name)}</div>
             <div class="dm-desc">${esc(m.desc || "")}</div>
             <div class="dm-bar"><span style="width:${pct}%"></span></div>
-            <div class="dm-meta"><span class="dm-prog">${cur}/${tgt}</span><span class="dm-reward">${esc(rewardBlurbOf(m))}</span></div>
+            <div class="dm-meta">
+              <span class="dm-prog">${cur}/${tgt}</span>
+              <span class="dm-reward">${missionRewardChips(m)}</span>
+            </div>
           </div>
           <div class="dm-act">${btn}</div>
         </div>`;
     }).join("");
+
+    const sumPct = total ? Math.round((doneCount / total) * 100) : 0;
     root.innerHTML = `
       <div class="hud">
         <span class="chip year"><span class="dot"></span>差事 · ${esc(d.dateKey)}</span>
         <span class="chip soul"><span class="dot"></span>${esc(L["ui.resource"] || "膠幣")} ${state.soul}</span>
         <span class="chip gold"><span class="dot"></span>金幣 ${state.gold | 0}</span>
+        <span class="chip fame"><span class="dot"></span>聲望 ${state.fame | 0}</span>
       </div>
       <div class="ribbon">每日差事</div>
-      <p class="sub">每日重置（Asia/Hong_Kong）· 跨世保留甲子／升星總計</p>
+      <div class="dm-summary">
+        <div class="dm-sum-head">
+          <span>今日進度 <b>${doneCount}/${total}</b></span>
+          <span>${claimable ? `<b style="color:var(--neon-pink)">${claimable} 項可領</b>` : (doneCount === total ? "全清" : "繼續努力")}</span>
+        </div>
+        <div class="dm-sum-bar"><span style="width:${sumPct}%"></span></div>
+        <div class="dm-sum-note">每日零時（香港時間）重置 · 甲子與升星次數跨世累計</div>
+      </div>
+      ${claimable > 1 ? `<button class="btn gold" id="btn-dm-claim-all" type="button" style="flex-shrink:0;padding:6px;font-size:0.78rem;">一次領取 ${claimable} 項</button>` : ""}
       <div class="dm-list">${rows || "<div class='soft-panel'>未有任務模板</div>"}</div>
-      <div class="spacer"></div>
-      <button class="btn ghost" id="btn-dm-back" type="button">返主頁</button>
       <nav class="tab-bar" aria-label="主選單">
         <button class="tab" type="button" id="tab-book" data-help="tab-book"><span class="ico">📖</span>卡冊</button>
         <button class="tab" type="button" id="tab-life" data-help="tab-life"><span class="ico">🏠</span>今世</button>
-        <button class="tab" type="button" id="tab-teahouse" aria-disabled="true" data-help="tab-teahouse"><span class="ico">🍜</span>茶記</button>
+        <button class="tab" type="button" id="tab-teahouse" data-help="tab-teahouse"><span class="ico">🍜</span>茶記</button>
         <button class="tab on" type="button" id="tab-jobs" data-help="tab-jobs"><span class="ico">📋</span>差事</button>
         <button class="tab" type="button" id="tab-more" aria-disabled="true" data-help="tab-more"><span class="ico">⋯</span>更多</button>
       </nav>
       <div id="home-toast" class="home-toast" hidden></div>
     `;
+    root.classList.add("missions-screen");
     const toast = (msg) => {
       const el = $("#home-toast", root);
       if (!el) return;
@@ -2873,17 +4011,39 @@
         }
       };
     });
-    $("#btn-dm-back", root).onclick = () => { state.screen = "home"; render(); };
+    const claimAll = $("#btn-dm-claim-all", root);
+    if (claimAll) {
+      claimAll.onclick = () => {
+        let n = 0;
+        list.forEach((m) => {
+          if (!d.claimed[m.id] && (d.progress[m.id] | 0) >= Math.max(1, m.target | 0)) {
+            if (claimDailyMission(m.id)) n += 1;
+          }
+        });
+        toast(n ? `已領取 ${n} 項差事獎勵` : "沒有可領取的差事");
+        render();
+      };
+    }
     $("#tab-life", root).onclick = () => { state.screen = "home"; render(); };
     $("#tab-jobs", root).onclick = () => { ensureDaily(); state.screen = "missions"; render(); };
-    ["tab-teahouse","tab-more"].forEach((id) => {
-      const el = $("#"+id, root);
-      if (el) el.onclick = () => toast("這個位置尚未開放。");
-    });
+    const teaTabM = $("#tab-teahouse", root);
+    if (teaTabM) teaTabM.onclick = () => { state.screen = "teaHouse"; render(); };
+    const moreTabM = $("#tab-more", root);
+    if (moreTabM) moreTabM.onclick = () => toast("這個位置尚未開放。");
     const tabBookM = $("#tab-book", root);
     if (tabBookM) tabBookM.onclick = () => { state.screen = "album"; render(); };
-    const tabLifeM = $("#tab-life", root);
-    if (tabLifeM) tabLifeM.onclick = () => { state.screen = "home"; render(); };
+  }
+
+  function eventDialogueHtml(ev, className) {
+    const lines = ev && Array.isArray(ev.dialogue) ? ev.dialogue : [];
+    if (!lines.length) return "";
+    const cls = className || "ec-dialogue";
+    return `<div class="${cls}">${lines.map((d) => {
+      const who = (d && (d.speaker || d.who)) || "";
+      const text = (d && (d.text || d.line)) || "";
+      const whoHtml = who ? `<b class="dlg-who">${esc(who)}</b>：` : "";
+      return `<p class="dlg-line">${whoHtml}${esc(text)}</p>`;
+    }).join("")}</div>`;
   }
 
   function viewStoryPacks(root) {
@@ -2896,17 +4056,27 @@
       body = `<div class="pack-list">${packs.map((p) => {
         const soon = p.status !== "available";
         const on = state.activeStoryPackId === p.id;
+        const isDefault = p.id === DEFAULT_STORY_PACK_ID;
         return `
         <button type="button" class="pack-card${soon ? " coming" : ""}${on ? " active-pack" : ""}" data-pack="${esc(p.id)}" data-help="btn-story">
           <img src="${esc(p.cover || "")}" alt="${esc(p.name)}" />
           <div class="pack-meta">
-            <div class="pack-name">${esc(p.name)}</div>
+            <div class="pack-name">${esc(p.name)}${isDefault ? `<span class="pack-default-tag">預設</span>` : ""}</div>
             <div class="pack-blurb">${esc(p.blurb || "")}</div>
             <span class="pack-status ${soon ? "soon" : "ok"}">${soon ? "即將" : (on ? "使用中" : "可選")}</span>
           </div>
         </button>`;
       }).join("")}</div>`;
     }
+    /*
+     * t377：顯示「仲有 N 個」提示。
+     * 總導演手機睇唔到「打工仔輓歌」——實際上它係第 6 個，被切在清單底部，
+     * 而清單冇任何「可以捲」嘅視覺提示，玩家以為只得 5 個。
+     */
+    const hiddenCount = Math.max(0, (packs || []).length - 4);
+    const moreHint = hiddenCount > 0
+      ? `<div class="pack-list-more" id="pack-list-more">▾ 向下捲，仲有 ${hiddenCount} 個故事 ▾</div>`
+      : "";
     root.innerHTML = `
       <div class="hud">
         <span class="chip year"><span class="dot"></span>故事包</span>
@@ -2915,10 +4085,22 @@
       <div class="ribbon">故事包</div>
       <p class="sub">可選模組注入主線氣氛——人生骨架永遠非直線</p>
       ${body}
-      <div class="spacer"></div>
+      ${moreHint}
       <button class="btn ghost" id="btn-pack-back" type="button" data-help="btn-back">返主頁</button>
       <div id="home-toast" class="home-toast" hidden></div>
     `;
+
+    // t377：捲到底就收起提示
+    const packListEl = $(".pack-list", root);
+    const moreEl = $("#pack-list-more", root);
+    if (packListEl && moreEl) {
+      const syncMore = () => {
+        const atBottom = packListEl.scrollTop + packListEl.clientHeight >= packListEl.scrollHeight - 8;
+        moreEl.style.display = atBottom ? "none" : "";
+      };
+      packListEl.addEventListener("scroll", syncMore, { passive: true });
+      syncMore();
+    }
     const toast = (msg) => {
       const el = $("#home-toast", root);
       if (!el) return;
@@ -2952,12 +4134,78 @@
       return;
     }
     const boost = packBoostEventIds(pack);
-    const evNames = (DATA.events || [])
-      .filter((e) => boost.has(e.id) || (pack.event_ids || []).includes(e.id))
-      .map((e) => e.name);
+    const isOfficeChain = Array.isArray(pack.office_chain) && pack.office_chain.length > 0;
+    const isTaleChain = Array.isArray(pack.tale_chain) && pack.tale_chain.length > 0;
+    const isChainPack = isOfficeChain || isTaleChain;
+
+    // 分支包：只列「分支 + 結局」，唔逐個節點爆雷
+    let evNames;
+    if (isChainPack) {
+      evNames = [];
+    } else {
+      evNames = (DATA.events || [])
+        .filter((e) => boost.has(e.id) || (pack.event_ids || []).includes(e.id))
+        .map((e) => e.name);
+    }
     const listHtml = evNames.length
       ? `<ul class="pack-ev-list">${evNames.map((n) => `<li>${esc(n)}</li>`).join("")}</ul>`
-      : `<p class="sub">此包未掛事件——人生照常進行。</p>`;
+      : (isChainPack ? "" : `<p class="sub">此包未掛事件——人生照常進行。</p>`);
+
+    // t369：tale 包的人物與結局
+    const taleCastHtml = (isTaleChain && Array.isArray(pack.tale_cast_profiles) && pack.tale_cast_profiles.length)
+      ? `<div class="pack-ev-title">人物</div>
+         <div class="tl-profile-list">${pack.tale_cast_profiles.map((c) => `
+           <div class="tl-profile">
+             <div class="tl-profile-head">
+               <span class="tl-profile-name">${esc(c.name)}</span>
+               <span class="tl-profile-role">${esc(c.role || "")}</span>
+             </div>
+             <p class="tl-profile-blurb">${esc(c.blurb || "")}</p>
+             ${Array.isArray(c.arc_stages) && c.arc_stages.length
+               ? `<div class="tl-arc-track">${c.arc_stages.map((s, i) => `<span class="tl-arc-step">${esc(s)}</span>`).join('<i class="tl-arc-arrow">›</i>')}</div>`
+               : ""}
+           </div>`).join("")}</div>`
+      : "";
+
+    const taleEndingsHtml = (isTaleChain && Array.isArray(pack.tale_endings))
+      ? `<div class="pack-ev-title">${pack.tale_endings.length} 個結局（由你與人物的關係決定）</div>
+         <div class="of-ending-list">${pack.tale_endings.map((e) => {
+           const done = !!(state.lifeFlags && state.lifeFlags["tale_ending_" + pack.id + "_" + e.id]);
+           return `<div class="of-ending-item${done ? " done" : ""}">
+             <span class="of-ending-mark">${done ? "✓" : "○"}</span>
+             <div class="of-ending-body">
+               <div class="of-ending-title">${esc(e.label)}</div>
+               <p class="of-ending-blurb">${esc(e.blurb)}</p>
+             </div>
+           </div>`;
+         }).join("")}</div>
+         <div class="pack-ev-title">${pack.tale_chain.length} 步分支</div>
+         <p class="of-chain-note">每一步 2–3 個選擇。人物對你嘅態度會隨選擇改變——同一段對白，唔同關係會有唔同講法。行到最後，關係決定結局。</p>`
+      : "";
+
+    // 分支包：結局一覽（已達成會打勾）
+    const endingsHtml = isOfficeChain && Array.isArray(pack.office_endings)
+      ? `<div class="pack-ev-title">五個結局（各 50 膠幣 · 一次性）</div>
+         <div class="of-ending-list">${pack.office_endings.map((e) => {
+           const done = !!(state.lifeFlags && state.lifeFlags["office_ending_" + e.id]);
+           return `<div class="of-ending-item${done ? " done" : ""}">
+             <span class="of-ending-mark">${done ? "✓" : "○"}</span>
+             <div class="of-ending-body">
+               <div class="of-ending-title">${esc(e.label)}</div>
+               <p class="of-ending-blurb">${esc(e.blurb)}</p>
+             </div>
+           </div>`;
+         }).join("")}</div>
+         <div class="pack-ev-title">十步分支</div>
+         <p class="of-chain-note">每一步三個選擇，後果隱藏至選擇之後才揭示。共 10 步，行到最後才見結局。本包不設中途獎賞、不設升級。</p>`
+      : "";
+    const beatHtml = Array.isArray(pack.beats) && pack.beats.length
+      ? `<div class="pack-ev-title">場面</div><div class="pack-beats">${pack.beats.map((b) => `<p class="pack-beat">${esc(b)}</p>`).join("")}</div>`
+      : "";
+    const dlgHtml = (DATA.events || [])
+      .filter((e) => (boost.has(e.id) || (pack.event_ids || []).includes(e.id)) && Array.isArray(e.dialogue) && e.dialogue.length)
+      .map((e) => `<div class="pack-ev-title">對白</div>${eventDialogueHtml(e, "pack-dialogue")}`)
+      .join("");
     const active = state.activeStoryPackId === pack.id;
     root.innerHTML = `
       <div class="hud">
@@ -2970,13 +4218,21 @@
           <img src="${esc(pack.cover || "")}" alt="${esc(pack.name)}" />
         </div>
         <div class="bubble">${esc(pack.blurb || "")}</div>
-        <div class="soft-panel pack-detail-note">故事包只是氣氛模組；進入故事後仍是命運／四揀一混其他類型，不會變成單一條直線劇。</div>
+        <div class="soft-panel pack-detail-note">${isChainPack
+          ? "多分支故事：每步 2–3 個選擇，人物關係會影響對白與結局；不設中途獎賞，行到結局先有 50 膠幣。"
+          : "故事包只是氣氛模組；進入故事後仍是命運／四揀一混其他類型，不會變成單一條直線劇。"}</div>
+        ${beatHtml}
+        ${taleCastHtml}
+        ${taleEndingsHtml}
+        ${endingsHtml}
         <div class="pack-ev-title">含事件</div>
         ${listHtml}
+        ${dlgHtml}
       </div>
       <div class="btn-row pack-detail-actions">
         <button class="btn ghost" id="btn-pack-list" type="button" data-help="btn-back">返列表</button>
         <button class="btn pink" id="btn-pack-use" type="button" data-help="btn-story-pick">${active ? "已用此包氣氛" : "以此包氣氛入故事"}</button>
+        ${isChainPack ? `<button class="btn gold" id="btn-pack-start-chain" type="button">${isTaleChain ? "由第一步開始（故事）" : "由第一日返工開始（分支）"}</button>` : ""}
       </div>
       <button class="btn ghost" id="btn-pack-home" type="button" data-help="btn-back">返主頁</button>
       <div id="home-toast" class="home-toast" hidden></div>
@@ -2991,12 +4247,47 @@
     };
     $("#btn-pack-list", root).onclick = () => { state.screen = "storyPacks"; render(); };
     $("#btn-pack-home", root).onclick = () => { state.screen = "home"; render(); };
+    const startChain = $("#btn-pack-start-chain", root);
+    if (startChain) {
+      startChain.onclick = () => {
+        // t369：tale 鏈優先（通用故事引擎，有角色弧線）
+        if (isTaleChain) {
+      state.activeStoryPackId = pack.id;
+      state.storyPackUserPicked = true;
+      const run = taleBeginRun(pack.id);
+          const first = run ? taleNodeById(run.nodeId) : null;
+          if (!first) {
+            toast("此故事鏈未設定完成");
+            return;
+          }
+          // 由故事包直接開鏈：唔需要經四揀一
+          state.selectedEvent = first;
+          state.eventConfirmOpen = false;
+          state.screen = "tale";
+          render();
+          return;
+        }
+        const first = officeStartNode();
+        if (!first) {
+          toast("此分支鏈未設定完成");
+          return;
+        }
+        state.activeStoryPackId = pack.id;
+        state.storyPackUserPicked = true;
+        officeBeginRun();
+        state.selectedEvent = first;
+        state.eventConfirmOpen = false;
+        state.screen = "office";
+        render();
+      };
+    }
     $("#btn-pack-use", root).onclick = () => {
       if (pack.status !== "available") {
         toast("稍後開放——此包尚未到");
         return;
       }
       state.activeStoryPackId = pack.id;
+      state.storyPackUserPicked = true;
       toast("已記「" + pack.name + "」氣氛——人生仍非直線");
       render();
     };
@@ -3015,7 +4306,7 @@
       <div class="hud">
         <span class="chip year"><span class="dot"></span>${state.age}歲 · 第 ${state.year} 年</span>
         <span class="chip soul"><span class="dot"></span>${esc(L["ui.resource"] || "膠幣")} ${state.soul}</span>
-        <button type="button" class="chip gacha-entry" id="btn-gacha-entry" data-gacha-entry title="廟街霓虹扭蛋機">霓虹扭蛋</button>
+        ${gachaEntryHtml()}
       </div>
       <div class="ribbon">今世主頁</div>
       <div class="home-hero">
@@ -3045,7 +4336,7 @@
       <nav class="tab-bar" aria-label="主選單">
         <button class="tab" type="button" id="tab-book" data-help="tab-book"><span class="ico">📖</span>卡冊</button>
         <button class="tab on" type="button" id="tab-life" data-help="tab-life"><span class="ico">🏠</span>今世</button>
-        <button class="tab" type="button" id="tab-teahouse" aria-disabled="true" data-help="tab-teahouse"><span class="ico">🍜</span>茶記</button>
+        <button class="tab" type="button" id="tab-teahouse" data-help="tab-teahouse"><span class="ico">🍜</span>茶記</button>
         <button class="tab" type="button" id="tab-jobs" data-help="tab-jobs"><span class="ico">📋</span>差事</button>
         <button class="tab" type="button" id="tab-more" aria-disabled="true" data-help="tab-more"><span class="ico">⋯</span>更多</button>
       </nav>
@@ -3065,7 +4356,7 @@
       if (!state.lifePrepped) { state.screen = "prep"; }
       else if (!state.originId) { state.screen = "origin"; }
       else if ((state.fateYearIndex | 0) < 3) {
-        if (!(state.fateOffer && state.fateOffer.length)) rollFateOffer();
+        state.fateOffer = normalizeFateOffer(state.fateOffer);
         state.screen = "fate";
       }
       else { state.screen = "events"; }
@@ -3116,10 +4407,15 @@
         }
       };
     }
-    ["side-spin","side-welfare","side-path","tab-teahouse","tab-more"].forEach((id) => {
+    ["side-spin","side-welfare","side-path","tab-more"].forEach((id) => {
       const el = $("#"+id, root);
       if (el) el.onclick = () => toast("這個位置尚未開放——請點選「舊帳」或「開始人生／繼續上次未完人生」繼續。");
     });
+    const tabTea = $("#tab-teahouse", root);
+    if (tabTea) {
+      tabTea.removeAttribute("aria-disabled");
+      tabTea.onclick = () => { state.screen = "teaHouse"; render(); };
+    }
     const tabBook = $("#tab-book", root);
     if (tabBook) tabBook.onclick = () => { state.screen = "album"; render(); };
     const tabJobs = $("#tab-jobs", root);
@@ -3135,7 +4431,7 @@
 
   function viewEvents(root) {
     if ((state.fateYearIndex | 0) < 3) {
-      if (!(state.fateOffer && state.fateOffer.length)) rollFateOffer();
+      state.fateOffer = normalizeFateOffer(state.fateOffer);
       state.screen = "fate";
       viewFate(root);
       return;
@@ -3151,18 +4447,23 @@
         const isShop = cat === "shop_equip" || cat === "shop_fighter" || cat === "shop_skill";
         const isTrade = cat === "card_trade";
         const isStarUp = cat === "star_up";
-        const outcome = isMinigame ? "須破關"
+        const isGift = cat === "card_gift";
+        const isOffice = isOfficeChainEvent(ev);
+        const outcome = isOffice ? "後果未知"
+          : isMinigame ? "須破關"
           : (isFaction ? "選邊站"
           : (isShop ? "金幣選購"
           : (isTrade ? "以物易物"
           : (isStarUp ? "金幣升星"
-          : (ev.battle ? "可能開打" : "直接收工")))));
-        const tagCls = ev.battle ? "fight" : (isMinigame ? "minigame" : (isFaction ? "faction" : ""));
-        const helpKey = isMinigame ? "event-minigame" : (isFaction ? "event-faction" : (ev.battle ? "event-battle" : "event-soft"));
+          : (isGift ? "免費三選一"
+          : (ev.battle ? "可能開打" : "直接收工"))))));
+        const tagCls = ev.battle ? "fight" : (isMinigame ? "minigame" : (isFaction ? "faction" : (isGift ? "gift" : "")));
+        const helpKey = isMinigame ? "event-minigame" : (isFaction ? "event-faction" : (isGift ? "event-gift" : (ev.battle ? "event-battle" : "event-soft")));
         // Reward chips: +經驗/+魂焰/etc. Dedupe「可能開打」— tag already says it.
-        const rawRewards = (ev.rewards_preview && ev.rewards_preview.length)
+        // t364：分支節點不設獎賞，卡面唔顯示任何 reward（避免誤導）
+        const rawRewards = (isOffice ? [] : ((ev.rewards_preview && ev.rewards_preview.length)
           ? ev.rewards_preview
-          : [];
+          : []));
         const rewards = rawRewards.filter((r) => {
           const t = String(r || "").trim();
           if (!t) return false;
@@ -3170,10 +4471,23 @@
           if (t.includes("可能開打")) return false;
           return true;
         });
-        let chips = rewards.slice(0, 3);
-        if (!chips.length) {
+        let chips = rewards.slice(0, 3).map((t) => {
+          const s = String(t);
+          if (s.includes("膠幣") && /[＋+]/.test(s)) {
+            const n = listedEventSoul(ev);
+            if (n) return `+${n} 膠幣`;
+          }
+          if (s.includes("經驗") && (ev.reward_xp | 0)) return `+${ev.reward_xp | 0} 經驗`;
+          if (s.includes("金幣") && (ev.reward_gold | 0) && !s.includes("四選一") && !s.includes("升星")) {
+            return `+${ev.reward_gold | 0} 金幣`;
+          }
+          return s;
+        });
+        if (!chips.length && !isOffice) {
           if (ev.reward_xp) chips.push(`+${ev.reward_xp | 0} 經驗`);
-          if (ev.reward_soul) chips.push(`+${ev.reward_soul | 0} 膠幣`);
+          const soulShown = listedEventSoul(ev);
+          if (soulShown) chips.push(`+${soulShown} 膠幣`);
+          if (ev.reward_gold) chips.push(`+${ev.reward_gold | 0} 金幣`);
         }
         const rewardRow = chips
           .map((r) => `<span class="ev-reward">${esc(r)}</span>`)
@@ -3197,9 +4511,12 @@
       .join("");
 
     let confirmModal = "";
-    if (state.eventConfirmOpen && state.selectedEvent && state.selectedEvent.battle) {
-      const ev = state.selectedEvent;
-      const roster = buildEnemyRoster(ev.battle);
+    const selectedEv = state.selectedEvent;
+    const dialogueOnly = !!(selectedEv && !selectedEv.battle
+      && Array.isArray(selectedEv.dialogue) && selectedEv.dialogue.length);
+    if (state.eventConfirmOpen && selectedEv && (selectedEv.battle || dialogueOnly)) {
+      const ev = selectedEv;
+      const roster = ev.battle ? encounterEnemyRoster(ev) : [];
       const preview = roster
         .map((e) => {
           const helpE = enemyHelpText(e);
@@ -3211,15 +4528,16 @@
         })
         .join("");
       confirmModal = `
-        <div class="modal-mask" id="event-confirm-mask" role="dialog" aria-modal="true" aria-label="開始事件？">
+        <div class="modal-mask" id="event-confirm-mask" role="dialog" aria-modal="true" aria-label="${ev.battle ? "開始事件？" : "事件對白"}">
           <div class="modal-sheet event-confirm-sheet" id="event-confirm-sheet">
-            <div class="modal-title">開始事件？</div>
+            <div class="modal-title">${ev.battle ? "開始事件？" : "呢一年，街上有事"}</div>
             <div class="ec-name">${esc(ev.name)}</div>
             <p class="ec-desc">${esc(ev.desc || "")}</p>
-            <div class="ec-enemy-row">${preview || "<span class=\"muted\">敵方預覽</span>"}</div>
+            ${eventDialogueHtml(ev, "ec-dialogue")}
+            ${preview ? `<div class="ec-enemy-row">${preview}</div>` : ""}
             <div class="modal-actions">
               <button type="button" class="btn ghost" id="btn-ec-cancel">我改主意了</button>
-              <button type="button" class="btn gold" id="btn-ec-go">開始吧</button>
+              <button type="button" class="btn gold" id="btn-ec-go">${ev.battle ? "開始吧" : "睇完，繼續"}</button>
             </div>
           </div>
         </div>`;
@@ -3254,11 +4572,26 @@
         render();
       };
       $("#btn-ec-go", root).onclick = () => {
+        const ev = state.selectedEvent;
         state.eventConfirmOpen = false;
-        state.deploy = [];
+        // 無戰但有對白的主線（例如「熄燈之前」）：睇完對白 → 直接入結算，唔入編隊
+        if (ev && !ev.battle) {
+          state.screen = "soft";
+          render();
+          return;
+        }
         state.selectAllySlot = null;
         state.fighterDetailId = null;
         state.detailSkillPick = null;
+        const resumed = applyRememberedDeploy();
+        if (resumed && !deployNeedsPlayerPick()) {
+          startBattle();
+          return;
+        }
+        if (!resumed) state.deploy = [];
+        state.deployHint = resumed
+          ? "上次上場有位空咗（陣亡／離隊）——補唔補位由你決定。"
+          : "";
         state.screen = "encounter";
         render();
       };
@@ -3316,12 +4649,80 @@
       render();
       return;
     }
+    // 送卡：免費三選一（唔扣金幣）
+    if (cat === "card_gift") {
+      state.eventConfirmOpen = false;
+      state.cardGift = null;
+      state.screen = "cardGift";
+      render();
+      return;
+    }
     // 升星攤：金幣升戰鬥卡星（唔燒合卡複本）
     if (cat === "star_up") {
       state.eventConfirmOpen = false;
       state.shopLeftEmpty = false;
       state.starUp = { focusId: null };
       state.screen = "starup";
+      render();
+      return;
+    }
+    // t366：裝備強化攤（金幣直接＋星，唔需要同名卡）
+    if (cat === "gear_upgrade") {
+      state.eventConfirmOpen = false;
+      state.shopLeftEmpty = false;
+      state.gearUpgrade = { done: null };
+      state.screen = "gearup";
+      render();
+      return;
+    }
+    // t366：戰鬥卡練功（直接給卡經驗／等級）
+    if (cat === "fighter_train") {
+      state.eventConfirmOpen = false;
+      state.shopLeftEmpty = false;
+      state.fighterTrain = { done: null };
+      state.screen = "train";
+      render();
+      return;
+    }
+    // t366：復活陣亡戰鬥卡
+    if (cat === "fighter_revive") {
+      state.eventConfirmOpen = false;
+      state.shopLeftEmpty = false;
+      state.fighterRevive = { done: null };
+      state.screen = "revive";
+      render();
+      return;
+    }
+    // t366：抽卡事件（免費／低價，直接入袋）
+    if (cat === "card_draw") {
+      state.eventConfirmOpen = false;
+      state.cardGift = null;
+      state.screen = "cardGift";
+      render();
+      return;
+    }
+    // t369：通用故事鏈節點（任何故事包）
+    if (isTaleNodeEvent(ev)) {
+      state.eventConfirmOpen = false;
+      if (!state.taleRun || state.taleRun.nodeId !== ev.id) {
+        if (!state.taleRun || state.taleRun.packId !== (ev.tale_pack || state.activeStoryPackId)) {
+          taleBeginRun(ev.tale_pack || state.activeStoryPackId);
+        }
+        if (state.taleRun) state.taleRun.nodeId = ev.id;
+      }
+      state.screen = "tale";
+      render();
+      return;
+    }
+    // t364：故事包分支鏈節點 → 分支選擇畫面（隱藏後果，選完才揭示）
+    if (isOfficeChainEvent(ev)) {
+      state.eventConfirmOpen = false;
+      if (!state.officeRun || state.officeRun.nodeId !== ev.id) {
+        // 玩家由事件卡直接點進某個節點（例如中途退出後再入）→ 由頭開始
+        officeBeginRun();
+        if (state.officeRun) state.officeRun.nodeId = ev.id;
+      }
+      state.screen = "office";
       render();
       return;
     }
@@ -3334,8 +4735,13 @@
       render();
       return;
     }
-    // main／side／trial／adventure／special_battle：有戰→確認；無戰→soft
+    // main／side／trial／adventure／special_battle：有戰→確認；有對白→先播對白；其餘→soft
     if (ev.battle) {
+      state.eventConfirmOpen = true;
+      state.screen = "events";
+      render();
+    } else if (Array.isArray(ev.dialogue) && ev.dialogue.length) {
+      // 無戰但有對白的主線：先睇對白再入結算（之前一段對白會被直接跳過）
       state.eventConfirmOpen = true;
       state.screen = "events";
       render();
@@ -3344,6 +4750,260 @@
       state.screen = "soft";
       render();
     }
+  }
+
+  /* ---------- t364：故事包分支畫面「打工仔輓歌」 ---------- */
+
+  /** 分支節點畫面：卡面只顯示兩個「未知後果」；選完才揭示傾向 */
+  function viewOffice(root) {
+    const run = state.officeRun;
+    const node = run ? officeNodeById(run.nodeId) : officeStartNode();
+    if (!node) {
+      state.screen = "events";
+      render();
+      return;
+    }
+    if (!run) {
+      officeBeginRun();
+      render();
+      return;
+    }
+
+    const pack = officePack();
+    const totalSteps = Math.max(1, ((pack && pack.office_chain) || []).length);
+    const stepNo = Math.min(totalSteps, Math.max(1, run.step | 0));
+    const choices = Array.isArray(node.office_choices) ? node.office_choices : [];
+    const reveal = run.reveal;
+
+    // 已揭示上一步：只在同一節點第一次進入時顯示，選完之後清空
+    const revealHtml = reveal
+      ? `<div class="of-reveal" role="status">
+           <div class="of-reveal-label">上一步（${esc(reveal.nodeName)}）</div>
+           <p class="of-reveal-choice">「${esc(reveal.choiceText)}」</p>
+           <p class="of-reveal-hint">${esc(reveal.hint)}</p>
+         </div>`
+      : "";
+
+    // 選擇卡：全部標「未知」，唔預先透露加減（符合「選完才顯示」）
+    const choiceHtml = choices.map((c, i) => {
+      const label = String.fromCharCode(65 + i);
+      return `<button type="button" class="of-choice" data-choice="${i}" aria-label="選項${label}：${esc(c.text)}">
+        <span class="of-choice-tag">選項 ${label}</span>
+        <span class="of-choice-text">${esc(c.text)}</span>
+        <span class="of-choice-unknown">後果未知 · 選後揭曉</span>
+      </button>`;
+    }).join("");
+
+    // 歷程（只顯示做過什麼，唔顯示分數）
+    const trail = (run.chosen || []).map((c, i) =>
+      `<li class="of-trail-item"><span class="of-trail-step">${i + 1}</span>${esc(c.text)}</li>`
+    ).join("");
+
+    root.innerHTML = `
+      <div class="of-hud">${esc(pack ? pack.name : "故事包")} · ${officeAge(run)}歲 · 第 ${stepNo} / ${totalSteps} 步</div>
+      <div class="office-node">
+        ${revealHtml}
+        <div class="of-node-head">
+          <img class="of-node-art" src="${esc(node.art || "")}" alt="" />
+          <div class="of-node-copy">
+            <div class="of-node-name">${esc(node.name)}</div>
+            <p class="of-node-desc">${esc(node.desc || "")}</p>
+          </div>
+        </div>
+        ${eventDialogueHtml(node, "of-dialogue")}
+        <div class="of-choices">${choiceHtml}</div>
+        ${trail ? `<details class="of-trail"><summary>已行過嘅路（${run.chosen.length}）</summary><ol>${trail}</ol></details>` : ""}
+        <p class="of-note">此故事包不設獎賞與升級；行到結局先有 50 膠幣。</p>
+      </div>
+      <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
+      ${storyDockHtml()}
+    `;
+
+    root.querySelectorAll(".of-choice[data-choice]").forEach((btn) => {
+      btn.onclick = () => {
+        const idx = parseInt(btn.dataset.choice, 10) | 0;
+        const info = officeApplyChoice(idx);
+        if (!info) return;
+        officeAdvanceAfterChoice();
+        render();
+      };
+    });
+    const ab = $("#btn-abandon", root);
+    if (ab) ab.onclick = () => requestAbandonLife();
+    wireStoryDock(root);
+  }
+
+  /**
+   * 選完之後推進：
+   *  - 非最後節點 → 去下一個鏈節點
+   *  - 最後節點 → 依 route 分數算出結局，入結局事件（soft 畫面，+50 膠幣）
+   */
+  function officeAdvanceAfterChoice() {
+    const run = state.officeRun;
+    if (!run) return;
+    const pack = officePack();
+    const chain = (pack && Array.isArray(pack.office_chain)) ? pack.office_chain : [];
+    const idx = chain.indexOf(run.nodeId);
+    const isLast = idx >= 0 ? idx >= chain.length - 1 : true;
+
+    if (!isLast) {
+      const nextNode = officeNodeById(chain[idx + 1]);
+      if (nextNode) {
+        run.nodeId = nextNode.id;
+        run.step = (run.step | 0) + 1;
+        // t365：分支鏈年齡由 officeAge() 推算，唔改 state.age（見 officeBeginRun 註解）
+        return;
+      }
+    }
+
+    // 走完鏈：算結局
+    const fin = officeFinishRun();
+    if (fin && fin.endingEv) {
+      if (!state.lifeFlags || typeof state.lifeFlags !== "object") state.lifeFlags = {};
+      state.lifeFlags["office_route_" + fin.routeKey] = 1;
+      /*
+       * t375：同時寫入 `office_ending_<id>`（同結局事件自身嘅 flag_on_complete 一致）。
+       * 原本只寫 `office_route_*`，而 `eventExcludedFromYearPool()` 檢查 `office_ending_*`
+       * → 排除永遠唔生效 → 完成後「第一日返工」仍然會再出現（總導演回報的循環問題）。
+       */
+      const endFlag = fin.endingEv.flag_on_complete || ("office_ending_" + fin.routeKey);
+      state.lifeFlags[endFlag] = 1;
+      state.lifeFlags["office_ending_" + fin.routeKey] = 1;
+      state.officeEndAge = officeAge(run);
+      state.selectedEvent = fin.endingEv;
+      state.officeRun = null;
+      state.softNote = "";
+      state.screen = "soft";
+      return;
+    }
+    // 極端情況：找不到結局 → 回事件頁（避免卡死）
+    state.officeRun = null;
+    state.screen = "events";
+  }
+
+  /** t369：通用故事鏈畫面（含角色關係顯示） */
+  function viewTale(root) {
+    const run = state.taleRun;
+    if (!run) {
+      state.screen = "events";
+      render();
+      return;
+    }
+    const pack = talePackById(run.packId);
+    const node = taleNodeById(run.nodeId);
+    if (!node) {
+      state.taleRun = null;
+      state.screen = "events";
+      render();
+      return;
+    }
+    const chain = (pack && pack.tale_chain) || [];
+    const totalSteps = Math.max(1, chain.length);
+    const stepNo = Math.min(totalSteps, Math.max(1, run.step | 0));
+    const choices = Array.isArray(node.tale_choices) ? node.tale_choices : [];
+    const reveal = run.reveal;
+    run.reveal = null; // 只顯示一次
+
+    // 立即後果
+    const revealHtml = reveal
+      ? `<div class="of-reveal" role="status">
+           <div class="of-reveal-label">剛才（${esc(reveal.nodeName)}）</div>
+           <p class="of-reveal-choice">「${esc(reveal.choiceText)}」</p>
+           ${reveal.outcome ? `<p class="of-reveal-outcome">${esc(reveal.outcome)}</p>` : ""}
+           ${reveal.bondNote ? `<p class="tl-bond-note">${esc(reveal.bondNote)}</p>` : ""}
+         </div>`
+      : "";
+
+    // 角色出場：顯示弧線對白
+    const cast = Array.isArray(node.tale_cast) ? node.tale_cast : [];
+    const castHtml = cast.map((ch) => {
+      const line = taleLineForCharacter(ch, run);
+      const b = run.bond[ch.id] | 0;
+      const bondTag = b !== 0
+        ? `<span class="tl-bond ${b > 0 ? "warm" : "cold"}">${esc(taleBondLabel(b))}</span>`
+        : "";
+      return `<div class="tl-char">
+        <div class="tl-char-head">
+          <span class="tl-char-name">${esc(ch.name)}</span>
+          <span class="tl-char-role">${esc(ch.role || "")}</span>
+          ${bondTag}
+        </div>
+        ${line ? `<p class="tl-char-line">「${esc(line)}」</p>` : ""}
+      </div>`;
+    }).join("");
+
+    const choiceHtml = choices.map((c, i) => {
+      const label = String.fromCharCode(65 + i);
+      return `<button type="button" class="of-choice tl-choice" data-tale-choice="${i}" aria-label="選項${label}：${esc(c.text)}">
+        <span class="of-choice-tag">選項 ${label}</span>
+        <span class="of-choice-text">${esc(c.text)}</span>
+        <span class="of-choice-unknown">後果未知 · 選後揭曉</span>
+      </button>`;
+    }).join("");
+
+    const trail = (run.chosen || []).map((c, i) =>
+      `<li class="of-trail-item"><span class="of-trail-step">${i + 1}</span>${esc(c.text)}${c.bondNote ? `<i class="of-trail-bond">${esc(c.bondNote)}</i>` : ""}</li>`
+    ).join("");
+
+    // 角色關係總覽
+    const allCast = [];
+    (pack && Array.isArray(pack.tale_cast_profiles) ? pack.tale_cast_profiles : []).forEach((c) => allCast.push(c));
+    (node.tale_cast || []).forEach((c) => {
+      if (!allCast.some((x) => x.id === c.id)) allCast.push(c);
+    });
+    const nameOfCast = (cid) => {
+      const hit = allCast.find((x) => x.id === cid);
+      if (hit && hit.name) return hit.name;
+      // 再退回：全故事鏈任何節點用過的角色
+      for (const nid of (pack && pack.tale_chain) || []) {
+        const nn = taleNodeById(nid);
+        const c2 = nn && (nn.tale_cast || []).find((x) => x.id === cid);
+        if (c2 && c2.name) return c2.name;
+      }
+      return cid;
+    };
+    const bondKeys = Object.keys(run.bond || {});
+    const bondSummary = bondKeys.length
+      ? `<div class="tl-bonds"><span class="tl-bonds-label">人物</span>${bondKeys.map((cid) => {
+          const v = run.bond[cid] | 0;
+          return `<span class="tl-bond-chip ${v > 0 ? "warm" : (v < 0 ? "cold" : "")}">${esc(nameOfCast(cid))} · ${esc(taleBondLabel(v))}</span>`;
+        }).join("")}</div>`
+      : "";
+
+    root.innerHTML = `
+      <div class="of-hud">${esc(pack ? pack.name : "故事")} · ${taleAge(run)}歲 · 第 ${stepNo} / ${totalSteps} 步</div>
+      <div class="office-node tl-node">
+        ${revealHtml}
+        <div class="of-node-head">
+          ${node.art ? `<img class="of-node-art" src="${esc(node.art)}" alt="" />` : ""}
+          <div class="of-node-copy">
+            <div class="of-node-name">${esc(node.name)}</div>
+            <p class="of-node-desc">${esc(node.desc || "")}</p>
+          </div>
+        </div>
+        ${eventDialogueHtml(node, "of-dialogue")}
+        ${castHtml ? `<div class="tl-cast">${castHtml}</div>` : ""}
+        ${bondSummary}
+        <div class="of-choices">${choiceHtml}</div>
+        ${trail ? `<details class="of-trail"><summary>已行過嘅路（${run.chosen.length}）</summary><ol>${trail}</ol></details>` : ""}
+        <p class="of-note">每一步都會改變人與人之間嘅距離；行到最後，關係決定你嘅結局。</p>
+      </div>
+      <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
+      ${storyDockHtml()}
+    `;
+
+    root.querySelectorAll(".tl-choice[data-tale-choice]").forEach((btn) => {
+      btn.onclick = () => {
+        const idx = parseInt(btn.dataset.taleChoice, 10) | 0;
+        const info = taleApplyChoice(idx);
+        if (!info) return;
+        taleAdvanceAfterChoice();
+        render();
+      };
+    });
+    const ab = $("#btn-abandon", root);
+    if (ab) ab.onclick = () => requestAbandonLife();
+    wireStoryDock(root);
   }
 
   function viewFaction(root) {
@@ -3435,8 +5095,8 @@
           state.lastResult = {
             win: true,
             reward: 0,
-            rewardBlurb: lifeOver() ? "壽命已到——今世歲數上限。" : "人生切片已跑完。",
-            eventName: lifeOver() ? "壽命到限" : "切片完結",
+            rewardBlurb: lifeEndBlurb(),
+            eventName: lifeEndName(),
             deadNames: [],
           };
           state.screen = "result";
@@ -3463,7 +5123,7 @@
         const hint = fd > 0 ? `好感＋${fd}` : (fd < 0 ? `好感${fd}` : "好感不變");
         return `<button type="button" class="btn fac-choice" data-choice="${esc(c.id)}" data-help="event-faction">
           <span class="fac-choice-label">${esc(c.label)}</span>
-          <span class="fac-choice-hint">${esc(hint)} · 膠幣 +${c.soul | 0}</span>
+          <span class="fac-choice-hint">${esc(hint)} · 膠幣 +${soulFromBase(c.soul)}</span>
         </button>`;
       })
       .join("");
@@ -3495,11 +5155,8 @@
           const bits = formatAttrsDelta(c.attrs_delta);
           if (bits.length) extraNotes.push(...bits);
         }
-        // 幸運只加成魂焰顯示／入帳
-        let soul = c.soul | 0;
-        const beforeLuck = soul;
-        soul = applyLuckToReward(Math.max(1, soul));
-        if (soul !== beforeLuck) extraNotes.push(`幸運×${luckRewardMult().toFixed(2)}`);
+        const soul = soulFromBase(c.soul);
+        if (soul !== (c.soul | 0)) extraNotes.push(`幸運×${luckRewardMult().toFixed(2)}`);
         const note = c.note || favorNoteRaw || "勢力結算";
         // 好感句去重：note 已含好感變化則 favorNote 留空（結果畫面只顯示一次）
         const normPlus = (s) => String(s || "").replace(/＋/g, "+").replace(/−/g, "-");
@@ -3525,6 +5182,22 @@
     wireStoryDock(root);
   }
 
+  /** 通用小提示：用畫面上已有的 toast，冇就即場建一個 */
+  function toastMsg(msg) {
+    const root = document.getElementById("screen") || document.body;
+    let el = document.getElementById("global-toast");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "global-toast";
+      el.className = "home-toast global-toast";
+      root.appendChild(el);
+    }
+    el.hidden = false;
+    el.textContent = msg;
+    clearTimeout(el._t);
+    el._t = setTimeout(() => { el.hidden = true; }, 1800);
+  }
+
   function shopToast(root, msg) {
     let el = $("#story-toast", root) || $("#home-toast", root);
     if (!el) {
@@ -3537,6 +5210,206 @@
     el.textContent = msg;
     clearTimeout(shopToast._t);
     shopToast._t = setTimeout(() => { el.hidden = true; }, 1600);
+  }
+
+  /** 送卡事件：三選一免費卡片（優先未持有、唔重複） */
+  function buildGiftOffers(kind) {
+    ensureGearShape();
+    albumEnsureState();
+    const takeUnique = (ordered, n) => {
+      const seen = new Set();
+      const out = [];
+      for (const it of ordered) {
+        if (!it || !it.id || seen.has(it.id)) continue;
+        seen.add(it.id);
+        out.push(it);
+        if (out.length >= n) break;
+      }
+      return out;
+    };
+    const prefer = (list) => {
+      const usable = list.filter((x) => x && x.id);
+      const withArt = usable.filter((x) => x.art && !String(x.art).includes("pending-manus"));
+      const src = withArt.length >= 3 ? withArt : usable;
+      const unowned = src.filter((x) => albumCardCount(x.id) <= 0);
+      const owned = src.filter((x) => albumCardCount(x.id) > 0);
+      return shuffleInPlace(unowned.slice()).concat(shuffleInPlace(owned.slice()));
+    };
+    let pool = [];
+    let cardKind = "fighter";
+    if (kind === "skill") {
+      ensureLifeSkills();
+      const inLife = new Set(state.lifeSkills || []);
+      const all = (DATA.skills || []).filter((sk) => sk && sk.id);
+      const notInLife = all.filter((sk) => !inLife.has(sk.id));
+      pool = prefer(notInLife).concat(prefer(all.filter((sk) => inLife.has(sk.id))));
+      cardKind = "skill";
+    } else if (kind === "gear") {
+      pool = prefer(equipItemList());
+      cardKind = "gear";
+    } else {
+      const inTeam = new Set(state.team || []);
+      const all = (DATA.fighters || []).filter((f) => f && f.id);
+      const notInTeam = all.filter((f) => !inTeam.has(f.id));
+      pool = prefer(notInTeam).concat(prefer(all.filter((f) => inTeam.has(f.id))));
+      cardKind = "fighter";
+    }
+    return takeUnique(pool, 3).map((it) => ({
+      id: it.id,
+      name: it.name || it.id,
+      art: it.art || "",
+      rarity: it.rarity || "",
+      kind: cardKind,
+      slot: it.slot || it.slot_id || null,
+    }));
+  }
+
+  function viewCardGift(root) {
+    const ev = state.selectedEvent;
+    // t366：card_draw（抽卡事件）與 card_gift（送卡事件）共用同一套三選一畫面
+    if (!ev || (ev.category !== "card_gift" && ev.category !== "card_draw")) {
+      state.screen = "events";
+      render();
+      return;
+    }
+    if (!state.cardGift || state.cardGift.eventId !== ev.id) {
+      state.cardGift = {
+        eventId: ev.id,
+        kind: ev.gift || "fighter",
+        offers: buildGiftOffers(ev.gift || "fighter"),
+        takenIdx: null,
+        note: "",
+        rewardApplied: false,
+      };
+    }
+    const gift = state.cardGift;
+    const taken = gift.takenIdx != null ? gift.offers[gift.takenIdx | 0] : null;
+    const kindLabel = gift.kind === "skill" ? "技能" : (gift.kind === "gear" ? "裝備" : "戰鬥卡");
+
+    const cards = gift.offers.map((o, idx) => {
+      const rare = shopRarityLabel(o.rarity);
+      const picked = gift.takenIdx != null && (gift.takenIdx | 0) === idx;
+      const dimmed = gift.takenIdx != null && !picked;
+      return `
+        <button type="button" class="shop-card gift-card${picked ? " picked" : ""}${dimmed ? " dimmed" : ""}" data-gift-idx="${idx}" ${gift.takenIdx != null ? "disabled" : ""}>
+          <img src="${esc(o.art || "")}" alt="${esc(o.name || "")}" />
+          <div class="shop-card-body">
+            <div class="shop-card-name">${esc(o.name || o.id)}</div>
+            <div class="shop-card-rare">${esc(rare)}</div>
+            <div class="shop-price gift-tag">${picked ? "已收下" : "免費帶走"}</div>
+          </div>
+        </button>`;
+    }).join("") || `<div class="shop-empty">暫時無卡可送</div>`;
+
+    const rewardLine = `今世賺了 <b style="color:var(--neon-gold)">+${listedEventSoul(ev)}</b> 膠幣` +
+      `${(ev.reward_xp | 0) ? ` · 經驗 +${ev.reward_xp | 0}` : ""}` +
+      ` · <span style="color:var(--neon-cyan)">下一歲 ${state.age + 1}歲（第 ${state.year + 1} 年）</span>`;
+
+    root.innerHTML = `
+      ${lifeHudHtml()}
+      <div class="ribbon">${ageRibbon("送卡・" + esc(ev.name))}</div>
+      <div class="shop-wrap">
+        <p class="sub">${esc(ev.desc || "")}</p>
+        <div class="gift-banner">${taken ? `已收下「${esc(taken.name || taken.id)}」` : `免費 ${kindLabel}・三選一（不用金幣）`}</div>
+        <div class="shop-grid gift-grid">${cards}</div>
+        ${taken ? `<div class="soft-panel">${esc(gift.note || "已加入收藏")}<br/>${rewardLine}</div>` : ""}
+      </div>
+      <div class="soft-cta">
+        ${taken ? `<button class="btn gold" id="btn-gift-ok" data-help="btn-ok">繼續</button>` : ""}
+        <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
+      </div>
+      ${storyDockHtml()}
+    `;
+
+    root.querySelectorAll("[data-gift-idx]").forEach((btn) => {
+      btn.onclick = () => {
+        if (gift.takenIdx != null) return;
+        const idx = btn.dataset.giftIdx | 0;
+        const offer = gift.offers[idx];
+        if (!offer) return;
+        gift.takenIdx = idx;
+        const extra = grantGiftCard(gift.kind, offer);
+        gift.note = `已收下「${offer.name || offer.id}」` + (extra ? `（${extra}）` : "");
+        render();
+      };
+    });
+
+    const okBtn = $("#btn-gift-ok", root);
+    if (okBtn) {
+      okBtn.onclick = () => {
+        if (!gift.rewardApplied) {
+          state.soul += listedEventSoul(ev);
+          if ((ev.reward_xp | 0) > 0) gainXp(ev.reward_xp | 0);
+          gift.rewardApplied = true;
+        }
+        trackEventMission(ev, { soft: true });
+        state.cardGift = null;
+        state.selectedEvent = null;
+        state.softNote = "";
+        advanceYear();
+        if (lifeDoneFlag()) {
+          state.lastResult = {
+            win: true,
+            reward: 0,
+            rewardBlurb: lifeEndBlurb(),
+            eventName: lifeEndName(),
+            deadNames: [],
+          };
+          state.screen = "result";
+        } else {
+          state.screen = afterFateOrEventScreen();
+        }
+        render();
+      };
+    }
+    $("#btn-abandon", root).onclick = () => requestAbandonLife();
+    wireStoryDock(root);
+  }
+
+  /** 送卡入袋：戰鬥卡／技能／裝備（唔扣金幣、唔換走己卡） */
+  function grantGiftCard(kind, offer) {
+    if (!offer || !offer.id) return "";
+    albumEnsureState();
+    if (kind === "skill") {
+      ensureLifeSkills();
+      const pick = (DATA.skills || []).find((sk) => sk && sk.id === offer.id) || null;
+      if (!pick) return "";
+      const inLife = new Set(state.lifeSkills || []);
+      albumGainOne("skills", pick.id);
+      if (!inLife.has(pick.id) && (state.lifeSkills || []).length < LIFE_SKILLS_CAP) {
+        state.lifeSkills.push(pick.id);
+        return "已加入技能口袋";
+      }
+      if (inLife.has(pick.id)) return "複本入卡冊";
+      return `技能口袋已滿（${LIFE_SKILLS_CAP}）——入卡冊`;
+    }
+    if (kind === "gear") {
+      ensureGearShape();
+      const pick = equipItemList().find((it) => it && it.id === offer.id) || null;
+      if (!pick) return "";
+      albumGainOne("gear", pick.id);
+      const slotId = offer.slot || pick.slot || pick.slot_id || null;
+      const emptySlots = GEAR_SLOTS.filter((s) => !state.accountGear[s.id]);
+      const match = slotId ? emptySlots.find((s) => s.id === slotId) : null;
+      if (match) {
+        state.accountGear[match.id] = pick.id;
+        // t364：裝上唔算升星（原本會虛報「裝備升星」任務進度）；升星只由卡冊按鈕觸發
+        return `已裝上${match.label}槽`;
+      }
+      return "已入裝備收藏";
+    }
+    const cap = fighterPocketCap();
+    const inTeam = new Set(state.team || []);
+    const pick = (DATA.fighters || []).find((f) => f && f.id === offer.id) || null;
+    if (!pick) return "";
+    albumGainOne("fighters", pick.id);
+    if (!inTeam.has(pick.id) && (state.team || []).length < cap) {
+      state.team.push(pick.id);
+      if (!state.loadout[pick.id]) state.loadout[pick.id] = [];
+      return "已加入戰鬥卡口袋";
+    }
+    if (inTeam.has(pick.id)) return "複本入卡冊";
+    return `統率已滿（${cap}）——入卡冊`;
   }
 
   /** 人生店鋪：四選一・金幣購買 */
@@ -3610,6 +5483,38 @@
   }
 
   /** 可交出的戰鬥卡（已擁有 count≥1；優先今世口袋） */
+  /**
+   * t371：換卡保護。
+   *
+   * 問題：玩家可以把「最後一張能打的卡」交出去。雖然換入會補回，
+   * 但若換入的剛好是廢卡，等於用主力換雜牌。
+   *
+   * ⚠ 特別處理：`albumEnsureState()` 每次都會強制補 C03「霓虹咒匠」（demo 驗魔攻用），
+   * 所以卡冊永遠「有一張後備」。但嗰張唔係玩家自己揀嘅主力，
+   * 唔應該當成「安全網」→ 判定時要把 `DEMO_FALLBACK_CARDS` 排除。
+   */
+  const DEMO_FALLBACK_CARDS = ["C03"]; // demo 種子／兜底卡
+
+  function isDemoFallbackCard(id) {
+    return DEMO_FALLBACK_CARDS.includes(String(id || ""));
+  }
+
+  function tradeWouldLeaveNoFighter(fighterId) {
+    const team = Array.isArray(state.team) ? state.team : [];
+    // 交出後仍在 team 的卡（未陣亡、仍持有、唔係兜底卡）
+    const remain = team.filter(
+      (id) => id !== fighterId && fighterById[id] && albumCardCount(id) > 0
+        && !isDeadFighter(id) && !isDemoFallbackCard(id)
+    );
+    // 卡冊中其他可用卡（不在 team、未陣亡、唔係兜底卡）
+    const spare = (DATA.fighters || []).filter(
+      (f) => f && f.id && f.id !== fighterId && !isDeadFighter(f.id)
+        && albumCardCount(f.id) > 0 && !team.includes(f.id)
+        && !isDemoFallbackCard(f.id)
+    );
+    return remain.length === 0 && spare.length === 0;
+  }
+
   function tradeGiveCandidates() {
     albumEnsureState();
     const team = Array.isArray(state.team) ? state.team.slice() : [];
@@ -3625,6 +5530,15 @@
       out.push(f);
     }
     return out;
+  }
+
+  /** 標記候選：lastUsable = 交出呢張之後會冇卡可打 */
+  function tradeCandidatesWithRisk() {
+    const list = tradeGiveCandidates();
+    return list.map((f) => ({
+      f,
+      lastUsable: tradeWouldLeaveNoFighter(f.id),
+    }));
   }
 
   function buildTradeTakeOffers(excludeId) {
@@ -3760,18 +5674,24 @@
     }
 
     // phase give
-    const cands = tradeGiveCandidates();
-    const cards = cands.map((f) => {
+    const risky = tradeCandidatesWithRisk();
+    // 只有當「全部候選都係最後一張」時，唔可以再擋（否則事件變死路）
+    const allRisky = risky.length > 0 && risky.every((x) => x.lastUsable);
+    const cards = risky.map(({ f, lastUsable }) => {
       const inPocket = (state.team || []).includes(f.id);
       const rare = shopRarityLabel(f.rarity);
       const star = albumFighterStar(f.id);
+      const warn = lastUsable
+        ? `<div class="trade-warn">⚠ 交出後冇卡可打${allRisky ? "（只此一張）" : ""}</div>`
+        : "";
       return `
-        <button type="button" class="shop-card" data-give-id="${esc(f.id)}">
+        <button type="button" class="shop-card${lastUsable ? " trade-risk" : ""}" data-give-id="${esc(f.id)}" data-last-usable="${lastUsable ? "1" : "0"}">
           <img src="${esc(f.art || "")}" alt="${esc(f.name || "")}" />
           <div class="shop-card-body">
             <div class="shop-card-name">${esc(f.name || f.id)}</div>
             <div class="shop-card-rare">${esc(rare)} · ★${star}${inPocket ? " · 口袋" : ""}</div>
             <div class="shop-price trade-tag">交出交換</div>
+            ${warn}
           </div>
         </button>`;
     }).join("") || `<div class="shop-empty">沒有可交出的戰鬥卡</div>`;
@@ -3797,6 +5717,12 @@
           shopToast(root, "持有不足");
           return;
         }
+        const isLast = btn.getAttribute("data-last-usable") === "1";
+        if (isLast) {
+          // t371：交出「最後一張能打嘅卡」需要二次確認
+          showTradeRiskConfirm(root, gid);
+          return;
+        }
         state.trade = {
           phase: "take",
           giveId: gid,
@@ -3810,11 +5736,49 @@
     wireStoryDock(root);
   }
 
+  /**
+   * t371：交出「最後一張能打嘅卡」二次確認。
+   * 用 fixed 覆蓋層（唔依賴 state），取消即返回；確認才進入換入階段。
+   */
+  function showTradeRiskConfirm(root, giveId) {
+    const old = document.getElementById("trade-risk-confirm");
+    if (old) old.remove();
+    const f = fighterById[giveId];
+    const name = (f && f.name) || giveId;
+    const mask = document.createElement("div");
+    mask.id = "trade-risk-confirm";
+    mask.className = "trade-risk-mask";
+    mask.innerHTML = `
+      <div class="trade-risk-sheet" role="dialog" aria-modal="true" aria-label="交出最後一張卡確認">
+        <div class="trade-risk-title">⚠ 這是你最後一張能打的卡</div>
+        <p class="trade-risk-body">交出「<b>${esc(name)}</b>」之後，你暫時冇卡可以出戰。<br/>換入的卡會補上，但如果換到廢卡，你就冇主力。</p>
+        <p class="trade-risk-q">確定要交出去？</p>
+        <div class="trade-risk-actions">
+          <button type="button" class="btn small ghost" id="trc-cancel">唔交，返去揀</button>
+          <button type="button" class="btn small gold" id="trc-ok">我明白，照交</button>
+        </div>
+      </div>`;
+    (document.getElementById("phone") || document.body).appendChild(mask);
+
+    const close = () => { const m = document.getElementById("trade-risk-confirm"); if (m) m.remove(); };
+    const cancel = $("#trc-cancel", mask);
+    if (cancel) cancel.onclick = (e) => { if (e) e.stopPropagation(); close(); };
+    const ok = $("#trc-ok", mask);
+    if (ok) {
+      ok.onclick = (e) => {
+        if (e) e.stopPropagation();
+        close();
+        state.trade = { phase: "take", giveId, offers: buildTradeTakeOffers(giveId) };
+        render();
+      };
+    }
+    if (mask.onclick) mask.onclick = (e) => { if (e.target === mask) close(); };
+  }
+
   /** 升星價：15 × 當前星 */
   function starUpPrice(currentStar) {
     return 15 * Math.max(1, currentStar | 0);
   }
-
   function starUpCandidates() {
     albumEnsureState();
     const team = Array.isArray(state.team) ? state.team.slice() : [];
@@ -3847,6 +5811,224 @@
     state.shopLeftEmpty = true;
     state.starUp = null;
     state.screen = "soft";
+  }
+
+  /**
+   * 夜市升星攤（EV45）：玩家主動付金幣，**選一張卡**升星——同卡冊按鈕一樣係手動操作。
+   * t364 保留此入口，但與卡冊共用同一套「燒同名卡」語意以外嘅規則：
+   * 佢只升戰鬥卡、只可由玩家逐張按、而且要有足夠金幣，唔存在任何自動升星。
+   */
+  /* ---------- 茶記：聲望換特殊卡 ---------- */
+  /** 茶記特殊卡（fame 為聲望價；售完即止，跨世保留已買記錄） */
+  function teaShopList() {
+    return Array.isArray(DATA.tea_shop_cards) ? DATA.tea_shop_cards : [];
+  }
+
+  function teaShopBoughtSet() {
+    if (!Array.isArray(state.teaShopBought)) state.teaShopBought = [];
+    return new Set(state.teaShopBought);
+  }
+
+  function buyTeaShopCard(cardId) {
+    albumEnsureState();
+    const card = teaShopList().find((c) => c && c.id === cardId);
+    if (!card) return { ok: false, msg: "無此卡" };
+    const bought = teaShopBoughtSet();
+    if (bought.has(cardId)) return { ok: false, msg: "已經換過" };
+    const price = Math.max(0, card.fame | 0);
+    if ((state.fame | 0) < price) return { ok: false, msg: `聲望不足（需 ${price}）` };
+    state.fame = (state.fame | 0) - price;
+    albumGainOne("fighters", card.id);
+    const cap = fighterPocketCap();
+    const inTeam = new Set(state.team || []);
+    let note = "已入卡冊";
+    if (!inTeam.has(card.id) && (state.team || []).length < cap) {
+      state.team.push(card.id);
+      if (!state.loadout[card.id]) state.loadout[card.id] = [];
+      note = "已加入戰鬥卡口袋";
+    } else if ((state.team || []).length >= cap) {
+      note = `統率已滿（${cap}）——入卡冊`;
+    }
+    state.teaShopBought.push(cardId);
+    return { ok: true, msg: `換得「${card.name}」（${note}）` };
+  }
+
+  /** 茶記特殊卡詳情彈窗：卡圖＋完整戰力／技能說明＋聲望價 */
+  function teaCardDetailHtml(card, opts) {
+    opts = opts || {};
+    const f = fighterById[card.id];
+    const name = card.name || (f && f.name) || card.id;
+    const price = Math.max(0, card.fame | 0);
+    const owned = !!opts.owned;
+    const can = !!opts.can;
+    const art = card.art || (f && f.art) || "";
+    const artHtml = art
+      ? `<img src="${esc(art)}" alt="${esc(name)}" loading="lazy" data-card-name="${esc(name)}" data-card-kind="fighter" />`
+      : `<img src="${cardGlyphDataUrl(name, "fighter")}" alt="${esc(name)}" />`;
+    const rare = (f && (f.rarity_slang || f.rarity)) || card.rarity || "特殊";
+    const stars = f ? albumFighterStar(f.id) : 1;
+    const rich = f ? fighterHelpRichHtml(f, { preview: fighterPreviewStats(f) }) : "";
+    const blurb = card.blurb || (f && (f.blurb || f.flavor)) || "";
+    const btnLabel = owned ? "已換過" : (can ? `用 ${price} 聲望換` : `聲望不足（需 ${price}）`);
+    return `
+      <div class="album-mask tea-detail-mask" id="tea-detail-mask" role="dialog" aria-modal="true" aria-label="${esc(name)} 說明">
+        <div class="album-detail-sheet" id="tea-detail-sheet">
+          <button type="button" class="album-detail-x" id="tea-detail-x" aria-label="關閉">×</button>
+          <div class="album-detail-top">
+            <span class="album-badge">茶記特殊卡</span>
+            <div class="album-detail-stars">${starsRowHtml(stars, ALBUM_MAX_STAR)}</div>
+            <div class="album-detail-name">${esc(name)}</div>
+            <div class="album-detail-next">${esc(rare)}</div>
+          </div>
+          <div class="album-detail-art"><div class="tea-detail-artbox">${artHtml}</div></div>
+          ${rich
+            ? `<div class="album-detail-body tea-detail-rich">${rich}</div>`
+            : (blurb ? `<div class="album-detail-body"><p class="album-detail-line">${esc(blurb)}</p></div>` : "")}
+          <div class="tea-detail-price">
+            <span class="tea-fame">聲望 ${price}</span>
+            ${owned ? `<span class="tea-detail-state">已換過</span>` : ""}
+          </div>
+          <button type="button" class="btn ${can ? "gold" : "ghost"} tea-detail-buy" id="tea-detail-buy" data-tea-id="${esc(card.id)}" ${can ? "" : "disabled"}>${esc(btnLabel)}</button>
+          <p class="album-detail-foot">點擊空白處或右上角關閉</p>
+        </div>
+      </div>`;
+  }
+
+  function viewTeaHouse(root) {
+    ensureDaily();
+    const cards = teaShopList();
+    const bought = teaShopBoughtSet();
+    const fame = state.fame | 0;
+    const detailCard = state.teaDetailId ? cards.find((c) => c && c.id === state.teaDetailId) : null;
+
+    const rows = cards.map((c) => {
+      const f = fighterById[c.id];
+      const price = Math.max(0, c.fame | 0);
+      const owned = bought.has(c.id);
+      const can = !owned && fame >= price;
+      const art = c.art || (f && f.art) || "";
+      const name = c.name || (f && f.name) || c.id;
+      const blurb = c.blurb || (f && (f.blurb || f.flavor)) || "";
+      const artHtml = art
+        ? `<img src="${esc(art)}" alt="${esc(name)}" loading="lazy" data-card-name="${esc(name)}" data-card-kind="fighter" />`
+        : `<img src="${cardGlyphDataUrl(name, "fighter")}" alt="${esc(name)}" />`;
+      return `
+        <article class="tea-card${owned ? " owned" : ""}${can ? " can" : ""}" data-tea-id="${esc(c.id)}" role="button" tabindex="0" aria-label="${esc(name)}（點擊查看說明）" title="點擊查看說明">
+          <div class="tea-art">${artHtml}${owned ? `<span class="tea-badge">已換</span>` : ""}</div>
+          <div class="tea-body">
+            <div class="tea-name">${esc(name)}<span class="tea-help-ico" aria-hidden="true">?</span></div>
+            <div class="tea-rare">${esc((f && (f.rarity_slang || f.rarity)) || c.rarity || "特殊")}${f ? ` · 攻${f.atk | 0} 速${f.spd | 0}` : ""}</div>
+            ${blurb ? `<p class="tea-blurb">${esc(blurb)}</p>` : ""}
+            <div class="tea-price"><span class="tea-fame">聲望 ${price}</span></div>
+          </div>
+          <div class="tea-act">
+            <button type="button" class="btn small ${can ? "gold" : "ghost"} tea-buy" data-tea-id="${esc(c.id)}" ${can ? "" : "disabled"}>${owned ? "已換" : (fame >= price ? "換" : "聲望不足")}</button>
+          </div>
+        </article>`;
+    }).join("") || `<div class="soft-panel">茶記暫時未有特殊卡——等老闆入貨。</div>`;
+
+    root.innerHTML = `
+      <div class="hud">
+        <span class="chip year"><span class="dot"></span>茶記</span>
+        <span class="chip soul"><span class="dot"></span>膠幣 ${state.soul}</span>
+        <span class="chip fame"><span class="dot"></span>聲望 ${fame}</span>
+      </div>
+      <div class="ribbon">茶記 · 熟客</div>
+      <div class="tea-wrap">
+        <p class="tea-intro">做差事儲聲望，同老闆娘講兩句，就有特別貨。<br/><span class="tea-tap-hint">點卡片可以睇完整說明</span></p>
+        <div class="tea-list">${rows}</div>
+      </div>
+      ${detailCard
+        ? teaCardDetailHtml(detailCard, {
+            owned: bought.has(detailCard.id),
+            can: !bought.has(detailCard.id) && fame >= Math.max(0, detailCard.fame | 0),
+          })
+        : ""}
+      <nav class="tab-bar" aria-label="主選單">
+        <button class="tab" type="button" id="tab-book"><span class="ico">📖</span>卡冊</button>
+        <button class="tab" type="button" id="tab-life"><span class="ico">🏠</span>今世</button>
+        <button class="tab on" type="button" id="tab-teahouse"><span class="ico">🍜</span>茶記</button>
+        <button class="tab" type="button" id="tab-jobs"><span class="ico">📋</span>差事</button>
+        <button class="tab" type="button" id="tab-more" aria-disabled="true"><span class="ico">⋯</span>更多</button>
+      </nav>
+      <div id="home-toast" class="home-toast" hidden></div>
+    `;
+    root.classList.add("tea-screen");
+    const toast = (msg) => {
+      const el = $("#home-toast", root);
+      if (!el) return;
+      el.hidden = false;
+      el.textContent = msg;
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => { el.hidden = true; }, 1900);
+    };
+    if (state.teaPendingNote) {
+      const note = state.teaPendingNote;
+      state.teaPendingNote = "";
+      setTimeout(() => toast(note), 60);
+    }
+    root.querySelectorAll(".tea-buy[data-tea-id]").forEach((btn) => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const res = buyTeaShopCard(btn.dataset.teaId);
+        toast(res.msg);
+        if (res.ok) render();
+      };
+    });
+
+    /* 點卡片（非按鈕區）→ 開詳情 */
+    const openDetail = (id) => {
+      state.teaDetailId = id;
+      render();
+    };
+    root.querySelectorAll(".tea-card[data-tea-id]").forEach((card) => {
+      card.onclick = (e) => {
+        if (e.target && e.target.closest && e.target.closest(".tea-buy")) return;
+        openDetail(card.dataset.teaId);
+      };
+      card.onkeydown = (e) => {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        e.preventDefault();
+        openDetail(card.dataset.teaId);
+      };
+    });
+
+    const dMask = $("#tea-detail-mask", root);
+    if (dMask) {
+      const close = () => { state.teaDetailId = null; render(); };
+      dMask.onclick = (e) => { if (e.target === dMask) close(); };
+      const dx = $("#tea-detail-x", root);
+      if (dx) dx.onclick = (e) => { e.stopPropagation(); close(); };
+      /* 詳情內的技能格：點一下睇效果（同卡冊一致） */
+      dMask.querySelectorAll(".fd-skill.fixed, .fd-skill.filled").forEach((el) => {
+        el.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const text = (el.getAttribute("data-help-text") || "").trim();
+          if (!text) return;
+          showHelpTip(el, text);
+        });
+      });
+      const dBuy = $("#tea-detail-buy", root);
+      if (dBuy) {
+        dBuy.onclick = (e) => {
+          e.stopPropagation();
+          const res = buyTeaShopCard(dBuy.dataset.teaId);
+          if (res.ok) {
+            state.teaDetailId = null;
+            state.teaPendingNote = res.msg;
+            render();
+          } else {
+            toast(res.msg);
+          }
+        };
+      }
+    }
+    $("#tab-life", root).onclick = () => { state.screen = "home"; render(); };
+    $("#tab-jobs", root).onclick = () => { state.screen = "missions"; render(); };
+    const tb = $("#tab-book", root);
+    if (tb) tb.onclick = () => { state.screen = "album"; render(); };
+    const more = $("#tab-more", root);
+    if (more) more.onclick = () => toast("這個位置尚未開放。");
   }
 
   function buyStarUp(fighterId) {
@@ -3931,30 +6113,366 @@
     wireStoryDock(root);
   }
 
-  function viewSoft(root) {
+  /* ========== t366：三類養成事件（裝備強化／戰鬥卡練功／復活） ========== */
+
+  /** 裝備強化價：膠幣 40 × 當前星（t367：改膠幣，因金幣稀缺） */
+  function gearUpgradePrice(star) {
+    return 40 * Math.max(1, star | 0);
+  }
+
+  /** 已擁有、未滿星嘅裝備（口袋優先排序，方便玩家搵） */
+  function gearUpgradeCandidates() {
+    albumEnsureState();
+    ensureGearShape();
+    const equipped = new Set(GEAR_SLOTS.map((s) => state.accountGear[s.id]).filter(Boolean));
+    const owned = equipItemList().filter((it) => it && it.id && albumCardCount(it.id) > 0);
+    const can = owned.filter((it) => equipStarOf(it) < (Number(it.max_star) || 5));
+    const on = can.filter((it) => equipped.has(it.id));
+    const rest = can.filter((it) => !equipped.has(it.id));
+    return on.concat(rest);
+  }
+
+  /** 裝備強化：直接＋1 星（用膠幣；t367 由金幣改成膠幣） */
+  function buyGearUpgrade(itemId) {
+    albumEnsureState();
+    ensureGearShape();
+    const item = itemByIdLookup()[itemId];
+    if (!item) return false;
+    const star = equipStarOf(item);
+    const maxS = Math.max(1, Number(item.max_star) || 5);
+    if (star >= maxS) return false;
+    const price = gearUpgradePrice(star);
+    if ((state.soul | 0) < price) return false;
+    state.soul = (state.soul | 0) - price;
+    state.equipStars[itemId] = star + 1;
+    bumpEquipStar(1);
+    state.softNote = `「${item.name}」升至 ★${star + 1}（全隊加乘）`;
+    state.shopLeftEmpty = false;
+    state.gearUpgrade = { done: { id: itemId, star: star + 1 } };
+    state.screen = "soft";
+    return true;
+  }
+
+  function leaveGearUpgrade() {
+    state.softNote = "離開強化攤，未強化";
+    state.shopLeftEmpty = true;
+    state.gearUpgrade = null;
+    state.screen = "soft";
+  }
+
+  function viewGearUpgrade(root) {
     const ev = state.selectedEvent;
-    const noReward = !!state.shopLeftEmpty;
-    let gain = 0;
-    let luckNote = "";
-    if (!noReward) {
-      gain = ev.reward_soul || 10;
-      const og = state.originId ? originById[state.originId] : null;
-      if (og && og.bonus_soul) gain = Math.max(1, Math.round(gain * (1 + og.bonus_soul)));
-      // 幸運：軟事件／奇遇 reward × (1 + luck*0.01)
-      const beforeLuck = gain;
-      gain = applyLuckToReward(gain);
-      luckNote = gain !== beforeLuck ? `（幸運×${luckRewardMult().toFixed(2)}）` : "";
+    if (!ev || ev.category !== "gear_upgrade") {
+      state.screen = "events";
+      render();
+      return;
     }
-    const rewardLine = noReward
-      ? `未獲取額外膠幣／經驗 · <span style="color:var(--neon-cyan)">下一歲 ${state.age + 1}歲（第 ${state.year + 1} 年）</span>`
-      : `今世賺了 <b style="color:var(--neon-gold)">+${gain}</b> ${esc(L["ui.resource"] || "膠幣")}${luckNote}${(ev.reward_xp|0) ? ` · 經驗 +${ev.reward_xp|0}` : ""} · <span style="color:var(--neon-cyan)">下一歲 ${state.age + 1}歲（第 ${state.year + 1} 年）</span>`;
+    const soul = state.soul | 0;
+    const cands = gearUpgradeCandidates();
+    const cards = cands.map((it) => {
+      const star = equipStarOf(it);
+      const maxS = Math.max(1, Number(it.max_star) || 5);
+      const price = gearUpgradePrice(star);
+      const can = soul >= price;
+      const slotMeta = GEAR_SLOTS.find((s) => s.id === it.slot);
+      const slotLabel = (slotMeta && slotMeta.label) || it.slot || "";
+      return `
+        <button type="button" class="shop-card${can ? "" : " disabled"}" data-gearup-id="${esc(it.id)}" ${can ? "" : 'aria-disabled="true"'}>
+          <img src="${esc(it.art || "")}" alt="${esc(it.name || "")}" />
+          <div class="shop-card-body">
+            <div class="shop-card-name">${esc(it.name || it.id)}</div>
+            <div class="shop-card-rare">${esc(slotLabel)}槽 · ★${star} → ★${star + 1}／${maxS}</div>
+            <div class="${can ? "shop-price" : "shop-price insufficient"}">膠幣 ${price}</div>
+            ${can ? "" : `<span class="shop-insuff">膠幣不足</span>`}
+          </div>
+        </button>`;
+    }).join("") || `<div class="shop-empty">沒有可強化嘅裝備（已擁有且未滿星）</div>`;
+
     root.innerHTML = `
       ${lifeHudHtml()}
-      <div class="ribbon">${ageRibbon(esc(ev.name))}</div>
+      <div class="ribbon">${ageRibbon(esc(ev.name || "裝備強化攤"))}</div>
+      <div class="shop-wrap">
+        <div class="shop-gold-banner">持有膠幣 <b>${soul}</b> · 價＝40×當前星</div>
+        <p class="shop-sub">選一件裝備直接＋1 星（唔需同名卡，加乘全隊生效）</p>
+        <div class="shop-grid shop-grid-scroll">${cards}</div>
+      </div>
+      <div class="soft-cta">
+        <button type="button" class="btn ghost" id="btn-gearup-leave">離開</button>
+        <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
+      </div>
+      ${storyDockHtml()}
+    `;
+    root.querySelectorAll("[data-gearup-id]").forEach((btn) => {
+      btn.onclick = () => {
+        const id = btn.dataset.gearupId;
+        const item = itemByIdLookup()[id];
+        if (!item) return;
+        const price = gearUpgradePrice(equipStarOf(item));
+        if ((state.soul | 0) < price) {
+          shopToast(root, "膠幣不足");
+          return;
+        }
+        if (!buyGearUpgrade(id)) {
+          shopToast(root, "無法強化");
+          return;
+        }
+        render();
+      };
+    });
+    $("#btn-gearup-leave", root).onclick = () => { leaveGearUpgrade(); render(); };
+    $("#btn-abandon", root).onclick = () => requestAbandonLife();
+    wireStoryDock(root);
+  }
+
+  /* ---------- 戰鬥卡練功 ---------- */
+
+  /** 練功所得卡經驗：40 × 當前等級（Lv5 就唔再升） */
+  function trainXpGain(level) {
+    return 40 * Math.max(1, level | 0);
+  }
+
+  function trainCandidates() {
+    albumEnsureState();
+    const team = Array.isArray(state.team) ? state.team.slice() : [];
+    const owned = (DATA.fighters || []).filter(
+      (f) => f && f.id && albumCardCount(f.id) > 0 && !isDeadFighter(f.id)
+    );
+    const can = owned.filter((f) => fighterLevelOf(f.id) < FIGHTER_LEVEL_MAX);
+    const inTeam = can.filter((f) => team.includes(f.id));
+    const rest = can.filter((f) => !team.includes(f.id));
+    return inTeam.concat(rest);
+  }
+
+  function leaveFighterTrain() {
+    state.softNote = "離開練功場，未練功";
+    state.shopLeftEmpty = true;
+    state.fighterTrain = null;
+    state.screen = "soft";
+  }
+
+  function viewFighterTrain(root) {
+    const ev = state.selectedEvent;
+    if (!ev || ev.category !== "fighter_train") {
+      state.screen = "events";
+      render();
+      return;
+    }
+    const cands = trainCandidates();
+    const cards = cands.map((f) => {
+      const lv = fighterLevelOf(f.id);
+      const xp = fighterXpOf(f.id);
+      const gain = trainXpGain(lv);
+      const need = fighterXpToNext(lv);
+      const inPocket = (state.team || []).includes(f.id);
+      const star = albumFighterStar(f.id);
+      return `
+        <button type="button" class="shop-card" data-train-id="${esc(f.id)}">
+          <img src="${esc(f.art || "")}" alt="${esc(f.name || "")}" />
+          <div class="shop-card-body">
+            <div class="shop-card-name">${esc(f.name || f.id)}</div>
+            <div class="shop-card-rare">Lv.${lv} · ★${star}${inPocket ? " · 口袋" : ""}</div>
+            <div class="shop-price gift-tag">練功 +${gain} 卡經驗</div>
+            <div class="shop-sub-line">${lv >= FIGHTER_LEVEL_MAX ? "已滿級" : `現 ${xp}／${need}`}</div>
+          </div>
+        </button>`;
+    }).join("") || `<div class="shop-empty">沒有可練功嘅戰鬥卡（已滿級或全部陣亡）</div>`;
+
+    root.innerHTML = `
+      ${lifeHudHtml()}
+      <div class="ribbon">${ageRibbon(esc(ev.name || "練功場"))}</div>
+      <div class="shop-wrap">
+        <p class="shop-sub">選一張戰鬥卡練功：直接得卡經驗 ${esc("（每級 +2 攻 / +10 血）")}</p>
+        <div class="shop-grid shop-grid-scroll">${cards}</div>
+      </div>
+      <div class="soft-cta">
+        <button type="button" class="btn ghost" id="btn-train-leave">離開</button>
+        <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
+      </div>
+      ${storyDockHtml()}
+    `;
+    root.querySelectorAll("[data-train-id]").forEach((btn) => {
+      btn.onclick = () => {
+        const id = btn.dataset.trainId;
+        if (!id) return;
+        const lv = fighterLevelOf(id);
+        if (lv >= FIGHTER_LEVEL_MAX) {
+          shopToast(root, "已滿級");
+          return;
+        }
+        const gain = trainXpGain(lv);
+        const res = grantFighterCardXp(id, gain);
+        if (!res) {
+          shopToast(root, "無法練功");
+          return;
+        }
+        state.fighterTrain = { done: { id, lv: res.toLv, xp: res.xp, leveled: res.leveled } };
+        state.softNote = res.leveled
+          ? `「${res.name}」升到 Lv.${res.toLv}`
+          : `「${res.name}」練功 +${gain} 卡經驗`;
+        state.shopLeftEmpty = false;
+        state.screen = "soft";
+        render();
+      };
+    });
+    $("#btn-train-leave", root).onclick = () => { leaveFighterTrain(); render(); };
+    $("#btn-abandon", root).onclick = () => requestAbandonLife();
+    wireStoryDock(root);
+  }
+
+  /* ---------- 復活陣亡卡 ---------- */
+
+  /**
+   * t367 經濟修復（B）：復活接受「膠幣」。
+   * 膠幣（soul）收入充足（平均 16/事件、戰鬥亦有），而金幣是稀缺資源。
+   * 復活改為主要用膠幣，令機制在實戰中真正可用。
+   */
+  function reviveSoulPrice(fighterId) {
+    const f = fighterById[fighterId];
+    const rank = { 普通: 1, 稀有: 1.5, 史詩: 2.25, 最高級: 3 }[f && f.rarity] || 1;
+    return Math.round(60 * rank);
+  }
+
+  /** 復活價：可選膠幣（主）或金幣（較便宜，給缺膠幣的人） */
+  function revivePrice(fighterId) {
+    return reviveSoulPrice(fighterId);
+  }
+
+  function reviveCandidates() {
+    albumEnsureState();
+    const dead = Array.isArray(state.deadFighters) ? state.deadFighters.slice() : [];
+    return dead
+      .map((id) => fighterById[id])
+      .filter(Boolean);
+  }
+
+  function leaveFighterRevive() {
+    state.softNote = "離開義莊，未復活";
+    state.shopLeftEmpty = true;
+    state.fighterRevive = null;
+    state.screen = "soft";
+  }
+
+  function buyRevive(fighterId, useGold) {
+    if (!isDeadFighter(fighterId)) return false;
+    const f = fighterById[fighterId];
+    if (!f) return false;
+    const soulPrice = reviveSoulPrice(fighterId);
+    if (!useGold && (state.soul | 0) < soulPrice) return false;
+    if (useGold && (state.gold | 0) < Math.round(soulPrice * 0.4)) return false;
+    if (useGold) {
+      state.gold = (state.gold | 0) - Math.round(soulPrice * 0.4);
+    } else {
+      state.soul = (state.soul | 0) - soulPrice;
+    }
+    // 移出陣亡名單 → 可再出戰；技能唔會自動復原（已燒）
+    state.deadFighters = state.deadFighters.filter((id) => id !== fighterId);
+    // 重新入隊（若口袋有位）
+    const cap = fighterPocketCap();
+    if (!state.team.includes(fighterId) && (state.team || []).length < cap) {
+      state.team.push(fighterId);
+    }
+    if (!state.loadout[fighterId]) state.loadout[fighterId] = [];
+    state.softNote = `「${f.name}」已復活——重返隊伍（技能已燒，需再裝）`;
+    state.shopLeftEmpty = false;
+    state.fighterRevive = { done: { id: fighterId, name: f.name } };
+    state.screen = "soft";
+    return true;
+  }
+
+  function viewFighterRevive(root) {
+    const ev = state.selectedEvent;
+    if (!ev || ev.category !== "fighter_revive") {
+      state.screen = "events";
+      render();
+      return;
+    }
+    const soul = state.soul | 0;
+    const gold = state.gold | 0;
+    const cands = reviveCandidates();
+    const cards = cands.map((f) => {
+      const sp = reviveSoulPrice(f.id);
+      const gp = Math.round(sp * 0.4);
+      const canSoul = soul >= sp;
+      const canGold = gold >= gp;
+      const can = canSoul || canGold;
+      const star = albumFighterStar(f.id);
+      const lv = fighterLevelOf(f.id);
+      return `
+        <button type="button" class="shop-card${can ? "" : " disabled"}" data-revive-id="${esc(f.id)}" data-revive-soul="${sp}" data-revive-gold="${gp}" ${canSoul ? 'data-use-soul="1"' : (canGold ? 'data-use-gold="1"' : "")} ${can ? "" : 'aria-disabled="true"'}>
+          <img src="${esc(f.art || "")}" alt="${esc(f.name || "")}" />
+          <div class="shop-card-body">
+            <div class="shop-card-name">${esc(f.name || f.id)}</div>
+            <div class="shop-card-rare">Lv.${lv} · ★${star} · ${esc(f.rarity || "")}</div>
+            <div class="${canSoul ? "shop-price" : "shop-price insufficient"}">膠幣 ${sp}</div>
+            <div class="${canGold ? "shop-price" : "shop-price insufficient"}">或 金幣 ${gp}</div>
+          </div>
+        </button>`;
+    }).join("") || `<div class="shop-empty">今世冇陣亡卡——義莊得個空位</div>`;
+
+    root.innerHTML = `
+      ${lifeHudHtml()}
+      <div class="ribbon">${ageRibbon(esc(ev.name || "義莊"))}</div>
+      <div class="shop-wrap">
+        <div class="shop-gold-banner">膠幣 <b>${soul}</b> · 金幣 <b>${gold}</b> · 陣亡卡 ${cands.length} 張</div>
+        <p class="shop-sub">付膠幣（或較便宜嘅金幣）請師傅做法事，令陣亡卡重返隊伍（技能已燒，需重新裝）</p>
+        <div class="shop-grid shop-grid-scroll">${cards}</div>
+      </div>
+      <div class="soft-cta">
+        <button type="button" class="btn ghost" id="btn-revive-leave">離開</button>
+        <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
+      </div>
+      ${storyDockHtml()}
+    `;
+    root.querySelectorAll("[data-revive-id]").forEach((btn) => {
+      btn.onclick = () => {
+        const id = btn.dataset.reviveId;
+        const useGold = btn.getAttribute("data-use-soul") !== "1" && btn.getAttribute("data-use-gold") === "1";
+        if (!buyRevive(id, useGold)) {
+          shopToast(root, "資源不足");
+          return;
+        }
+        render();
+      };
+    });
+    $("#btn-revive-leave", root).onclick = () => { leaveFighterRevive(); render(); };
+    $("#btn-abandon", root).onclick = () => requestAbandonLife();
+    wireStoryDock(root);
+  }
+
+  function viewSoft(root) {
+    const ev = state.selectedEvent;
+    // t364：結局事件只有 50 膠幣，而且只發一次（已領過就 0）
+    const isEnding = !!ev.office_ending;
+    const endingClaimable = isEnding ? endingRewardAvailable(ev) : true;
+    const gain = endingClaimable ? listedEventSoul(ev) : 0;
+    const goldGain = endingClaimable ? (ev.reward_gold | 0) : 0;
+    const rewardLine = isEnding
+      ? (endingClaimable
+          ? `結局達成 · 獲得 <b style="color:var(--neon-gold)">+${gain}</b> ${esc(L["ui.resource"] || "膠幣")}（一次性）`
+          : `<span style="color:var(--muted)">此結局已領過 50 膠幣——重玩唔再發</span>`)
+      : `今世賺了 <b style="color:var(--neon-gold)">+${gain}</b> ${esc(L["ui.resource"] || "膠幣")}${(ev.reward_xp|0) ? ` · 經驗 +${ev.reward_xp|0}` : ""}${goldGain ? ` · 金幣 +${goldGain}` : ""} · <span style="color:var(--neon-cyan)">下一歲 ${state.age + 1}歲（第 ${state.year + 1} 年）</span>`;
+    const endingBanner = isEnding
+      ? `<div class="of-ending-banner">
+           <div class="of-ending-kicker">分支結局</div>
+           <div class="of-ending-name">${esc(ev.office_ending_label || ev.name || "")}</div>
+         </div>`
+      : "";
+    // t365：分支結局用「故事包 · 結局」頂條，唔顯示人生 HUD（避免 10 歲等不相干歲數）
+    const endingAge = state.officeEndAge | 0;
+    const packMeta = storyPackById("office_ballad");
+    root.innerHTML = `
+      ${isEnding
+        ? `<div class="of-hud">${esc(packMeta ? packMeta.name : "故事包")} · ${endingAge ? endingAge + "歲 · " : ""}結局</div>`
+        : lifeHudHtml()}
+      <div class="ribbon">${isEnding
+        ? esc(ev.office_ending_label || ev.name || "")
+        : ageRibbon(esc(ev.name))}</div>
       <div class="soft-scroll">
+        ${endingBanner}
         <img class="result-art soft-art" src="${esc(ev.art)}" alt="" />
         <div class="bubble neon">${esc(ev.desc)}</div>
-        <div class="soft-panel">${state.softNote ? `<span style="color:var(--neon-pink);font-weight:800">${esc(state.softNote)}</span><br/>` : ""}${esc(ev.reward_blurb || eventCategoryLabel(ev) || "日常")}<br/>${rewardLine}</div>
+        ${eventDialogueHtml(ev, "soft-dialogue")}
+        <div class="soft-panel">${state.softNote ? `<span style="color:var(--neon-pink);font-weight:800">${esc(state.softNote)}</span><br/>` : ""}${isEnding ? "" : esc(ev.reward_blurb || eventCategoryLabel(ev) || "日常") + "<br/>"}${rewardLine}</div>
       </div>
       <div class="soft-cta">
         <button class="btn gold" id="btn-ok" data-help="btn-ok">${esc(L["ui.next_year"] || "繼續")}</button>
@@ -3963,9 +6481,13 @@
       ${storyDockHtml()}
     `;
     const settleTo = (screen) => {
-      if (!noReward) {
-        state.soul += gain;
-        if ((ev.reward_xp | 0) > 0) gainXp(ev.reward_xp | 0);
+      state.soul += gain;
+      if (goldGain) state.gold = (state.gold | 0) + goldGain;
+      if ((ev.reward_xp | 0) > 0) gainXp(ev.reward_xp | 0);
+      // 結局旗標：領完即鎖，防止重複領 50 膠幣
+      if (isEnding && endingClaimable && ev.flag_on_complete) {
+        if (!state.lifeFlags || typeof state.lifeFlags !== "object") state.lifeFlags = {};
+        state.lifeFlags[ev.flag_on_complete] = 1;
       }
       state.shopLeftEmpty = false;
       trackEventMission(ev, { soft: true });
@@ -3976,8 +6498,8 @@
         state.lastResult = {
           win: true,
           reward: 0,
-          rewardBlurb: lifeOver() ? "壽命已到——今世歲數上限。" : "人生切片已跑完。",
-          eventName: lifeOver() ? "壽命到限" : "切片完結",
+          rewardBlurb: lifeEndBlurb(),
+          eventName: lifeEndName(),
           deadNames: [],
         };
         state.screen = "result";
@@ -4035,12 +6557,7 @@
       mg.timers = [];
     };
 
-    const baseSoul = () => {
-      let g = ev.reward_soul || 10;
-      const og = state.originId ? originById[state.originId] : null;
-      if (og && og.bonus_soul) g = Math.max(1, Math.round(g * (1 + og.bonus_soul)));
-      return applyLuckToReward(g);
-    };
+    const baseSoul = () => listedEventSoul(ev);
     const baseXp = () => (ev.reward_xp | 0);
     const baseGold = () => (ev.reward_gold | 0);
 
@@ -4055,41 +6572,75 @@
         won: "破關成功",
         lost: "破關失敗",
       })[mg.phase] || "";
+      const isResult = mg.phase === "won" || mg.phase === "lost";
+      const timePct = Math.max(0, Math.min(100, (remain / timeLimitSec) * 100));
+      const timeWarn = remain <= 8;
+
+      // 關卡指示燈
+      const dots = [];
+      for (let r = 1; r <= maxRounds; r++) {
+        const cls = mg.phase === "won" || r < mg.round ? "done" : (r === mg.round && !isResult ? "now" : "");
+        dots.push(`<span class="mg-round-dot${cls ? " " + cls : ""}"></span>`);
+      }
+
+      // 鍵位（圓形霓虹）
       const pads = [];
       for (let i = 0; i < padCount; i++) {
         const lit = mg.flashIdx === i ? " lit" : "";
-        const disabled = (mg.phase !== "input") ? " disabled" : "";
+        const dis = mg.phase !== "input" ? " disabled" : "";
         pads.push(
-          `<button type="button" class="mg-pad${lit}${disabled}" data-pad="${i}" style="--mg-c:${PAD_COLORS[i]}" ${mg.phase !== "input" ? "disabled" : ""} aria-label="${PAD_LABELS[i]}">` +
+          `<button type="button" class="mg-pad mg-pad-neon${lit}" data-pad="${i}" style="--mg-c:${PAD_COLORS[i]}"${dis} aria-label="${PAD_LABELS[i]}">` +
           `<span class="mg-pad-label">${PAD_LABELS[i]}</span></button>`
         );
       }
+
+      // 輸入進度
+      const progress = mg.phase === "input" && mg.sequence.length
+        ? `<div class="mg-input-progress">${mg.sequence
+            .map((_, i) => `<i class="${i < mg.inputIdx ? "on" : ""}"></i>`)
+            .join("")}</div>`
+        : "";
+
       let cta = "";
       if (mg.phase === "intro") {
         cta = `<button class="btn gold" id="btn-mg-start" type="button">開始破關</button>
           <button class="btn ghost" id="btn-mg-skip" type="button">放棄（半獎）</button>`;
-      } else if (mg.phase === "won" || mg.phase === "lost") {
+      } else if (isResult) {
         cta = `<button class="btn gold" id="btn-mg-ok" type="button" data-help="btn-ok">繼續</button>
           <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>`;
       } else {
         cta = `<button class="btn ghost" id="btn-mg-skip" type="button">放棄（半獎）</button>`;
       }
-      const rewardLine = (mg.phase === "won" || mg.phase === "lost")
+
+      const rewardLine = isResult
         ? `<div class="soft-panel">${esc(mg.message)}<br/>今世賺了 <b style="color:var(--neon-gold)">+${mg.rewardSoul}</b> 膠幣` +
           `${mg.rewardXp ? ` · 經驗 +${mg.rewardXp}` : ""}` +
           `${mg.rewardGold ? ` · 金幣 +${mg.rewardGold}` : ""}` +
           `${mg.won && ev.attrs_delta ? ` · ${esc(formatAttrsDelta(ev.attrs_delta).join("、") || "")}` : ""}` +
           ` · <span style="color:var(--neon-cyan)">下一歲 ${state.age + 1}歲（第 ${state.year + 1} 年）</span></div>`
-        : `<div class="mg-hud"><span>第 ${mg.round}/${maxRounds} 關</span><span>剩餘 ${remain}s</span><span>${esc(phaseLabel)}</span></div>
-           <div class="bubble neon mg-msg">${esc(mg.message)}</div>`;
+        : "";
 
       root.innerHTML = `
         ${lifeHudHtml()}
         <div class="ribbon">${ageRibbon(esc(ev.name) + " · 小遊戲")}</div>
         <div class="mg-wrap">
-          <p class="sub mg-sub">${esc(ev.desc || "記憶破關")}</p>
+          <div class="mg-arcade">
+            <div class="mg-rounds" aria-hidden="true">${dots.join("")}</div>
+            <div class="mg-timebar${timeWarn ? " warn" : ""}"><i style="width:${timePct}%"></i></div>
+            <div class="mg-status">
+              <span>第 <b>${mg.round}</b>／${maxRounds} 關</span>
+              <span class="mg-phase">${esc(phaseLabel)}</span>
+              <span>剩餘 <b>${remain}</b>s</span>
+            </div>
+            ${
+              isResult
+                ? `<div class="mg-result-banner ${mg.won ? "win" : "lose"}">${mg.won ? "★ 破關成功 ★" : "破關失敗"}</div>`
+                : `<div class="bubble neon mg-msg">${esc(mg.message)}</div>`
+            }
+            ${progress}
+            <div class="mg-pads mg-pads-neon" style="--mg-n:${padCount}">${pads.join("")}</div>
+          </div>
           ${rewardLine}
-          <div class="mg-pads" style="--mg-n:${padCount}">${pads.join("")}</div>
         </div>
         <div class="soft-cta mg-cta">${cta}</div>
         ${storyDockHtml()}
@@ -4131,6 +6682,19 @@
     };
 
     const startWatchRound = () => {
+      /*
+       * t378b：清走上一關殘留嘅「輸入超時」計時器。
+       *
+       * 原本只靠 `if (mg.phase === "input")` 判斷，但實測發現：
+       * 第 1 關輸入完 → 進入第 2 關 watch → 播完序列 → 第 2 關 input，
+       * 而第 1 關嗰個 10 秒超時計時器仍然存在，若它喺第 2 關 input 期間到期，
+       * 就會立即判「輸入逾時」（實測第 2 關只有 300ms 反應時間）。
+       * 這裡只取消舊嘅 input 超時，唔碰全局限時（mg.deadlineAt 嗰個）。
+       */
+      if (mg.inputTimer) {
+        clearTimeout(mg.inputTimer);
+        mg.inputTimer = null;
+      }
       // 每關序列長度 = round+1（第1關長2…第3關長4）
       const len = mg.round + 1;
       mg.sequence = [];
@@ -4152,19 +6716,28 @@
           mg.message = "依同樣順序點選鍵位。";
           mg.inputDeadlineAt = Date.now() + 10000;
           paint();
-          schedule(() => {
+          // t378b：記錄計時器 id，方便下一關開始時取消（避免舊超時誤判新關卡）
+          if (mg.inputTimer) clearTimeout(mg.inputTimer);
+          mg.inputTimer = schedule(() => {
             if (mg.phase === "input") endRun(false, "輸入逾時——半獎，人生繼續。");
           }, 10000);
           return;
         }
         mg.flashIdx = mg.sequence[step];
+        // t378：亮起音效（每個鍵位不同音高，聽感上幫記憶）
+        gachaBeep(420 + mg.flashIdx * 110, 0.09, 0.03);
         paint();
+        /*
+         * t378：亮起時間隨序列長度遞增（480ms → 最長 620ms），
+         * 因舊版固定 480ms，第 3 關 4 步時玩家經常追唔切。
+         */
+        const litMs = Math.min(620, 480 + (mg.sequence.length - 2) * 45);
         schedule(() => {
           mg.flashIdx = -1;
           paint();
           step += 1;
           schedule(flashNext, 220);
-        }, 480);
+        }, litMs);
       };
       schedule(flashNext, 400);
     };
@@ -4177,12 +6750,31 @@
       }
       const expect = mg.sequence[mg.inputIdx];
       if (idx !== expect) {
-        endRun(false, "順序有誤——半獎，人生繼續。");
+        // t378：錯誤鍵位抖動 + 正確鍵位閃一下，即時視覺回饋
+        const wrongEl = root.querySelector(`.mg-pad[data-pad="${idx}"]`);
+        if (wrongEl) {
+          wrongEl.classList.add("miss");
+          setTimeout(() => wrongEl && wrongEl.classList.remove("miss"), 380);
+        }
+        const rightEl = root.querySelector(`.mg-pad[data-pad="${expect}"]`);
+        if (rightEl) {
+          rightEl.classList.add("hit");
+          setTimeout(() => rightEl && rightEl.classList.remove("hit"), 320);
+        }
+        gachaBeep(160, 0.12, 0.06);
+        schedule(() => endRun(false, "順序有誤——半獎，人生繼續。"), 380);
         return;
       }
       mg.inputIdx += 1;
       mg.flashIdx = idx;
       paint();
+      // t378：命中波紋
+      const hitEl = root.querySelector(`.mg-pad[data-pad="${idx}"]`);
+      if (hitEl) {
+        hitEl.classList.add("hit");
+        setTimeout(() => hitEl && hitEl.classList.remove("hit"), 320);
+      }
+      gachaBeep(520 + idx * 90, 0.05, 0.035);
       schedule(() => {
         mg.flashIdx = -1;
         if (mg.inputIdx >= mg.sequence.length) {
@@ -4257,8 +6849,8 @@
         state.lastResult = {
           win: true,
           reward: 0,
-          rewardBlurb: lifeOver() ? "壽命已到——今世歲數上限。" : "人生切片已跑完。",
-          eventName: lifeOver() ? "壽命到限" : "切片完結",
+          rewardBlurb: lifeEndBlurb(),
+          eventName: lifeEndName(),
           deadNames: [],
         };
         state.screen = "result";
@@ -4338,9 +6930,29 @@
     return bonus;
   }
 
+  /** t364：裝備／戰鬥卡共用同一套稀有度名（以前 epic→「稀有」、legend→「傳奇」同卡冊對不上） */
   function rarityEquipLabel(r) {
-    const map = { common: "普通", rare: "稀有", legend: "傳奇", epic: "稀有" };
-    return map[r] || r || "";
+    return rarityLabelAny(r);
+  }
+
+  /**
+   * t364：把裝備的 tag_boost（street／chachaan／wok…）轉成玩家睇得明的主題名。
+   * 原本 40 張裝備有 32 張寫住 tag_boost，但全站冇任何地方讀取 → 純死資料。
+   * 現用在說明卡，講清楚呢件裝備屬於邊個街頭主題。
+   */
+  function equipTagLabel(tag) {
+    if (!tag) return "";
+    const key = String(tag).trim();
+    if (!key) return "";
+    const fromData = (DATA.skill_tags || []).find((t) => t && t.id === key);
+    if (fromData && fromData.name) return fromData.name;
+    const fallback = {
+      street: "街頭", chachaan: "茶記", wok: "鑊氣", walled: "城寨",
+      arcade: "打機舖", nightshift: "夜更", festival: "節慶",
+      weather: "天氣", mtr: "港鐵", renqing: "人情", neon: "霓虹",
+      rooftop: "天台", any: "通用",
+    };
+    return fallback[key] || key;
   }
 
   function formatTeamBonus(bonus) {
@@ -4417,11 +7029,101 @@
         </div>
         <div class="lh-right">
           <span class="chip soul" title="膠幣"><span class="dot"></span>${state.soul}</span>
+          <span class="chip fame" title="聲望（茶記買特殊卡）"><span class="dot"></span>聲望 ${state.fame | 0}</span>
           <span class="chip gold" title="金幣"><span class="dot"></span>${state.gold | 0}</span>
-          <button type="button" class="chip gacha-entry" id="btn-gacha-entry" data-gacha-entry title="廟街霓虹扭蛋機">霓虹扭蛋</button>
+          ${gachaEntryHtml()}
         </div>
         <div class="lh-factions" title="今世勢力好感（0–5；隨人生重置）">${esc(factionFavorLine() || "勢力好感未開")}</div>
       </div>`;
+  }
+
+  /** 故事底欄「盟友」面板：顯示今世可出場的戰鬥卡（圖＋戰力＋普攻／自帶） */
+  function viewAlliesPanel(root) {
+    ensureDefaultLoadout(false);
+    ensureLoadoutShape();
+    const cap = fighterPocketCap();
+    const team = (state.team || []).filter((id) => id && fighterById[id]);
+    const deploySet = new Set((state.deploy || []).filter(Boolean));
+    const rows = team.map((fid) => {
+      const f = fighterById[fid];
+      const dead = isDeadFighter(fid);
+      const pv = dead ? null : fighterPreviewStats(f);
+      const stars = albumFighterStar(fid);
+      const rare = shopRarityLabel(f.rarity) || f.rarity || "普通";
+      const slang = f.rarity_slang || "";
+      const inField = deploySet.has(fid);
+      const load = (state.loadout[fid] || []).filter(Boolean).map((sid) => skillById[sid]).filter(Boolean);
+      const loadHtml = load.length
+        ? load.map((s) => `<span class="al-skill">${esc(s.name)}</span>`).join("")
+        : `<span class="al-skill empty">未裝技能</span>`;
+      const art = f.art
+        ? `<img src="${esc(f.art)}" alt="${esc(f.name)}" loading="lazy" data-card-name="${esc(f.name)}" data-card-kind="fighter" />`
+        : `<img src="${cardGlyphDataUrl(f.name, "fighter")}" alt="${esc(f.name)}" loading="lazy" />`;
+      const statBits = pv
+        ? `<span><b>攻</b>${pv.atk}</span>
+           <span><b>物防</b>${pv.def}</span>
+           <span><b>魔攻</b>${pv.matk}</span>
+           <span><b>速</b>${pv.spd}</span>
+           <span><b>HP</b>${pv.hp}</span>`
+        : `<span class="al-dead">已陣亡 · 今世不可再出場</span>`;
+      const basic = f.basic
+        ? `<div class="al-line"><span class="al-k">普攻</span>${esc(f.basic)}<em>${esc(basicPowerParenLabel(f))}</em></div>`
+        : "";
+      const innate = f.skill
+        ? `<div class="al-line"><span class="al-k">自帶</span>${esc(f.skill)}<em>${esc(innatePowerTagLabel(f))}</em>${f.skill_cd != null ? `<span class="al-cd">CD ${f.skill_cd | 0}</span>` : ""}</div>
+           ${f.skill_effect ? `<div class="al-eff">${esc(f.skill_effect)}</div>` : ""}`
+        : "";
+      const blurb = (f.blurb || f.flavor || "");
+      return `
+        <article class="al-card${dead ? " dead" : ""}${inField ? " infield" : ""}">
+          <div class="al-art">${art}
+            ${inField ? `<span class="al-badge field">場上</span>` : ""}
+            ${dead ? `<span class="al-badge dead">陣亡</span>` : ""}
+          </div>
+          <div class="al-body">
+            <div class="al-head">
+              <span class="al-name">${esc(f.name)}</span>
+              <span class="al-lv">Lv.${pv ? pv.level : fighterLevelOf(fid)}</span>
+            </div>
+            <div class="al-sub">${esc(rare)}${slang ? " · " + esc(slang) : ""} · ${starsRowHtml(stars, ALBUM_MAX_STAR)}</div>
+            <div class="al-stats">${statBits}</div>
+            ${basic}${innate}
+            <div class="al-line"><span class="al-k">已裝</span><span class="al-skills">${loadHtml}</span></div>
+            ${blurb ? `<p class="al-blurb">${esc(blurb)}</p>` : ""}
+          </div>
+        </article>`;
+    }).join("") || `<p class="ally-empty">口袋暫時未有戰鬥卡——準備出發時先揀卡。</p>`;
+
+    const deadCount = (state.deadFighters || []).length;
+    root.innerHTML = `
+      ${lifeHudHtml()}
+      <div class="ribbon">盟友 · 今世戰鬥卡</div>
+      <div class="al-wrap">
+        <div class="al-top">
+          <span class="al-pill">口袋 ${team.length}/${cap}</span>
+          <span class="al-pill cyan">出戰上限 ${TEAM_SIZE} 張</span>
+          <span class="al-pill ${deadCount ? "pink" : ""}">今世陣亡 ${deadCount}</span>
+        </div>
+        <p class="al-hint">戰鬥只會派上場 3 張；按下方返回可繼續人生。</p>
+        <div class="al-list">${rows}</div>
+      </div>
+      <div class="soft-cta">
+        <button type="button" class="btn gold" id="btn-allies-back">返回</button>
+      </div>
+      ${storyDockHtml()}
+    `;
+    $("#btn-allies-back", root).onclick = () => {
+      state.screen = state.alliesReturnScreen || "events";
+      state.alliesReturnScreen = null;
+      render();
+    };
+    wireStoryDock(root);
+  }
+
+  function openAlliesPanel() {
+    if (state.screen !== "allies") state.alliesReturnScreen = state.screen || "events";
+    state.screen = "allies";
+    render();
   }
 
   /** 故事流底欄 7 掣（港式名；對齊參考：盟友／冒險技能／戰鬥技能／裝備／道具／聲望／戰利品） */
@@ -4456,11 +7158,7 @@
       btn.onclick = () => {
         const k = btn.dataset.sd;
         if (k === "allies") {
-          const cap = fighterPocketCap();
-          const names = (state.team || [])
-            .map((id) => (fighterById[id] && fighterById[id].name) || id)
-            .filter(Boolean);
-          storyToast(root, `盟友口袋 ${names.length}/${cap}：${names.join("、") || "（空）"} · 故事中管理後補`);
+          openAlliesPanel();
           return;
         }
         if (k === "fame") {
@@ -4494,6 +7192,57 @@
 
   function applyLuckToReward(base) {
     return Math.max(1, Math.round((base || 0) * luckRewardMult()));
+  }
+
+  /** 事件膠幣：卡面、入帳用同一個數（身世加成後再乘幸運）。0 就係 0，唔再兜成 10。 */
+  function soulFromBase(base) {
+    let gain = base | 0;
+    if (!gain) return 0;
+    const og = state.originId ? originById[state.originId] : null;
+    if (og && og.bonus_soul) gain = Math.max(1, Math.round(gain * (1 + og.bonus_soul)));
+    return applyLuckToReward(gain);
+  }
+
+  function listedEventSoul(ev) {
+    // t364：故事包結局固定 50 膠幣，唔受身世／幸運加成影響（要求：結局才給 50）
+    if (ev && ev.office_ending) return Math.max(0, ev.reward_soul | 0);
+    return soulFromBase(ev && ev.reward_soul);
+  }
+
+  /**
+   * t364：故事包分支事件唔可以當普通年度事件隨機抽出。
+   *  - 結局事件（office_ending）：只可以由分支鏈走到底觸發
+   *  - 中途節點（office_node 但唔係鏈頭）：只可以由上一步推進觸發
+   *  - **鏈頭（office_entry）**：只可以「未玩過」時入池
+   *
+   * t375 修正（總導演回報：「完成後，事件再次出現『第一日返工』的選項」）：
+   * 原本鏈頭永遠可以入年度池，所以行完一次之後仍會再抽到，變成無限循環。
+   * 現在：只要已達成任何一個結局（`office_ending_*` 旗標），鏈頭亦唔再入池。
+   */
+  function eventExcludedFromYearPool(ev) {
+    if (!ev) return true;
+    if (ev.office_ending) return true;
+    if (ev.office_node) {
+      const pack = officePack();
+      const entry = pack && pack.office_entry;
+      // 非鏈頭 → 一律排除
+      if (!entry || ev.id !== entry) return true;
+      // 鏈頭：若已經行完任何結局，就唔再出（一個故事包只玩一次）
+      const flags = state.lifeFlags || {};
+      const alreadyFinished = Object.keys(flags).some((k) => k.indexOf("office_ending_") === 0);
+      return alreadyFinished;
+    }
+    // t369：tale 鏈節點亦唔入年度池（同 office 一樣只由分支鏈觸發）
+    if (ev.tale_node) return true;
+    return false;
+  }
+
+  /** 結局 50 膠幣只可領一次：以 flag_on_complete 判斷 */
+  function endingRewardAvailable(ev) {
+    if (!ev || !ev.office_ending) return true;
+    const flag = ev.flag_on_complete;
+    if (!flag) return true;
+    return !(state.lifeFlags && state.lifeFlags[flag]);
   }
 
   function fighterPocketCap() {
@@ -4697,7 +7446,7 @@
       if (item) {
         const star = equipStarOf(item);
         const helpGear = equipHelpText(item, slot);
-        return `<button type="button" class="prep-gear-slot filled${foc}" data-gear="${esc(slot.id)}" data-help="gear-slot" data-help-text="${helpTextAttr(helpGear)}" aria-label="${esc(slot.label)} ${esc(item.name)} ${star}星">
+        return `<button type="button" class="prep-gear-slot filled${foc}" data-gear="${esc(slot.id)}" data-gid="${esc(item.id)}" data-help="gear-slot" data-help-rich="gear" data-help-gid="${esc(item.id)}" data-help-text="${helpTextAttr(helpGear)}" aria-label="${esc(slot.label)} ${esc(item.name)} ${star}星">
           <span class="pg-label">${esc(slot.label)}</span>
           <span class="pg-art">${item.art ? `<img src="${esc(item.art)}" alt="" />` : `<span class="pg-glyph">裝</span>`}</span>
           <span class="pg-stars">${starsRowHtml(star, Number(item.max_star) || 5)}</span>
@@ -4720,8 +7469,8 @@
       const helpText = fighterHelpText(ff, { dead });
       const artSrc = ff.art ? esc(ff.art) : "";
       const artHtml = artSrc
-        ? `<img src="${artSrc}" alt="${esc(ff.name)}" />`
-        : `<span class="pf-placeholder">無圖</span>`;
+        ? `<img src="${artSrc}" alt="${esc(ff.name)}" data-card-name="${esc(ff.name)}" data-card-kind="fighter" />`
+        : `<img src="${cardGlyphDataUrl(ff.name, "fighter")}" alt="${esc(ff.name)}" />`;
       const stars = rarityStars(ff.rarity);
       const fLv = fighterLevelOf(ff.id);
       fighterCells.push(`<button type="button" class="prep-f-thumb selected${foc}${dead ? " dead" : ""}" data-id="${esc(ff.id)}" data-help="prep-fighter" data-help-rich="fighter" data-help-fid="${esc(ff.id)}" data-help-text="${helpTextAttr(helpText)}" aria-label="${esc(ff.name)} Lv.${fLv}${dead ? "（陣亡）" : ""}">
@@ -4791,8 +7540,8 @@
         const on = !dead && teamSet.has(ff.id);
         const helpText = fighterHelpText(ff, { dead });
         const artHtml = ff.art
-          ? `<img src="${esc(ff.art)}" alt="${esc(ff.name)}" />`
-          : `<span class="pf-placeholder">無圖</span>`;
+          ? `<img src="${esc(ff.art)}" alt="${esc(ff.name)}" data-card-name="${esc(ff.name)}" data-card-kind="fighter" />`
+          : `<img src="${cardGlyphDataUrl(ff.name, "fighter")}" alt="${esc(ff.name)}" />`;
         const stars = rarityStars(ff.rarity);
         const btnLabel = on ? "取消" : "選擇";
         const btnCls = on ? "pick-act cancel" : "pick-act select";
@@ -4871,7 +7620,7 @@
         const btnLabel = on ? "取消" : "選擇";
         const btnCls = on ? "pick-act cancel" : "pick-act select";
         const rare = rarityEquipLabel(item.rarity);
-        return `<div class="pick-card gear${on ? " selected" : ""}" data-help="gear-slot" data-help-text="${helpTextAttr(helpText)}">
+        return `<div class="pick-card gear${on ? " selected" : ""}" data-help="gear-slot" data-help-rich="gear" data-help-gid="${esc(item.id)}" data-help-text="${helpTextAttr(helpText)}">
           <div class="pick-art-wrap">${artHtml}
             ${on ? `<span class="pick-check">✓</span>` : ""}
           </div>
@@ -4907,7 +7656,7 @@
       <div class="hud prep-hud">
         <span class="chip year"><span class="dot"></span>第 ${state.year} 年</span>
         <span class="chip soul"><span class="dot"></span>${esc(L["ui.resource"] || "膠幣")} ${state.soul}</span>
-        <button type="button" class="chip gacha-entry" id="btn-gacha-entry" data-gacha-entry title="廟街霓虹扭蛋機">霓虹扭蛋</button>
+        ${gachaEntryHtml()}
       </div>
       <div class="ribbon">今世準備出發</div>
       <div class="prep-body">
@@ -5156,6 +7905,10 @@
       state.prepGearFocusSlot = null;
       state.lifePrepped = true;
       state.deploy = [];
+      state.deployHint = "";
+      state.lastWinDeploy = [];
+      state.battleFieldSnapshot = null;
+      state.cardGift = null;
       state.selectedEvent = null;
       state.eventConfirmOpen = false;
       state.selectAllySlot = null;
@@ -5174,34 +7927,12 @@
     };
   }
 
-  function raiseEquippedStarsToast(root, toastFn) {
-    ensureGearShape();
-    const byId = itemByIdLookup();
-    const filledIds = GEAR_SLOTS.map((s) => state.accountGear[s.id]).filter(Boolean);
-    if (!filledIds.length) {
-      toastFn(root, "未有裝備可升星——先在店裡取得一件或在準備出發裝上");
-      return;
-    }
-    let raised = 0;
-    let lastName = "";
-    filledIds.forEach((iid) => {
-      const item = byId[iid];
-      if (!item) return;
-      const maxS = Math.max(1, Number(item.max_star) || 5);
-      const cur = equipStarOf(item);
-      if (cur >= maxS) return;
-      state.equipStars[iid] = cur + 1;
-      raised += 1;
-      lastName = item.name;
-    });
-    if (!raised) {
-      toastFn(root, "已裝裝備全部滿星（最多 ★5）");
-      return;
-    }
-    bumpEquipStar(raised);
-    toastFn(root, `升星＋${raised}${lastName ? " · " + lastName : ""}（累計 ${state.accountStats.equipStarsTotal}）`);
-    render();
-  }
+  /*
+   * t364：已移除 raiseEquippedStarsToast()。
+   * 它原本會「一鍵把所有已裝裝備各升 1 星」，屬自動升星；
+   * 而且從未接上任何按鈕（只在 HELP_DEFAULT 有說明文字），係死碼。
+   * 現在升星只有一個入口：卡冊 → 點裝備卡 → 「升星」（燒同名卡）。
+   */
 
   /* ---------- 魂焰扭蛋：廟街霓虹扭蛋機（t318） ---------- */
   const gachaPriceSingle = 1;
@@ -5230,22 +7961,11 @@
   }
 
   function gachaNormalizeRarity(raw) {
-    const key = String(raw == null ? "" : raw).trim();
-    if (!key) return null;
-    const map = {
-      common: "普通",
-      rare: "稀有",
-      epic: "史詩",
-      legend: "最高級",
-      "普通": "普通",
-      "稀有": "稀有",
-      "史詩": "史詩",
-      "最高級": "最高級",
-      "傳奇": "最高級",
-    };
-    if (map[key]) return map[key];
-    const low = key.toLowerCase();
-    return map[low] || null;
+    // t364：與全站共用同一張表，避免第四套叫法。
+    // 認不出（例如 "foo"）回 null 讓 pool 跳過；"傳奇" 等別名已被正規化成「最高級」。
+    const label = rarityLabelAny(raw);
+    if (!label) return null;
+    return RARITY_LABELS[rarityIdOf(label)] === label ? label : null;
   }
 
   /**
@@ -5368,10 +8088,11 @@
   }
 
   /**
-   * 入冊／複本升星／滿星退焰。
-   * - 新卡：albumSetCount(id,1) →「新獲得」
-   * - 已擁有未滿星：★＋1、淨持有不變（扭中當材料）→「升星至★N」
-   * - 已擁有且 ★＝ALBUM_MAX_STAR：唔加複本、唔升星；退 gachaPriceSingle →「已滿星，退回 N 膠幣」（封測單抽價）
+   * t364：扭蛋結果只負責「入冊」，**唔會自動升星**。
+   * - 新卡：count 0 → 1，★1 →「新獲得」
+   * - 重複卡：count ＋1（同名卡疊起，卡冊顯示 x2、x3…）→「重複」
+   *   ★ 由玩家自己去卡冊按「升星」燒同名卡，升星只此一個入口。
+   * - 已 ★5：照樣加同名卡（可留作他日用），並退回單抽價
    */
   function applyGachaGrant(kind, id) {
     albumEnsureState();
@@ -5385,11 +8106,11 @@
     const rarity = gachaItemRarity(kind, item) || "普通";
     const before = albumCardCount(id);
     const maxS = albumMaxStar(kind, item);
-    const starBefore = albumStarOf(kind, id, item);
+    const star = albumStarOf(kind, id, item);
 
     if (before <= 0) {
       albumSetCount(id, 1);
-      albumMarkNewCardStar1(kind, id); // t322 新卡預設 ★1
+      albumMarkNewCardStar1(kind, id);
       return {
         kind, id, name, art, rarity,
         flag: "new",
@@ -5400,32 +8121,31 @@
       };
     }
 
-    if (starBefore >= maxS) {
+    // 重複卡：只加張數，唔碰星數（★ 一律由卡冊「升星」按鈕處理）
+    albumSetCount(id, before + 1);
+    const need = albumStarNeed(star);
+    const canUp = star < maxS && albumCardCount(id) >= need;
+
+    if (star >= maxS) {
       const refund = gachaPriceSingle;
       state.soul = (state.soul | 0) + refund;
       return {
         kind, id, name, art, rarity,
         flag: "refund",
-        flagLabel: "已滿星，退回 " + refund + " 膠幣",
-        star: starBefore,
-        count: before,
+        flagLabel: "已滿星 · 退回 " + refund + " 膠幣",
+        star,
+        count: albumCardCount(id),
         refund,
       };
     }
 
-    // 未滿星複本：直接 ★＋1，唔增加淨持有（材料已燒）
-    if (kind === "fighters") state.fighterStars[id] = starBefore + 1;
-    else if (kind === "skills") state.skillStars[id] = starBefore + 1;
-    else {
-      state.equipStars[id] = starBefore + 1;
-      bumpEquipStar(1);
-    }
-    const starAfter = albumStarOf(kind, id, item);
     return {
       kind, id, name, art, rarity,
-      flag: "starup",
-      flagLabel: "升星至★" + starAfter,
-      star: starAfter,
+      flag: "dupe",
+      flagLabel: canUp
+        ? "重複 · 可去卡冊升星"
+        : `重複 · 同名 ${albumCardCount(id)}／${need}`,
+      star,
       count: albumCardCount(id),
       refund: 0,
     };
@@ -5542,7 +8262,19 @@
   }
 
   function gachaResultHelpRich(r) {
-    if (!r || r.kind !== "fighters") return null;
+    if (!r) return null;
+    // t364：裝備／技能都補 rich 版（以前只有戰鬥卡有，其餘只得純文字）
+    if (r.kind === "gear") {
+      const item = itemByIdLookup()[r.id] || null;
+      if (!item) return null;
+      const slotMeta = GEAR_SLOTS.find((s) => s.id === item.slot) || null;
+      return equipHelpRichHtml(item, slotMeta);
+    }
+    if (r.kind === "skills") {
+      // 技能未做 rich 版：回 null 讓呼叫端退到純文字說明
+      return null;
+    }
+    if (r.kind !== "fighters") return null;
     const f = fighterById[r.id];
     if (!f) return null;
     try {
@@ -5598,15 +8330,37 @@
     });
   }
 
+  function gachaCardBlurb(r) {
+    if (!r) return "";
+    let line = "";
+    if (r.kind === "fighters") {
+      const f = fighterById[r.id];
+      if (f) {
+        const flavor = f.blurb || f.flavor || "";
+        const skill = f.skill ? ("自帶「" + f.skill + "」" + (f.skill_effect ? "：" + f.skill_effect : "")) : "";
+        line = [flavor, skill].filter(Boolean).join(" ");
+      }
+    } else if (r.kind === "skills") {
+      const sk = skillById[r.id];
+      if (sk) line = sk.effect || sk.blurb || sk.flavor || "";
+    } else {
+      const item = (typeof itemByIdLookup === "function") ? itemByIdLookup()[r.id] : null;
+      if (item) line = item.blurb || item.flavor || item.effect || "";
+    }
+    line = String(line || "").replace(/\s+/g, " ").trim();
+    if (!line) return "點擊查看完整說明";
+    return line.length > 48 ? line.slice(0, 47) + "…" : line;
+  }
+
   function gachaCardHtml(r, idx, opts) {
     opts = opts || {};
     const rareLabel = gachaNormalizeRarity(r.rarity) || "普通";
     const art = r.art
-      ? ("<img src=\"" + esc(r.art) + "\" alt=\"" + esc(r.name) + "\" />")
-      : "<span class=\"gacha-ph\">無圖</span>";
+      ? ("<img src=\"" + esc(r.art) + "\" alt=\"" + esc(r.name) + "\" data-card-name=\"" + esc(r.name) + "\" data-card-kind=\"" + esc(r.kind || "") + "\" />")
+      : ("<img src=\"" + esc(cardGlyphDataUrl(r.name, r.kind)) + "\" alt=\"" + esc(r.name) + "\" />");
     const flagCls = r.flag === "new"
       ? "new"
-      : (r.flag === "starup" ? "starup" : (r.flag === "refund" ? "refund" : "dupe"));
+      : (r.flag === "refund" ? "refund" : "dupe");
     const eggCls = "egg-" + ((idx % 5) + 1);
     const finale = opts.finale ? " gacha-finale" : "";
     const big = opts.big ? " gacha-card-big" : "";
@@ -5616,12 +8370,20 @@
       "</div>";
     const kind = r.kind || "";
     const id = r.id || "";
+    const newBadge = r.flag === "new" ? "<span class=\"gacha-new-badge\">NEW</span>" : "";
+    const blurb = gachaCardBlurb(r);
+    // t364：重複卡顯示同名張數（升星材料），玩家一眼知可以去卡冊升星
+    const qty = r.flag !== "new" && (r.count | 0) > 1
+      ? "<span class=\"gacha-card-qty\">x" + (r.count | 0) + "</span>"
+      : "";
     return (
       "<div class=\"gacha-card rarity-" + esc(rareLabel) + finale + big +
         "\" role=\"button\" tabindex=\"0\" title=\"點擊查看說明\"" +
         " data-rarity=\"" + esc(rareLabel) + "\"" +
         " data-id=\"" + esc(id) + "\" data-kind=\"" + esc(kind) + "\"" +
         " data-gacha-idx=\"" + (idx | 0) + "\" data-gacha-help=\"1\">" +
+        newBadge +
+        qty +
         "<div class=\"gacha-card-beam\" aria-hidden=\"true\"></div>" +
         "<div class=\"gacha-card-sparkles\" aria-hidden=\"true\"></div>" +
         particles +
@@ -5630,8 +8392,9 @@
         "<div class=\"gacha-card-meta\">" +
           "<div class=\"gacha-card-name\">" + esc(r.name) + "</div>" +
           "<div class=\"gacha-card-rare\">" + esc(rareLabel || "普通") + " · ★" + Math.max(1, r.star | 0) + "</div>" +
+          "<p class=\"gacha-card-blurb\">" + esc(blurb) + "</p>" +
           "<div class=\"gacha-card-flag " + flagCls + "\">" + esc(r.flagLabel || "") + "</div>" +
-          "<div class=\"gacha-card-hint\">點擊查看說明</div>" +
+          "<div class=\"gacha-card-hint\">點擊查看完整說明</div>" +
         "</div>" +
       "</div>"
     );
@@ -5664,14 +8427,64 @@
           "<em class=\"gm-neon-en\">／NEON</em>" +
         "</div>" +
         "<div class=\"gm-art-wrap\">" +
-          "<img class=\"gm-art\" src=\"assets/gacha/machine-ref.webp?v=t327-1\" width=\"281\" height=\"500\" alt=\"廟街霓虹扭蛋機\" draggable=\"false\" />" +
+          "<img class=\"gm-art gm-art-photo\" src=\"assets/gacha/machine-hk.png?v=t373-1\" width=\"520\" height=\"818\" alt=\"香港主題霓虹扭蛋機\" draggable=\"false\" />" +
         "</div>" +
-        /* 純 CSS 示意機保留 DOM 但 display:none（.gm-css-schematic）——方便日後回退 */
+        "<div class=\"gm-price-board\" aria-label=\"扭蛋價錢\">" +
+          "<span><b>" + gachaPriceSingle + "</b> 膠幣／次</span>" +
+          "<span><b>" + gachaPriceTen + "</b> 膠幣／十連</span>" +
+        "</div>" +
+        /* 純 CSS 示意機：主視覺圖載入失敗時顯示（.gm-css-schematic 預設隱藏）；
+           DOM 要齊全，否則降級時只剩空白一片 */
         "<div class=\"gm-css-schematic\" hidden>" +
-          "<div class=\"gm-dome\"></div>" +
-          "<div class=\"gm-lightbox\"></div>" +
-          "<div class=\"gm-cabinet\"><div class=\"gm-knob\"></div><div class=\"gm-chute\"></div></div>" +
-          "<div class=\"gm-base\"></div>" +
+          "<div class=\"gm-dome\">" +
+            "<div class=\"gm-dome-glass\">" +
+              "<div class=\"gm-eggs-pile\">" +
+                "<i class=\"gm-ball b1\"></i><i class=\"gm-ball b2\"></i><i class=\"gm-ball b3\"></i>" +
+                "<i class=\"gm-ball b4\"></i><i class=\"gm-ball b5\"></i><i class=\"gm-ball b6\"></i>" +
+                "<i class=\"gm-ball b7\"></i><i class=\"gm-ball b8\"></i><i class=\"gm-ball b9\"></i>" +
+                "<i class=\"gm-ball b10\"></i><i class=\"gm-ball b11\"></i><i class=\"gm-ball b12\"></i>" +
+                "<i class=\"gm-ball b13\"></i><i class=\"gm-ball b14\"></i><i class=\"gm-ball b15\"></i>" +
+                "<i class=\"gm-ball b16\"></i><i class=\"gm-ball b17\"></i><i class=\"gm-ball b18\"></i>" +
+                "<i class=\"gm-ball b19\"></i><i class=\"gm-ball b20\"></i><i class=\"gm-ball b21\"></i>" +
+                "<i class=\"gm-ball b22\"></i><i class=\"gm-ball b23\"></i><i class=\"gm-ball b24\"></i>" +
+                "<i class=\"gm-ball b25\"></i><i class=\"gm-ball b26\"></i><i class=\"gm-ball b27\"></i>" +
+                "<i class=\"gm-ball b28\"></i>" +
+              "</div>" +
+              "<div class=\"gm-glass-shine\"></div>" +
+              "<div class=\"gm-glass-shine gm-glass-shine-2\"></div>" +
+            "</div>" +
+            "<div class=\"gm-dome-rim\">" +
+              "<i class=\"gm-rim-bolt\"></i><i class=\"gm-rim-bolt\"></i>" +
+              "<i class=\"gm-rim-bolt\"></i><i class=\"gm-rim-bolt\"></i>" +
+            "</div>" +
+          "</div>" +
+          "<div class=\"gm-lightbox\">" +
+            "<i class=\"gm-bulb\"></i><i class=\"gm-bulb\"></i>" +
+            "<span class=\"gm-lightbox-text\">" +
+              "<b class=\"gm-neon-cn\">廟街扭蛋</b>" +
+              "<em class=\"gm-neon-en\">／NEON</em>" +
+            "</span>" +
+            "<i class=\"gm-bulb\"></i><i class=\"gm-bulb\"></i>" +
+          "</div>" +
+          "<div class=\"gm-cabinet\">" +
+            "<div class=\"gm-controls\">" +
+              "<div class=\"gm-coin-slot\"><em></em><span>投幣</span></div>" +
+              "<div class=\"gm-knob\">" +
+                "<span class=\"gm-knob-ring\"></span>" +
+                "<span class=\"gm-knob-handle\">" +
+                  "<span class=\"gm-knob-grip\"></span>" +
+                "</span>" +
+                "<span class=\"gm-knob-hub\"></span>" +
+              "</div>" +
+            "</div>" +
+            "<div class=\"gm-chute\">" +
+              "<span class=\"gm-chute-label\">出蛋</span>" +
+              "<span class=\"gm-chute-door\"></span>" +
+              "<span class=\"gm-chute-frame\"></span>" +
+              "<span class=\"gm-chute-lip\"></span>" +
+            "</div>" +
+          "</div>" +
+          "<div class=\"gm-base\"><span></span><span></span></div>" +
         "</div>" +
         /* t322／t323：提示字獨立實色橫條——機底下方，唔蓋罩／轉柄／出蛋口 */
         "<div class=\"gm-hint-bar\" role=\"note\">投入膠幣，扭出霓虹塑膠蛋</div>" +
@@ -5776,6 +8589,11 @@
     }
     if (phase === "result") {
       const gridCls = isTen ? "result-grid" : "single";
+      // t364：重複卡唔再自動升星 → 底部提示玩家去卡冊親手升
+      const hasDupe = results.some((r) => r.flag === "dupe");
+      const tip = hasDupe
+        ? "<p class=\"gacha-result-tip\">重複卡已存為同名卡（見卡上 xN）。升星要自己去「卡冊 → 裝備卡／技能卡／戰鬥卡」點卡按「升星」，扭蛋唔會自動升。</p>"
+        : "";
       stage.innerHTML =
         (results.length
           ? ("<div class=\"gacha-results revealed " + gridCls + "\">" +
@@ -5783,6 +8601,7 @@
                 finale: isTen && i === results.length - 1,
                 big: !isTen,
               })).join("") +
+              tip +
             "</div>")
           : "<div class=\"gacha-idle-hint solid\">投入膠幣，扭出霓虹塑膠蛋</div>");
     }
@@ -5851,6 +8670,10 @@
   function enterGachaScreen() {
     ensureGachaPity();
     clearGachaAnim();
+    if (gachaEntryLocked()) {
+      toastMsg("進入人生後不可抽扭蛋——完咗今世先再嚟。");
+      return;
+    }
     if (state.screen !== "gacha") {
       state.gachaReturnScreen = state.screen || "home";
     }
@@ -5864,6 +8687,18 @@
     render();
   }
 
+  /** 進入人生後停止扭蛋：準備出發／今世進行中一律鎖；只可喺今世主頁（未開始）抽 */
+  function gachaEntryLocked() {
+    return !!state.lifePrepped || state.screen === "prep";
+  }
+
+  function gachaEntryHtml() {
+    if (gachaEntryLocked()) {
+      return `<button type="button" class="chip gacha-entry locked" id="btn-gacha-entry" data-gacha-entry data-gacha-locked="1" title="進入人生後不可抽扭蛋" aria-disabled="true">霓虹扭蛋 · 人生中停抽</button>`;
+    }
+    return `<button type="button" class="chip gacha-entry" id="btn-gacha-entry" data-gacha-entry title="廟街霓虹扭蛋機">霓虹扭蛋</button>`;
+  }
+
   function wireGachaEntry(root) {
     if (!root) return;
     root.querySelectorAll("#btn-gacha-entry, [data-gacha-entry]").forEach((btn) => {
@@ -5872,6 +8707,10 @@
           e.preventDefault();
           e.stopPropagation();
         }
+        if (gachaEntryLocked()) {
+          toastMsg("進入人生後不可抽扭蛋——完咗今世先再嚟。");
+          return;
+        }
         enterGachaScreen();
       };
     });
@@ -5879,6 +8718,17 @@
 
   function viewGacha(root) {
     ensureGachaPity();
+    // 已經入咗人生（或舊存檔殘留扭蛋畫面）就擋返出去，唔可以中途抽卡
+    if (gachaEntryLocked()) {
+      state.gachaReturnScreen = null;
+      state.gachaResults = [];
+      state.gachaReveal = false;
+      state.gachaPhase = "idle";
+      state.screen = "home";
+      render();
+      toastMsg("進入人生後不可抽扭蛋——完咗今世先再嚟。");
+      return;
+    }
     const soul = state.soul | 0;
     const pityRare = state.gachaPityRare | 0;
     const pityEpic = state.gachaPityEpic | 0;
@@ -6019,6 +8869,28 @@
     ensureGearShape();
     const owned = (id) => albumCountRaw(id) > 0;
     state.team = (state.team || []).filter((id) => owned(id));
+    /*
+     * t374：P0 保險 —— 修剪之後如果隊伍變空，自動由已擁有嘅卡補回。
+     * 原因：state.team 預設為 default_team，但 demo 種子只隨機抽 5 張，
+     * 有機會一張都唔中；原本修剪後 team 變空 → 準備頁無法開始遊戲（實測 100% 重現）。
+     * 現在即使種子再變，玩家都一定有卡可以揀。
+     */
+    if (!state.team.length) {
+      const cap = fighterPocketCap();
+      const fallback = [];
+      // 先試 default_team 中有擁有嘅
+      (DATA.default_team || []).forEach((id) => {
+        if (fallback.length < cap && owned(id)) fallback.push(id);
+      });
+      // 再唔夠就由卡冊任意補
+      if (fallback.length < 1) {
+        (DATA.fighters || []).forEach((f) => {
+          if (fallback.length >= Math.min(3, cap)) return;
+          if (f && f.id && owned(f.id) && !fallback.includes(f.id)) fallback.push(f.id);
+        });
+      }
+      state.team = fallback;
+    }
     state.deploy = (state.deploy || []).filter((id) => state.team.includes(id));
     if (state.equipFocus && !state.team.includes(state.equipFocus)) {
       state.equipFocus = state.team[0] || null;
@@ -6074,6 +8946,19 @@
         next[f.id] = 1;
         state.fighterStars[f.id] = 1; // t322 種子新卡 ★1
       });
+      /*
+       * t374：P0 修正 —— 種子必須包含 default_team（C241 泥頭車／C244 纜車廂／C248 晨跑徑）。
+       *
+       * 原本只隨機抽 5 張，default_team 嘅三張經常抽唔到；
+       * 而 `state.team` 初始化為 default_team、隨後 `pruneUnownedRefs()` 會剔走未擁有嘅卡
+       * → team 變空 → 準備頁只有「＋」、`btn-ready` 永久 disabled → **玩家完全無法開始遊戲**。
+       * 實測：全新開局 100% 重現（default_team 三張一張都冇）。
+       */
+      (DATA.default_team || []).forEach((id) => {
+        if (!id) return;
+        next[id] = Math.max(1, next[id] | 0);
+        if (state.fighterStars[id] == null) state.fighterStars[id] = 1;
+      });
       shuffleCopy(skills).slice(0, 5).forEach((sk) => {
         if (!sk.id) return;
         next[sk.id] = 1;
@@ -6096,6 +8981,19 @@
       skills.forEach((sk) => ensureZero(sk.id));
       equips.forEach((it) => ensureZero(it.id));
       stubs.forEach(ensureZero);
+      /*
+       * t375b：舊存檔亦要補 default_team。
+       * 原因：種子版本未變（271）→ 唔會重種子，但舊存檔可能完全冇 default_team 嘅三張卡，
+       * 而 pruneUnownedRefs() 之後 team 會變空（下面另有空隊保險，但補卡更徹底）。
+       * 只補「未擁有」嘅，唔會洗走玩家收藏。
+       */
+      (DATA.default_team || []).forEach((id) => {
+        if (!id) return;
+        if ((state.cardCounts[id] | 0) < 1) {
+          state.cardCounts[id] = 1;
+          if (state.fighterStars[id] == null) state.fighterStars[id] = 1;
+        }
+      });
       pruneUnownedRefs();
     }
 
@@ -6295,20 +9193,13 @@
 
   function albumRarityKey(kind, item) {
     if (!item) return "";
-    if (kind === "gear") {
-      const map = { common: "普通", rare: "稀有", legend: "最高級", epic: "史詩" };
-      return map[item.rarity] || item.rarity || "";
-    }
-    return item.rarity || "";
+    // t364：一套叫法行全站——裝備唔再自己翻譯一次
+    return rarityLabelAny(item.rarity);
   }
 
   function albumRarityClass(kind, item) {
-    const r = albumRarityKey(kind, item);
-    if (r === "普通" || r === "common") return "r-common";
-    if (r === "稀有" || r === "rare") return "r-rare";
-    if (r === "史詩" || r === "epic") return "r-epic";
-    if (r === "最高級" || r === "legend") return "r-legend";
-    return "r-common";
+    const id = rarityIdOf(item && item.rarity);
+    return "r-" + id;
   }
 
   function albumListForTab(tab) {
@@ -6364,11 +9255,12 @@
     });
   }
 
-  function albumArtHtml(art, name, phClass) {
+  function albumArtHtml(art, name, phClass, kind) {
+    const k = kind || "fighter";
     if (art) {
-      return `<img src="${esc(art)}" alt="${esc(name || "")}" loading="lazy" decoding="async" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'${phClass || "album-cell-ph"}',textContent:'無圖'}))" />`;
+      return `<img src="${esc(art)}" alt="${esc(name || "")}" loading="lazy" decoding="async" data-card-name="${esc(name || "")}" data-card-kind="${esc(k)}" />`;
     }
-    return `<span class="${phClass || "album-cell-ph"}">無圖</span>`;
+    return `<img src="${cardGlyphDataUrl(name, k)}" alt="${esc(name || "")}" loading="lazy" />`;
   }
 
   function albumDetailBodyHtml(kind, id) {
@@ -6508,7 +9400,7 @@
             : "";
         // 只列已擁有；點擊卡圖／整格開詳情（唔掛 data-help，避免長按擋住 click）
         return `<button type="button" class="album-cell ${rareCls}" data-album-id="${esc(e.id)}" data-album-kind="${esc(e.kind)}" aria-label="${esc(e.name)} x${count}">
-          <div class="album-cell-art" data-album-open="1">${albumArtHtml(e.art, e.name)}${lvBadge}<div class="album-cell-stars">${albumStarsHtml(star, Math.min(maxS, 5))}</div></div>
+          <div class="album-cell-art" data-album-open="1">${albumArtHtml(e.art, e.name, null, e.kind)}${lvBadge}<div class="album-cell-stars">${albumStarsHtml(star, Math.min(maxS, 5))}</div></div>
           <div class="album-cell-name">${esc(e.name)} <span class="album-qty">x${count}</span></div>
         </button>`;
       })
@@ -6722,7 +9614,9 @@
 
 
   function viewFate(root) {
-    if (!(state.fateOffer && state.fateOffer.length)) rollFateOffer();
+    if (!(state.fateOffer && state.fateOffer.length === FATE_OFFER_SIZE)) {
+      state.fateOffer = normalizeFateOffer(state.fateOffer);
+    }
     const n = Math.min(3, (state.fateYearIndex | 0) + 1);
     const cards = (state.fateOffer || []).map((fid) => {
       const f = fateById[fid] || { id: fid, name: fid, blurb: "", kind: "mixed" };
@@ -6799,6 +9693,47 @@
     return -1;
   }
 
+  /** 槽位對齊的可出戰名單：離隊、陣亡、重複的格留空 */
+  function livingDeploySlots(list) {
+    const next = [];
+    const used = new Set();
+    const src = Array.isArray(list) ? list : [];
+    const team = state.team || [];
+    for (let i = 0; i < TEAM_SIZE; i++) {
+      const id = src[i] || null;
+      const ok = id && fighterById[id] && team.includes(id) && !isDeadFighter(id) && !used.has(id);
+      if (ok) {
+        next[i] = id;
+        used.add(id);
+      } else {
+        next[i] = null;
+      }
+    }
+    return next;
+  }
+
+  function applyRememberedDeploy() {
+    const next = livingDeploySlots(state.lastWinDeploy);
+    if (!next.some(Boolean)) return false;
+    state.deploy = next;
+    return true;
+  }
+
+  /** 上次上場有空位（陣亡／離隊），而口袋仍有未上場的卡 → 交由玩家自己決定補位 */
+  function deployNeedsPlayerPick() {
+    const cur = state.deploy || [];
+    let emptySlots = 0;
+    for (let i = 0; i < TEAM_SIZE; i++) {
+      if (!cur[i] || !fighterById[cur[i]] || isDeadFighter(cur[i])) emptySlots += 1;
+    }
+    if (!emptySlots) return false;
+    const used = new Set(cur.filter(Boolean));
+    const spares = (state.team || []).filter(
+      (id) => id && fighterById[id] && !isDeadFighter(id) && !used.has(id)
+    );
+    return spares.length > 0;
+  }
+
   function setDeploySlot(slot, fid) {
     const next = [];
     for (let i = 0; i < TEAM_SIZE; i++) next[i] = state.deploy[i] || null;
@@ -6819,7 +9754,7 @@
     ensureDefaultLoadout(false);
     ensureLoadoutShape();
     const primary = enemyById[ev.battle];
-    const roster = buildEnemyRoster(ev.battle);
+    const roster = encounterEnemyRoster(ev);
     const previewCards = roster
       .map((e) => {
         const hp = e.maxHp != null ? e.maxHp : (e.hp | 0);
@@ -7049,6 +9984,9 @@
         </div>
         <button class="btn gold enc-fight" id="btn-fight" data-help="btn-fight" ${canFight ? "" : "disabled"}>開始戰鬥</button>
         <div class="deploy-row" aria-label="出戰位">${slots.join("")}</div>
+        ${state.deployHint && deployNeedsPlayerPick()
+          ? `<p class="modal-hint deploy-hint" role="status">${esc(state.deployHint)}</p>`
+          : `<p class="modal-hint">打贏之後沿用這次上場，之後的戰鬥唔使再揀。</p>`}
       </div>
       <button class="btn ghost enc-back" id="btn-back" data-help="btn-back">放棄，重新開始！</button>
       ${allyModal}
@@ -7069,6 +10007,7 @@
     $("#btn-fight", root).onclick = () => startBattle();
     $("#btn-back", root).onclick = () => {
       state.deploy = [];
+      state.deployHint = "";
       state.selectAllySlot = null;
       state.fighterDetailId = null;
       state.detailSkillPick = null;
@@ -7201,9 +10140,36 @@
     wireStoryDock(root);
   }
 
+  /** 戰鬥速度只接受 1／2／4；其他值回 1 */
+  function normalizeBattleSpeed(v) {
+    const n = v | 0;
+    return (n === 2 || n === 4) ? n : 1;
+  }
+
+  function speedButtonLabel(speed) {
+    return speed === 1
+      ? (L["ui.speed2"] || "加速・兩倍")
+      : speed === 2
+        ? "再快・四倍"
+        : "回復・一倍";
+  }
+
+  function applySpeedToButton() {
+    const btn = document.getElementById("btn-speed");
+    if (btn) btn.textContent = speedButtonLabel(state.speed);
+    const spd = document.getElementById("b-spd");
+    if (spd) spd.textContent = state.speed + "×";
+  }
+
   function startBattle() {
     const deployIds = (state.deploy || []).filter((id) => id && !isDeadFighter(id));
     if (!deployIds.length) return;
+    state.deployHint = "";
+    state.battleFieldSnapshot = [];
+    for (let i = 0; i < TEAM_SIZE; i++) {
+      const id = (state.deploy || [])[i] || null;
+      state.battleFieldSnapshot[i] = (id && deployIds.indexOf(id) >= 0) ? id : null;
+    }
     const ev = state.selectedEvent;
     const enemyDef = enemyById[ev.battle];
     ensureDefaultLoadout(false);
@@ -7280,13 +10246,14 @@
         alive: true,
       };
     });
-    const enemies = buildEnemyRoster(ev.battle);
+    const enemies = encounterEnemyRoster(ev);
     if (enemyDef && enemyDef.id === "E03") {
       players.forEach((p) => {
         p.spd = Math.max(1, p.spd - 1);
       });
     }
-    state.speed = 1;
+    // 沿用上次戰鬥揀好嘅速度（唔再每場重設做 1×）
+    state.speed = normalizeBattleSpeed(state.speed);
     state.battle = {
       players,
       enemies,
@@ -7298,7 +10265,7 @@
       timer: null,
       queue: [],
       // 幸運亦影響戰鬥結算魂焰（同軟事件公式）
-      reward: applyLuckToReward(ev.reward_soul || 10),
+      reward: listedEventSoul(ev),
       lastHit: null,
     };
     state.pendingDefeat = {
@@ -7634,7 +10601,7 @@
 
     actor.turnsTaken += 1;
     const cd = Math.max(1, actor.skill_cd | 0);
-    const useSkill = actor.turnsTaken % cd === 0;
+    let useSkill = actor.turnsTaken % cd === 0;
     let moveName = useSkill ? actor.skill : actor.basic;
     let effectText = actor.skill_effect || "";
     let moveSpec = useSkill
@@ -7696,9 +10663,31 @@
         moveSpec = pick.spec;
       }
     } else if (useSkill && actor.side === "enemy") {
-      // 敵方暫無結構化技卡：沿用自帶欄（若有）否則 ×1.5
-      if (actor.dmg_mult == null && !actor.heal_mult) {
-        moveSpec = { dmg_mult: 1.5, hits: 1, target: "single", power: "phys" };
+      // 敵方＝卡池卡：自帶技照玩家同一套結算（群攻／治療／斬殺等都會生效）
+      const innateSpec = skillCombatSpec({
+        dmg_mult: actor.dmg_mult,
+        hits: actor.hits,
+        target: actor.target,
+        power: actor.power || actor.basic_power,
+        basic_power: actor.basic_power,
+        splash_mult: actor.splash_mult,
+        heal_mult: actor.heal_mult,
+        support: actor.support,
+        execute_hp_pct: actor.execute_hp_pct,
+        execute_mult: actor.execute_mult,
+        hit_scales: actor.hit_scales,
+        passive: actor.passive,
+        skill_cd: actor.skill_cd,
+        cd: actor.skill_cd,
+      });
+      if (innateSpec.passive) {
+        // 被動技唔當主動出招，改用普攻
+        useSkill = false;
+        moveName = actor.basic;
+        moveSpec = { dmg_mult: 1, hits: 1, target: "single", power: actor.basic_power || "phys" };
+      } else if (!(innateSpec.dmg_mult > 0) && !(innateSpec.splash_mult > 0) && !(innateSpec.heal_mult > 0) && innateSpec.target !== "self") {
+        // 無結構化自帶技：維持原本倍率
+        moveSpec = { dmg_mult: 1.5, hits: 1, target: "single", power: actor.basic_power || "phys" };
       }
     }
 
@@ -7926,17 +10915,36 @@
     };
     state.battlesThisLife += 1;
     if (win) {
+      if (Array.isArray(state.battleFieldSnapshot) && state.battleFieldSnapshot.some(Boolean)) {
+        state.lastWinDeploy = state.battleFieldSnapshot.slice(0, TEAM_SIZE);
+      }
       state.soul += b.reward;
-      // 勝場經驗：4＋幸運微調
+      /*
+       * t367：戰鬥勝利必給金幣（經濟修復 A）。
+       * 原本 85 個事件只有 3 個有 reward_gold，總和 21 金幣，
+       * 而復活一張卡要 20–60 金幣 → 復活機制形同虛設（實測整條命只夠復活 0.5 次）。
+       * 現在每場勝利都有基礎金幣，令「打贏 → 有錢 → 可以復活/強化」這個循環成立。
+       */
+      const baseGold = victoryGoldFor(ev) - ((ev && ev.reward_gold) | 0);
+      const goldGain = baseGold + ((ev && ev.reward_gold) | 0);
+      if (goldGain) state.gold = (state.gold | 0) + goldGain;
+      if (state.lastResult) state.lastResult.goldGain = goldGain;
+      // 卡面有寫經驗就照發；冇寫先用 4＋幸運微調
       const luck = (state.attrs && state.attrs.luck) | 0;
-      const xpGain = Math.max(1, 4 + Math.floor(luck / 5));
+      const xpGain = (ev && (ev.reward_xp | 0) > 0)
+        ? (ev.reward_xp | 0)
+        : Math.max(1, 4 + Math.floor(luck / 5));
       gainXp(xpGain);
       if (state.lastResult) state.lastResult.xpGain = xpGain;
       // 卡經驗：本場參戰卡各＋FIGHTER_BATTLE_XP（帳號級；存活／陣亡同得）
       const cardXpNotes = grantDeployedCardXpFromBattle(b);
       if (state.lastResult) state.lastResult.cardXpNotes = cardXpNotes;
+      // t367 補卡修復（C）：戰鬥勝利有機率掉落新戰鬥卡，補充陣亡缺口
+      const drop = tryBattleCardDrop(ev);
+      if (drop && state.lastResult) state.lastResult.cardDrop = drop;
       trackEventMission(ev, { battleWin: true });
     }
+    state.battleFieldSnapshot = null;
     if (tutorialLoss) {
       // 教學期敗：唔加歲／唔推遭遇；清選中事件，返回同年四揀一
       state.selectedEvent = null;
@@ -7951,9 +10959,47 @@
     }, 560 / state.speed);
   }
 
+  /**
+   * t368 補卡修復（C）：戰鬥勝利掉落戰鬥卡。
+   * 實測：每場平均陣亡 0.58 張，而原本補充只有 0.33 張/年 → 淨流失必死。
+   * 現在勝利 85% 機率掉卡（原本 60%），並在口袋已滿時仍然入冊，
+   * 讓玩家有卡可以替換（不再因為「池滿」而白費掉落）。
+   */
+  const BATTLE_CARD_DROP_CHANCE = 0.85;
+
+  function tryBattleCardDrop(ev) {
+    if (Math.random() >= BATTLE_CARD_DROP_CHANCE) return null;
+    albumEnsureState();
+    const teamSet = new Set(state.team || []);
+    const cap = fighterPocketCap();
+    const all = (DATA.fighters || []).filter((f) => f && f.id);
+    if (!all.length) return null;
+    // 優先未持有 → 其次未在隊
+    const unowned = all.filter((f) => albumCardCount(f.id) <= 0 && !teamSet.has(f.id));
+    const notInTeam = all.filter((f) => !teamSet.has(f.id));
+    const src = unowned.length ? unowned : (notInTeam.length ? notInTeam : all);
+    const pick = src[Math.floor(Math.random() * src.length)];
+    if (!pick) return null;
+    albumGainOne("fighters", pick.id);
+    let joined = false;
+    // 口袋有空位才自動入隊；滿了就只入卡冊（玩家可在準備頁換上）
+    if ((state.team || []).length < cap) {
+      state.team.push(pick.id);
+      if (!state.loadout[pick.id]) state.loadout[pick.id] = [];
+      joined = true;
+    }
+    return {
+      id: pick.id,
+      name: pick.name || pick.id,
+      art: pick.art || null,
+      rarity: pick.rarity || "",
+      joined,
+    };
+  }
+
   function lookupDef(unit) {
     if (!unit) return null;
-    if (unit.side === "enemy") return enemyById[unit.defId || unit.id] || null;
+    if (unit.side === "enemy") return enemyUnitDef(unit);
     return fighterById[unit.id] || null;
   }
 
@@ -8164,12 +11210,7 @@
 
     const enemyUnits = b.enemies.map((e) => slotHtml(e, "e")).join("");
     const playerUnits = b.players.map((p) => slotHtml(p, "p")).join("");
-    const speedLabel =
-      state.speed === 1
-        ? esc(L["ui.speed2"] || "加速・兩倍")
-        : state.speed === 2
-          ? "再快・四倍"
-          : "回復・一倍";
+    const speedLabel = esc(speedButtonLabel(state.speed));
     root.innerHTML = `
       <div class="battle">
         <div class="impact-flash" id="impact-flash"></div>
@@ -8193,17 +11234,8 @@
     $("#btn-speed", root).onclick = () => {
       ensureAudio();
       state.speed = state.speed === 1 ? 2 : state.speed === 2 ? 4 : 1;
-      const spd = document.getElementById("b-spd");
-      if (spd) spd.textContent = state.speed + "×";
-      const btn = document.getElementById("btn-speed");
-      if (btn) {
-        btn.textContent =
-          state.speed === 1
-            ? L["ui.speed2"] || "加速・兩倍"
-            : state.speed === 2
-              ? "再快・四倍"
-              : "回復・一倍";
-      }
+      applySpeedToButton();
+      saveGame();
       if (b.running && !b.paused) scheduleNext(280);
     };
     $("#btn-forfeit", root).onclick = () => {
@@ -8272,7 +11304,7 @@
         ${r.enemyArt ? `<img class="result-art" src="${esc(r.enemyArt)}" alt="" />` : ""}
         <div class="soft-panel result-panel">
           ${r.eventName ? `<div class="result-ev">${esc(r.eventName)}</div>` : ""}
-          ${r.win ? `膠幣 <b style="color:var(--neon-gold)">+${r.reward}</b>${r.xpGain ? ` · 經驗 <b style="color:var(--neon-lime)">+${r.xpGain}</b>` : ""}` : "沒有賺到膠幣"}
+          ${r.win ? `膠幣 <b style="color:var(--neon-gold)">+${r.reward}</b>${r.goldGain ? ` · 金幣 <b style="color:var(--neon-gold)">+${r.goldGain}</b>` : ""}${r.xpGain ? ` · 經驗 <b style="color:var(--neon-lime)">+${r.xpGain}</b>` : ""}` : "沒有賺到膠幣"}
           · ${blurb}<br/>
           <span style="color:var(--neon-cyan)">現在 ${state.age}歲 · 第 ${state.year} 年</span>
           · 膠幣 ${state.soul} · 已打 ${state.battlesThisLife} 場
@@ -8287,7 +11319,7 @@
           })()}
           ${(r.deadNames && r.deadNames.length) ? `<br/><span style="color:var(--neon-pink)">陣亡：${esc(r.deadNames.join("、"))}（技能一併不可再用）</span>` : ""}
           ${r.softRevive ? `<br/><span style="color:var(--neon-cyan)">教學期——出戰卡暫時倒下，下局可再出戰；本年遭遇可再揀。</span>` : ""}
-          ${lifeDone ? `<br/><span style="color:var(--neon-pink)">${lifeOver() ? "壽命已到——" : (state.lifeWiped ? "出戰卡已死光——" : "人生切片已跑完——")}可結算今世返主頁。</span>` : ""}
+          ${lifeDone ? `<br/><span style="color:var(--neon-pink)">${lifeOver() ? "壽命已到——" : "出戰卡已死光——"}可結算今世返主頁。</span>` : ""}
         </div>
       </div>
       <div class="result-cta">

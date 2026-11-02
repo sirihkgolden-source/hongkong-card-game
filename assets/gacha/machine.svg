@@ -1,0 +1,183 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400" width="300" height="400" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <linearGradient id="gmBody" x1="0.12" y1="0" x2="0.88" y2="1">
+      <stop offset="0" stop-color="#ff6069"/>
+      <stop offset="0.26" stop-color="#e21c34"/>
+      <stop offset="0.62" stop-color="#ae0f22"/>
+      <stop offset="1" stop-color="#56060f"/>
+    </linearGradient>
+    <linearGradient id="gmBodySide" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.4"/>
+      <stop offset="0.2" stop-color="#ffffff" stop-opacity="0.07"/>
+      <stop offset="0.8" stop-color="#000000" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.5"/>
+    </linearGradient>
+    <linearGradient id="gmGlass" x1="0.18" y1="0" x2="0.82" y2="1">
+      <stop offset="0" stop-color="#eaffff" stop-opacity="0.58"/>
+      <stop offset="0.46" stop-color="#8fe6ff" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#241040" stop-opacity="0.52"/>
+    </linearGradient>
+    <radialGradient id="gmDomeGlow" cx="0.5" cy="0.34" r="0.7">
+      <stop offset="0" stop-color="#8ff0ff" stop-opacity="0.36"/>
+      <stop offset="1" stop-color="#3a1c6e" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gmDomeInner" cx="0.5" cy="0.42" r="0.66">
+      <stop offset="0" stop-color="#2f1e5c"/>
+      <stop offset="0.62" stop-color="#180d30"/>
+      <stop offset="1" stop-color="#0b0517"/>
+    </radialGradient>
+    <linearGradient id="gmMetal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4f8ff"/>
+      <stop offset="0.34" stop-color="#bcc7d9"/>
+      <stop offset="0.7" stop-color="#7b869a"/>
+      <stop offset="1" stop-color="#434c5c"/>
+    </linearGradient>
+    <linearGradient id="gmKnob" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.4" stop-color="#d2dae8"/>
+      <stop offset="0.76" stop-color="#8a94a7"/>
+      <stop offset="1" stop-color="#3b4351"/>
+    </linearGradient>
+    <linearGradient id="gmPanel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1e1327"/>
+      <stop offset="1" stop-color="#090411"/>
+    </linearGradient>
+    <linearGradient id="gmBase" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3c2c40"/>
+      <stop offset="0.5" stop-color="#1f1727"/>
+      <stop offset="1" stop-color="#090511"/>
+    </linearGradient>
+    <linearGradient id="gmChute" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000000" stop-opacity="0.94"/>
+      <stop offset="0.68" stop-color="#1b1226"/>
+      <stop offset="1" stop-color="#090411"/>
+    </linearGradient>
+    <filter id="gmNeonPink" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="gmNeonCyan" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="3.2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="gmSoftShadow" x="-30%" y="-16%" width="160%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#000000" flood-opacity="0.55"/>
+    </filter>
+  </defs>
+
+  <!-- ???? -->
+  <ellipse cx="150" cy="386" rx="112" ry="12" fill="#000000" opacity="0.5"/>
+  <ellipse cx="150" cy="384" rx="78" ry="7" fill="#ff2d95" opacity="0.2"/>
+
+  <!-- ?? -->
+  <g filter="url(#gmSoftShadow)">
+    <path d="M50 346 H250 Q259 346 259 355 V376 Q259 385 250 385 H50 Q41 385 41 376 V355 Q41 346 50 346 Z" fill="url(#gmBase)" stroke="#07030e" stroke-width="4"/>
+    <rect x="58" y="354" width="184" height="5" rx="2.5" fill="#ff2d95" opacity="0.48"/>
+    <rect x="58" y="370" width="184" height="3.4" rx="1.7" fill="#2de2ff" opacity="0.32"/>
+    <circle cx="70" cy="376" r="3.4" fill="#2de2ff" opacity="0.9"/>
+    <circle cx="230" cy="376" r="3.4" fill="#ff2d95" opacity="0.9"/>
+  </g>
+
+  <!-- ?? -->
+  <g filter="url(#gmSoftShadow)">
+    <path d="M64 198 H236 Q246 198 246 208 V346 H54 V208 Q54 198 64 198 Z" fill="url(#gmBody)" stroke="#07030e" stroke-width="4.5"/>
+    <path d="M64 198 H236 Q246 198 246 208 V346 H54 V208 Q54 198 64 198 Z" fill="url(#gmBodySide)"/>
+    <path d="M58 218 V340" stroke="#ff2d95" stroke-width="2.3" opacity="0.85" filter="url(#gmNeonPink)"/>
+    <path d="M242 218 V340" stroke="#2de2ff" stroke-width="2.3" opacity="0.72" filter="url(#gmNeonCyan)"/>
+  </g>
+
+  <!-- ???? -->
+  <g>
+    <rect x="70" y="212" width="160" height="42" rx="6" fill="url(#gmPanel)" stroke="#ffd36a" stroke-width="2.4"/>
+    <rect x="74" y="216" width="152" height="34" rx="4" fill="none" stroke="#ff2d95" stroke-width="1.3" opacity="0.55"/>
+    <text x="150" y="235" text-anchor="middle" font-family="Microsoft JhengHei, PingFang TC, sans-serif" font-size="16" font-weight="800" fill="#ff5fae" filter="url(#gmNeonPink)">&#24287;&#34903;&#25197;&#34507;</text>
+    <text x="150" y="247" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="7.4" font-weight="700" letter-spacing="2.2" fill="#7fe9ff">N E O N</text>
+  </g>
+
+  <!-- ??? -->
+  <g>
+    <rect x="66" y="264" width="42" height="32" rx="5" fill="#241a2e" stroke="#07030e" stroke-width="2.5"/>
+    <rect x="74" y="272" width="26" height="4.6" rx="2.3" fill="#07030e"/>
+    <rect x="74" y="272" width="26" height="1.8" rx="0.9" fill="#6b5a78"/>
+    <circle cx="87" cy="286" r="2.8" fill="#ffd36a" opacity="0.85"/>
+    <text x="87" y="307" text-anchor="middle" font-family="Microsoft JhengHei, PingFang TC, sans-serif" font-size="6.2" font-weight="700" fill="#c9b8d8">&#25237;&#24163;</text>
+  </g>
+
+  <!-- ???? -->
+  <g>
+    <rect x="116" y="264" width="62" height="32" rx="5" fill="#1a1024" stroke="#3b2a4a" stroke-width="2"/>
+    <text x="147" y="277" text-anchor="middle" font-family="Microsoft JhengHei, PingFang TC, sans-serif" font-size="6.4" font-weight="700" fill="#8fe6ff">&#19968;&#25197;&#19968;&#34507;</text>
+    <text x="147" y="289" text-anchor="middle" font-family="Microsoft JhengHei, PingFang TC, sans-serif" font-size="6.4" font-weight="700" fill="#ffe9a8">&#34507;&#20839;&#26377;&#24425;</text>
+  </g>
+
+  <!-- ??? -->
+  <g>
+    <rect x="84" y="300" width="112" height="44" rx="6" fill="#1a1226" stroke="#07030e" stroke-width="3"/>
+    <rect x="90" y="305" width="100" height="34" rx="4" fill="url(#gmChute)"/>
+    <rect x="90" y="305" width="100" height="9" rx="4" fill="#ffd36a" opacity="0.12"/>
+    <circle cx="140" cy="323" r="11.5" fill="#ffe9a8" opacity="0.92"/>
+    <path d="M128.5 323 A11.5 11.5 0 0 1 151.5 323 Z" fill="#ff2d95"/>
+    <ellipse cx="136" cy="318" rx="3.4" ry="2.1" fill="#ffffff" opacity="0.6"/>
+    <rect x="84" y="300" width="112" height="44" rx="6" fill="none" stroke="#2de2ff" stroke-width="1.5" opacity="0.42" filter="url(#gmNeonCyan)"/>
+  </g>
+
+  <!-- ??? -->
+  <g>
+    <circle cx="268" cy="268" r="27" fill="#07030e" opacity="0.68"/>
+    <circle cx="265" cy="265" r="26" fill="url(#gmMetal)" stroke="#07030e" stroke-width="3.2"/>
+    <circle cx="265" cy="265" r="18.5" fill="url(#gmKnob)" stroke="#07030e" stroke-width="2"/>
+    <circle cx="265" cy="265" r="7.6" fill="#3f4757" stroke="#141a24" stroke-width="1.7"/>
+    <circle cx="262.4" cy="262.4" r="3" fill="#ffffff" opacity="0.55"/>
+    <rect x="259.5" y="234" width="11" height="18" rx="3.6" fill="#ffd36a" stroke="#07030e" stroke-width="2"/>
+    <rect x="262.4" y="236.8" width="3.6" height="11.6" rx="1.8" fill="#fff6d0" opacity="0.75"/>
+    <path d="M265 233 L271.6 238.6 L265 244.2 Z" fill="#ff2d95" opacity="0.9"/>
+    <circle cx="265" cy="265" r="30" fill="none" stroke="#ff2d95" stroke-width="1.5" opacity="0.45" filter="url(#gmNeonPink)"/>
+  </g>
+
+  <!-- ??? -->
+  <g>
+    <ellipse cx="150" cy="108" rx="102" ry="94" fill="#0e0720" opacity="0.5"/>
+    <ellipse cx="150" cy="108" rx="100" ry="92" fill="url(#gmDomeInner)" stroke="#07030e" stroke-width="4.5"/>
+    <ellipse cx="150" cy="108" rx="100" ry="92" fill="url(#gmDomeGlow)"/>
+
+    <!-- ???? -->
+    <g>
+      <circle cx="106" cy="72" r="17" fill="#ff2d95"/>
+      <path d="M89 72 A17 17 0 0 1 123 72 Z" fill="#ffe9d0"/>
+      <circle cx="154" cy="58" r="15" fill="#ffd36a"/>
+      <path d="M139 58 A15 15 0 0 1 169 58 Z" fill="#2de2ff"/>
+      <circle cx="192" cy="86" r="14" fill="#2de2ff"/>
+      <path d="M178 86 A14 14 0 0 1 206 86 Z" fill="#ff7a3a"/>
+      <circle cx="122" cy="104" r="16" fill="#b8ff4a"/>
+      <path d="M106 104 A16 16 0 0 1 138 104 Z" fill="#ff2d95"/>
+      <circle cx="172" cy="106" r="15" fill="#d4a0ff"/>
+      <path d="M157 106 A15 15 0 0 1 187 106 Z" fill="#ffe9a8"/>
+      <circle cx="140" cy="138" r="14" fill="#ff7a3a"/>
+      <path d="M126 138 A14 14 0 0 1 154 138 Z" fill="#2de2ff"/>
+      <circle cx="100" cy="130" r="12" fill="#ffffff" opacity="0.5"/>
+      <circle cx="188" cy="136" r="13" fill="#ffd36a"/>
+      <path d="M175 136 A13 13 0 0 1 201 136 Z" fill="#b8ff4a"/>
+      <circle cx="156" cy="160" r="11" fill="#ff2d95" opacity="0.9"/>
+      <circle cx="116" cy="162" r="10" fill="#2de2ff" opacity="0.9"/>
+      <circle cx="180" cy="162" r="9" fill="#ffe9a8" opacity="0.85"/>
+      <ellipse cx="102" cy="64" rx="5" ry="3.2" fill="#fff" opacity="0.55"/>
+      <ellipse cx="150" cy="51" rx="4.4" ry="2.8" fill="#fff" opacity="0.5"/>
+      <ellipse cx="118" cy="97" rx="4.6" ry="2.8" fill="#fff" opacity="0.5"/>
+    </g>
+
+    <!-- ???? -->
+    <ellipse cx="150" cy="108" rx="100" ry="92" fill="url(#gmGlass)"/>
+    <ellipse cx="108" cy="62" rx="32" ry="19" fill="#ffffff" opacity="0.28" transform="rotate(-28 108 62)"/>
+    <ellipse cx="192" cy="152" rx="17" ry="9" fill="#ffffff" opacity="0.11" transform="rotate(24 192 152)"/>
+    <path d="M56 116 A94 94 0 0 1 244 116" fill="none" stroke="#e8eef8" stroke-width="4.6" opacity="0.5"/>
+    <ellipse cx="150" cy="108" rx="100" ry="92" fill="none" stroke="#2de2ff" stroke-width="2" opacity="0.48" filter="url(#gmNeonCyan)"/>
+
+    <!-- ?? -->
+    <path d="M126 20 Q150 6 174 20 Q164 34 150 36 Q136 34 126 20 Z" fill="url(#gmMetal)" stroke="#07030e" stroke-width="3"/>
+    <circle cx="150" cy="14" r="6.6" fill="#ff2d95" stroke="#07030e" stroke-width="1.8" filter="url(#gmNeonPink)"/>
+  </g>
+
+  <!-- ?????? -->
+  <ellipse cx="150" cy="198" rx="96" ry="12" fill="#2a1a3c" stroke="#07030e" stroke-width="3.2"/>
+  <ellipse cx="150" cy="196" rx="90" ry="8" fill="#ffd36a" opacity="0.15"/>
+</svg>

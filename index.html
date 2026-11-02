@@ -1,10 +1,13 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#07040e" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>香江 Card Game · 直向切片</title>
-  <link rel="stylesheet" href="styles.css?v=t327-1" />
+  <link rel="stylesheet" href="styles.css?v=t378-1" id="app-css" />
 </head>
 <body>
   <div class="page">
@@ -12,7 +15,93 @@
       <div id="screen" class="screen"></div>
     </div>
   </div>
-  <script src="data.js"></script>
-  <script src="app.js?v=t327-1"></script>
+  <script src="data.js?v=t378-1"></script>
+  <script src="app.js?v=t378-1"></script>
+  <script>
+    /* t362：舊快取自癒守衛
+       問題：瀏覽器留著舊 styles.css（指向已搬到 assets/ui/_legacy-svg/ 的 bg-*.svg），
+             畫面只剩紫黑色幾何佔位圖 → 玩家回報「背景底圖缺失」。
+       做法：用一個離屏探針實際量度 CSS 算出來的 background-image。
+             如果指的不是背景 JPG，就帶新 query 重新載入 CSS；仍未好就整頁重載一次。
+             兩次都失敗就放棄（避免無限迴圈），由 app.js 的 inline 保險接手。 */
+    (function () {
+      var WANT = {
+        "bg-title": "bg-title.jpg",
+        "bg-home": "bg-home.jpg",
+        "bg-events": "bg-events.jpg",
+        "bg-team": "bg-team.jpg",
+        "bg-encounter": "bg-encounter.jpg",
+        "bg-battle": "bg-battle-scene.jpg",
+        "bg-result": "bg-result.jpg"
+      };
+      var K_CSS = "hkcg-bg-guard-css";
+      var K_RELOAD = "hkcg-bg-guard-reload";
+
+      function seen(k) {
+        try { return sessionStorage.getItem(k) === "1"; } catch (e) { return true; }
+      }
+      function mark(k) {
+        try { sessionStorage.setItem(k, "1"); } catch (e) {}
+      }
+      function clearGuards() {
+        try {
+          sessionStorage.removeItem(K_CSS);
+          sessionStorage.removeItem(K_RELOAD);
+        } catch (e) {}
+      }
+
+      function bgOf(cls) {
+        var d = document.createElement("div");
+        d.className = "screen has-bg " + cls;
+        d.setAttribute("aria-hidden", "true");
+        d.style.cssText = "position:absolute;left:-9999px;top:0;width:8px;height:8px;pointer-events:none";
+        document.body.appendChild(d);
+        var v = "";
+        try { v = getComputedStyle(d).backgroundImage || ""; } catch (e) { v = ""; }
+        document.body.removeChild(d);
+        return v;
+      }
+
+      function badKeys() {
+        var bad = [];
+        for (var k in WANT) {
+          if (!Object.prototype.hasOwnProperty.call(WANT, k)) continue;
+          if (bgOf(k).indexOf(WANT[k]) === -1) bad.push(k);
+        }
+        return bad;
+      }
+
+      function heal() {
+        if (!badKeys().length) {
+          clearGuards();
+          return;
+        }
+        /* 第一次：只換 CSS 的 query（唔會丟失遊戲進度） */
+        if (!seen(K_CSS)) {
+          mark(K_CSS);
+          var link = document.getElementById("app-css");
+          if (link) {
+            link.setAttribute("href", "styles.css?v=t378-1-r" + Date.now());
+            setTimeout(function () { heal(); }, 500);
+            return;
+          }
+        }
+        /* 第二次：真係要整頁重載（加 query 繞過整頁快取，唔會無限循環） */
+        if (!seen(K_RELOAD)) {
+          mark(K_RELOAD);
+          try {
+            var u = location.href.split("#")[0];
+            u += (u.indexOf("?") === -1 ? "?" : "&") + "bgfix=" + Date.now();
+            location.replace(u);
+          } catch (e) {}
+          return;
+        }
+        /* 兩次都唔得 → 唔再糾纏，交畀 app.js 的 inline 保險 */
+      }
+
+      if (document.readyState === "complete") heal();
+      else window.addEventListener("load", heal);
+    })();
+  </script>
 </body>
 </html>

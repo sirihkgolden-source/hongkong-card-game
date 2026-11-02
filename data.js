@@ -6050,6 +6050,83 @@ window.HK_SLICE_DATA = {
       "hits": 1,
       "target": "aoe",
       "power": "phys"
+    },
+    {
+      "id": "C251",
+      "name": "手袋女俠",
+      "rarity": "史詩",
+      "slots": 6,
+      "tags": [
+        "天台",
+        "霓虹"
+      ],
+      "atk": 15,
+      "spd": 14,
+      "basic": "手袋橫掃",
+      "skill": "一袋打三個",
+      "skill_cd": 3,
+      "art": "assets/fighters/C251.jpg",
+      "flavor": "天台水氹倒住霓虹，白恤衫撕到膊頭。眼鏡都歪埋，佢仲係企得穩——手袋一揮，三個西裝一齊退。",
+      "blurb": "眼鏡歪埋，手袋一揮三個退。",
+      "skill_effect": "群傷 攻×0.85；命中者速−3（1 回）；自己被圍時減傷 15%（1 回）",
+      "rarity_slang": "勁牌",
+      "tod": "雨夜天台",
+      "dmg_mult": 0.85,
+      "hits": 1,
+      "target": "aoe",
+      "power": "phys"
+    },
+    {
+      "id": "C252",
+      "name": "紅白藍搬運妹",
+      "rarity": "稀有",
+      "slots": 5,
+      "tags": [
+        "街頭",
+        "人情"
+      ],
+      "atk": 14,
+      "spd": 10,
+      "basic": "膠袋甩",
+      "skill": "一袋上樓",
+      "skill_cd": 4,
+      "art": "assets/fighters/C252.jpg",
+      "flavor": "樓梯轉角，紅白藍袋塞到爆。佢一隻手抽住袋耳，一隻手扶欄，汗沿下巴滴落地磚——搬完呢轉再講。",
+      "blurb": "一袋上樓，汗滴落地磚。",
+      "skill_effect": "重擊 攻×1.6；自己回復 HP 12%；全隊下一回減傷 8%",
+      "rarity_slang": "靚牌",
+      "tod": "日間樓梯口",
+      "dmg_mult": 1.6,
+      "hits": 1,
+      "target": "single",
+      "power": "phys"
+    },
+    {
+      "id": "C253",
+      "name": "西裝女拳",
+      "rarity": "史詩",
+      "slots": 6,
+      "tags": [
+        "旺角",
+        "霓虹"
+      ],
+      "atk": 13,
+      "spd": 16,
+      "basic": "公事包劈",
+      "skill": "飛踢收工",
+      "skill_cd": 3,
+      "art": "assets/fighters/C253.jpg",
+      "flavor": "西裝褸未除，領帶已經鬆。旺角後巷霓虹照住，佢一腳蹬牆借力，鐵通都未落就已經飛出去。收工之前，先收數。",
+      "blurb": "領帶一鬆，飛踢收工。",
+      "skill_effect": "單體 攻×1.9；若目標血量低於 40%，傷害再×1.35；擊倒則自己速＋2（1 回）",
+      "rarity_slang": "勁牌",
+      "tod": "深夜旺角",
+      "dmg_mult": 1.9,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "execute_hp_pct": 40,
+      "execute_mult": 1.35
     }
   ],
   "enemies": [
@@ -6128,6 +6205,96 @@ window.HK_SLICE_DATA = {
       "rarity_slang": "街頭對手",
       "tags": [
         "舊帳"
+      ]
+    },
+    {
+      "id": "E05",
+      "name": "西裝收數隊",
+      "stage": "精英・天台收數",
+      "hp": 200,
+      "atk": 15,
+      "spd": 12,
+      "slots": 5,
+      "notes": "三人一隊；手袋女俠的對頭",
+      "art": "assets/enemies/E05.jpg",
+      "flavor": "天台風大，三個西裝圍住一個女仔。袋口拉開，裡面唔係錢，係一張張欠單。",
+      "blurb": "西裝圍天台，欠單一疊。",
+      "event_type": "舊帳",
+      "rarity": "敵方",
+      "rarity_slang": "街頭對手",
+      "tags": [
+        "天台",
+        "舊帳"
+      ]
+    },
+    {
+      "id": "E06",
+      "name": "旺角圍標",
+      "stage": "精英・後巷截擊",
+      "hp": 215,
+      "atk": 17,
+      "spd": 13,
+      "slots": 6,
+      "notes": "高攻；鐵通圍攻",
+      "art": "assets/enemies/E06.jpg",
+      "flavor": "霓虹一閃一閃，鐵通敲水氹。帶頭嗰個話：呢條巷你唔應該行。",
+      "blurb": "鐵通圍巷，霓虹照住。",
+      "event_type": "舊帳",
+      "rarity": "敵方",
+      "rarity_slang": "街頭對手",
+      "tags": [
+        "旺角",
+        "舊帳"
+      ]
+    },
+    {
+      "id": "E07",
+      "name": "招牌拆遷隊",
+      "stage": "精英・招牌圍拆",
+      "hp": 205,
+      "atk": 16,
+      "spd": 12,
+      "slots": 6,
+      "notes": "拆招牌；高血",
+      "art": "assets/enemies/E07.png",
+      "flavor": "吊臂車泊在騎樓底，三個人上棚，未夠鐘就開始鬆螺絲。霓虹未熄，招牌先要落地。",
+      "blurb": "招牌落地之前，先要過你這一關。",
+      "event_type": "霓虹",
+      "rarity": "敵方",
+      "rarity_slang": "街頭對手",
+      "tags": [
+        "霓虹",
+        "舊帳"
+      ],
+      "lineup": [
+        "C171",
+        "C83",
+        "C177"
+      ]
+    },
+    {
+      "id": "E08",
+      "name": "地盤清場隊",
+      "stage": "精英・地盤清場",
+      "hp": 230,
+      "atk": 18,
+      "spd": 11,
+      "slots": 6,
+      "notes": "鐵枝清場；攻高",
+      "art": "assets/enemies/E08.png",
+      "flavor": "圍板上面貼滿告示，紮鐵工人把鐵枝一支一支抽起。地盤話今晚之前要清乾淨。",
+      "blurb": "鐵枝一抽，霓虹就冇位掛。",
+      "event_type": "霓虹",
+      "rarity": "敵方",
+      "rarity_slang": "街頭對手",
+      "tags": [
+        "霓虹",
+        "城寨"
+      ],
+      "lineup": [
+        "C83",
+        "C241",
+        "C01"
       ]
     }
   ],
@@ -7073,71 +7240,6066 @@ window.HK_SLICE_DATA = {
     },
     {
       "id": "EV46",
-      "name": "缺劃燈箱",
+      "name": "第一章：九龍城寨風雲",
       "type": "主線",
-      "desc": "旺角騎樓下一支燈箱少了一劃。師傅蹲在梯上問你：今晚要不要幫忙扶穩？霓虹未完——缺劃仍閃。",
-      "reward_blurb": "霓虹未完・可遇敵",
+      "desc": "一九七零年，城寨西門燈未亮。看更攔住你：差佬唔入寨，今晚開片，先講你邊度人。",
+      "dialogue": [
+        {
+          "speaker": "巷口看更",
+          "text": "企喺度。一九七零，城寨西門冇差佬巡。你邊度人？唔報字頭，一線天唔畀過。"
+        },
+        {
+          "speaker": "你",
+          "text": "我冇字頭。街口聽人講城寨起風雲，想問清楚先踏入去。"
+        },
+        {
+          "speaker": "巷口看更",
+          "text": "問？呢度唔係茶樓。龍城同對家開緊片，天井下面收緊陀地。刀仔未出鞘，拳頭已經喺度講數。"
+        },
+        {
+          "speaker": "城寨鐵拳",
+          "text": "看更，收聲。呢條後生我識。跟我上騎樓——食碗面翻碗底嘅，城寨一個都唔留。"
+        },
+        {
+          "speaker": "騎樓牙科檔阿伯",
+          "text": "鐵拳，帶細路行慢啲。廊燈未亮，七十年代嘅寨，一步踏錯就係舊帳。"
+        },
+        {
+          "speaker": "城寨鐵拳",
+          "text": "阿伯講得啱。大佬吩咐：今晚嘅帳自己人清。你若果仲講義氣，就同我企同一條線，唔好望住西門想走。"
+        },
+        {
+          "speaker": "暗角馬仔",
+          "text": "鐵拳哥，人齊咗。西門封晒，遲咗。阿叔叫你帶新丁落天井。"
+        },
+        {
+          "speaker": "城寨鐵拳",
+          "text": "聽到未。第一章就係咁寫——九龍城寨風雲，唔係飲茶吹水。企穩，開片。"
+        }
+      ],
+      "reward_blurb": "城寨第一章・西門開片",
       "category": "main",
       "rewards_preview": [
-        "+7 經驗",
-        "+24 膠幣",
-        "缺劃燈箱"
+        "+8 經驗",
+        "+28 膠幣",
+        "九龍城寨"
       ],
-      "battle": "E03",
-      "reward_soul": 24,
-      "reward_xp": 7,
-      "art": "assets/events/ev-mtr-crowd.jpg",
+      "battle": "E04",
+      "reward_soul": 28,
+      "reward_xp": 8,
+      "pack": "walled_ch1",
+      "art": "assets/events/ev-alley-wake.jpg",
       "category_label": "主線",
-      "story_pack_id": "neon_mei_wan"
+      "story_pack_id": "kowloon_walled_ch1"
     },
     {
       "id": "EV47",
-      "name": "雨夜燈海",
+      "name": "風球照常",
       "type": "主線",
-      "desc": "驟雨打在燈箱上，街道映成碎玻璃。有人隔著雨簾喊你名字——雨夜燈海，霓虹未完續章。",
-      "reward_blurb": "霓虹未完・氣氛戰",
+      "desc": "收銀機夾著紙條：「風球照常。」侍應把凍奶茶改成熱的，掌心按住番茄醬瓶，免得它自己走路。",
+      "reward_blurb": "風球夜・茶記不收舖",
+      "category": "main",
+      "rewards_preview": [
+        "+5 經驗",
+        "+16 膠幣",
+        "熱奶茶"
+      ],
+      "battle": null,
+      "reward_soul": 16,
+      "reward_xp": 5,
+      "pack": "typhoon_tea",
+      "art": "assets/events/ev-yum-cha.jpg",
+      "category_label": "主線",
+      "story_pack_id": "fung_kau_mei_lok"
+    },
+    {
+      "id": "EV48",
+      "name": "凳頂住門",
+      "type": "主線",
+      "desc": "紅塑膠凳頂著茶記門。風還是撞開一條縫，趕不上天星、趕不上小巴的人，一身水湧進來。托盤先放下。",
+      "reward_blurb": "風球夜・人潮入席",
       "category": "main",
       "rewards_preview": [
         "+7 經驗",
-        "+26 膠幣",
-        "雨夜燈海"
+        "+22 膠幣",
+        "維港停航"
       ],
-      "battle": "E04",
-      "reward_soul": 26,
+      "battle": "E03",
+      "reward_soul": 22,
       "reward_xp": 7,
-      "art": "assets/events/ev-alley-wake.jpg",
+      "pack": "typhoon_tea",
+      "art": "assets/events/ev-yum-cha.jpg",
+      "category_label": "主線",
+      "story_pack_id": "fung_kau_mei_lok"
+    },
+    {
+      "id": "EV49",
+      "name": "天台鐵籠練拳",
+      "type": "送卡",
+      "desc": "天台鐵籠晒到燙手，舊拳手遞來一對手帶：「打十分鐘，我教你一手。」練完佢拍你膊頭，話你揀邊個跟你走。",
+      "reward_blurb": "免費戰鬥卡・三選一",
+      "category": "card_gift",
+      "category_label": "送卡",
+      "gift": "fighter",
+      "rewards_preview": [
+        "免費三選一",
+        "隨機戰鬥卡",
+        "+8 膠幣"
+      ],
+      "reward_soul": 8,
+      "reward_xp": 3,
+      "battle": null,
+      "art": "assets/events/ev-alley-wake.jpg"
+    },
+    {
+      "id": "EV50",
+      "name": "街坊借你一雙手",
+      "type": "送卡",
+      "desc": "樓梯口阿婆拉住你：「後生仔，我呢度有張卡，跟過我廿年。你拎去，唔好蝕底。」",
+      "reward_blurb": "免費戰鬥卡・三選一",
+      "category": "card_gift",
+      "category_label": "送卡",
+      "gift": "fighter",
+      "rewards_preview": [
+        "免費三選一",
+        "隨機戰鬥卡",
+        "+10 膠幣"
+      ],
+      "reward_soul": 10,
+      "reward_xp": 3,
+      "battle": null,
+      "art": "assets/events/ev-yum-cha.jpg"
+    },
+    {
+      "id": "EV51",
+      "name": "舊伙記留低一招",
+      "type": "送卡",
+      "desc": "伙記退休前把圍裙交你手上，順手塞張手抄技頁：「呢招我做咗三十年，唔好失傳。」",
+      "reward_blurb": "免費技能・三選一",
+      "category": "card_gift",
+      "category_label": "送卡",
+      "gift": "skill",
+      "rewards_preview": [
+        "免費三選一",
+        "隨機技能",
+        "+9 膠幣"
+      ],
+      "reward_soul": 9,
+      "reward_xp": 3,
+      "battle": null,
+      "art": "assets/events/ev-yum-cha.jpg"
+    },
+    {
+      "id": "EV52",
+      "name": "廟街師傅點你一句",
+      "type": "送卡",
+      "desc": "檔口後面阿伯招手：「後生仔，我唔收錢，你聽我講一句就夠。」講完你手上多了一張技卡。",
+      "reward_blurb": "免費技能・三選一",
+      "category": "card_gift",
+      "category_label": "送卡",
+      "gift": "skill",
+      "rewards_preview": [
+        "免費三選一",
+        "隨機技能",
+        "+11 膠幣"
+      ],
+      "reward_soul": 11,
+      "reward_xp": 3,
+      "battle": null,
+      "art": "assets/events/ev-mtr-crowd.jpg"
+    },
+    {
+      "id": "EV53",
+      "name": "車房執到一袋零件",
+      "type": "送卡",
+      "desc": "車房鐵閘半掩，地上散住件件舊裝備，伙記話：「你合用就拎走，唔好擺喺度擋路。」",
+      "reward_blurb": "免費裝備・三選一",
+      "category": "card_gift",
+      "category_label": "送卡",
+      "gift": "gear",
+      "rewards_preview": [
+        "免費三選一",
+        "隨機裝備",
+        "+8 膠幣"
+      ],
+      "reward_soul": 8,
+      "reward_xp": 3,
+      "battle": null,
+      "art": "assets/events/ev-expired-can.jpg"
+    },
+    {
+      "id": "EV54",
+      "name": "舊同學分你半套裝",
+      "type": "送卡",
+      "desc": "舊同學喺球場邊攤開個袋：「我唔用呢套了，你揀一件。」夕陽照住，你唔好意思咁揀。",
+      "reward_blurb": "免費裝備・三選一",
+      "category": "card_gift",
+      "category_label": "送卡",
+      "gift": "gear",
+      "rewards_preview": [
+        "免費三選一",
+        "隨機裝備",
+        "+10 膠幣"
+      ],
+      "reward_soul": 10,
+      "reward_xp": 3,
+      "battle": null,
+      "art": "assets/events/ev-alley-wake.jpg"
+    },
+    {
+      "id": "EV55",
+      "name": "三張卡・三條數",
+      "type": "主線",
+      "desc": "雨夜天台先開場。之後樓梯口一袋紅白藍，再到旺角後巷，三條數其實係同一個人嘅——佢欠嘅唔止錢。",
+      "dialogue": [
+        {
+          "speaker": "天台上的眼鏡女",
+          "text": "企定。呢張欠單寫住我阿媽個名，你哋收錯人。"
+        },
+        {
+          "speaker": "西裝帶頭",
+          "text": "收錯？字係你簽。天台冇閉路電視，你講咩都得。"
+        },
+        {
+          "speaker": "你",
+          "text": "等等。我識樓梯口搬嘢嗰個，同旺角打拳嗰個。三個都係你哋追嘅人。"
+        },
+        {
+          "speaker": "西裝帶頭",
+          "text": "後生仔，你行過三條巷，就當自己係證人？講多句，你都要簽名。"
+        }
+      ],
+      "reward_blurb": "雨夜天台・收數隊上樓",
+      "category": "main",
+      "rewards_preview": [
+        "+9 經驗",
+        "+26 膠幣",
+        "欠單風波"
+      ],
+      "battle": "E05",
+      "reward_soul": 26,
+      "reward_xp": 9,
+      "pack": "shou_dai_nv_xia",
+      "art": "assets/fighters/C251.jpg",
+      "category_label": "主線",
+      "story_pack_id": "shou_dai_nv_xia"
+    },
+    {
+      "id": "EV56",
+      "name": "樓梯口那袋紅白藍",
+      "type": "主線",
+      "desc": "樓梯轉角，紅白藍袋橫放。搬運妹話：裡面唔係貨，係欠單同身份證副本。你要幫佢抬上樓，抑或當冇見過。",
+      "dialogue": [
+        {
+          "speaker": "紅白藍搬運妹",
+          "text": "唔好望袋面。呢袋嘢抬上去，我就有本錢同佢哋講數。"
+        },
+        {
+          "speaker": "你",
+          "text": "抬上去，你就走唔甩。"
+        },
+        {
+          "speaker": "紅白藍搬運妹",
+          "text": "走唔甩都好過一世幫佢哋抬。搭把手，樓梯窄，唔好撞到人。"
+        }
+      ],
+      "reward_blurb": "樓梯口・一袋上樓",
+      "category": "main",
+      "rewards_preview": [
+        "+7 經驗",
+        "+22 膠幣",
+        "紅白藍袋"
+      ],
+      "battle": null,
+      "reward_soul": 22,
+      "reward_xp": 7,
+      "pack": "shou_dai_nv_xia",
+      "art": "assets/fighters/C252.jpg",
+      "category_label": "主線",
+      "story_pack_id": "shou_dai_nv_xia"
+    },
+    {
+      "id": "EV57",
+      "name": "旺角後巷收工",
+      "type": "主線",
+      "desc": "西裝褸未除，領帶鬆到胸口。旺角後巷霓虹照住，鐵通舉起，佢一腳蹬牆——今晚唔止收工，順手收數。",
+      "dialogue": [
+        {
+          "speaker": "西裝女拳",
+          "text": "條巷好窄，你哋企咁埋，我唔知踢邊個先。"
+        },
+        {
+          "speaker": "旺角圍標",
+          "text": "收工？今晚你冇工收，只有數收。"
+        },
+        {
+          "speaker": "西裝女拳",
+          "text": "後生仔，你企牆邊。三分鐘——收完數，我請你食宵夜。"
+        }
+      ],
+      "reward_blurb": "旺角後巷・飛踢收工",
+      "category": "main",
+      "rewards_preview": [
+        "+10 經驗",
+        "+30 膠幣",
+        "旺角收數"
+      ],
+      "battle": "E06",
+      "reward_soul": 30,
+      "reward_xp": 10,
+      "pack": "shou_dai_nv_xia",
+      "art": "assets/fighters/C253.jpg",
+      "category_label": "主線",
+      "story_pack_id": "shou_dai_nv_xia"
+    },
+    {
+      "id": "EV58",
+      "name": "熄燈之前",
+      "type": "主線",
+      "desc": "凌晨兩點，整條街只剩半邊招牌著。修燈師傅由棚頂落嚟，手上一截光管仲有餘溫：「呢批招牌，政府話要拆。你話，熄定唔熄？」",
+      "dialogue": [
+        {
+          "speaker": "霓虹修燈",
+          "text": "你睇下。呢個「大」字缺一劃，我補咗三次。補一次，政府話一次要拆。"
+        },
+        {
+          "speaker": "你",
+          "text": "拆咗，條街夜晚靠咩照？"
+        },
+        {
+          "speaker": "霓虹修燈",
+          "text": "靠車燈囉。車一過，光就散。招牌唔同——招牌係寫明呢度有人做生意、有人住、有人捱到天光。"
+        },
+        {
+          "speaker": "廣告招牌漆",
+          "text": "我啲漆仲有半桶。字拆得甩，漆入咗牆就洗唔甩。你話值唔值？"
+        },
+        {
+          "speaker": "霓虹修燈",
+          "text": "後生仔，唔使你出手。你只要記住今晚呢條街係咩樣——日後有人問起，你講得出。"
+        }
+      ],
+      "reward_blurb": "凌晨兩點・半條街仍著",
+      "category": "main",
+      "rewards_preview": [
+        "+6 經驗",
+        "+20 膠幣",
+        "霓虹未完"
+      ],
+      "battle": null,
+      "reward_soul": 20,
+      "reward_xp": 6,
+      "pack": "neon_mei_wan",
+      "art": "assets/fighters/C73.png",
       "category_label": "主線",
       "story_pack_id": "neon_mei_wan"
     },
     {
-      "id": "EV48",
-      "name": "燈管記憶",
-      "type": "打機舖",
-      "desc": "舊電器舖橱窗裏，半支霓虹管按節拍明滅。跟上亮起的鍵位，把缺劃補完——闖關領滿獎，失敗仍可繼續人生。",
-      "reward_blurb": "破關滿獎・失敗半獎・人生不停",
+      "id": "EV59",
+      "name": "招牌上棚",
+      "type": "主線",
+      "desc": "吊臂車泊在騎樓底，三個人上棚鬆螺絲。師傅把光管交你手上：「你扶住呢邊，我去同佢哋講。」",
+      "dialogue": [
+        {
+          "speaker": "招牌拆遷隊",
+          "text": "阿哥，唔好企棚邊。呢塊招牌三噸重，跌一份出嚟，你扶唔住。"
+        },
+        {
+          "speaker": "霓虹修燈",
+          "text": "三噸重你都拆得，你拆嘅係鐵，唔係字。個字我補咗三次。"
+        },
+        {
+          "speaker": "招牌拆遷隊",
+          "text": "字唔值錢，紙值錢。上頭簽咗紙，我今晚要交棚。你阻我，我要交人。"
+        },
+        {
+          "speaker": "廣告招牌漆",
+          "text": "後生仔，你唔使做英雄。你行開半步，我同師傅講數；你企定，就當你係自己人。"
+        },
+        {
+          "speaker": "你",
+          "text": "我扶住呢邊。"
+        },
+        {
+          "speaker": "招牌拆遷隊",
+          "text": "好。咁就唔係講數，係開片。"
+        }
+      ],
+      "reward_blurb": "騎樓底・三噸招牌",
+      "category": "main",
+      "rewards_preview": [
+        "+11 經驗",
+        "+32 膠幣",
+        "招牌唔落地"
+      ],
+      "battle": "E07",
+      "reward_soul": 32,
+      "reward_xp": 11,
+      "pack": "neon_mei_wan",
+      "art": "assets/fighters/C115.png",
+      "category_label": "主線",
+      "story_pack_id": "neon_mei_wan"
+    },
+    {
+      "id": "EV60",
+      "name": "最後一盞",
+      "type": "主線",
+      "desc": "地盤圍板圍到街口，紮鐵工人抽起鐵枝，最後一盞招牌失去支架。師傅話：拆得甩招牌，拆唔甩條街記性。",
+      "dialogue": [
+        {
+          "speaker": "地盤清場隊",
+          "text": "今晚十二點前清乾淨。鐵枝一支都唔留——你哋啲招牌掛得太出，吊機入唔到。"
+        },
+        {
+          "speaker": "霓虹修燈",
+          "text": "吊機入唔到，人行得到。呢條街幾十年都係人行。"
+        },
+        {
+          "speaker": "地盤清場隊",
+          "text": "師傅，我敬你手藝。但紙係上頭簽，錢係上頭出，我唔做，有人做。"
+        },
+        {
+          "speaker": "廣告招牌漆",
+          "text": "後生仔，記住，拆到最後一盞，唔好望住佢熄——望住佢著嗰刻。"
+        }
+      ],
+      "reward_blurb": "街口圍板・最後一盞",
+      "category": "main",
+      "rewards_preview": [
+        "+12 經驗",
+        "+34 膠幣",
+        "條街記性"
+      ],
+      "battle": "E08",
+      "reward_soul": 34,
+      "reward_xp": 12,
+      "pack": "neon_mei_wan",
+      "art": "assets/fighters/C83.png",
+      "category_label": "主線",
+      "story_pack_id": "neon_mei_wan"
+    },
+    {
+      "id": "EV_OF_01",
+      "name": "第一日返工",
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "desc": "中五畢業，屋企等你搵錢。三份工擺喺你面前：寫字樓信差、茶記樓面、親戚舖頭幫手。三份都唔係你想做，但三份都有人肯請。",
+      "dialogue": [
+        {
+          "speaker": "阿媽",
+          "text": "唔使你賺大錢，穩定就得。"
+        },
+        {
+          "speaker": "你",
+          "text": "穩定……即係做幾耐？"
+        },
+        {
+          "speaker": "阿媽",
+          "text": "做到唔使問呢句為止。"
+        },
+        {
+          "speaker": "阿媽",
+          "text": "（佢轉身去廚房，水聲好大）"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住天花板個紅膠桶，一滴、兩滴）"
+        },
+        {
+          "speaker": "阿媽",
+          "text": "（廚房傳出）你阿爸當年都係咁開始。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你從來冇問過佢，阿爸做咗幾耐）"
+        },
+        {
+          "speaker": "你",
+          "text": "（你亦都冇問過，佢開唔開心）"
+        },
+        {
+          "speaker": "阿媽",
+          "text": "（端一碗湯出嚟）飲咗先出去。"
+        },
+        {
+          "speaker": "你",
+          "text": "（湯好燙。你飲咗好耐）"
+        }
+      ],
+      "art": "assets/events/ev-mtr-crowd.jpg",
+      "battle": null,
+      "story_pack_id": "office_ballad",
+      "pack": "office_ballad",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "打工仔輓歌 · 分支",
+      "office_node": "start",
+      "office_choices": [
+        {
+          "text": "入寫字樓做信差，睇清楚西裝係點著",
+          "delta": {
+            "rich": 4,
+            "biz": 1,
+            "flat": 1
+          }
+        },
+        {
+          "text": "去茶記做樓面，實實在在搵現金",
+          "delta": {
+            "biz": 4,
+            "flat": 1
+          }
+        },
+        {
+          "text": "跟親戚做買賣，學人做生意",
+          "delta": {
+            "street": 4,
+            "scam": 1
+          }
+        }
+      ],
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "mom",
+          "name": "阿媽",
+          "role": "等你養家",
+          "line": "等你養家",
+          "arc_lines": {
+            "warm": "等你養家（佢仲喺度）",
+            "neutral": "等你養家",
+            "cold": "等你養家（佢已經唔想講）"
+          }
+        }
+      ]
+    },
+    {
+      "id": "EV_OF_02",
+      "name": "影印機旁的那個人",
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "desc": "入職第三日，主管叫你幫佢打一份私人文件——唔係公司嘅。影印機旁邊，有個做咗十九年嘅阿姐望住你。",
+      "dialogue": [
+        {
+          "speaker": "主管",
+          "text": "後生仔，幫我打呢份。唔使問係咩。"
+        },
+        {
+          "speaker": "主管",
+          "text": "打好咗放我枱面，唔好話畀人知。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住份文件，上面有另一個公司嘅名）"
+        },
+        {
+          "speaker": "隔籬位阿姐",
+          "text": "（佢冇望你，一路打字）"
+        },
+        {
+          "speaker": "隔籬位阿姐",
+          "text": "第一次有人叫你打嘢？"
+        },
+        {
+          "speaker": "你",
+          "text": "嗯。"
+        },
+        {
+          "speaker": "隔籬位阿姐",
+          "text": "打好咗，你就係佢嘅人。唔打，你就係冇用嘅人。"
+        },
+        {
+          "speaker": "隔籬位阿姐",
+          "text": "我十九年前揀咗第一個。"
+        },
+        {
+          "speaker": "你",
+          "text": "（佢打字的聲停咗一下）"
+        },
+        {
+          "speaker": "隔籬位阿姐",
+          "text": "你自己決定。我唔會幫你。"
+        }
+      ],
+      "art": "assets/events/ev-mtr-crowd.jpg",
+      "battle": null,
+      "story_pack_id": "office_ballad",
+      "pack": "office_ballad",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "打工仔輓歌 · 分支",
+      "office_node": "desk",
+      "office_choices": [
+        {
+          "text": "照打，順手學埋佢點睇數",
+          "delta": {
+            "rich": 2,
+            "biz": 3,
+            "street": 1,
+            "scam": 1
+          }
+        },
+        {
+          "text": "拒絕，守返自己崗位",
+          "delta": {
+            "rich": 1,
+            "flat": 4
+          }
+        },
+        {
+          "text": "打，但要佢寫推薦信",
+          "delta": {
+            "rich": 3,
+            "biz": 2
+          }
+        }
+      ],
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "colleague",
+          "name": "隔籬位阿姐",
+          "role": "教你規矩",
+          "line": "教你規矩",
+          "arc_lines": {
+            "warm": "教你規矩（佢仲喺度）",
+            "neutral": "教你規矩",
+            "cold": "教你規矩（佢已經唔想講）"
+          }
+        },
+        {
+          "id": "mom",
+          "name": "阿媽",
+          "role": "唔敢問你",
+          "line": "唔敢問你",
+          "arc_lines": {
+            "warm": "唔敢問你（佢仲喺度）",
+            "neutral": "唔敢問你",
+            "cold": "唔敢問你（佢已經唔想講）"
+          }
+        }
+      ]
+    },
+    {
+      "id": "EV_OF_03",
+      "name": "茶記的數簿",
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "desc": "第三年，你喺茶記幫手。收工嗰陣你見到數簿——有一條數對唔上，差嘅唔多，但每次都係同一個位。",
+      "dialogue": [
+        {
+          "speaker": "你",
+          "text": "（你翻咗三次，三次都係差同一個數）"
+        },
+        {
+          "speaker": "你",
+          "text": "（差嘅錢，剛好夠一個伙記一日人工）"
+        },
+        {
+          "speaker": "你",
+          "text": "（你認得嗰個伙記——佢個仔今年升中一）"
+        },
+        {
+          "speaker": "伙記",
+          "text": "（佢見你望住本簿）……你睇到咩？"
+        },
+        {
+          "speaker": "你",
+          "text": "（你未答）"
+        },
+        {
+          "speaker": "伙記",
+          "text": "我知我唔應該。"
+        },
+        {
+          "speaker": "伙記",
+          "text": "但我個仔要交書簿費。"
+        },
+        {
+          "speaker": "伙記",
+          "text": "我下個月還返。我發誓。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你想起天花板上個紅膠桶）"
+        },
+        {
+          "speaker": "伙記",
+          "text": "你講啦。你要講就講。"
+        }
+      ],
       "art": "assets/events/ev-yum-cha.jpg",
       "battle": null,
-      "reward_soul": 24,
-      "reward_xp": 6,
-      "reward_gold": 4,
-      "category": "minigame",
-      "category_label": "小遊戲",
-      "rewards_preview": [
-        "+24 膠幣",
-        "+6 經驗",
-        "幸運＋1"
+      "story_pack_id": "office_ballad",
+      "pack": "office_ballad",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "打工仔輓歌 · 分支",
+      "office_node": "counter",
+      "office_choices": [
+        {
+          "text": "照實講，指條數出嚟",
+          "delta": {
+            "rich": 3,
+            "biz": 1,
+            "flat": 1
+          }
+        },
+        {
+          "text": "唔出聲，自己暗中補返",
+          "delta": {
+            "flat": 4
+          }
+        },
+        {
+          "text": "趁機自己開間舖",
+          "delta": {
+            "biz": 3,
+            "street": 2,
+            "scam": 1
+          }
+        }
       ],
-      "attrs_delta": {
-        "luck": 1
-      },
-      "minigame": {
-        "kind": "memory_pads",
-        "rounds": 3,
-        "pad_count": 4,
-        "time_limit_sec": 35
-      },
-      "flag_on_win": "neon_tube_clear",
-      "story_pack_id": "neon_mei_wan"
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "colleague",
+          "name": "隔籬位阿姐",
+          "role": "幫你頂過一次",
+          "line": "幫你頂過一次",
+          "arc_lines": {
+            "warm": "幫你頂過一次（佢仲喺度）",
+            "neutral": "幫你頂過一次",
+            "cold": "幫你頂過一次（佢已經唔想講）"
+          }
+        }
+      ]
+    },
+    {
+      "id": "EV_OF_04",
+      "name": "第一單生意",
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "desc": "第四年，你第一次自己接單。客人要一批貨，交貨期十日，但你手上現金只夠入三分一。",
+      "dialogue": [
+        {
+          "speaker": "客人",
+          "text": "十日。做唔做到？"
+        },
+        {
+          "speaker": "你",
+          "text": "（你計過，正常要十四日）"
+        },
+        {
+          "speaker": "客人",
+          "text": "做唔到我就搵第二個。後面排住隊。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住張訂單，上面嘅數夠你半年人工）"
+        },
+        {
+          "speaker": "你",
+          "text": "（但你冇現金入貨）"
+        },
+        {
+          "speaker": "朋友",
+          "text": "（電話）借？我介紹個財仔畀你。"
+        },
+        {
+          "speaker": "朋友",
+          "text": "三分息，一個月還。你頂唔頂得住？"
+        },
+        {
+          "speaker": "你",
+          "text": "（三分息，一個月＝你賺嘅全部）"
+        },
+        {
+          "speaker": "客人",
+          "text": "（催）點呀？"
+        },
+        {
+          "speaker": "你",
+          "text": "（你發現自己手心出汗）"
+        }
+      ],
+      "art": "assets/events/ev-alley-wake.jpg",
+      "battle": null,
+      "story_pack_id": "office_ballad",
+      "pack": "office_ballad",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "打工仔輓歌 · 分支",
+      "office_node": "trade",
+      "office_choices": [
+        {
+          "text": "老實報價，逐個客傾（放棄呢單）",
+          "delta": {
+            "biz": 4,
+            "flat": 2
+          }
+        },
+        {
+          "text": "搏一鋪，借錢入多批貨",
+          "delta": {
+            "flat": 1,
+            "street": 4,
+            "scam": 1
+          }
+        },
+        {
+          "text": "聽朋友講，跟人炒一轉快錢",
+          "delta": {
+            "street": 1,
+            "scam": 4
+          }
+        }
+      ],
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "partner",
+          "name": "嗰個人",
+          "role": "一齊諗將來",
+          "line": "一齊諗將來",
+          "arc_lines": {
+            "warm": "一齊諗將來（佢仲喺度）",
+            "neutral": "一齊諗將來",
+            "cold": "一齊諗將來（佢已經唔想講）"
+          }
+        }
+      ]
+    },
+    {
+      "id": "EV_OF_05",
+      "name": "升職還是跳槽",
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "desc": "第五年，公司裁員。你冇被裁，但隔籬位嘅阿姐走咗。佢張枱放咗三個月冇人坐。老闆叫你入房。",
+      "dialogue": [
+        {
+          "speaker": "老闆",
+          "text": "坐。"
+        },
+        {
+          "speaker": "老闆",
+          "text": "阿姐走咗，佢嗰份你接。"
+        },
+        {
+          "speaker": "你",
+          "text": "人工呢？"
+        },
+        {
+          "speaker": "老闆",
+          "text": "加五百。"
+        },
+        {
+          "speaker": "你",
+          "text": "（阿姐做咗十九年，佢份糧唔止呢個數）"
+        },
+        {
+          "speaker": "老闆",
+          "text": "你想清楚。外面而家唔易搵工。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你想起阿姐臨走講嘅話）"
+        },
+        {
+          "speaker": "你",
+          "text": "（「唔好以為做多有用」）"
+        },
+        {
+          "speaker": "老闆",
+          "text": "（推一份新合約過嚟）簽咗就當你應承。"
+        },
+        {
+          "speaker": "你",
+          "text": "（筆喺你手上）"
+        }
+      ],
+      "art": "assets/events/ev-mtr-crowd.jpg",
+      "battle": null,
+      "story_pack_id": "office_ballad",
+      "pack": "office_ballad",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "打工仔輓歌 · 分支",
+      "office_node": "promotion",
+      "office_choices": [
+        {
+          "text": "留低升職，慢慢爬",
+          "delta": {
+            "rich": 4,
+            "biz": 1,
+            "flat": 2
+          }
+        },
+        {
+          "text": "跳槽，博更高人工",
+          "delta": {
+            "rich": 1,
+            "biz": 4,
+            "street": 1
+          }
+        },
+        {
+          "text": "辭職，自己做老闆",
+          "delta": {
+            "biz": 2,
+            "street": 4,
+            "scam": 1
+          }
+        }
+      ],
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "partner",
+          "name": "嗰個人",
+          "role": "開始等你",
+          "line": "開始等你",
+          "arc_lines": {
+            "warm": "開始等你（佢仲喺度）",
+            "neutral": "開始等你",
+            "cold": "開始等你（佢已經唔想講）"
+          }
+        },
+        {
+          "id": "mom",
+          "name": "阿媽",
+          "role": "開始唔明你",
+          "line": "開始唔明你",
+          "arc_lines": {
+            "warm": "開始唔明你（佢仲喺度）",
+            "neutral": "開始唔明你",
+            "cold": "開始唔明你（佢已經唔想講）"
+          }
+        }
+      ]
+    },
+    {
+      "id": "EV_OF_06",
+      "name": "租約到期",
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "desc": "第六年，你自己間舖租約到期。業主加租四成。你計過，加咗租就冇錢賺。",
+      "dialogue": [
+        {
+          "speaker": "業主",
+          "text": "四成。唔簽就搬。"
+        },
+        {
+          "speaker": "你",
+          "text": "四成？我賺嘅都冇咁多。"
+        },
+        {
+          "speaker": "業主",
+          "text": "隔籬個位有人出更高。我唔急。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住舖頭，貨架係你自己一手一腳搭嘅）"
+        },
+        {
+          "speaker": "伙記",
+          "text": "（細聲）老闆……我哋搬唔搬？"
+        },
+        {
+          "speaker": "你",
+          "text": "（你請咗兩個伙記，兩個都有家）"
+        },
+        {
+          "speaker": "業主",
+          "text": "（遞筆）下星期一之前答我。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你想起第一日返工，阿媽講嘅「穩定」）"
+        },
+        {
+          "speaker": "你",
+          "text": "（原來穩定係要買嘅，而且年年加價）"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住支筆，好耐）"
+        }
+      ],
+      "art": "assets/events/ev-alley-wake.jpg",
+      "battle": null,
+      "story_pack_id": "office_ballad",
+      "pack": "office_ballad",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "打工仔輓歌 · 分支",
+      "office_node": "rent",
+      "office_choices": [
+        {
+          "text": "簽，縮細規模頂住",
+          "delta": {
+            "biz": 2,
+            "flat": 4
+          }
+        },
+        {
+          "text": "搬去更遠更平嘅舖",
+          "delta": {
+            "biz": 4,
+            "flat": 1,
+            "street": 1
+          }
+        },
+        {
+          "text": "借錢擴充，一次過做大",
+          "delta": {
+            "street": 4,
+            "scam": 2
+          }
+        }
+      ],
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "colleague",
+          "name": "隔籬位阿姐",
+          "role": "覺得你太急",
+          "line": "覺得你太急",
+          "arc_lines": {
+            "warm": "覺得你太急（佢仲喺度）",
+            "neutral": "覺得你太急",
+            "cold": "覺得你太急（佢已經唔想講）"
+          }
+        }
+      ]
+    },
+    {
+      "id": "EV_OF_07",
+      "name": "抽居屋",
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "desc": "第七年，你同嗰個人抽到居屋。號碼好前。簽紙嗰日，佢問你：你確定？",
+      "dialogue": [
+        {
+          "speaker": "嗰個人",
+          "text": "抽到咗。"
+        },
+        {
+          "speaker": "嗰個人",
+          "text": "但係……你確定？"
+        },
+        {
+          "speaker": "你",
+          "text": "確定咩？"
+        },
+        {
+          "speaker": "嗰個人",
+          "text": "確定要供三十年。"
+        },
+        {
+          "speaker": "嗰個人",
+          "text": "三十年。你今年二十八。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你計過，供完你五十八歲）"
+        },
+        {
+          "speaker": "嗰個人",
+          "text": "我唔係唔想。我只係想問清楚。"
+        },
+        {
+          "speaker": "嗰個人",
+          "text": "因為簽咗之後，我哋就唔可以再話「唔知」。 "
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住張紙，上面有兩個空格）"
+        },
+        {
+          "speaker": "你",
+          "text": "（兩個空格都未簽）"
+        }
+      ],
+      "art": "assets/events/ev-alley-wake.jpg",
+      "battle": null,
+      "story_pack_id": "office_ballad",
+      "pack": "office_ballad",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "打工仔輓歌 · 分支",
+      "office_node": "flat_try",
+      "office_choices": [
+        {
+          "text": "抽，同時開始儲首期",
+          "delta": {
+            "rich": 1,
+            "flat": 5
+          }
+        },
+        {
+          "text": "唔抽，租樓住先",
+          "delta": {
+            "biz": 3,
+            "flat": 1,
+            "street": 1
+          }
+        },
+        {
+          "text": "跟朋友夾份炒一層",
+          "delta": {
+            "rich": 1,
+            "street": 2,
+            "scam": 4
+          }
+        }
+      ],
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "partner",
+          "name": "嗰個人",
+          "role": "唔再等你",
+          "line": "唔再等你",
+          "arc_lines": {
+            "warm": "唔再等你（佢仲喺度）",
+            "neutral": "唔再等你",
+            "cold": "唔再等你（佢已經唔想講）"
+          }
+        }
+      ]
+    },
+    {
+      "id": "EV_OF_08",
+      "name": "內幕消息",
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "desc": "第八年，有個舊同學搵你。佢話有內幕消息，一隻股票下星期會升三倍。佢自己已經落重注。",
+      "dialogue": [
+        {
+          "speaker": "舊同學",
+          "text": "我唔會害你。我落咗五十萬。"
+        },
+        {
+          "speaker": "舊同學",
+          "text": "你信我一次。我幾時呃過你？"
+        },
+        {
+          "speaker": "你",
+          "text": "（你想起中學時候，佢借過你十蚊，還咗）"
+        },
+        {
+          "speaker": "舊同學",
+          "text": "下星期三。你自己決定。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你查過，間公司冇咩業務）"
+        },
+        {
+          "speaker": "你",
+          "text": "（但係你嘅積蓄，剛好夠首期一半）"
+        },
+        {
+          "speaker": "舊同學",
+          "text": "（電話）仲有半個鐘。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你想起阿媽個紅膠桶）"
+        },
+        {
+          "speaker": "你",
+          "text": "（你想起供三十年嘅承諾）"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住個電話，冇按落去）"
+        }
+      ],
+      "art": "assets/events/ev-alley-wake.jpg",
+      "battle": null,
+      "story_pack_id": "office_ballad",
+      "pack": "office_ballad",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "打工仔輓歌 · 分支",
+      "office_node": "hot_tip",
+      "office_choices": [
+        {
+          "text": "唔落，繼續做自己嘢",
+          "delta": {
+            "rich": 4,
+            "biz": 1,
+            "flat": 1
+          }
+        },
+        {
+          "text": "落少少，試下水溫",
+          "delta": {
+            "flat": 1,
+            "scam": 4
+          }
+        },
+        {
+          "text": "All in，借埋錢",
+          "delta": {
+            "street": 4,
+            "scam": 4
+          }
+        }
+      ],
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "colleague",
+          "name": "隔籬位阿姐",
+          "role": "同你講咗真話",
+          "line": "同你講咗真話",
+          "arc_lines": {
+            "warm": "同你講咗真話（佢仲喺度）",
+            "neutral": "同你講咗真話",
+            "cold": "同你講咗真話（佢已經唔想講）"
+          }
+        }
+      ]
+    },
+    {
+      "id": "EV_OF_09",
+      "name": "合夥人",
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "desc": "第九年，有個人搵你合夥。佢出錢，你出力。合約擺喺枱面，條款好厚，你睇唔明最後三頁。",
+      "dialogue": [
+        {
+          "speaker": "合夥人",
+          "text": "我出七成錢，你出三成力。"
+        },
+        {
+          "speaker": "合夥人",
+          "text": "賺錢四六分。我六。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你計過，唔公平，但唔算離譜）"
+        },
+        {
+          "speaker": "合夥人",
+          "text": "最後三頁係保障我嘅。你放心。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住最後三頁，字好細）"
+        },
+        {
+          "speaker": "合夥人",
+          "text": "唔使睇。我做人做咗三十年。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你想起阿姐：「唔好以為做多有用」）"
+        },
+        {
+          "speaker": "你",
+          "text": "（你想起業主：「我唔急」）"
+        },
+        {
+          "speaker": "合夥人",
+          "text": "（遞筆）簽咗我哋就開工。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你發現自己已經四十歲）"
+        }
+      ],
+      "art": "assets/events/ev-yum-cha.jpg",
+      "battle": null,
+      "story_pack_id": "office_ballad",
+      "pack": "office_ballad",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "打工仔輓歌 · 分支",
+      "office_node": "partner",
+      "office_choices": [
+        {
+          "text": "簽合約，寫清楚條款",
+          "delta": {
+            "rich": 2,
+            "biz": 4
+          }
+        },
+        {
+          "text": "口頭應承，先睇一段時間",
+          "delta": {
+            "biz": 1,
+            "flat": 2,
+            "street": 1,
+            "scam": 3
+          }
+        },
+        {
+          "text": "唔合作，自己做",
+          "delta": {
+            "rich": 1,
+            "flat": 4,
+            "street": 1
+          }
+        }
+      ],
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "mom",
+          "name": "阿媽",
+          "role": "只求你平安",
+          "line": "只求你平安",
+          "arc_lines": {
+            "warm": "只求你平安（佢仲喺度）",
+            "neutral": "只求你平安",
+            "cold": "只求你平安（佢已經唔想講）"
+          }
+        }
+      ]
+    },
+    {
+      "id": "EV_OF_10",
+      "name": "最後一個月",
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "desc": "第十年。你企喺天橋上面，望住下面啲車。有一架停咗喺路邊，車入面有人喺度食飯盒。你電話響起，係一個陌生號碼。",
+      "dialogue": [
+        {
+          "speaker": "你",
+          "text": "（你數咗十個分岔）"
+        },
+        {
+          "speaker": "你",
+          "text": "（每一個你都真係揀過）"
+        },
+        {
+          "speaker": "你",
+          "text": "（但冇一個係你最初想要嘅）"
+        },
+        {
+          "speaker": "電話",
+          "text": "（響）"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住個屏幕，唔識呢個號碼）"
+        },
+        {
+          "speaker": "阿媽",
+          "text": "（你想起佢問：你開唔開心）"
+        },
+        {
+          "speaker": "你",
+          "text": "（你當時冇答）"
+        },
+        {
+          "speaker": "電話",
+          "text": "（繼續響）"
+        },
+        {
+          "speaker": "你",
+          "text": "（天橋下面，車龍開始動）"
+        },
+        {
+          "speaker": "你",
+          "text": "（你仲有得揀）"
+        }
+      ],
+      "art": "assets/events/ev-alley-wake.jpg",
+      "battle": null,
+      "story_pack_id": "office_ballad",
+      "pack": "office_ballad",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "打工仔輓歌 · 分支",
+      "office_node": "crunch",
+      "office_choices": [
+        {
+          "text": "守住份工，唔再搏",
+          "delta": {
+            "rich": 3,
+            "flat": 4
+          }
+        },
+        {
+          "text": "再搏最後一次",
+          "delta": {
+            "biz": 2,
+            "street": 4,
+            "scam": 1
+          }
+        },
+        {
+          "text": "接聽嗰個陌生電話",
+          "delta": {
+            "street": 1,
+            "scam": 5
+          }
+        }
+      ],
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "mom",
+          "name": "阿媽",
+          "role": "等你返嚟食飯",
+          "line": "等你返嚟食飯",
+          "arc_lines": {
+            "warm": "等你返嚟食飯（佢仲喺度）",
+            "neutral": "等你返嚟食飯",
+            "cold": "等你返嚟食飯（佢已經唔想講）"
+          }
+        },
+        {
+          "id": "partner",
+          "name": "嗰個人",
+          "role": "各走各路",
+          "line": "各走各路",
+          "arc_lines": {
+            "warm": "各走各路（佢仲喺度）",
+            "neutral": "各走各路",
+            "cold": "各走各路（佢已經唔想講）"
+          }
+        }
+      ]
+    },
+    {
+      "id": "EV_OF_11",
+      "name": "結局：打工致富",
+      "type": "主線",
+      "category": "main",
+      "category_label": "結局",
+      "desc": "由信差做到部門主管，供滿層樓，仲有閒錢買馬。你冇發達，但你企得穩。",
+      "dialogue": [
+        {
+          "speaker": "你",
+          "text": "同一個位坐咗二十三年。椅子凹咗，我冇走。"
+        },
+        {
+          "speaker": "舊同事",
+          "text": "當年一齊入嚟嗰批，走剩你一個。"
+        },
+        {
+          "speaker": "你",
+          "text": "走剩我一個，所以我升。唔係叻，係留得低。"
+        },
+        {
+          "speaker": "銀行職員",
+          "text": "最後一期供完。層樓，係你嘅喇。"
+        },
+        {
+          "speaker": "你",
+          "text": "（望住窗外面嗰條街）我唔係贏咗，我只係冇認輸。"
+        }
+      ],
+      "art": "assets/fighters/C69.png",
+      "battle": null,
+      "story_pack_id": "office_ballad",
+      "pack": "office_ballad",
+      "reward_soul": 50,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [
+        "+50 膠幣",
+        "結局達成"
+      ],
+      "reward_blurb": "結局達成 · 50 膠幣",
+      "office_ending": "rich",
+      "office_ending_label": "成功打工致富",
+      "office_ending_blurb": "由信差做到部門主管，供滿層樓，仲有閒錢買馬。你冇發達，但你企得穩。",
+      "flag_on_complete": "office_ending_rich",
+      "require_flag": "office_route_rich"
+    },
+    {
+      "id": "EV_OF_12",
+      "name": "結局：生意失敗",
+      "type": "主線",
+      "category": "main",
+      "category_label": "結局",
+      "desc": "舖頭開咗三年，租加咗兩次，伙記走淨一個。你冇破產，但你冇咗間舖。",
+      "dialogue": [
+        {
+          "speaker": "你",
+          "text": "租約到期嗰日，業主話加三成。我計咗一晚數，計唔掂。"
+        },
+        {
+          "speaker": "伙記",
+          "text": "老闆，我下個月唔嚟喇。"
+        },
+        {
+          "speaker": "你",
+          "text": "好。走得快好世界。我唔會欠你一個月糧。"
+        },
+        {
+          "speaker": "你",
+          "text": "拉閘嗰刻，鐵閘聲好響。原來一間舖死，只係一聲。"
+        },
+        {
+          "speaker": "你",
+          "text": "我仲有手有腳。只係唔知下次仲敢唔敢。"
+        }
+      ],
+      "art": "assets/fighters/C94.png",
+      "battle": null,
+      "story_pack_id": "office_ballad",
+      "pack": "office_ballad",
+      "reward_soul": 50,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [
+        "+50 膠幣",
+        "結局達成"
+      ],
+      "reward_blurb": "結局達成 · 50 膠幣",
+      "office_ending": "biz_fail",
+      "office_ending_label": "生意失敗",
+      "office_ending_blurb": "舖頭開咗三年，租加咗兩次，伙記走淨一個。你冇破產，但你冇咗間舖。",
+      "flag_on_complete": "office_ending_biz_fail",
+      "require_flag": "office_route_biz_fail"
+    },
+    {
+      "id": "EV_OF_13",
+      "name": "結局：上樓成家",
+      "type": "主線",
+      "category": "main",
+      "category_label": "結局",
+      "desc": "抽到居屋，簽紙嗰日手震。層樓唔大，但門牌上面有你同佢嘅名。",
+      "dialogue": [
+        {
+          "speaker": "你",
+          "text": "抽籤嗰日，號碼讀出嚟，我以為自己聽錯。"
+        },
+        {
+          "speaker": "佢",
+          "text": "你企咗喺度成分鐘，冇出聲。"
+        },
+        {
+          "speaker": "你",
+          "text": "我怕一出聲，就會醒。"
+        },
+        {
+          "speaker": "律師",
+          "text": "兩位簽名。恭喜，係你哋嘅。"
+        },
+        {
+          "speaker": "你",
+          "text": "（鎖匙跌落掌心）唔係好大。但係，係我哋嘅。"
+        }
+      ],
+      "art": "assets/fighters/C24.png",
+      "battle": null,
+      "story_pack_id": "office_ballad",
+      "pack": "office_ballad",
+      "reward_soul": 50,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [
+        "+50 膠幣",
+        "結局達成"
+      ],
+      "reward_blurb": "結局達成 · 50 膠幣",
+      "office_ending": "flat",
+      "office_ending_label": "成功買樓成家立室",
+      "office_ending_blurb": "抽到居屋，簽紙嗰日手震。層樓唔大，但門牌上面有你同佢嘅名。",
+      "flag_on_complete": "office_ending_flat",
+      "require_flag": "office_route_flat"
+    },
+    {
+      "id": "EV_OF_14",
+      "name": "結局：露宿街頭",
+      "type": "主線",
+      "category": "main",
+      "category_label": "結局",
+      "desc": "你借盡所有人，押上所有嘢，最後剩返一個紅白藍袋同一個紙皮箱。",
+      "dialogue": [
+        {
+          "speaker": "你",
+          "text": "最後一個電話，打畀阿媽。接通咗，我冇出聲。"
+        },
+        {
+          "speaker": "阿媽",
+          "text": "你幾時返嚟食飯？"
+        },
+        {
+          "speaker": "你",
+          "text": "……下個禮拜。"
+        },
+        {
+          "speaker": "你",
+          "text": "（收線）我冇下個禮拜。"
+        },
+        {
+          "speaker": "你",
+          "text": "紙皮鋪喺天橋底，夜晚有風。我把衫塞入袋，當枕頭。"
+        },
+        {
+          "speaker": "你",
+          "text": "天光之前最凍。原來一個人破產，唔會有人通知你。"
+        }
+      ],
+      "art": "assets/fighters/C36.png",
+      "battle": null,
+      "story_pack_id": "office_ballad",
+      "pack": "office_ballad",
+      "reward_soul": 50,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [
+        "+50 膠幣",
+        "結局達成"
+      ],
+      "reward_blurb": "結局達成 · 50 膠幣",
+      "office_ending": "street",
+      "office_ending_label": "創業失敗露宿街頭",
+      "office_ending_blurb": "你借盡所有人，押上所有嘢，最後剩返一個紅白藍袋同一個紙皮箱。",
+      "flag_on_complete": "office_ending_street",
+      "require_flag": "office_route_street"
+    },
+    {
+      "id": "EV_OF_15",
+      "name": "結局：騙局之後",
+      "type": "主線",
+      "category": "main",
+      "category_label": "結局",
+      "desc": "一個保證回報的電話，一次轉帳，一世人積蓄。你冇勇氣面對第二日。",
+      "dialogue": [
+        {
+          "speaker": "電話",
+          "text": "陳生，呢個計劃保證年回報兩成，名額仲有兩個。"
+        },
+        {
+          "speaker": "你",
+          "text": "……要唔要我上去睇下？"
+        },
+        {
+          "speaker": "電話",
+          "text": "唔使啦，信我。轉數快就得。"
+        },
+        {
+          "speaker": "你",
+          "text": "（轉帳成功）"
+        },
+        {
+          "speaker": "你",
+          "text": "（三日後，同一個號碼已停用）"
+        },
+        {
+          "speaker": "你",
+          "text": "我唔知點同屋企人講。我唔知點返工。我唔知點面對聽日。"
+        },
+        {
+          "speaker": "你",
+          "text": "（天台。風很大。城市仍然亮。）"
+        }
+      ],
+      "art": "assets/fighters/C114.png",
+      "battle": null,
+      "story_pack_id": "office_ballad",
+      "pack": "office_ballad",
+      "reward_soul": 50,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [
+        "+50 膠幣",
+        "結局達成"
+      ],
+      "reward_blurb": "結局達成 · 50 膠幣",
+      "office_ending": "scam",
+      "office_ending_label": "被詐騙後自殺身亡",
+      "office_ending_blurb": "一個保證回報的電話，一次轉帳，一世人積蓄。你冇勇氣面對第二日。",
+      "flag_on_complete": "office_ending_scam",
+      "require_flag": "office_route_scam"
+    },
+    {
+      "id": "EV61",
+      "name": "深水埗車房．補衫補鞋",
+      "type": "裝備強化",
+      "desc": "車房角落，阿伯戴住放大鏡補鞋底：「你件裝備，識針線就仲有得救。」枱面擺滿鐵鎚、蠟線、舊皮革。",
+      "reward_blurb": "金幣強化裝備・選一件＋1星",
+      "category": "gear_upgrade",
+      "category_label": "裝備強化",
+      "rewards_preview": [
+        "強化裝備",
+        "+10 膠幣",
+        "+3 經驗"
+      ],
+      "reward_soul": 10,
+      "reward_xp": 3,
+      "battle": null,
+      "art": "assets/events/ev-alley-wake.jpg"
+    },
+    {
+      "id": "EV62",
+      "name": "廟街夜市．打銅打鐵",
+      "type": "裝備強化",
+      "desc": "夜市尾段有檔打鐵，爐火紅得刺眼。師傅唔問你叫咩名，只問：「要幾硬？」",
+      "reward_blurb": "金幣強化裝備・全隊加乘",
+      "category": "gear_upgrade",
+      "category_label": "裝備強化",
+      "rewards_preview": [
+        "強化裝備",
+        "+12 膠幣",
+        "+4 經驗"
+      ],
+      "reward_soul": 12,
+      "reward_xp": 4,
+      "battle": null,
+      "art": "assets/events/ev-alley-wake.jpg"
+    },
+    {
+      "id": "EV63",
+      "name": "舊樓天台．晾衫繩加料",
+      "type": "裝備強化",
+      "desc": "天台晾衫繩上掛住半條街嘅裝備，阿姐用衣夾逐件加固：「風大，唔加固就飛走。」",
+      "reward_blurb": "金幣強化裝備・選一件＋1星",
+      "category": "gear_upgrade",
+      "category_label": "裝備強化",
+      "rewards_preview": [
+        "強化裝備",
+        "+11 膠幣",
+        "+3 經驗"
+      ],
+      "reward_soul": 11,
+      "reward_xp": 3,
+      "battle": null,
+      "art": "assets/events/ev-alley-wake.jpg"
+    },
+    {
+      "id": "EV64",
+      "name": "天台鐵籠．加操兩小時",
+      "type": "練功",
+      "desc": "鐵籠內沙包打到爆線，教練啜住煙：「你唔夠力，唔係因為張卡弱，係你冇練。」",
+      "reward_blurb": "選一張戰鬥卡練功・加卡經驗",
+      "category": "fighter_train",
+      "category_label": "練功",
+      "rewards_preview": [
+        "卡經驗",
+        "+9 膠幣",
+        "+5 經驗"
+      ],
+      "reward_soul": 9,
+      "reward_xp": 5,
+      "battle": null,
+      "art": "assets/events/ev-alley-wake.jpg"
+    },
+    {
+      "id": "EV65",
+      "name": "球場夜練．燈光下對拆",
+      "type": "練功",
+      "desc": "街場燈光昏黃，幾個阿叔圍住看你同人對拆。「打得好唔好睇你練幾多晚。」",
+      "reward_blurb": "選一張戰鬥卡練功・可能升級",
+      "category": "fighter_train",
+      "category_label": "練功",
+      "rewards_preview": [
+        "卡經驗",
+        "+10 膠幣",
+        "+6 經驗"
+      ],
+      "reward_soul": 10,
+      "reward_xp": 6,
+      "battle": null,
+      "art": "assets/events/ev-alley-wake.jpg"
+    },
+    {
+      "id": "EV66",
+      "name": "茶記後巷．洗碗練腕力",
+      "type": "練功",
+      "desc": "阿姐遞你一桶碗：「洗夠三個鐘，你隻手就唔同晒。」蒸氣混住洗潔精味。",
+      "reward_blurb": "選一張戰鬥卡練功・加卡經驗",
+      "category": "fighter_train",
+      "category_label": "練功",
+      "rewards_preview": [
+        "卡經驗",
+        "+8 膠幣",
+        "+4 經驗"
+      ],
+      "reward_soul": 8,
+      "reward_xp": 4,
+      "battle": null,
+      "art": "assets/events/ev-yum-cha.jpg"
+    },
+    {
+      "id": "EV67",
+      "name": "油麻地義莊．做場法事",
+      "type": "復活",
+      "desc": "義莊門口香火不斷，喃嘸師傅問：「邊位兄弟未走？畀封利是我幫你叫返佢。」",
+      "reward_blurb": "付金幣復活陣亡卡・重返隊伍",
+      "category": "fighter_revive",
+      "category_label": "復活",
+      "rewards_preview": [
+        "復活陣亡卡",
+        "+15 膠幣",
+        "+5 經驗"
+      ],
+      "reward_soul": 15,
+      "reward_xp": 5,
+      "battle": null,
+      "art": "assets/events/ev-alley-wake.jpg"
+    },
+    {
+      "id": "EV68",
+      "name": "盂蘭節．街口燒衣",
+      "type": "復活",
+      "desc": "盂蘭夜，街口燒衣火光照住一堆紙紮。阿婆話：「有心就返得嚟，最緊要有人記得。」",
+      "reward_blurb": "付金幣復活陣亡卡・盂蘭限定",
+      "category": "fighter_revive",
+      "category_label": "復活",
+      "rewards_preview": [
+        "復活陣亡卡",
+        "+16 膠幣",
+        "+6 經驗"
+      ],
+      "reward_soul": 16,
+      "reward_xp": 6,
+      "battle": null,
+      "art": "assets/events/ev-alley-wake.jpg"
+    },
+    {
+      "id": "EV69",
+      "name": "街邊扭蛋．一蚊一抽",
+      "type": "抽卡",
+      "desc": "士多門口擺住部舊扭蛋機，一蚊一抽。扭幾下，出咩都好，總好過冇。",
+      "reward_blurb": "免費抽戰鬥卡・三選一",
+      "category": "card_draw",
+      "category_label": "抽卡",
+      "rewards_preview": [
+        "抽戰鬥卡",
+        "+7 膠幣",
+        "+3 經驗"
+      ],
+      "reward_soul": 7,
+      "reward_xp": 3,
+      "battle": null,
+      "art": "assets/events/ev-alley-wake.jpg",
+      "gift": "fighter"
+    },
+    {
+      "id": "EV70",
+      "name": "報紙檔．跟車送貨執到",
+      "type": "抽卡",
+      "desc": "幫報紙檔跟車送貨，回程見貨車尾箱有幾張濕透嘅卡。「要唔要？唔要就扔。」",
+      "reward_blurb": "免費抽戰鬥卡・三選一",
+      "category": "card_draw",
+      "category_label": "抽卡",
+      "rewards_preview": [
+        "抽戰鬥卡",
+        "+8 膠幣",
+        "+4 經驗"
+      ],
+      "reward_soul": 8,
+      "reward_xp": 4,
+      "battle": null,
+      "art": "assets/events/ev-alley-wake.jpg",
+      "gift": "fighter"
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "初入香江 · 故事",
+      "story_pack_id": "chu_ru_xiang_jiang",
+      "pack": "chu_ru_xiang_jiang",
+      "id": "EV_CRXJ_01",
+      "name": "第一日落車",
+      "desc": "火車剎停，蒸氣撲面。你隻手只得一個紅白藍袋，袋口用繩紮死兩次。月台有人舉牌寫住你個姓——但個姓寫錯咗一個字。四周都係人，冇一個識你。",
+      "art": "assets/events/ev-mtr-crowd.jpg",
+      "tale_node": "start",
+      "tale_pack": "chu_ru_xiang_jiang",
+      "dialogue": [
+        {
+          "speaker": "你",
+          "text": "（你望住個牌，望咗好耐）"
+        },
+        {
+          "speaker": "你",
+          "text": "我姓陳。個牌寫錯咗。"
+        },
+        {
+          "speaker": "七叔",
+          "text": "錯咗就錯咗，跟住我走。"
+        },
+        {
+          "speaker": "七叔",
+          "text": "錯字唔會害你，錯人先會。"
+        },
+        {
+          "speaker": "七叔",
+          "text": "你袋入面有咩？唔使答，我睇你紮繩就知——係阿媽紮嘅。"
+        },
+        {
+          "speaker": "阿珍",
+          "text": "喂，你個袋咁重，拎入嚟先。"
+        },
+        {
+          "speaker": "阿珍",
+          "text": "茶走。唔走我唔收錢。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你想講多謝，但嘴巴乾得開唔到）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "seven",
+          "name": "七叔",
+          "role": "帶路人 · 前碼頭苦力",
+          "line": "你行得快過我，即係你唔知路。慢啲，跟尾。",
+          "arc_lines": {
+            "warm": "後生，你唔似來打工。你似來還債。",
+            "neutral": "跟住我走，唔好問咁多。",
+            "cold": "你急住邊去？急嘅人通常都行錯路。"
+          }
+        },
+        {
+          "id": "zhen",
+          "name": "阿珍",
+          "role": "茶記阿姐 · 一個養兩個",
+          "line": "杯茶你飲，錢遲啲先講。第一次嚟香江？個樣寫晒出嚟。",
+          "arc_lines": {
+            "warm": "坐低，慢慢飲。呢度冇人赶你。",
+            "neutral": "杯茶你飲，錢遲啲先講。",
+            "cold": "飲完就走，我仲有三枱要收。"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "跟七叔走，唔問（先信人）",
+          "delta": {
+            "trust": 2
+          },
+          "bond": {
+            "seven": 1
+          },
+          "outcome": "七叔冇再講嘢，但行到路口有車過，佢伸手攔住你。",
+          "bond_note": "七叔 · 願意帶你行"
+        },
+        {
+          "text": "問清楚個錯字係邊個寫（先查清楚）",
+          "delta": {
+            "careful": 2
+          },
+          "bond": {
+            "seven": -1,
+            "zhen": 1
+          },
+          "outcome": "七叔皺眉。阿珍在後面笑了一聲：「呢個細路醒。」",
+          "bond_note": "七叔 · 覺得你麻煩｜阿珍 · 覺得你有腦"
+        },
+        {
+          "text": "先入茶記坐低飲杯茶（先安頓）",
+          "delta": {
+            "warm": 2
+          },
+          "bond": {
+            "zhen": 1,
+            "seven": -1
+          },
+          "outcome": "七叔門口等你，踱步踱到第三支煙。阿珍遞你一碟多士：「唔收錢。」",
+          "bond_note": "阿珍 · 覺得你識做人｜七叔 · 嫌你慢"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "初入香江 · 故事",
+      "story_pack_id": "chu_ru_xiang_jiang",
+      "pack": "chu_ru_xiang_jiang",
+      "id": "EV_CRXJ_02",
+      "name": "第一份工",
+      "desc": "七叔帶你去見工。三個地方：碼頭搬貨（即日現金，傷腰）、茶記樓面（阿珍缺人）、跟車（光仔個位，佢病咗三日）。三家都喺同一條街，行完一圈唔使十五分鐘。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "job",
+      "tale_pack": "chu_ru_xiang_jiang",
+      "dialogue": [
+        {
+          "speaker": "七叔",
+          "text": "碼頭一日三蚊，現金，冇保險。你做唔做得？"
+        },
+        {
+          "speaker": "七叔",
+          "text": "我做咗十二年。條腰係咁樣斷嘅。"
+        },
+        {
+          "speaker": "阿珍",
+          "text": "我度缺人。不過我醜話講先：我唔會當你係仔。"
+        },
+        {
+          "speaker": "阿珍",
+          "text": "做唔到就講，唔好做到一半走。我最憎人做到一半走。"
+        },
+        {
+          "speaker": "光仔",
+          "text": "跟車唔難，最緊要識跳落車。"
+        },
+        {
+          "speaker": "光仔",
+          "text": "我病三日咋，你唔好搶咗我個位。"
+        },
+        {
+          "speaker": "你",
+          "text": "（三個人望住你，冇一個催你）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "seven",
+          "name": "七叔",
+          "role": "帶路人",
+          "line": "我做咗十二年碼頭，條腰係咁樣斷嘅。你自己揀。",
+          "arc_lines": {
+            "warm": "你揀咩我都撐。但唔好學我，做一世苦力。",
+            "neutral": "碼頭一日三蚊，現金。你自己揀。",
+            "cold": "做唔做？唔做唔好阻住我開工。"
+          }
+        },
+        {
+          "id": "guang",
+          "name": "光仔",
+          "role": "跟車細路 · 十六歲",
+          "line": "我病三日咋，你唔好搶咗我個位。",
+          "arc_lines": {
+            "warm": "你幫我頂三日，我教你點跳車唔跌。",
+            "neutral": "我病三日咋，你唔好搶咗我個位。",
+            "cold": "你企喺我個位度做咩？"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "揀碼頭——現金最實際，腰可以慢慢醫",
+          "delta": {
+            "hard": 3
+          },
+          "bond": {
+            "seven": 2,
+            "guang": 1
+          },
+          "outcome": "七叔拍你膊頭，第一次笑。光仔望住你，眼有啲唔同。",
+          "bond_note": "七叔 · 覺得你似佢後生｜光仔 · 冇被搶位"
+        },
+        {
+          "text": "揀茶記——阿珍缺人，至少有餐飯",
+          "delta": {
+            "warm": 3
+          },
+          "bond": {
+            "zhen": 2,
+            "seven": -1
+          },
+          "outcome": "阿珍唔講多謝，只係俾你一件圍裙——袋口有補過。",
+          "bond_note": "阿珍 · 當你係自己人｜七叔 · 覺得你怕辛苦"
+        },
+        {
+          "text": "揀跟車——頂光仔三日，佢病好就交返",
+          "delta": {
+            "kind": 3
+          },
+          "bond": {
+            "guang": 3,
+            "seven": 1,
+            "zhen": 1
+          },
+          "outcome": "光仔呆咗半晌。「你……真係頂我？」之後三日，佢日日嚟看你跳車。",
+          "bond_note": "光仔 · 欠你一個大人情"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": "E05",
+      "reward_soul": 18,
+      "reward_xp": 7,
+      "reward_gold": 0,
+      "rewards_preview": [
+        "+18 膠幣",
+        "+7 經驗",
+        "身份紙風波"
+      ],
+      "reward_blurb": "初入香江 · 故事",
+      "story_pack_id": "chu_ru_xiang_jiang",
+      "pack": "chu_ru_xiang_jiang",
+      "id": "EV_CRXJ_03",
+      "name": "收數上門",
+      "desc": "第七日，兩個西裝上樓。佢哋手上有一張身份紙——你嘅名，你嘅身份證號碼，但簽名唔係你嘅字。原來有人用你個名頂咗一筆數。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "debt",
+      "tale_pack": "chu_ru_xiang_jiang",
+      "dialogue": [
+        {
+          "speaker": "西裝帶頭",
+          "text": "呢張紙係你簽，字係你個名。唔關邊個頂唔頂事。"
+        },
+        {
+          "speaker": "西裝帶頭",
+          "text": "你唔識字？唔緊要。識簽名就夠。"
+        },
+        {
+          "speaker": "七叔",
+          "text": "（細聲）唔好認。"
+        },
+        {
+          "speaker": "七叔",
+          "text": "認一次，以後張紙都係你嘅。呢條街做生意，講嘅係「邊個認」。"
+        },
+        {
+          "speaker": "阿珍",
+          "text": "（門口）喂，我煲咗湯。"
+        },
+        {
+          "speaker": "阿珍",
+          "text": "你兩個大熱天時上樓，唔飲湯會中暑。"
+        },
+        {
+          "speaker": "西裝帶頭",
+          "text": "（望住阿珍）阿姐，唔關你事。"
+        },
+        {
+          "speaker": "阿珍",
+          "text": "呢個門口關我事。"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "seven",
+          "name": "七叔",
+          "role": "帶路人",
+          "line": "我識呢班人。你唔好同佢哋講道理，講道理嗰個會輸。",
+          "arc_lines": {
+            "warm": "你唔使怕。我仲有幾個舊伙記喺附近。",
+            "neutral": "唔好認。認一次，以後張紙都係你嘅。",
+            "cold": "你自己惹返嚟，自己搞。"
+          }
+        },
+        {
+          "id": "zhen",
+          "name": "阿珍",
+          "role": "茶記阿姐",
+          "line": "我唔識講大道理，但門口呢度係我地方。",
+          "arc_lines": {
+            "warm": "你出聲，我幫你。我唔驚佢哋。",
+            "neutral": "（門口）我煲咗湯，你兩個要唔要入嚟飲？",
+            "cold": "唔好喺我門口搞事。"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "當面否認，硬碰（開打）",
+          "delta": {
+            "hard": 3,
+            "trust": 1
+          },
+          "bond": {
+            "seven": 2,
+            "zhen": 1
+          },
+          "outcome": "七叔即刻退後半步——唔係走，係讓位畀你出手。",
+          "bond_note": "七叔 · 睇得起你｜阿珍 · 覺得你有種"
+        },
+        {
+          "text": "認咗先，之後再算（先保命）",
+          "delta": {
+            "careful": 3
+          },
+          "bond": {
+            "seven": -2,
+            "zhen": 1
+          },
+          "outcome": "七叔轉身就走，冇再望你一眼。阿珍拉住你袖：「你傻咗？」",
+          "bond_note": "七叔 · 失望至極｜阿珍 · 担心你"
+        },
+        {
+          "text": "拖住佢哋，等七叔叫救兵",
+          "delta": {
+            "trust": 3
+          },
+          "bond": {
+            "seven": 3,
+            "zhen": 1
+          },
+          "outcome": "七叔吹了一聲哨。樓梯口出現三個人——全部都係碼頭舊伙記。",
+          "bond_note": "七叔 · 你信佢，佢記住"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "初入香江 · 故事",
+      "story_pack_id": "chu_ru_xiang_jiang",
+      "pack": "chu_ru_xiang_jiang",
+      "id": "EV_CRXJ_04",
+      "name": "頂名之人",
+      "desc": "查到最後，頂你個名嘅係光仔。佢阿媽要做手術，佢借咗一筆，用咗你張紙——因為全條街只有你唔識簽名，最容易落手。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "truth",
+      "tale_pack": "chu_ru_xiang_jiang",
+      "dialogue": [
+        {
+          "speaker": "光仔",
+          "text": "我……我唔係想害你。"
+        },
+        {
+          "speaker": "光仔",
+          "text": "我阿媽要做手術。我去問過三個人，三個都話冇。"
+        },
+        {
+          "speaker": "光仔",
+          "text": "我見到你張紙放喺枱面，我……我當時冇諗咁多。"
+        },
+        {
+          "speaker": "光仔",
+          "text": "你報警啦。我唔會走。"
+        },
+        {
+          "speaker": "七叔",
+          "text": "（佢唔出聲，只係望住你）"
+        },
+        {
+          "speaker": "阿珍",
+          "text": "（企喺門口，手上仲拎住個湯煲）"
+        },
+        {
+          "speaker": "你",
+          "text": "（你想起第一日，佢教你點跳車）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "guang",
+          "name": "光仔",
+          "role": "跟車細路 · 十六歲",
+          "line": "我知我做錯。你要我點做，我照做。",
+          "arc_lines": {
+            "warm": "你當我係朋友，我就唔會再呃你一次。",
+            "neutral": "你報警啦。我唔會走。",
+            "cold": "你唔會明。你冇一個要死嘅阿媽。"
+          }
+        },
+        {
+          "id": "seven",
+          "name": "七叔",
+          "role": "帶路人",
+          "line": "（佢唔講嘢，只係望住你——等你決定）",
+          "arc_lines": {
+            "warm": "你點揀，我都唔會怪你。",
+            "neutral": "（佢唔講嘢，只係望住你）",
+            "cold": "（佢已經唔想再理呢件事）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "原諒佢，一齊想辦法還錢",
+          "delta": {
+            "kind": 4
+          },
+          "bond": {
+            "guang": 3,
+            "seven": 2,
+            "zhen": 1
+          },
+          "outcome": "光仔跪落嚟，你拉住佢。七叔轉身抹面，話係煙熏眼。",
+          "bond_note": "光仔 · 一生記住｜七叔 · 覺得你係人"
+        },
+        {
+          "text": "要佢自己承擔，但唔報警（留一線）",
+          "delta": {
+            "careful": 3,
+            "hard": 1
+          },
+          "bond": {
+            "guang": -2,
+            "seven": 1
+          },
+          "outcome": "光仔點頭，一粒聲都冇。之後三個月，佢冇再出現喺街口。",
+          "bond_note": "光仔 · 冇面見你｜七叔 · 覺得你公道"
+        },
+        {
+          "text": "報警，劃清界線",
+          "delta": {
+            "hard": 4
+          },
+          "bond": {
+            "guang": -3,
+            "seven": -2,
+            "zhen": -1
+          },
+          "outcome": "警車嚟嗰陣，七叔已經走咗。阿珍關咗閘。",
+          "bond_note": "全條街 · 都知你係咩人"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "初入香江 · 故事",
+      "story_pack_id": "chu_ru_xiang_jiang",
+      "pack": "chu_ru_xiang_jiang",
+      "id": "EV_CRXJ_05",
+      "name": "一年之後",
+      "desc": "一年過去。你企喺同一條巷，紅白藍袋已經換成一個真皮公事包。有人喺後面叫你個名——叫得好準，冇一個錯字。",
+      "art": "assets/events/ev-yum-cha.jpg",
+      "tale_node": "after",
+      "tale_pack": "chu_ru_xiang_jiang",
+      "dialogue": [
+        {
+          "speaker": "阿珍",
+          "text": "一年前你連茶都唔識叫。"
+        },
+        {
+          "speaker": "阿珍",
+          "text": "而家識得叫茶走，仲識得叫多士要烘底。"
+        },
+        {
+          "speaker": "七叔",
+          "text": "條街冇變。"
+        },
+        {
+          "speaker": "七叔",
+          "text": "變嘅係你行路嘅聲。"
+        },
+        {
+          "speaker": "光仔",
+          "text": "（遠處，冇行過嚟）"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住個公事包，突然覺得好重）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "seven",
+          "name": "七叔",
+          "role": "帶路人",
+          "line": "（佢望住你個公事包，冇講嘢）",
+          "arc_lines": {
+            "warm": "你行得快過我喇。唔好回頭望我。",
+            "neutral": "條街冇變，變嘅係你行路嘅聲。",
+            "cold": "（佢點咗個頭，就行咗去對面）"
+          }
+        },
+        {
+          "id": "zhen",
+          "name": "阿珍",
+          "role": "茶記阿姐",
+          "line": "仲飲唔飲茶？我度加咗價。",
+          "arc_lines": {
+            "warm": "坐啦。呢個位永遠留返俾你。",
+            "neutral": "仲飲唔飲茶？我度加咗價。",
+            "cold": "（佢忙住抹枱，冇抬頭）"
+          }
+        },
+        {
+          "id": "guang",
+          "name": "光仔",
+          "role": "跟車細路",
+          "line": "（企喺遠處，冇行過嚟）",
+          "arc_lines": {
+            "warm": "喂！我而家做正行喇。你信唔信？",
+            "neutral": "（企喺遠處，冇行過嚟）",
+            "cold": "（見到你就轉身）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "留低，同佢哋一齊飲杯茶",
+          "delta": {
+            "warm": 3,
+            "trust": 2
+          },
+          "bond": {
+            "seven": 1,
+            "zhen": 1,
+            "guang": 1
+          },
+          "outcome": "四個人迫埋一張細枱。你冇講嘢，只係聽。",
+          "bond_note": "你揀咗呢條街"
+        },
+        {
+          "text": "行前一步，但唔留低",
+          "delta": {
+            "careful": 2,
+            "hard": 1
+          },
+          "outcome": "你點咗個頭，行出去。身後有人叫，但你冇回頭。",
+          "bond_note": "你揀咗前面"
+        },
+        {
+          "text": "交低一筆錢，轉身走",
+          "delta": {
+            "rich": 3
+          },
+          "bond": {
+            "seven": -1,
+            "zhen": -1
+          },
+          "outcome": "錢放喺枱面。阿珍冇收，七叔冇望。",
+          "bond_note": "你以為錢可以還清一切"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "九龍城寨風雲 · 故事",
+      "story_pack_id": "kowloon_walled_ch1",
+      "pack": "kowloon_walled_ch1",
+      "id": "EV_KLW_01",
+      "name": "寨門之前",
+      "desc": "一九七〇年，城寨西門。燈籠未點，巷口有塊褪色木牌：「差佬唔入」。天色已經暗到睇唔清人脸，但看更嘅凳腳聲好清楚。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "start",
+      "tale_pack": "kowloon_walled_ch1",
+      "dialogue": [
+        {
+          "speaker": "看更權",
+          "text": "入寨做咩？講唔出就唔好入。"
+        },
+        {
+          "speaker": "看更權",
+          "text": "我坐喺呢張凳三十年，見過太多人入去，冇出返嚟。"
+        },
+        {
+          "speaker": "白衫",
+          "text": "（遠處）喂，你企喺條線度做咩？過嚟。"
+        },
+        {
+          "speaker": "看更權",
+          "text": "（唔望白衫）你揀邊邊，就係你一世邊邊。"
+        },
+        {
+          "speaker": "你",
+          "text": "（兩邊都望住你，冇一邊催你）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "quan",
+          "name": "看更權",
+          "role": "寨口看更 · 三十年老江湖",
+          "line": "入寨做咩？講唔出就唔好入。",
+          "arc_lines": {
+            "warm": "你唔使講，我睇你對手就知你係咩人。",
+            "neutral": "入寨做咩？講唔出就唔好入。",
+            "cold": "你企喺我盞燈之外。"
+          }
+        },
+        {
+          "id": "bak",
+          "name": "白衫",
+          "role": "差佬 · 唔入寨",
+          "line": "你知唔知企過條線就係另一件事？",
+          "arc_lines": {
+            "warm": "你識做。我記住你。",
+            "neutral": "你知唔知企過條線就係另一件事？",
+            "cold": "你遲早要為今日嘅選擇負責。"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "答「搵食」，直行入寨",
+          "delta": {
+            "walled": 3
+          },
+          "bond": {
+            "quan": 2,
+            "bak": -1
+          },
+          "outcome": "看更權讓開半步，凳腳刮過石地。「呢句答得實。」",
+          "bond_note": "看更權 · 覺得你唔似探子｜白衫 · 盯住你"
+        },
+        {
+          "text": "先問看更權：寨入面而家邊個話事",
+          "delta": {
+            "careful": 3
+          },
+          "bond": {
+            "quan": 1,
+            "bak": 1
+          },
+          "outcome": "看更權笑咗：「問得對。入去左轉第三間，唔好敲門，敲咗就當你係敵人。」",
+          "bond_note": "看更權 · 你識規矩｜白衫 · 覺得你唔係蠢人"
+        },
+        {
+          "text": "走向白衫，問清楚條線",
+          "delta": {
+            "law": 3
+          },
+          "bond": {
+            "bak": 2,
+            "quan": -2
+          },
+          "outcome": "看更權冇再望你。白衫遞你一支煙：「聰明。」",
+          "bond_note": "白衫 · 覺得你識時務｜看更權 · 當你係外人"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "九龍城寨風雲 · 故事",
+      "story_pack_id": "kowloon_walled_ch1",
+      "pack": "kowloon_walled_ch1",
+      "id": "EV_KLW_02",
+      "name": "藥房阿妹",
+      "desc": "左轉第三間係藥房。櫃檯後面有個女仔，手指夾住一枝玻璃針筒，冇針頭。藥櫃上面貼住幾十張手寫紙條，字好細。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "pharmacy",
+      "tale_pack": "kowloon_walled_ch1",
+      "dialogue": [
+        {
+          "speaker": "阿妹",
+          "text": "你唔係嚟買藥。"
+        },
+        {
+          "speaker": "阿妹",
+          "text": "呢條巷三日死兩個人。你入嚟做咩？"
+        },
+        {
+          "speaker": "你",
+          "text": "（你未答，佢已經把針筒收返落袋）"
+        },
+        {
+          "speaker": "阿妹",
+          "text": "我唔係驚你。我係驚你後面嗰個。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你回頭，後面冇人）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "mui",
+          "name": "阿妹",
+          "role": "寨內藥房 · 十八歲",
+          "line": "你唔係嚟買藥。",
+          "arc_lines": {
+            "warm": "你坐低。我幫你睇下隻手。",
+            "neutral": "你唔係嚟買藥。",
+            "cold": "（佢把針筒收返落袋，冇再望你）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "講真話：你係嚟找一個人",
+          "delta": {
+            "trust": 3
+          },
+          "bond": {
+            "mui": 3
+          },
+          "outcome": "阿妹望你三秒，然後指一指後面布簾：「入去。有人等你。」",
+          "bond_note": "阿妹 · 你講真話，佢記住"
+        },
+        {
+          "text": "講大話：話自己係送藥嘅",
+          "delta": {
+            "careful": 2,
+            "walled": 1
+          },
+          "bond": {
+            "mui": -1
+          },
+          "outcome": "阿妹笑咗一下，好淡。「送藥嘅唔會企喺門口望咁耐。」",
+          "bond_note": "阿妹 · 睇穿你"
+        },
+        {
+          "text": "反問佢：呢條巷三日死兩個人，你怕唔怕",
+          "delta": {
+            "kind": 3
+          },
+          "bond": {
+            "mui": 2
+          },
+          "outcome": "阿妹停低抹枱嘅手。「怕。但走唔甩。」",
+          "bond_note": "阿妹 · 第一次有人問佢怕唔怕"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": "E04",
+      "reward_soul": 22,
+      "reward_xp": 9,
+      "reward_gold": 0,
+      "rewards_preview": [
+        "+22 膠幣",
+        "+9 經驗",
+        "天井開片"
+      ],
+      "reward_blurb": "九龍城寨風雲 · 故事",
+      "story_pack_id": "kowloon_walled_ch1",
+      "pack": "kowloon_walled_ch1",
+      "id": "EV_KLW_03",
+      "name": "天井開片",
+      "desc": "布簾後面係天井。兩幫人企喺度，中間一張麻雀枱，枱面冇牌，只有一把刀同一本數簿。天井上面冇天，只有一線光。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "fight",
+      "tale_pack": "kowloon_walled_ch1",
+      "dialogue": [
+        {
+          "speaker": "看更權",
+          "text": "（門口）我唔入。"
+        },
+        {
+          "speaker": "看更權",
+          "text": "你入咗，就要自己出返嚟。"
+        },
+        {
+          "speaker": "阿妹",
+          "text": "（細聲）數簿唔可以燒。"
+        },
+        {
+          "speaker": "阿妹",
+          "text": "燒咗全寨都唔使找數，但冇人會再信你。"
+        },
+        {
+          "speaker": "打拳佬",
+          "text": "（枱另一邊）你邊度嚟？"
+        },
+        {
+          "speaker": "你",
+          "text": "（你發現自己冇答案）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "quan",
+          "name": "看更權",
+          "role": "寨口看更",
+          "line": "我唔入。你入咗，就要自己出返嚟。",
+          "arc_lines": {
+            "warm": "（佢唔講嘢，但將自己條腰帶除低，塞落你手）",
+            "neutral": "我唔入。你入咗，就要自己出返嚟。",
+            "cold": "（佢背住你，冇再望）"
+          }
+        },
+        {
+          "id": "mui",
+          "name": "阿妹",
+          "role": "藥房",
+          "line": "數簿唔可以燒。燒咗冇人會再信你。",
+          "arc_lines": {
+            "warm": "我信你。你話點我就照做。",
+            "neutral": "數簿唔可以燒。燒咗冇人會再信你。",
+            "cold": "（佢退到牆邊，冇再出聲）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "打，但要保住數簿",
+          "delta": {
+            "walled": 3,
+            "trust": 2
+          },
+          "bond": {
+            "quan": 2,
+            "mui": 2
+          },
+          "outcome": "你護住本簿打。打完之後，兩幫人都望住你——冇人再問你係邊個。",
+          "bond_note": "全寨 · 認得你呢個名"
+        },
+        {
+          "text": "唔打，叫兩邊坐低講數",
+          "delta": {
+            "careful": 4
+          },
+          "bond": {
+            "mui": 2,
+            "quan": 1
+          },
+          "outcome": "你講咗三個字：「數要還。」天井靜咗。",
+          "bond_note": "阿妹 · 覺得你有種｜看更權 · 覺得你太嫩"
+        },
+        {
+          "text": "燒數簿，一了百了",
+          "delta": {
+            "burn": 4
+          },
+          "bond": {
+            "mui": -3,
+            "quan": -3
+          },
+          "outcome": "火燒起。阿妹望住你，然後轉身走入藥房，關門。",
+          "bond_note": "阿妹 · 唔會再信你｜看更權 · 覺得你搞亂晒"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "九龍城寨風雲 · 故事",
+      "story_pack_id": "kowloon_walled_ch1",
+      "pack": "kowloon_walled_ch1",
+      "id": "EV_KLW_04",
+      "name": "白衫的條件",
+      "desc": "出寨嗰陣，白衫企喺巷口。佢遞你一張紙：「幫我做一件事，你之前所有嘢一筆勾銷。」",
+      "art": "assets/events/ev-mtr-crowd.jpg",
+      "tale_node": "deal",
+      "tale_pack": "kowloon_walled_ch1",
+      "dialogue": [
+        {
+          "speaker": "白衫",
+          "text": "唔使我講你都知——我要一個人。你入得去，就知邊個。"
+        },
+        {
+          "speaker": "白衫",
+          "text": "你唔做，我都可以照做。不過到時唔止一個人。"
+        },
+        {
+          "speaker": "白衫",
+          "text": "你以為你係乾淨嘅？你入過寨，你已經係佢哋一份子。"
+        },
+        {
+          "speaker": "看更權",
+          "text": "（遠處，唔知有冇聽到）"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住張紙，上面有一個名）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "bak",
+          "name": "白衫",
+          "role": "差佬",
+          "line": "你唔做，我都可以照做。不過到時唔止一個人。",
+          "arc_lines": {
+            "warm": "我唔想搞大件事。你幫我，我幫你。",
+            "neutral": "你唔做，我都可以照做。",
+            "cold": "你以為你走得甩？"
+          }
+        },
+        {
+          "id": "mui",
+          "name": "阿妹",
+          "role": "藥房",
+          "line": "（佢喺你後面，冇行前）",
+          "arc_lines": {
+            "warm": "你唔好信佢。但……你自己決定。",
+            "neutral": "（佢喺你後面，冇行前）",
+            "cold": "（佢已經退返入藥房）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "拒絕，唔做二五",
+          "delta": {
+            "walled": 4,
+            "trust": 2
+          },
+          "bond": {
+            "bak": -3,
+            "quan": 2,
+            "mui": 2
+          },
+          "outcome": "白衫將張紙摺返起。「你會後悔。」但佢冇即刻做任何嘢。",
+          "bond_note": "白衫 · 記住你｜全寨 · 知你冇賣人"
+        },
+        {
+          "text": "假意答應，唔做真事",
+          "delta": {
+            "careful": 4
+          },
+          "bond": {
+            "bak": 1,
+            "quan": 1
+          },
+          "outcome": "白衫點咗個頭。你冇答應任何具體嘢——但佢當你答應咗。",
+          "bond_note": "白衫 · 以為你上釣"
+        },
+        {
+          "text": "真做：供出一個人，換全寨平安",
+          "delta": {
+            "law": 4
+          },
+          "bond": {
+            "bak": 3,
+            "quan": -3,
+            "mui": -3
+          },
+          "outcome": "你講咗個名。白衫笑住收紙。身後天井，有人開始搬嘢走。",
+          "bond_note": "白衫 · 你係佢嘅人｜看更權 · 你出賣咗寨"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "九龍城寨風雲 · 故事",
+      "story_pack_id": "kowloon_walled_ch1",
+      "pack": "kowloon_walled_ch1",
+      "id": "EV_KLW_05",
+      "name": "燈籠再亮",
+      "desc": "半年後，寨門燈籠重新點起。你行過，看更換咗人。舊看更坐喺巷口剝花生，見你嚟，冇起身。",
+      "art": "assets/events/ev-yum-cha.jpg",
+      "tale_node": "after",
+      "tale_pack": "kowloon_walled_ch1",
+      "dialogue": [
+        {
+          "speaker": "看更權",
+          "text": "（剝花生）仲記得入寨嗰日點答我？"
+        },
+        {
+          "speaker": "看更權",
+          "text": "你答「搵食」。全寨都係搵食，冇人係嚟做英雄。"
+        },
+        {
+          "speaker": "阿妹",
+          "text": "（藥房門口）我加咗新藥。你要唔要？"
+        },
+        {
+          "speaker": "阿妹",
+          "text": "你隻手好返未？"
+        },
+        {
+          "speaker": "你",
+          "text": "（你低頭望自己隻手，上面有道疤）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "quan",
+          "name": "看更權",
+          "role": "前看更",
+          "line": "（剝花生，冇抬頭）",
+          "arc_lines": {
+            "warm": "坐低。呢包花生我請。",
+            "neutral": "仲記得入寨嗰日點答我？",
+            "cold": "（佢起身，行入巷尾）"
+          }
+        },
+        {
+          "id": "mui",
+          "name": "阿妹",
+          "role": "藥房",
+          "line": "我加咗新藥。你要唔要？",
+          "arc_lines": {
+            "warm": "你返嚟就好。我一直留個位俾你。",
+            "neutral": "我加咗新藥。你要唔要？",
+            "cold": "（佢低頭執藥，冇望你）"
+          }
+        },
+        {
+          "id": "bak",
+          "name": "白衫",
+          "role": "差佬",
+          "line": "（企喺對面街，冇過嚟）",
+          "arc_lines": {
+            "warm": "（佢點咗個頭，然後行開）",
+            "neutral": "（企喺對面街，冇過嚟）",
+            "cold": "（佢望住你，手放喺腰間）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "坐低，同看更權剝花生",
+          "delta": {
+            "warm": 3
+          },
+          "bond": {
+            "quan": 2,
+            "mui": 1
+          },
+          "outcome": "你哋冇講嘢，只係剝花生。巷口好靜。",
+          "bond_note": "你留低咗"
+        },
+        {
+          "text": "入藥房，同阿妹講多謝",
+          "delta": {
+            "warm": 2,
+            "trust": 2
+          },
+          "bond": {
+            "mui": 2
+          },
+          "outcome": "阿妹遞你一杯水。「唔使多謝。你隻手仲痛唔痛？」",
+          "bond_note": "阿妹 · 記住你隻手"
+        },
+        {
+          "text": "過對面街，同白衫講清楚",
+          "delta": {
+            "law": 2,
+            "hard": 2
+          },
+          "bond": {
+            "bak": 2,
+            "quan": -2,
+            "mui": -2
+          },
+          "outcome": "白衫同你講咗五分鐘。你返轉頭嗰陣，花生已經收咗。",
+          "bond_note": "白衫 · 你揀咗另一邊"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "風球未落 · 故事",
+      "story_pack_id": "fung_kau_mei_lok",
+      "pack": "fung_kau_mei_lok",
+      "id": "EV_FKL_01",
+      "name": "八號",
+      "desc": "八號風球掛出嘅時候，維港先灰，後靜。天星鐘響過一聲，綠船冇再靠岸。你企喺碼頭，傘已經反咗兩次，最後索性收埋。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "start",
+      "tale_pack": "fung_kau_mei_lok",
+      "dialogue": [
+        {
+          "speaker": "你",
+          "text": "（風將你推前兩步，又拉後一步）"
+        },
+        {
+          "speaker": "阿嬸",
+          "text": "（推開茶記門）入嚟啦。"
+        },
+        {
+          "speaker": "阿嬸",
+          "text": "風球照常，我唔拉閘。"
+        },
+        {
+          "speaker": "水手",
+          "text": "（坐喺角落）冇纜可解。"
+        },
+        {
+          "speaker": "水手",
+          "text": "哨子掛喺頸度，只係一件飾物。"
+        },
+        {
+          "speaker": "細路",
+          "text": "（企喺門口）我搵唔到我阿媽。"
+        },
+        {
+          "speaker": "你",
+          "text": "（三個人，三種原因，都喺呢間舖）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "sailor",
+          "name": "水手",
+          "role": "天星小輪",
+          "line": "冇纜可解。哨子掛喺頸度，只係一件飾物。",
+          "arc_lines": {
+            "warm": "你坐。今晚我唔使開船，可以講多兩句。",
+            "neutral": "冇纜可解。哨子掛喺頸度，只係一件飾物。",
+            "cold": "（佢望住窗外，冇應你）"
+          }
+        },
+        {
+          "id": "aunt",
+          "name": "阿嬸",
+          "role": "通宵茶記",
+          "line": "入嚟啦。風球照常，我唔拉閘。",
+          "arc_lines": {
+            "warm": "你坐近爐邊。凍奶茶我幫你改成熱。",
+            "neutral": "入嚟啦。風球照常，我唔拉閘。",
+            "cold": "（佢忙住按住番茄醬瓶，冇望你）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "入茶記，先避風",
+          "delta": {
+            "warm": 3
+          },
+          "bond": {
+            "aunt": 2,
+            "sailor": 1
+          },
+          "outcome": "阿嬸遞你一條乾毛巾。「抹咗先講嘢。」",
+          "bond_note": "阿嬸 · 當你係熟客｜水手 · 點咗個頭"
+        },
+        {
+          "text": "幫細路搵阿媽",
+          "delta": {
+            "kind": 3
+          },
+          "bond": {
+            "aunt": 1,
+            "sailor": 1
+          },
+          "outcome": "你拖住細路行咗半條街。風將招牌吹得好響，佢一路都冇放手。",
+          "bond_note": "細路 · 捉實你隻手"
+        },
+        {
+          "text": "問水手：今晚仲會唔會開船",
+          "delta": {
+            "careful": 3
+          },
+          "bond": {
+            "sailor": -1,
+            "aunt": -1
+          },
+          "outcome": "水手望你一眼。「你問得啱。開唔開，唔係我話事。」",
+          "bond_note": "水手 · 覺得你識問嘢"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "風球未落 · 故事",
+      "story_pack_id": "fung_kau_mei_lok",
+      "pack": "fung_kau_mei_lok",
+      "id": "EV_FKL_02",
+      "name": "膠紙打叉",
+      "desc": "阿嬸站上凳，膠紙喺窗上打叉。她說玻璃響就讓它響，人不要把臉貼上去跟風說話。窗外面，招牌開始甩。",
+      "art": "assets/events/ev-yum-cha.jpg",
+      "tale_node": "tape",
+      "tale_pack": "fung_kau_mei_lok",
+      "dialogue": [
+        {
+          "speaker": "阿嬸",
+          "text": "後生，幫我按住呢邊。"
+        },
+        {
+          "speaker": "阿嬸",
+          "text": "我一個人打咗三十年膠紙。"
+        },
+        {
+          "speaker": "阿嬸",
+          "text": "每年都有人話我傻，話拉閘就得。"
+        },
+        {
+          "speaker": "阿嬸",
+          "text": "但係拉咗閘，今晚邊個有熱嘢飲？"
+        },
+        {
+          "speaker": "水手",
+          "text": "（望住窗外）對岸仲有燈。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望出去，其實咩都睇唔清）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "aunt",
+          "name": "阿嬸",
+          "role": "通宵茶記",
+          "line": "後生，幫我按住呢邊。",
+          "arc_lines": {
+            "warm": "你按住。我唔想跌親。",
+            "neutral": "後生，幫我按住呢邊。",
+            "cold": "（佢自己企上凳，冇叫你）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "幫手打膠紙",
+          "delta": {
+            "warm": 2,
+            "kind": 1
+          },
+          "bond": {
+            "aunt": 2
+          },
+          "outcome": "你扶住凳。阿嬸打完最後一個叉，落嚟嗰陣拍你膊頭。",
+          "bond_note": "阿嬸 · 你係自己人"
+        },
+        {
+          "text": "問阿嬸：點解唔拉閘",
+          "delta": {
+            "careful": 3
+          },
+          "bond": {
+            "aunt": 2,
+            "sailor": 1
+          },
+          "outcome": "阿嬸停手。「拉咗閘，今晚邊個有熱嘢飲？」",
+          "bond_note": "阿嬸 · 你問到重點"
+        },
+        {
+          "text": "出去幫手搬招牌",
+          "delta": {
+            "hard": 3
+          },
+          "bond": {
+            "sailor": -1,
+            "aunt": -2
+          },
+          "outcome": "你衝出去，水手跟住你。阿嬸喺門口叫：「痴線！返嚟！」",
+          "bond_note": "水手 · 覺得你夠膽｜阿嬸 · 覺得你唔要命"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": "E03",
+      "reward_soul": 20,
+      "reward_xp": 8,
+      "reward_gold": 0,
+      "rewards_preview": [
+        "+20 膠幣",
+        "+8 經驗",
+        "九號風球"
+      ],
+      "reward_blurb": "風球未落 · 故事",
+      "story_pack_id": "fung_kau_mei_lok",
+      "pack": "fung_kau_mei_lok",
+      "id": "EV_FKL_03",
+      "name": "九號",
+      "desc": "風球升到九號。招牌開始甩，鐵皮喺半空轉。有人拍門——係隔離舖嘅人，話佢個女仲喺樓上。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "nine",
+      "tale_pack": "fung_kau_mei_lok",
+      "dialogue": [
+        {
+          "speaker": "隔離舖",
+          "text": "我個女仲喺三樓！佢唔肯落嚟！"
+        },
+        {
+          "speaker": "隔離舖",
+          "text": "佢話要等佢隻貓。"
+        },
+        {
+          "speaker": "水手",
+          "text": "（起身）我去。"
+        },
+        {
+          "speaker": "水手",
+          "text": "我識行呢條樓梯。我行過幾百次。"
+        },
+        {
+          "speaker": "阿嬸",
+          "text": "（拉住你袖）你唔好跟佢去。"
+        },
+        {
+          "speaker": "阿嬸",
+          "text": "佢一條命，你兩條。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你發現自己已經企咗起身）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "sailor",
+          "name": "水手",
+          "role": "天星小輪",
+          "line": "我去。我識行呢條樓梯。",
+          "arc_lines": {
+            "warm": "你跟我尾。我照你。",
+            "neutral": "我去。我識行呢條樓梯。",
+            "cold": "（佢自己行出去，冇叫你）"
+          }
+        },
+        {
+          "id": "aunt",
+          "name": "阿嬸",
+          "role": "通宵茶記",
+          "line": "你唔好跟佢去。佢一條命，你兩條。",
+          "arc_lines": {
+            "warm": "你去啦。我幫你睇住個爐。",
+            "neutral": "你唔好跟佢去。佢一條命，你兩條。",
+            "cold": "（佢轉身入廚房，冇再講）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "跟水手上樓",
+          "delta": {
+            "hard": 4,
+            "kind": 2
+          },
+          "bond": {
+            "sailor": 3,
+            "aunt": 1
+          },
+          "outcome": "三樓樓梯斷咗兩級。水手喺前面，一路數住級數。",
+          "bond_note": "水手 · 你同佢一齊上"
+        },
+        {
+          "text": "留低，幫阿嬸守住茶記",
+          "delta": {
+            "warm": 3,
+            "careful": 1
+          },
+          "bond": {
+            "aunt": -1,
+            "sailor": -2
+          },
+          "outcome": "你按住門。阿嬸喺後面煲水，一路冇停手。",
+          "bond_note": "阿嬸 · 你揀咗留低"
+        },
+        {
+          "text": "報警，然後叫埋街坊一齊上",
+          "delta": {
+            "trust": 4
+          },
+          "bond": {
+            "sailor": 2,
+            "aunt": 2
+          },
+          "outcome": "你嗌咗三聲。樓下陸續有人開門——四個、六個、十個。",
+          "bond_note": "全條街 · 你叫得動人"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "風球未落 · 故事",
+      "story_pack_id": "fung_kau_mei_lok",
+      "pack": "fung_kau_mei_lok",
+      "id": "EV_FKL_04",
+      "name": "熄燈之後",
+      "desc": "凌晨四點，風球開始落。對岸嘅燈一盞一盞熄。水手望住海，話佢做咗十八年，未試過冇船開。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "dawn",
+      "tale_pack": "fung_kau_mei_lok",
+      "dialogue": [
+        {
+          "speaker": "水手",
+          "text": "十八年。第一次冇船開。"
+        },
+        {
+          "speaker": "水手",
+          "text": "原來冇船開嘅時候，我唔知自己做咩。"
+        },
+        {
+          "speaker": "水手",
+          "text": "我成世人都係喺船上。船一停，我就冇咗身份。"
+        },
+        {
+          "speaker": "阿嬸",
+          "text": "（放低一杯熱奶茶）飲啦。"
+        },
+        {
+          "speaker": "阿嬸",
+          "text": "唔使做嘢。今晚你唔係水手，你係我客人。"
+        },
+        {
+          "speaker": "水手",
+          "text": "（佢接過杯，手震）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "sailor",
+          "name": "水手",
+          "role": "天星小輪",
+          "line": "十八年。第一次冇船開。",
+          "arc_lines": {
+            "warm": "我而家先知，我嘅人生係綁喺條纜上面。",
+            "neutral": "十八年。第一次冇船開。",
+            "cold": "（佢冇再講嘢，只係望住海）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "坐低陪佢，唔講嘢",
+          "delta": {
+            "warm": 3,
+            "trust": 2
+          },
+          "bond": {
+            "sailor": 3,
+            "aunt": 2
+          },
+          "outcome": "你哋坐咗一個鐘。天由黑變灰。阿嬸冇收枱。",
+          "bond_note": "水手 · 你陪佢坐過最長嘅一夜"
+        },
+        {
+          "text": "問佢：如果冇船，你會做咩",
+          "delta": {
+            "careful": 3
+          },
+          "bond": {
+            "sailor": 2
+          },
+          "outcome": "水手想咗好耐。「唔知。可能學人開茶記。」阿嬸喺後面笑咗。",
+          "bond_note": "水手 · 第一次認真想過"
+        },
+        {
+          "text": "講：風球一定會落，聽日仲要開工",
+          "delta": {
+            "hard": 3
+          },
+          "bond": {
+            "sailor": -3,
+            "aunt": -1
+          },
+          "outcome": "水手點咗個頭，起身。「講得啱。」但佢冇再望你。",
+          "bond_note": "水手 · 你戳破咗啲嘢"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "風球未落 · 故事",
+      "story_pack_id": "fung_kau_mei_lok",
+      "pack": "fung_kau_mei_lok",
+      "id": "EV_FKL_05",
+      "name": "風球落",
+      "desc": "早上七點，風球落。第一班船靠岸。水手企喺閘口，手放喺哨子上。阿嬸拉開茶記鐵閘，聲好響。",
+      "art": "assets/events/ev-yum-cha.jpg",
+      "tale_node": "after",
+      "tale_pack": "fung_kau_mei_lok",
+      "dialogue": [
+        {
+          "speaker": "水手",
+          "text": "（吹哨）上船喇。"
+        },
+        {
+          "speaker": "水手",
+          "text": "（細聲）多謝。"
+        },
+        {
+          "speaker": "阿嬸",
+          "text": "（門口）今晚仲開唔開？"
+        },
+        {
+          "speaker": "阿嬸",
+          "text": "我開。你哋要嚟就嚟。"
+        },
+        {
+          "speaker": "細路",
+          "text": "（拉住你衫尾）你走唔走？"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住三個人，突然唔知答咩）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "sailor",
+          "name": "水手",
+          "role": "天星小輪",
+          "line": "（吹哨）上船喇。",
+          "arc_lines": {
+            "warm": "（佢吹完哨，行過嚟同你握咗手）",
+            "neutral": "（吹哨）上船喇。",
+            "cold": "（佢望都冇望你，直接行上船）"
+          }
+        },
+        {
+          "id": "aunt",
+          "name": "阿嬸",
+          "role": "通宵茶記",
+          "line": "今晚仲開唔開？",
+          "arc_lines": {
+            "warm": "今晚我煲咗湯，你早啲嚟。",
+            "neutral": "今晚仲開唔開？",
+            "cold": "（佢忙住拉閘，冇應你）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "上船，跟水手過一次海",
+          "delta": {
+            "trust": 3,
+            "warm": 1
+          },
+          "bond": {
+            "sailor": 2,
+            "aunt": 1
+          },
+          "outcome": "船離岸。你回頭望，見到阿嬸企喺閘口，越變越細。",
+          "bond_note": "你試過另一邊"
+        },
+        {
+          "text": "留低，幫阿嬸開檔",
+          "delta": {
+            "warm": 3
+          },
+          "bond": {
+            "aunt": 3,
+            "sailor": 1
+          },
+          "outcome": "你幫手搬枱。阿嬸話：「今晚加你一份人工。」",
+          "bond_note": "阿嬸 · 你留低咗"
+        },
+        {
+          "text": "兩樣都唔做，行返屋企眠一眠",
+          "delta": {
+            "careful": 2,
+            "hard": 1
+          },
+          "outcome": "你行返屋企。經過碼頭，水手嘅哨聲響咗一下。",
+          "bond_note": "你揀咗自己",
+          "bond": {
+            "sailor": -2,
+            "aunt": -2
+          }
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "手袋三夜 · 故事",
+      "story_pack_id": "shou_dai_nv_xia",
+      "pack": "shou_dai_nv_xia",
+      "id": "EV_SDN_01",
+      "name": "第一夜・天台",
+      "desc": "雨夜天台。眼鏡女企喺水箱邊，手上揸住一張欠單，紙邊已經濕透。樓梯口有三個人上緊嚟，腳步聲好齊，冇一個人講嘢。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "start",
+      "tale_pack": "shou_dai_nv_xia",
+      "dialogue": [
+        {
+          "speaker": "眼鏡女",
+          "text": "企定。"
+        },
+        {
+          "speaker": "眼鏡女",
+          "text": "呢張欠單寫住我阿媽個名，你哋收錯人。"
+        },
+        {
+          "speaker": "西裝帶頭",
+          "text": "收錯？字係你簽。"
+        },
+        {
+          "speaker": "西裝帶頭",
+          "text": "天台冇閉路電視，你講咩都得。"
+        },
+        {
+          "speaker": "西裝帶頭",
+          "text": "不過我唔急。我等你自己認。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你企喺樓梯度，兩邊都望住你）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "glasses",
+          "name": "眼鏡女",
+          "role": "欠單上的名字",
+          "line": "企定。呢張欠單寫住我阿媽個名。",
+          "arc_lines": {
+            "warm": "你上嚟做咩？走啦……不過，多謝。",
+            "neutral": "企定。呢張欠單寫住我阿媽個名，你哋收錯人。",
+            "cold": "（佢退到水箱後面，唔再望你）"
+          }
+        },
+        {
+          "id": "suit",
+          "name": "西裝帶頭",
+          "role": "收數隊",
+          "line": "後生仔，你行過三條巷，就當自己係證人？",
+          "arc_lines": {
+            "warm": "你講嘢有分寸。我賣你一個人情。",
+            "neutral": "後生仔，你行過三條巷，就當自己係證人？",
+            "cold": "你阻我做嘢。你知唔知後果？"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "行出嚟，話你識另外兩個人",
+          "delta": {
+            "trust": 3
+          },
+          "bond": {
+            "glasses": 2,
+            "suit": -1
+          },
+          "outcome": "眼鏡女望住你，眼神第一次唔係防備。",
+          "bond_note": "眼鏡女 · 你幫佢講嘢｜西裝 · 覺得你多事"
+        },
+        {
+          "text": "問西裝：張單係邊度嚟",
+          "delta": {
+            "care": 3
+          },
+          "bond": {
+            "suit": 1,
+            "glasses": 1
+          },
+          "outcome": "西裝停低。「你問得啱。呢張單唔係我出。」",
+          "bond_note": "西裝 · 你問到要點"
+        },
+        {
+          "text": "唔出聲，睇清楚先",
+          "delta": {
+            "care": 2
+          },
+          "bond": {
+            "glasses": -1
+          },
+          "outcome": "你企喺暗處。眼鏡女望過嚟，然後別開面。",
+          "bond_note": "眼鏡女 · 覺得你唔會幫"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "手袋三夜 · 故事",
+      "story_pack_id": "shou_dai_nv_xia",
+      "pack": "shou_dai_nv_xia",
+      "id": "EV_SDN_02",
+      "name": "第二夜・樓梯口",
+      "desc": "樓梯口，一袋紅白藍。搬嘢嘅女人話佢只係幫人搬，唔關欠單事。袋底有個手袋，拉鏈半開，露出一個角。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "stairs",
+      "tale_pack": "shou_dai_nv_xia",
+      "dialogue": [
+        {
+          "speaker": "搬嘢女人",
+          "text": "我唔識字。"
+        },
+        {
+          "speaker": "搬嘢女人",
+          "text": "我只係幫人搬。搬完收錢，唔問係咩。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住個袋）"
+        },
+        {
+          "speaker": "搬嘢女人",
+          "text": "（望住個手袋）呢個袋……我見過。"
+        },
+        {
+          "speaker": "搬嘢女人",
+          "text": "但係我唔可以講。講咗我就冇工開。"
+        },
+        {
+          "speaker": "你",
+          "text": "（佢手一路摸住袋口嘅繩）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "mover",
+          "name": "搬嘢女人",
+          "role": "樓梯口 · 唔識字",
+          "line": "我唔識字。我只係幫人搬。",
+          "arc_lines": {
+            "warm": "你信我？咁我講多啲你聽。",
+            "neutral": "我唔識字。我只係幫人搬。",
+            "cold": "（佢拎起袋，行落樓梯）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "打開手袋睇清楚",
+          "delta": {
+            "care": 3
+          },
+          "bond": {
+            "mover": -1
+          },
+          "outcome": "袋入面有一張相、一個地址、同另一張欠單——同天台嗰張筆跡一樣。",
+          "bond_note": "搬嘢女人 · 覺得你唔信佢"
+        },
+        {
+          "text": "問佢個袋係邊個嘅",
+          "delta": {
+            "trust": 3
+          },
+          "bond": {
+            "mover": 2
+          },
+          "outcome": "佢望咗你好耐。「我唔知個名。但我知道佢住邊。」",
+          "bond_note": "搬嘢女人 · 你問得尊重"
+        },
+        {
+          "text": "幫佢搬埋袋，一路行一路問",
+          "delta": {
+            "kind": 3
+          },
+          "bond": {
+            "mover": 3
+          },
+          "outcome": "你哋搬咗六層樓。佢一路講，一路唔敢望你。",
+          "bond_note": "搬嘢女人 · 你係第一個幫佢嘅人"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": "E05",
+      "reward_soul": 26,
+      "reward_xp": 9,
+      "reward_gold": 0,
+      "rewards_preview": [
+        "+26 膠幣",
+        "+9 經驗",
+        "欠單風波"
+      ],
+      "reward_blurb": "手袋三夜 · 故事",
+      "story_pack_id": "shou_dai_nv_xia",
+      "pack": "shou_dai_nv_xia",
+      "id": "EV_SDN_03",
+      "name": "第三夜・後巷",
+      "desc": "旺角後巷。打拳嗰個男人企喺鐵閘前，手背有血。西裝帶頭同佢對峙，兩個人中間隔住三步。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "alley",
+      "tale_pack": "shou_dai_nv_xia",
+      "dialogue": [
+        {
+          "speaker": "打拳",
+          "text": "我唔識嗰個女人。"
+        },
+        {
+          "speaker": "打拳",
+          "text": "但佢阿媽借錢係為咗我。"
+        },
+        {
+          "speaker": "打拳",
+          "text": "我打斷咗人條肋骨，要賠。"
+        },
+        {
+          "speaker": "打拳",
+          "text": "佢阿媽拎咗層樓去押。"
+        },
+        {
+          "speaker": "西裝帶頭",
+          "text": "咁你而家認咗？"
+        },
+        {
+          "speaker": "眼鏡女",
+          "text": "（後面）唔好認！"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "boxer",
+          "name": "打拳",
+          "role": "後巷拳手",
+          "line": "我唔識嗰個女人。但佢阿媽借錢係為咗我。",
+          "arc_lines": {
+            "warm": "你講一句，我收手。",
+            "neutral": "我唔識嗰個女人。但佢阿媽借錢係為咗我。",
+            "cold": "（佢握緊拳，冇再解釋）"
+          }
+        },
+        {
+          "id": "glasses",
+          "name": "眼鏡女",
+          "role": "欠單上的名字",
+          "line": "唔好認！",
+          "arc_lines": {
+            "warm": "你信我，我唔會害你。",
+            "neutral": "唔好認！",
+            "cold": "（佢已經冇再出聲）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "叫打拳唔好認，由你講",
+          "delta": {
+            "trust": 4,
+            "kind": 2
+          },
+          "bond": {
+            "boxer": 3,
+            "glasses": 3,
+            "suit": -2
+          },
+          "outcome": "你講咗五分鐘。西裝冇打斷你。打完之後，打拳細細聲講：「多謝。」",
+          "bond_note": "打拳＋眼鏡女 · 你保住佢哋"
+        },
+        {
+          "text": "叫三個人一齊坐低，當面講清",
+          "delta": {
+            "care": 4
+          },
+          "bond": {
+            "boxer": 2,
+            "glasses": 2,
+            "suit": 2
+          },
+          "outcome": "四個人坐喺後巷膠凳。西裝第一次冇企起身。",
+          "bond_note": "所有人都 · 覺得你講道理"
+        },
+        {
+          "text": "由得佢哋打，你企埋一邊",
+          "delta": {
+            "care": 1
+          },
+          "bond": {
+            "boxer": -3,
+            "glasses": -3
+          },
+          "outcome": "打咗三分鐘。你冇動。之後冇人再同你講嘢。",
+          "bond_note": "全部人 · 覺得你唔可靠"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "手袋三夜 · 故事",
+      "story_pack_id": "shou_dai_nv_xia",
+      "pack": "shou_dai_nv_xia",
+      "id": "EV_SDN_04",
+      "name": "三條數",
+      "desc": "三張欠單擺喺枱面。筆跡一樣，簽名唔同。有人一直用三個名借錢——而三個人互相唔識。",
+      "art": "assets/events/ev-yum-cha.jpg",
+      "tale_node": "truth",
+      "tale_pack": "shou_dai_nv_xia",
+      "dialogue": [
+        {
+          "speaker": "眼鏡女",
+          "text": "三個名，同一個人寫。"
+        },
+        {
+          "speaker": "眼鏡女",
+          "text": "你睇個「陳」字嘅最後一筆。三個都係咁寫。"
+        },
+        {
+          "speaker": "打拳",
+          "text": "咁即係有人特登。"
+        },
+        {
+          "speaker": "搬嘢女人",
+          "text": "（細聲）我知邊個。"
+        },
+        {
+          "speaker": "搬嘢女人",
+          "text": "但講咗之後，我就唔使再住呢區。"
+        },
+        {
+          "speaker": "你",
+          "text": "（三個人望住你，等你要佢講）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "glasses",
+          "name": "眼鏡女",
+          "role": "欠單上的名字",
+          "line": "三個名，同一個人寫。",
+          "arc_lines": {
+            "warm": "你講，我聽。我信你識分。",
+            "neutral": "三個名，同一個人寫。",
+            "cold": "（佢已經收埋張單）"
+          }
+        },
+        {
+          "id": "mover",
+          "name": "搬嘢女人",
+          "role": "唔識字",
+          "line": "我知邊個。但講咗之後，我就唔使再住呢區。",
+          "arc_lines": {
+            "warm": "我講。因為你幫過我搬嘢。",
+            "neutral": "我知邊個。但講咗之後，我就唔使再住呢區。",
+            "cold": "（佢搖頭，唔講）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "叫搬嘢女人講，你保證佢安全",
+          "delta": {
+            "trust": 4,
+            "kind": 2
+          },
+          "bond": {
+            "mover": 3,
+            "glasses": 2,
+            "boxer": 2
+          },
+          "outcome": "佢講咗一個名。講完之後手都震。你企喺佢同門口之間。",
+          "bond_note": "搬嘢女人 · 你做到承諾"
+        },
+        {
+          "text": "唔逼人，自己查落去",
+          "delta": {
+            "care": 4
+          },
+          "bond": {
+            "mover": -2,
+            "glasses": -2,
+            "boxer": -2
+          },
+          "outcome": "你查咗三日。查到嘅嘢比想像中更難睇。",
+          "bond_note": "你自己 · 查到底"
+        },
+        {
+          "text": "報警，等警察查",
+          "delta": {
+            "law": 3
+          },
+          "bond": {
+            "mover": -2,
+            "glasses": -1,
+            "suit": 1
+          },
+          "outcome": "警察嚟咗。搬嘢女人第二日就搬走咗，冇留低地址。",
+          "bond_note": "搬嘢女人 · 你出賣咗佢的信任"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "手袋三夜 · 故事",
+      "story_pack_id": "shou_dai_nv_xia",
+      "pack": "shou_dai_nv_xia",
+      "id": "EV_SDN_05",
+      "name": "第四夜・冇雨",
+      "desc": "一個月之後，天台冇雨。三個人企喺同一位置，冇人講嘢。欠單已經收咗，但冇人覺得贏。",
+      "art": "assets/events/ev-yum-cha.jpg",
+      "tale_node": "after",
+      "tale_pack": "shou_dai_nv_xia",
+      "dialogue": [
+        {
+          "speaker": "眼鏡女",
+          "text": "我阿媽走咗。"
+        },
+        {
+          "speaker": "眼鏡女",
+          "text": "走之前講，唔好怪任何人。"
+        },
+        {
+          "speaker": "打拳",
+          "text": "我而家唔打拳。我教細路。"
+        },
+        {
+          "speaker": "打拳",
+          "text": "有幾個好有潛質。有一個似我後生。"
+        },
+        {
+          "speaker": "搬嘢女人",
+          "text": "（點頭，冇講嘢）"
+        },
+        {
+          "speaker": "你",
+          "text": "（你發現自己係唯一一個仲企喺原地嘅人）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "glasses",
+          "name": "眼鏡女",
+          "role": "欠單上的名字",
+          "line": "我阿媽走咗。走之前講，唔好怪任何人。",
+          "arc_lines": {
+            "warm": "你仲會唔會上嚟？天台好靜。",
+            "neutral": "我阿媽走咗。走之前講，唔好怪任何人。",
+            "cold": "（佢望住遠處，冇同你打招呼）"
+          }
+        },
+        {
+          "id": "boxer",
+          "name": "打拳",
+          "role": "前拳手",
+          "line": "我而家唔打拳。我教細路。",
+          "arc_lines": {
+            "warm": "得閒嚟睇下細路打拳。有幾個好有潛質。",
+            "neutral": "我而家唔打拳。我教細路。",
+            "cold": "（佢點咗個頭就走）"
+          }
+        },
+        {
+          "id": "mover",
+          "name": "搬嘢女人",
+          "role": "唔識字",
+          "line": "（點頭，冇講嘢）",
+          "arc_lines": {
+            "warm": "我而家學識寫自己個名。你教我嘅。",
+            "neutral": "（點頭，冇講嘢）",
+            "cold": "（佢企喺最遠嘅角落）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "留低，四個人一齊食餐飯",
+          "delta": {
+            "warm": 4
+          },
+          "bond": {
+            "glasses": 2,
+            "boxer": 1,
+            "mover": 1
+          },
+          "outcome": "你哋去咗樓下茶記。冇人提欠單。",
+          "bond_note": "你哋變咗朋友"
+        },
+        {
+          "text": "交低張欠單，轉身走",
+          "delta": {
+            "hard": 3
+          },
+          "bond": {
+            "glasses": -3,
+            "boxer": -2
+          },
+          "outcome": "你把單放喺水箱頂。行到樓梯口，冇人叫住你。",
+          "bond_note": "你揀咗放手"
+        },
+        {
+          "text": "問佢哋：如果當初我冇出聲會點",
+          "delta": {
+            "care": 3
+          },
+          "bond": {
+            "glasses": 2,
+            "boxer": 2
+          },
+          "outcome": "眼鏡女想咗好耐。「我而家應該唔喺度。」",
+          "bond_note": "你哋都知答案"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "霓虹未完 · 故事",
+      "story_pack_id": "neon_mei_wan",
+      "pack": "neon_mei_wan",
+      "id": "EV_NMW_01",
+      "name": "熄燈之前",
+      "desc": "凌晨兩點半，半條街仍然著。補燈師傅吊喺棚上，一手揸住燈管，一手揸住螺絲批。下面有人等緊佢落嚟，等咗兩個鐘。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "start",
+      "tale_pack": "neon_mei_wan",
+      "dialogue": [
+        {
+          "speaker": "補燈師傅",
+          "text": "呢支燈著咗三十七年。"
+        },
+        {
+          "speaker": "補燈師傅",
+          "text": "我補過佢十一次。"
+        },
+        {
+          "speaker": "拆遷隊",
+          "text": "阿叔，落嚟啦。聽日就拆。"
+        },
+        {
+          "speaker": "拆遷隊",
+          "text": "我唔想睇你跌。"
+        },
+        {
+          "speaker": "招牌漆",
+          "text": "（企喺對面）拆得甩招牌。"
+        },
+        {
+          "speaker": "招牌漆",
+          "text": "拆唔甩條街嘅記性。"
+        },
+        {
+          "speaker": "你",
+          "text": "（三個人，三種立場，你企喺中間）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "lamp",
+          "name": "補燈師傅",
+          "role": "棚上 · 三十七年",
+          "line": "呢支燈著咗三十七年。我補過佢十一次。",
+          "arc_lines": {
+            "warm": "你上嚟。我教你點睇一支燈仲有冇得救。",
+            "neutral": "呢支燈著咗三十七年。我補過佢十一次。",
+            "cold": "（佢冇望你，繼續扭螺絲）"
+          }
+        },
+        {
+          "id": "paint",
+          "name": "招牌漆",
+          "role": "寫字的人",
+          "line": "拆得甩招牌，拆唔甩條街嘅記性。",
+          "arc_lines": {
+            "warm": "我寫咗四十年字。你呢條街嘅字，我全部記得。",
+            "neutral": "拆得甩招牌，拆唔甩條街嘅記性。",
+            "cold": "（佢已經收埋毛筆）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "行埋去問師傅：仲救唔救得返",
+          "delta": {
+            "warm": 3
+          },
+          "bond": {
+            "lamp": 2,
+            "paint": 1
+          },
+          "outcome": "師傅望你一陣，然後遞你一把螺絲批。「上嚟睇。」",
+          "bond_note": "補燈師傅 · 你問得對｜招牌漆 · 留意到你"
+        },
+        {
+          "text": "問拆遷隊：拆完之後呢",
+          "delta": {
+            "warm": 1,
+            "care": 2
+          },
+          "bond": {
+            "lamp": 1
+          },
+          "outcome": "拆遷隊望你一額汗。「之後？之後呢度就唔係街喇。」",
+          "bond_note": "拆遷隊 · 覺得你問得奇怪"
+        },
+        {
+          "text": "企埋一邊，睇清楚先",
+          "delta": {
+            "care": 2
+          },
+          "bond": {
+            "lamp": -1,
+            "paint": -1
+          },
+          "outcome": "你企喺燈光邊緣。三個人各做各嘅嘢。",
+          "bond_note": "兩邊 · 都覺得你唔會插手"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "霓虹未完 · 故事",
+      "story_pack_id": "neon_mei_wan",
+      "pack": "neon_mei_wan",
+      "id": "EV_NMW_02",
+      "name": "最後一晚",
+      "desc": "拆遷前一晚。師傅話最後一次補燈，補完之後呢支燈就唔會再有人理。招牌漆攞咗顏料出嚟。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "last",
+      "tale_pack": "neon_mei_wan",
+      "dialogue": [
+        {
+          "speaker": "補燈師傅",
+          "text": "補完最後一次，我就落嚟。"
+        },
+        {
+          "speaker": "補燈師傅",
+          "text": "三十七年。你話一支燈可以著幾耐？"
+        },
+        {
+          "speaker": "招牌漆",
+          "text": "我寫最後一個字，你話寫咩。"
+        },
+        {
+          "speaker": "招牌漆",
+          "text": "我寫咗四十年字。今次係最後一次。"
+        },
+        {
+          "speaker": "拆遷隊",
+          "text": "（遠處）十二點之後唔好上棚。"
+        },
+        {
+          "speaker": "你",
+          "text": "（兩邊都等你講嘢）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "lamp",
+          "name": "補燈師傅",
+          "role": "棚上",
+          "line": "補完最後一次，我就落嚟。",
+          "arc_lines": {
+            "warm": "你幫我扶住條梯。我唔想最後一次跌親。",
+            "neutral": "補完最後一次，我就落嚟。",
+            "cold": "（佢自己爬上去，冇叫人扶）"
+          }
+        },
+        {
+          "id": "paint",
+          "name": "招牌漆",
+          "role": "寫字的人",
+          "line": "我寫最後一個字，你話寫咩。",
+          "arc_lines": {
+            "warm": "你講，我寫。寫得好唔好，係我嘅事。",
+            "neutral": "我寫最後一個字，你話寫咩。",
+            "cold": "（佢自己寫咗一個字，冇問你）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "幫師傅扶梯，陪佢補完最後一支",
+          "delta": {
+            "warm": 4,
+            "trust": 2
+          },
+          "bond": {
+            "lamp": 3,
+            "paint": 1
+          },
+          "outcome": "你扶咗兩個鐘。師傅落嚟之後，喺梯上面坐咗好耐。",
+          "bond_note": "補燈師傅 · 你陪過佢最後一晚"
+        },
+        {
+          "text": "同招牌漆一齊寫最後一個字",
+          "delta": {
+            "kind": 3
+          },
+          "bond": {
+            "paint": 3,
+            "lamp": 1
+          },
+          "outcome": "你講咗個字。招牌漆寫完之後，退後三步睇。「得。」",
+          "bond_note": "招牌漆 · 你寫咗落條街度"
+        },
+        {
+          "text": "去同拆遷隊傾，睇下有冇彎轉",
+          "delta": {
+            "care": 4
+          },
+          "bond": {
+            "lamp": -1,
+            "paint": -2
+          },
+          "outcome": "拆遷隊聽你講完。「你以為我唔想？呢個決定唔係我做。」",
+          "bond_note": "拆遷隊 · 第一次同你講實話"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": "E07",
+      "reward_soul": 30,
+      "reward_xp": 11,
+      "reward_gold": 0,
+      "rewards_preview": [
+        "+30 膠幣",
+        "+11 經驗",
+        "招牌上棚"
+      ],
+      "reward_blurb": "霓虹未完 · 故事",
+      "story_pack_id": "neon_mei_wan",
+      "pack": "neon_mei_wan",
+      "id": "EV_NMW_03",
+      "name": "招牌上棚",
+      "desc": "拆遷朝早，吊臂車已經到。三噸招牌吊到半空，螺絲鬆咗一半。有人喺下面叫停。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "crane",
+      "tale_pack": "neon_mei_wan",
+      "dialogue": [
+        {
+          "speaker": "拆遷隊",
+          "text": "鬆咗一半就唔可以停。"
+        },
+        {
+          "speaker": "拆遷隊",
+          "text": "停咗更危險。你明唔明？"
+        },
+        {
+          "speaker": "補燈師傅",
+          "text": "（喺棚上）下面有人。"
+        },
+        {
+          "speaker": "補燈師傅",
+          "text": "你鬆埋呢口，招牌就落。"
+        },
+        {
+          "speaker": "招牌漆",
+          "text": "（舉起油漆掃）我唔會走。"
+        },
+        {
+          "speaker": "你",
+          "text": "（吊臂嘅鋼纜開始響）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "lamp",
+          "name": "補燈師傅",
+          "role": "棚上",
+          "line": "下面有人。你鬆埋呢口，招牌就落。",
+          "arc_lines": {
+            "warm": "你叫得停就停。我信你。",
+            "neutral": "（喺棚上）下面有人。你鬆埋呢口，招牌就落。",
+            "cold": "（佢自己捉實條鋼纜）"
+          }
+        },
+        {
+          "id": "paint",
+          "name": "招牌漆",
+          "role": "寫字的人",
+          "line": "我唔會走。",
+          "arc_lines": {
+            "warm": "你企前面，我企後面。",
+            "neutral": "（舉起油漆掃）我唔會走。",
+            "cold": "（佢退到人群後面）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "衝上去叫停吊臂",
+          "delta": {
+            "hard": 4,
+            "kind": 2
+          },
+          "bond": {
+            "lamp": 3,
+            "paint": 2
+          },
+          "outcome": "你跑到吊臂下面揮手。操作員停咗。三噸招牌喺半空停咗三分鐘。",
+          "bond_note": "補燈師傅＋招牌漆 · 你救咗條街"
+        },
+        {
+          "text": "拉走下面嘅人，唔阻止拆遷",
+          "delta": {
+            "care": 4
+          },
+          "bond": {
+            "lamp": -1,
+            "paint": -1
+          },
+          "outcome": "你拉走咗七個人。招牌落嗰陣，冇人受傷。",
+          "bond_note": "街坊 · 你救咗人｜師傅 · 你冇保住支燈"
+        },
+        {
+          "text": "同拆遷隊講數，爭取延後一日",
+          "delta": {
+            "care": 3,
+            "trust": 3
+          },
+          "bond": {
+            "lamp": 2,
+            "paint": 2
+          },
+          "outcome": "你講咗二十分鐘。拆遷隊打咗三個電話。最後：「一個鐘。」",
+          "bond_note": "你爭取到一個鐘"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "霓虹未完 · 故事",
+      "story_pack_id": "neon_mei_wan",
+      "pack": "neon_mei_wan",
+      "id": "EV_NMW_04",
+      "name": "拆剩嘅字",
+      "desc": "招牌落咗。牆上面留低一個印，係招牌擋住咗幾十年嘅位置。招牌漆望住個印，唔出聲。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "trace",
+      "tale_pack": "neon_mei_wan",
+      "dialogue": [
+        {
+          "speaker": "招牌漆",
+          "text": "幾十年冇見過呢幅牆。"
+        },
+        {
+          "speaker": "招牌漆",
+          "text": "原來後面係一堵磚牆。我以為係石屎。"
+        },
+        {
+          "speaker": "補燈師傅",
+          "text": "個印仲喺度。過多兩年就冇。"
+        },
+        {
+          "speaker": "補燈師傅",
+          "text": "新樓起到，連個印都唔見。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住個印，形狀有啲似一個字）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "paint",
+          "name": "招牌漆",
+          "role": "寫字的人",
+          "line": "幾十年冇見過呢幅牆。",
+          "arc_lines": {
+            "warm": "你話我聽，呢個印似咩字？",
+            "neutral": "幾十年冇見過呢幅牆。",
+            "cold": "（佢收埋工具，準備走）"
+          }
+        },
+        {
+          "id": "lamp",
+          "name": "補燈師傅",
+          "role": "前補燈師傅",
+          "line": "個印仲喺度。過多兩年就冇。",
+          "arc_lines": {
+            "warm": "你後生，記住呢個印。我記唔到幾耐。",
+            "neutral": "個印仲喺度。過多兩年就冇。",
+            "cold": "（佢執緊自己嘅工具袋）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "幫手影相，記錄低個印",
+          "delta": {
+            "care": 3,
+            "kind": 2
+          },
+          "bond": {
+            "paint": 3,
+            "lamp": 2
+          },
+          "outcome": "你影咗十二張。招牌漆話：「影完之後，記得晒出嚟。」",
+          "bond_note": "招牌漆 · 你幫佢留低咗"
+        },
+        {
+          "text": "問師傅：你會唔會再補燈",
+          "delta": {
+            "trust": 3
+          },
+          "bond": {
+            "lamp": 3
+          },
+          "outcome": "師傅望住隻手。「補燈嘅手，唔補燈可以做咩。」",
+          "bond_note": "補燈師傅 · 你問中佢心裡話"
+        },
+        {
+          "text": "默默行開，唔打擾",
+          "delta": {
+            "care": 2
+          },
+          "bond": {
+            "lamp": -2,
+            "paint": -2
+          },
+          "outcome": "你行到街口，回頭見到兩個人都仲企喺原地。",
+          "bond_note": "兩個人都 · 覺得你走得太快"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "霓虹未完 · 故事",
+      "story_pack_id": "neon_mei_wan",
+      "pack": "neon_mei_wan",
+      "id": "EV_NMW_05",
+      "name": "最後一盞",
+      "desc": "半年之後，街口圍板圍到好入。有一晚，圍板中間嘅縫，透出一線光。有人重新拉咗電線。",
+      "art": "assets/events/ev-yum-cha.jpg",
+      "tale_node": "after",
+      "tale_pack": "neon_mei_wan",
+      "dialogue": [
+        {
+          "speaker": "補燈師傅",
+          "text": "（圍板後面）呢支燈，我接返咗。"
+        },
+        {
+          "speaker": "補燈師傅",
+          "text": "唔係為咗條街。係為咗我自己。"
+        },
+        {
+          "speaker": "招牌漆",
+          "text": "（寫住圍板）「未拆完」。"
+        },
+        {
+          "speaker": "招牌漆",
+          "text": "（細聲）我寫咗四十七個名。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你認得其中一個名——係你自己）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "lamp",
+          "name": "補燈師傅",
+          "role": "補燈",
+          "line": "（圍板後面）呢支燈，我接返咗。",
+          "arc_lines": {
+            "warm": "你入嚟睇。我重接咗三支。",
+            "neutral": "呢支燈，我接返咗。",
+            "cold": "（圍板後面冇聲）"
+          }
+        },
+        {
+          "id": "paint",
+          "name": "招牌漆",
+          "role": "寫字的人",
+          "line": "（寫住圍板）「未拆完」。",
+          "arc_lines": {
+            "warm": "我寫咗成條街嘅名。你嗰個都有。",
+            "neutral": "（寫住圍板）「未拆完」。",
+            "cold": "（圍板上嘅字已經俾人油咗白）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "入圍板後面，同師傅一齊接燈",
+          "delta": {
+            "warm": 4,
+            "hard": 2
+          },
+          "bond": {
+            "lamp": 3,
+            "paint": 1
+          },
+          "outcome": "你哋接咗三支燈。亮起嗰陣，兩個人都冇講嘢。",
+          "bond_note": "你變咗補燈嘅人"
+        },
+        {
+          "text": "幫招牌漆寫埋條街嘅名",
+          "delta": {
+            "kind": 3,
+            "trust": 2
+          },
+          "bond": {
+            "paint": 3,
+            "lamp": 1
+          },
+          "outcome": "你哋寫咗四十七個名。寫到天光。",
+          "bond_note": "你寫低咗條街"
+        },
+        {
+          "text": "企喺圍板外面，睇住線光",
+          "delta": {
+            "care": 3
+          },
+          "bond": {
+            "lamp": -1,
+            "paint": -1
+          },
+          "outcome": "你企咗一個鐘。光冇熄。你行返屋企。",
+          "bond_note": "你只係睇住"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "故事",
+      "story_pack_id": "chu_ru_xiang_jiang",
+      "pack": "chu_ru_xiang_jiang",
+      "id": "EV_CRXJ_03B",
+      "name": "第一份糧",
+      "desc": "半個月後，你第一次收到現金。薄薄一疊，用橡筋紮住。你企喺街口，唔知呢筆錢應該放邊。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "first_pay",
+      "tale_pack": "chu_ru_xiang_jiang",
+      "dialogue": [
+        {
+          "speaker": "七叔",
+          "text": "第一次出糧，通常會做三件事。"
+        },
+        {
+          "speaker": "七叔",
+          "text": "一，寄返鄉下。二，請人食飯。三，收埋，唔話畀人聽。"
+        },
+        {
+          "speaker": "阿珍",
+          "text": "（望住你手上嗰疊錢）你賺幾多唔關我事。"
+        },
+        {
+          "speaker": "阿珍",
+          "text": "不過你今晚食咩，關我事。"
+        },
+        {
+          "speaker": "光仔",
+          "text": "喂，請我食碗麵得唔得？我三日冇食過熱嘢。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你數咗兩次，兩次都係咁多）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "seven",
+          "name": "七叔",
+          "role": "帶路人",
+          "line": "第一次出糧，通常會做三件事。",
+          "arc_lines": {
+            "warm": "你唔使請我。你寄返鄉下啦，阿媽等緊。",
+            "neutral": "第一次出糧，通常會做三件事。",
+            "cold": "（佢望都冇望你手上嗰疊錢）"
+          }
+        },
+        {
+          "id": "guang",
+          "name": "光仔",
+          "role": "跟車細路",
+          "line": "請我食碗麵得唔得？",
+          "arc_lines": {
+            "warm": "你請我，我下次請返你。講真。",
+            "neutral": "喂，請我食碗麵得唔得？",
+            "cold": "（佢見你唔出聲，自己行開咗）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "全部寄返鄉下",
+          "delta": {
+            "warm": 3,
+            "kind": 2
+          },
+          "bond": {
+            "seven": 2,
+            "zhen": 1
+          },
+          "outcome": "你去郵局匯錢。職員問你要唔要留啲，你搖頭。返到街口，阿珍遞你一碗麵：「記我數。」",
+          "bond_note": "七叔 · 覺得你識做人"
+        },
+        {
+          "text": "請全條街食飯",
+          "delta": {
+            "warm": 4
+          },
+          "bond": {
+            "seven": 1,
+            "zhen": 3,
+            "guang": 2
+          },
+          "outcome": "你請咗七個人食大牌檔。埋單嗰陣，你發現唔夠錢。阿珍幫你補：「下次先還。」",
+          "bond_note": "阿珍 · 覺得你傻但好"
+        },
+        {
+          "text": "收埋，一個仙都唔用",
+          "delta": {
+            "care": 3,
+            "hard": 2
+          },
+          "bond": {
+            "seven": -1,
+            "guang": -2
+          },
+          "outcome": "你將錢收喺床下底。光仔望住你，然後走咗。七叔咩都冇講。",
+          "bond_note": "光仔 · 覺得你孤寒"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "故事",
+      "story_pack_id": "chu_ru_xiang_jiang",
+      "pack": "chu_ru_xiang_jiang",
+      "id": "EV_CRXJ_03C",
+      "name": "第一次捱夜",
+      "desc": "加班到凌晨三點。你行返屋企，條街只剩霓虹燈同清潔工人。有個阿婆蹲喺騎樓底執紙皮。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "night",
+      "tale_pack": "chu_ru_xiang_jiang",
+      "dialogue": [
+        {
+          "speaker": "阿婆",
+          "text": "後生，幫我托一托好唔好？我隻手痛。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望一望手錶，又望一望天）"
+        },
+        {
+          "speaker": "阿婆",
+          "text": "唔幫都唔緊要。我自己慢慢嚟。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你想起鄉下阿媽，佢都係咁蹲喺門口執嘢）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "seven",
+          "name": "七叔",
+          "role": "帶路人（唔在場）",
+          "line": "（你想起佢講過：幫人唔會蝕底，蝕底嘅係計較）",
+          "arc_lines": {
+            "warm": "（你想起佢條腰，同佢點樣幫你托過個袋）",
+            "neutral": "（你想起佢講過：幫人唔會蝕底）",
+            "cold": "（你想起佢已經唔想同你講嘢）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "幫阿婆托埋上樓",
+          "delta": {
+            "kind": 4,
+            "warm": 2
+          },
+          "bond": {
+            "seven": 2,
+            "zhen": 1
+          },
+          "outcome": "你托咗七層樓。阿婆塞你一個橙：「唔值錢，但係甜。」",
+          "bond_note": "你開始明白七叔講嘅嘢"
+        },
+        {
+          "text": "幫佢托一段，然後走",
+          "delta": {
+            "kind": 2,
+            "care": 2
+          },
+          "bond": {
+            "seven": 1
+          },
+          "outcome": "你托到街口就放手。阿婆點頭：「夠喇，多謝。」",
+          "bond_note": "你盡咗力"
+        },
+        {
+          "text": "唔幫，趕住返屋企",
+          "delta": {
+            "hard": 3
+          },
+          "bond": {
+            "seven": -2
+          },
+          "outcome": "你行過。行到巷尾，你回頭望——阿婆仲蹲喺度，一個人托。",
+          "bond_note": "七叔 · 若佢知，會失望"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "故事",
+      "story_pack_id": "chu_ru_xiang_jiang",
+      "pack": "chu_ru_xiang_jiang",
+      "id": "EV_CRXJ_04B",
+      "name": "阿珍的湯",
+      "desc": "阿珍叫你入廚房。枱面有個湯煲，仲滾。佢話呢煲湯本來係煲畀另一個人嘅。",
+      "art": "assets/events/ev-yum-cha.jpg",
+      "tale_node": "soup",
+      "tale_pack": "chu_ru_xiang_jiang",
+      "dialogue": [
+        {
+          "speaker": "阿珍",
+          "text": "呢煲湯，我煲咗十二年。"
+        },
+        {
+          "speaker": "你",
+          "text": "十二年？"
+        },
+        {
+          "speaker": "阿珍",
+          "text": "我個仔。佢十二歲嗰年走咗。"
+        },
+        {
+          "speaker": "阿珍",
+          "text": "我唔係當你係佢。你唔似佢。"
+        },
+        {
+          "speaker": "阿珍",
+          "text": "不過……有個人坐喺度飲，好過冇。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你接過碗，湯好燙）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "zhen",
+          "name": "阿珍",
+          "role": "茶記阿姐",
+          "line": "呢煲湯，我煲咗十二年。",
+          "arc_lines": {
+            "warm": "你飲完先返去。外面落雨。",
+            "neutral": "呢煲湯，我煲咗十二年。",
+            "cold": "（佢自己飲咗一碗，冇遞你）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "飲完，同佢講自己鄉下嘅事",
+          "delta": {
+            "warm": 4,
+            "trust": 2
+          },
+          "bond": {
+            "zhen": 3
+          },
+          "outcome": "你講咗半個鐘。阿珍一路聽，一路抹枱，抹到枱面反光。",
+          "bond_note": "阿珍 · 你當佢係人，唔係老闆"
+        },
+        {
+          "text": "飲完，靜靜放低碗就走",
+          "delta": {
+            "care": 3
+          },
+          "bond": {
+            "zhen": 1
+          },
+          "outcome": "你放低碗。行到門口，阿珍講：「聽日再嚟。」",
+          "bond_note": "阿珍 · 你識分寸"
+        },
+        {
+          "text": "問佢個仔點樣走",
+          "delta": {
+            "care": 2,
+            "trust": 2
+          },
+          "bond": {
+            "zhen": 2
+          },
+          "outcome": "阿珍停手。「病。醫院話冇得救。」之後佢冇再講，但佢冇趕你走。",
+          "bond_note": "阿珍 · 你肯問，佢肯講"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "故事",
+      "story_pack_id": "kowloon_walled_ch1",
+      "pack": "kowloon_walled_ch1",
+      "id": "EV_KLW_02B",
+      "name": "寨內第一次食飯",
+      "desc": "阿妹叫你留低食飯。枱上有三碟餸，全部都係藥房後巷種嘅。佢話寨入面冇人會無故請人食飯。",
+      "art": "assets/events/ev-yum-cha.jpg",
+      "tale_node": "meal",
+      "tale_pack": "kowloon_walled_ch1",
+      "dialogue": [
+        {
+          "speaker": "阿妹",
+          "text": "食啦。唔好問咩肉。"
+        },
+        {
+          "speaker": "阿妹",
+          "text": "寨入面嘅規矩：食完唔好講多謝，講多謝即係你覺得欠我。"
+        },
+        {
+          "speaker": "阿妹",
+          "text": "欠人嘅嘢，要還。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你夾咗一箸，唔知係咩）"
+        },
+        {
+          "speaker": "看更權",
+          "text": "（門口經過，冇入嚟，只係望咗一眼）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "mui",
+          "name": "阿妹",
+          "role": "寨內藥房",
+          "line": "食啦。唔好問咩肉。",
+          "arc_lines": {
+            "warm": "你食多啲。你瘦咗。",
+            "neutral": "食啦。唔好問咩肉。",
+            "cold": "（佢自己食，冇望你）"
+          }
+        },
+        {
+          "id": "quan",
+          "name": "看更權",
+          "role": "寨口看更",
+          "line": "（門口經過，冇入嚟）",
+          "arc_lines": {
+            "warm": "（佢放低一包煙，然後行開）",
+            "neutral": "（門口經過，只係望咗一眼）",
+            "cold": "（佢行過，裝作冇見到）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "食完，幫佢洗碗",
+          "delta": {
+            "kind": 3,
+            "warm": 2
+          },
+          "bond": {
+            "mui": 3
+          },
+          "outcome": "阿妹冇阻止你。你洗碗嗰陣，佢企喺後面好耐，冇講嘢。",
+          "bond_note": "阿妹 · 你當呢度係屋企"
+        },
+        {
+          "text": "食完，問佢點解留你",
+          "delta": {
+            "care": 3
+          },
+          "bond": {
+            "mui": 2
+          },
+          "outcome": "阿妹抹手。「因為你冇問我名。」",
+          "bond_note": "阿妹 · 你問得真"
+        },
+        {
+          "text": "食完就走，唔講嘢",
+          "delta": {
+            "care": 2,
+            "walled": 2
+          },
+          "bond": {
+            "mui": -1
+          },
+          "outcome": "你放低筷子就走。阿妹冇叫你，但你聽到佢收碗嘅聲好慢。",
+          "bond_note": "阿妹 · 覺得你唔想留"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "故事",
+      "story_pack_id": "kowloon_walled_ch1",
+      "pack": "kowloon_walled_ch1",
+      "id": "EV_KLW_03B",
+      "name": "寨內規矩",
+      "desc": "看更權帶你行一圈。三十幾條巷，條條都通，但冇一條係出去嘅路。佢一路行一路講規矩。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "rules",
+      "tale_pack": "kowloon_walled_ch1",
+      "dialogue": [
+        {
+          "speaker": "看更權",
+          "text": "第一，唔好問人以前做過咩。"
+        },
+        {
+          "speaker": "看更權",
+          "text": "第二，唔好講自己以後會做咩。"
+        },
+        {
+          "speaker": "看更權",
+          "text": "第三，最重要——唔好帶外面嘅人入嚟。"
+        },
+        {
+          "speaker": "看更權",
+          "text": "你係第三個例外。第一個死咗，第二個走咗。"
+        },
+        {
+          "speaker": "看更權",
+          "text": "你想做第三個咩？"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住巷尾，盡頭係一幅牆）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "quan",
+          "name": "看更權",
+          "role": "寨口看更",
+          "line": "你係第三個例外。",
+          "arc_lines": {
+            "warm": "我講呢啲，係因為我唔想你做第四個。",
+            "neutral": "你係第三個例外。第一個死咗，第二個走咗。",
+            "cold": "（佢講完就唔再講，行快咗）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "答：我想做第三個",
+          "delta": {
+            "walled": 4,
+            "trust": 2
+          },
+          "bond": {
+            "quan": 3
+          },
+          "outcome": "看更權停低，轉頭望你。望咗好耐，然後笑咗。",
+          "bond_note": "看更權 · 你答得出佢想聽嘅嘢"
+        },
+        {
+          "text": "問：頭兩個點解一個死一個走",
+          "delta": {
+            "care": 4
+          },
+          "bond": {
+            "quan": 2
+          },
+          "outcome": "看更權沉默咗一陣。「一個唔肯走，一個走得太快。」",
+          "bond_note": "看更權 · 你問到核心"
+        },
+        {
+          "text": "唔答，繼續行",
+          "delta": {
+            "care": 2
+          },
+          "bond": {
+            "quan": -1
+          },
+          "outcome": "看更權冇再講嘢。行到巷尾，佢指一指牆：「呢度係盡頭。」",
+          "bond_note": "看更權 · 覺得你唔想聽"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "故事",
+      "story_pack_id": "kowloon_walled_ch1",
+      "pack": "kowloon_walled_ch1",
+      "id": "EV_KLW_04B",
+      "name": "阿妹的選擇",
+      "desc": "阿妹搵你，手上有兩張紙。一張係你嘅名，一張係佢自己嘅名。佢話：白衫要一個人，你揀邊張交出去。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "sacrifice",
+      "tale_pack": "kowloon_walled_ch1",
+      "dialogue": [
+        {
+          "speaker": "阿妹",
+          "text": "呢兩張紙，一張你，一張我。"
+        },
+        {
+          "speaker": "阿妹",
+          "text": "白衫唔會分。你交邊張，佢就收邊張。"
+        },
+        {
+          "speaker": "你",
+          "text": "你點解會有你自己張紙？"
+        },
+        {
+          "speaker": "阿妹",
+          "text": "我早就預咗。"
+        },
+        {
+          "speaker": "阿妹",
+          "text": "你唔好以為我好偉大。我只係唔想再有人喺呢條巷死。"
+        },
+        {
+          "speaker": "你",
+          "text": "（佢手冇震，但佢望住枱面）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "mui",
+          "name": "阿妹",
+          "role": "寨內藥房",
+          "line": "呢兩張紙，一張你，一張我。",
+          "arc_lines": {
+            "warm": "你唔好揀我。你揀我，我會嬲你一輩子。",
+            "neutral": "白衫唔會分。你交邊張，佢就收邊張。",
+            "cold": "（佢已經把兩張紙推到你面前）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "兩張都唔交，自己出去頂",
+          "delta": {
+            "hard": 4,
+            "kind": 3
+          },
+          "bond": {
+            "mui": 3,
+            "quan": 2
+          },
+          "outcome": "你撕咗兩張紙。阿妹呆咗，然後第一次喊。",
+          "bond_note": "阿妹 · 你救咗佢"
+        },
+        {
+          "text": "交自己嗰張",
+          "delta": {
+            "kind": 4,
+            "trust": 2
+          },
+          "bond": {
+            "mui": 3,
+            "quan": 1
+          },
+          "outcome": "你把白紙推過去。阿妹拉住你手，你甩開咗。",
+          "bond_note": "阿妹 · 你替佢死"
+        },
+        {
+          "text": "交阿妹嗰張",
+          "delta": {
+            "hard": 4,
+            "care": 3
+          },
+          "bond": {
+            "mui": -3,
+            "quan": -3
+          },
+          "outcome": "你冇望佢。阿妹望住你，然後收返自己張紙，行入藥房。",
+          "bond_note": "阿妹 · 你出賣咗佢"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "故事",
+      "story_pack_id": "fung_kau_mei_lok",
+      "pack": "fung_kau_mei_lok",
+      "id": "EV_FKL_02B",
+      "name": "細路的貓",
+      "desc": "細路拉住你行去後巷。佢話佢隻貓跑咗出去，喺隔離樓嘅天台。風咁大，貓應該唔會走遠。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "cat",
+      "tale_pack": "fung_kau_mei_lok",
+      "dialogue": [
+        {
+          "speaker": "細路",
+          "text": "佢叫阿花。佢驚風。"
+        },
+        {
+          "speaker": "細路",
+          "text": "我阿媽話唔可以帶貓返屋企。"
+        },
+        {
+          "speaker": "細路",
+          "text": "但係我唔帶佢，佢會死。"
+        },
+        {
+          "speaker": "你",
+          "text": "（後巷嘅鐵閘鎖住，要爬過去）"
+        },
+        {
+          "speaker": "阿嬸",
+          "text": "（遠處）喂！唔好爬！"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "kid",
+          "name": "細路",
+          "role": "走失 · 十歲",
+          "line": "佢叫阿花。佢驚風。",
+          "arc_lines": {
+            "warm": "你幫我，我以後聽你話。",
+            "neutral": "佢叫阿花。佢驚風。",
+            "cold": "（佢自己爬鐵閘，唔再求你）"
+          }
+        },
+        {
+          "id": "aunt",
+          "name": "阿嬸",
+          "role": "通宵茶記",
+          "line": "喂！唔好爬！",
+          "arc_lines": {
+            "warm": "你小心啲。我喺度等你。",
+            "neutral": "喂！唔好爬！",
+            "cold": "（佢返入舖，冇再叫）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "爬過去幫佢搵貓",
+          "delta": {
+            "kind": 3,
+            "hard": 2
+          },
+          "bond": {
+            "kid": 3,
+            "aunt": 1
+          },
+          "outcome": "你爬過鐵閘，喺天台角落搵到隻濕透嘅貓。細路抱住佢喊。",
+          "bond_note": "細路 · 你係英雄"
+        },
+        {
+          "text": "拉住佢，話等風細先",
+          "delta": {
+            "care": 3
+          },
+          "bond": {
+            "kid": -1,
+            "aunt": 2
+          },
+          "outcome": "細路望住你，眼都紅。「佢會死。」但佢冇再爬。",
+          "bond_note": "阿嬸 · 你做對了｜細路 · 失望"
+        },
+        {
+          "text": "陪佢喺後巷等，睇貓會唔會自己返",
+          "delta": {
+            "care": 2,
+            "kind": 2
+          },
+          "bond": {
+            "kid": 2,
+            "aunt": 1
+          },
+          "outcome": "你哋蹲咗半個鐘。貓喺雨裡面自己行返嚟，一身泥。",
+          "bond_note": "細路 · 你陪佢等過"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "故事",
+      "story_pack_id": "fung_kau_mei_lok",
+      "pack": "fung_kau_mei_lok",
+      "id": "EV_FKL_03B",
+      "name": "三樓",
+      "desc": "你同水手爬樓梯。三樓走廊冇燈，水退到腳眼。有扇門半開。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "stairs",
+      "tale_pack": "fung_kau_mei_lok",
+      "dialogue": [
+        {
+          "speaker": "水手",
+          "text": "跟住我。唔好望後面。"
+        },
+        {
+          "speaker": "水手",
+          "text": "呢條樓梯，我行過幾百次。有次送一個孕婦落樓。"
+        },
+        {
+          "speaker": "水手",
+          "text": "佢個仔今年應該十幾歲。"
+        },
+        {
+          "speaker": "你",
+          "text": "（樓梯上面有水聲）"
+        },
+        {
+          "speaker": "水手",
+          "text": "（停低）你聽到咩？"
+        },
+        {
+          "speaker": "你",
+          "text": "（你聽到——係貓叫）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "sailor",
+          "name": "水手",
+          "role": "天星小輪",
+          "line": "跟住我。唔好望後面。",
+          "arc_lines": {
+            "warm": "你行前面。我照你後面。",
+            "neutral": "跟住我。唔好望後面。",
+            "cold": "（佢自己行上去，冇等你）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "行前面開路",
+          "delta": {
+            "hard": 3,
+            "kind": 2
+          },
+          "bond": {
+            "sailor": 3
+          },
+          "outcome": "你行前面，水手喺後面數樓梯。三樓，門推開，細路嘅阿媽抱住隻貓。",
+          "bond_note": "水手 · 你同佢一齊行"
+        },
+        {
+          "text": "叫水手行前面（佢熟路）",
+          "delta": {
+            "trust": 3
+          },
+          "bond": {
+            "sailor": 2
+          },
+          "outcome": "水手點頭，行前面。你哋冇再講嘢。",
+          "bond_note": "水手 · 你信佢"
+        },
+        {
+          "text": "折返，話太危險",
+          "delta": {
+            "care": 3
+          },
+          "bond": {
+            "sailor": -2
+          },
+          "outcome": "你轉身落樓。水手喺後面叫咗一聲，但你冇停。",
+          "bond_note": "水手 · 覺得你走咗"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "故事",
+      "story_pack_id": "fung_kau_mei_lok",
+      "pack": "fung_kau_mei_lok",
+      "id": "EV_FKL_04B",
+      "name": "阿嬸的丈夫",
+      "desc": "凌晨五點，茶記只剩你同阿嬸。佢喺廚房拎咗一張相出嚟，相入面有個男人喺船上。",
+      "art": "assets/events/ev-yum-cha.jpg",
+      "tale_node": "photo",
+      "tale_pack": "fung_kau_mei_lok",
+      "dialogue": [
+        {
+          "speaker": "阿嬸",
+          "text": "呢個係我老公。"
+        },
+        {
+          "speaker": "阿嬸",
+          "text": "佢都係做船。做咗二十年。"
+        },
+        {
+          "speaker": "阿嬸",
+          "text": "有一年八號風球，佢照樣開船。"
+        },
+        {
+          "speaker": "阿嬸",
+          "text": "之後就冇返嚟。"
+        },
+        {
+          "speaker": "阿嬸",
+          "text": "所以我唔拉閘。我要有人喺度等。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住張相，個男人笑得好開心）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "aunt",
+          "name": "阿嬸",
+          "role": "通宵茶記",
+          "line": "呢個係我老公。",
+          "arc_lines": {
+            "warm": "你聽我講呢啲，我當你係親人。",
+            "neutral": "呢個係我老公。佢都係做船。",
+            "cold": "（佢收返張相，冇再講）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "陪佢坐，聽佢講完",
+          "delta": {
+            "warm": 4,
+            "kind": 2
+          },
+          "bond": {
+            "aunt": 3
+          },
+          "outcome": "阿嬸講到天光。你冇插嘴，只係一路幫佢添水。",
+          "bond_note": "阿嬸 · 你聽完咗佢嘅故事"
+        },
+        {
+          "text": "問佢：你嬲唔嬲佢開船",
+          "delta": {
+            "care": 3,
+            "trust": 2
+          },
+          "bond": {
+            "aunt": 2
+          },
+          "outcome": "阿嬸想咗好耐。「嬲。嬲咗二十年。而家唔嬲喇。」",
+          "bond_note": "阿嬸 · 你問到最難嘅問題"
+        },
+        {
+          "text": "話：我唔會開船",
+          "delta": {
+            "care": 2,
+            "hard": 2
+          },
+          "bond": {
+            "aunt": -1
+          },
+          "outcome": "阿嬸望住你。「你唔明。有啲人唔開船就唔知自己係邊個。」",
+          "bond_note": "阿嬸 · 覺得你未明白"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "故事",
+      "story_pack_id": "shou_dai_nv_xia",
+      "pack": "shou_dai_nv_xia",
+      "id": "EV_SDN_02B",
+      "name": "手袋裡的字",
+      "desc": "你同搬嘢女人喺樓梯坐低。佢打開手袋，裡面有一張紙，寫住一個地址同一個名。佢話佢唔識字，但佢認得個名嘅形狀。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "bag",
+      "tale_pack": "shou_dai_nv_xia",
+      "dialogue": [
+        {
+          "speaker": "搬嘢女人",
+          "text": "呢張紙，我執咗三個月。"
+        },
+        {
+          "speaker": "搬嘢女人",
+          "text": "我唔知寫咩。但你睇——呢個字，同我老細個名好似。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你睇到個名，同欠單上嘅一樣）"
+        },
+        {
+          "speaker": "搬嘢女人",
+          "text": "你唔好話我知。我唔想知。"
+        },
+        {
+          "speaker": "你",
+          "text": "（佢把手袋遞你）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "mover",
+          "name": "搬嘢女人",
+          "role": "唔識字",
+          "line": "你唔好話我知。我唔想知。",
+          "arc_lines": {
+            "warm": "你講啦。我信你唔會害我。",
+            "neutral": "你唔好話我知。我唔想知。",
+            "cold": "（佢搶返個袋，收埋落身）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "讀畀佢聽",
+          "delta": {
+            "trust": 3,
+            "kind": 2
+          },
+          "bond": {
+            "mover": 3
+          },
+          "outcome": "你逐個字讀。讀到一半，佢捂住嘴。讀完之後，佢話：「我早就知。」",
+          "bond_note": "搬嘢女人 · 你冇騙佢"
+        },
+        {
+          "text": "話：我都唔識睇",
+          "delta": {
+            "care": 3
+          },
+          "bond": {
+            "mover": 1
+          },
+          "outcome": "佢望你一眼，然後笑咗。「你識。不過算。」",
+          "bond_note": "搬嘢女人 · 你留情面"
+        },
+        {
+          "text": "收埋張紙，唔講",
+          "delta": {
+            "care": 2
+          },
+          "bond": {
+            "mover": -2
+          },
+          "outcome": "你把紙收埋。佢望住你手，然後起身走。",
+          "bond_note": "搬嘢女人 · 覺得你同其他人一樣"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "故事",
+      "story_pack_id": "shou_dai_nv_xia",
+      "pack": "shou_dai_nv_xia",
+      "id": "EV_SDN_03B",
+      "name": "打拳的手",
+      "desc": "打拳嗰個男人坐喺後巷膠凳，手背仲流緊血。你遞佢一卷紗布。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "hand",
+      "tale_pack": "shou_dai_nv_xia",
+      "dialogue": [
+        {
+          "speaker": "打拳",
+          "text": "唔使。"
+        },
+        {
+          "speaker": "打拳",
+          "text": "我打斷人條肋骨，抵。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你冇收手）"
+        },
+        {
+          "speaker": "打拳",
+          "text": "（望住你）你點解唔走？"
+        },
+        {
+          "speaker": "打拳",
+          "text": "呢度人人都走。你唔走，你好怪。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你幫佢包紮。佢冇再拒絕）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "boxer",
+          "name": "打拳",
+          "role": "後巷拳手",
+          "line": "你點解唔走？",
+          "arc_lines": {
+            "warm": "你包得幾好。你以前做過？",
+            "neutral": "你點解唔走？",
+            "cold": "（佢一手推開你隻手）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "包完，問佢為咩要打",
+          "delta": {
+            "care": 3,
+            "trust": 2
+          },
+          "bond": {
+            "boxer": 3
+          },
+          "outcome": "打拳望住隻手。「因為有人話我阿媽係雞。我忍唔住。」",
+          "bond_note": "打拳 · 你問到佢痛處"
+        },
+        {
+          "text": "包完就走，唔問",
+          "delta": {
+            "care": 3
+          },
+          "bond": {
+            "boxer": 1
+          },
+          "outcome": "你行到巷口，聽到佢講：「喂。多謝。」",
+          "bond_note": "打拳 · 你冇多事"
+        },
+        {
+          "text": "叫佢去自首",
+          "delta": {
+            "law": 3
+          },
+          "bond": {
+            "boxer": -3
+          },
+          "outcome": "打拳扯走紗布。「你同佢哋一樣。」",
+          "bond_note": "打拳 · 覺得你同收數隊一樣"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "故事",
+      "story_pack_id": "shou_dai_nv_xia",
+      "pack": "shou_dai_nv_xia",
+      "id": "EV_SDN_04B",
+      "name": "三個人的天台",
+      "desc": "你叫三個人上天台。眼鏡女、搬嘢女人、打拳，三個第一次見面。冇人講嘢，雨開始落。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "three",
+      "tale_pack": "shou_dai_nv_xia",
+      "dialogue": [
+        {
+          "speaker": "眼鏡女",
+          "text": "你叫晒我哋上嚟做咩？"
+        },
+        {
+          "speaker": "搬嘢女人",
+          "text": "（望住打拳）你係……"
+        },
+        {
+          "speaker": "打拳",
+          "text": "（望住搬嘢女人）你搬過我屋企嘅嘢。"
+        },
+        {
+          "speaker": "眼鏡女",
+          "text": "（望住兩個人）你哋識？"
+        },
+        {
+          "speaker": "你",
+          "text": "（三個人發現，佢哋都有同一個債主）"
+        },
+        {
+          "speaker": "眼鏡女",
+          "text": "唔係巧合。"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "glasses",
+          "name": "眼鏡女",
+          "role": "欠單上的名字",
+          "line": "唔係巧合。",
+          "arc_lines": {
+            "warm": "你叫我上嚟，係為我好。我知道。",
+            "neutral": "唔係巧合。",
+            "cold": "（佢企喺最遠嘅角落）"
+          }
+        },
+        {
+          "id": "boxer",
+          "name": "打拳",
+          "role": "後巷拳手",
+          "line": "你搬過我屋企嘅嘢。",
+          "arc_lines": {
+            "warm": "原來大家都係受害者。我以為只有我一個。",
+            "neutral": "你搬過我屋企嘅嘢。",
+            "cold": "（佢行去另一邊，唔想企埋）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "叫佢哋講出自己嗰張單",
+          "delta": {
+            "trust": 4,
+            "kind": 2
+          },
+          "bond": {
+            "glasses": 3,
+            "boxer": 2,
+            "mover": 2
+          },
+          "outcome": "三個人輪住講。講到最後，雨停咗。",
+          "bond_note": "三個人 · 第一次覺得唔止自己一個"
+        },
+        {
+          "text": "自己講晒三個故事",
+          "delta": {
+            "care": 3,
+            "trust": 2
+          },
+          "bond": {
+            "glasses": 2,
+            "boxer": 2,
+            "mover": 1
+          },
+          "outcome": "你講完，眼鏡女望住你。「你點知咁多？」",
+          "bond_note": "三個人 · 你查得好深"
+        },
+        {
+          "text": "唔講，只係叫佢哋冷靜",
+          "delta": {
+            "care": 2
+          },
+          "bond": {
+            "glasses": -1,
+            "boxer": -1
+          },
+          "outcome": "三個人互相望一眼，然後各自落樓。",
+          "bond_note": "三個人 · 覺得你唔想插手"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "故事",
+      "story_pack_id": "neon_mei_wan",
+      "pack": "neon_mei_wan",
+      "id": "EV_NMW_02B",
+      "name": "師傅的工具箱",
+      "desc": "師傅叫你上棚幫手。佢打開工具箱，裡面每一件工具都有名，用膠紙寫住。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "toolbox",
+      "tale_pack": "neon_mei_wan",
+      "dialogue": [
+        {
+          "speaker": "補燈師傅",
+          "text": "呢把鉗，跟我三十年。"
+        },
+        {
+          "speaker": "補燈師傅",
+          "text": "呢把螺絲批，係我師傅留低嘅。"
+        },
+        {
+          "speaker": "補燈師傅",
+          "text": "佢死嗰年，我接手呢條街。"
+        },
+        {
+          "speaker": "補燈師傅",
+          "text": "而家冇人接我手。"
+        },
+        {
+          "speaker": "你",
+          "text": "（工具箱最底有一張相，好舊）"
+        },
+        {
+          "speaker": "補燈師傅",
+          "text": "（佢見到你望）唔使睇。舊嘢。"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "lamp",
+          "name": "補燈師傅",
+          "role": "棚上 · 三十七年",
+          "line": "而家冇人接我手。",
+          "arc_lines": {
+            "warm": "你想學？我教你。學唔學得識，睇你。",
+            "neutral": "而家冇人接我手。",
+            "cold": "（佢合上工具箱）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "話：我想學",
+          "delta": {
+            "warm": 3,
+            "kind": 2
+          },
+          "bond": {
+            "lamp": 3
+          },
+          "outcome": "師傅望住你，好耐。然後遞你一把螺絲批：「由今日開始，你係我最後一個徒弟。」",
+          "bond_note": "補燈師傅 · 你有咗師傅"
+        },
+        {
+          "text": "問佢相裡面係邊個",
+          "delta": {
+            "care": 3,
+            "trust": 2
+          },
+          "bond": {
+            "lamp": 2
+          },
+          "outcome": "師傅打開相。「我師傅。佢教我點睇一支燈仲有冇得救。」",
+          "bond_note": "補燈師傅 · 你問到佢心裡話"
+        },
+        {
+          "text": "唔問，繼續幫手",
+          "delta": {
+            "care": 2
+          },
+          "bond": {
+            "lamp": 1
+          },
+          "outcome": "你哋補咗兩個鐘。冇人講嘢。",
+          "bond_note": "補燈師傅 · 你識做"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "故事",
+      "story_pack_id": "neon_mei_wan",
+      "pack": "neon_mei_wan",
+      "id": "EV_NMW_03B",
+      "name": "招牌漆的帳簿",
+      "desc": "招牌漆帶你入佢嘅寫字檔。牆上掛住幾十張草圖，每一張都係一條街嘅招牌。",
+      "art": "assets/events/ev-yum-cha.jpg",
+      "tale_node": "ledger",
+      "tale_pack": "neon_mei_wan",
+      "dialogue": [
+        {
+          "speaker": "招牌漆",
+          "text": "我寫過嘅招牌，全部喺呢本簿。"
+        },
+        {
+          "speaker": "招牌漆",
+          "text": "四十年，三百幾個。"
+        },
+        {
+          "speaker": "招牌漆",
+          "text": "每一個名，我都記得點解要寫成咁。"
+        },
+        {
+          "speaker": "招牌漆",
+          "text": "呢個「金」字，老闆話要有霸氣。我寫咗七次。"
+        },
+        {
+          "speaker": "招牌漆",
+          "text": "而家全部拆晒。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你翻到最後一頁，係空白）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "paint",
+          "name": "招牌漆",
+          "role": "寫字的人",
+          "line": "而家全部拆晒。",
+          "arc_lines": {
+            "warm": "最後一頁，我想留返俾你呢條街。",
+            "neutral": "而家全部拆晒。",
+            "cold": "（佢合上簿，收埋）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "叫佢喺最後一頁寫呢條街",
+          "delta": {
+            "kind": 4,
+            "warm": 2
+          },
+          "bond": {
+            "paint": 3
+          },
+          "outcome": "招牌漆提筆，寫咗三個字。寫完之後，佢好耐冇講嘢。",
+          "bond_note": "招牌漆 · 你叫佢留低咗啲嘢"
+        },
+        {
+          "text": "問佢：拆完之後你寫咩",
+          "delta": {
+            "care": 3
+          },
+          "bond": {
+            "paint": 2
+          },
+          "outcome": "招牌漆停手。「唔知。可能唔再寫。」",
+          "bond_note": "招牌漆 · 你問到佢最怕嘅事"
+        },
+        {
+          "text": "靜靜睇完本簿就走",
+          "delta": {
+            "care": 2
+          },
+          "bond": {
+            "paint": 1
+          },
+          "outcome": "你行到門口，招牌漆講：「喂。多謝你睇完。」",
+          "bond_note": "招牌漆 · 你尊重佢嘅一生"
+        }
+      ]
+    },
+    {
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [],
+      "reward_blurb": "故事",
+      "story_pack_id": "neon_mei_wan",
+      "pack": "neon_mei_wan",
+      "id": "EV_NMW_04B",
+      "name": "拆遷隊的紙",
+      "desc": "拆遷隊搵你，遞你一張紙。上面係政府嘅清拆令，日期、範圍、簽名都齊。",
+      "art": "assets/events/ev-alley-wake.jpg",
+      "tale_node": "order",
+      "tale_pack": "neon_mei_wan",
+      "dialogue": [
+        {
+          "speaker": "拆遷隊",
+          "text": "你睇清楚。呢張紙，我冇得揀。"
+        },
+        {
+          "speaker": "拆遷隊",
+          "text": "我唔係壞人。我都要養家。"
+        },
+        {
+          "speaker": "拆遷隊",
+          "text": "但係我每次拆一塊招牌，都會記住個名。"
+        },
+        {
+          "speaker": "拆遷隊",
+          "text": "你信唔信？"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住張紙，上面嘅字好細）"
+        }
+      ],
+      "tale_cast": [
+        {
+          "id": "crane",
+          "name": "拆遷隊",
+          "role": "揸吊臂嘅人",
+          "line": "我唔係壞人。我都要養家。",
+          "arc_lines": {
+            "warm": "你明就好。我唔想同你哋做敵人。",
+            "neutral": "我唔係壞人。我都要養家。",
+            "cold": "（佢收返張紙，行開）"
+          }
+        }
+      ],
+      "tale_choices": [
+        {
+          "text": "話：我信你",
+          "delta": {
+            "trust": 4
+          },
+          "bond": {
+            "crane": 3,
+            "lamp": 1
+          },
+          "outcome": "拆遷隊呆咗。「……好少人會咁講。」",
+          "bond_note": "拆遷隊 · 你係第一個信佢嘅人"
+        },
+        {
+          "text": "問佢記唔記得自己拆過幾多塊",
+          "delta": {
+            "care": 3,
+            "trust": 2
+          },
+          "bond": {
+            "crane": 2
+          },
+          "outcome": "拆遷隊想咗好耐。「三百一十二塊。我數過。」",
+          "bond_note": "拆遷隊 · 你發現佢都有記性"
+        },
+        {
+          "text": "撕咗張紙",
+          "delta": {
+            "hard": 4
+          },
+          "bond": {
+            "crane": -3,
+            "lamp": 2
+          },
+          "outcome": "拆遷隊望住碎紙。「你以為撕咗就冇事？」",
+          "bond_note": "拆遷隊 · 你同佢反面"
+        }
+      ]
     }
   ],
   "locale": {
@@ -8708,7 +14870,7 @@ window.HK_SLICE_DATA = {
   },
   "slice": {
     "max_years": 15,
-    "note": "垂直切片：命運Y1–3 → 遭遇四揀一（year≥4）；每5年強制宿敵（special_battle）四揀一；差事每日任務；商店／特殊六維 soft 結算。",
+    "note": "今世行到壽命（歲數超過壽命）或出戰卡死光先完。max_years 只係早期年池對照，唔再切斷人生。命運Y1–3之後出街；每5個自由年強制宿敵。",
     "default_equip_fill": 3,
     "fighters_note": "出戰池：保留 C01–C10 故事位；掛入 PASS 美術 C21–C250；預設隊非舖（C241 泥頭車／C244 纜車廂／C248 晨跑徑）；口袋年解鎖 3/5/8/12 max15。"
   },
@@ -8789,10 +14951,10 @@ window.HK_SLICE_DATA = {
       "id": "EQP03",
       "name": "漁夫笠帽",
       "slot": "head",
-      "rarity": "common",
+      "rarity": "rare",
       "atk": 0,
-      "def": 1,
-      "hp": 1,
+      "def": 2,
+      "hp": 2,
       "spd": 0,
       "tag_boost": null,
       "blurb": "避雨又遮陽，碼頭味最重。",
@@ -8835,11 +14997,11 @@ window.HK_SLICE_DATA = {
       "id": "EQP05",
       "name": "泳鏡頭箍",
       "slot": "head",
-      "rarity": "common",
+      "rarity": "rare",
       "atk": 0,
-      "def": 0,
+      "def": 1,
       "hp": 0,
-      "spd": 2,
+      "spd": 3,
       "tag_boost": null,
       "blurb": "公眾泳池味——氯氣當頭盔。",
       "flavor": "鏡片霧了先算游夠。",
@@ -8927,11 +15089,11 @@ window.HK_SLICE_DATA = {
       "id": "EQP09",
       "name": "反光頭燈帶",
       "slot": "head",
-      "rarity": "rare",
+      "rarity": "legend",
       "atk": 1,
       "def": 1,
-      "hp": 0,
-      "spd": 1,
+      "hp": 2,
+      "spd": 3,
       "tag_boost": "nightshift",
       "blurb": "夜更地盤頭燈——照得到先動。",
       "flavor": "黑暗裡一粒光就夠膽。",
@@ -8940,9 +15102,9 @@ window.HK_SLICE_DATA = {
       "max_star": 5,
       "star_bonus_per_level": {
         "atk": 0,
-        "def": 1,
+        "def": 2,
         "hp": 0,
-        "spd": 1
+        "spd": 2
       },
       "source_id": "EQP09"
     },
@@ -8950,10 +15112,10 @@ window.HK_SLICE_DATA = {
       "id": "EQP10",
       "name": "廟街草帽",
       "slot": "head",
-      "rarity": "rare",
+      "rarity": "epic",
       "atk": 0,
-      "def": 0,
-      "hp": 2,
+      "def": 2,
+      "hp": 3,
       "spd": 1,
       "tag_boost": "street",
       "blurb": "檔口草帽——喊價都遮到眼。",
@@ -8963,7 +15125,7 @@ window.HK_SLICE_DATA = {
       "max_star": 5,
       "star_bonus_per_level": {
         "atk": 0,
-        "def": 1,
+        "def": 2,
         "hp": 0,
         "spd": 1
       },
@@ -9125,7 +15287,7 @@ window.HK_SLICE_DATA = {
       "star_bonus_per_level": {
         "atk": 0,
         "def": 1,
-        "hp": 1,
+        "hp": 2,
         "spd": 0
       },
       "source_id": "EQP36"
@@ -9147,8 +15309,8 @@ window.HK_SLICE_DATA = {
       "max_star": 5,
       "star_bonus_per_level": {
         "atk": 0,
-        "def": 1,
-        "hp": 1,
+        "def": 2,
+        "hp": 2,
         "spd": 0
       },
       "source_id": "EQP40"
@@ -9171,7 +15333,7 @@ window.HK_SLICE_DATA = {
       "star_bonus_per_level": {
         "atk": 0,
         "def": 0,
-        "hp": 1,
+        "hp": 2,
         "spd": 0
       },
       "source_id": "EQP41"
@@ -9194,7 +15356,7 @@ window.HK_SLICE_DATA = {
       "star_bonus_per_level": {
         "atk": 0,
         "def": 0,
-        "hp": 1,
+        "hp": 2,
         "spd": 0
       },
       "source_id": "EQP42"
@@ -9261,7 +15423,7 @@ window.HK_SLICE_DATA = {
       "star": 1,
       "max_star": 5,
       "star_bonus_per_level": {
-        "atk": 1,
+        "atk": 2,
         "def": 0,
         "hp": 1,
         "spd": 0
@@ -9284,9 +15446,9 @@ window.HK_SLICE_DATA = {
       "star": 1,
       "max_star": 5,
       "star_bonus_per_level": {
-        "atk": 1,
+        "atk": 2,
         "def": 0,
-        "hp": 1,
+        "hp": 2,
         "spd": 0
       },
       "source_id": "EQP60"
@@ -9364,7 +15526,7 @@ window.HK_SLICE_DATA = {
       "id": "EQP28",
       "name": "地盤膠錐",
       "slot": "off",
-      "rarity": "rare",
+      "rarity": "epic",
       "atk": 0,
       "def": 2,
       "hp": 0,
@@ -9377,7 +15539,7 @@ window.HK_SLICE_DATA = {
       "max_star": 5,
       "star_bonus_per_level": {
         "atk": 0,
-        "def": 1,
+        "def": 2,
         "hp": 1,
         "spd": 0
       },
@@ -9387,7 +15549,7 @@ window.HK_SLICE_DATA = {
       "id": "EQP29",
       "name": "紅白藍王盾",
       "slot": "off",
-      "rarity": "epic",
+      "rarity": "legend",
       "atk": 0,
       "def": 3,
       "hp": 2,
@@ -9400,8 +15562,8 @@ window.HK_SLICE_DATA = {
       "max_star": 5,
       "star_bonus_per_level": {
         "atk": 0,
-        "def": 1,
-        "hp": 1,
+        "def": 2,
+        "hp": 2,
         "spd": 0
       },
       "source_id": "EQP80"
@@ -9424,7 +15586,7 @@ window.HK_SLICE_DATA = {
       "star_bonus_per_level": {
         "atk": 0,
         "def": 0,
-        "hp": 1,
+        "hp": 2,
         "spd": 0
       },
       "source_id": "EQP81"
@@ -9447,7 +15609,7 @@ window.HK_SLICE_DATA = {
       "star_bonus_per_level": {
         "atk": 0,
         "def": 0,
-        "hp": 1,
+        "hp": 2,
         "spd": 0
       },
       "source_id": "EQP85"
@@ -9514,7 +15676,7 @@ window.HK_SLICE_DATA = {
       "star": 1,
       "max_star": 5,
       "star_bonus_per_level": {
-        "atk": 1,
+        "atk": 2,
         "def": 0,
         "hp": 1,
         "spd": 0
@@ -9525,7 +15687,7 @@ window.HK_SLICE_DATA = {
       "id": "EQP35",
       "name": "人情玉如意小掛",
       "slot": "charm",
-      "rarity": "epic",
+      "rarity": "legend",
       "atk": 1,
       "def": 2,
       "hp": 3,
@@ -9537,9 +15699,9 @@ window.HK_SLICE_DATA = {
       "star": 1,
       "max_star": 5,
       "star_bonus_per_level": {
-        "atk": 1,
+        "atk": 2,
         "def": 0,
-        "hp": 1,
+        "hp": 2,
         "spd": 0
       },
       "source_id": "EQP100"
@@ -9548,7 +15710,7 @@ window.HK_SLICE_DATA = {
       "id": "EQP36",
       "name": "白鞋",
       "slot": "feet",
-      "rarity": "common",
+      "rarity": "rare",
       "atk": 0,
       "def": 0,
       "hp": 1,
@@ -9562,7 +15724,7 @@ window.HK_SLICE_DATA = {
       "star_bonus_per_level": {
         "atk": 0,
         "def": 0,
-        "hp": 1,
+        "hp": 2,
         "spd": 0
       },
       "source_id": "EQP101"
@@ -9585,7 +15747,7 @@ window.HK_SLICE_DATA = {
       "star_bonus_per_level": {
         "atk": 0,
         "def": 0,
-        "hp": 1,
+        "hp": 2,
         "spd": 0
       },
       "source_id": "EQP102"
@@ -9617,7 +15779,7 @@ window.HK_SLICE_DATA = {
       "id": "EQP39",
       "name": "打機舖通宵鞋",
       "slot": "feet",
-      "rarity": "rare",
+      "rarity": "epic",
       "atk": 0,
       "def": 0,
       "hp": 0,
@@ -9632,7 +15794,7 @@ window.HK_SLICE_DATA = {
         "atk": 0,
         "def": 0,
         "hp": 1,
-        "spd": 1
+        "spd": 2
       },
       "source_id": "EQP111"
     },
@@ -9654,8 +15816,8 @@ window.HK_SLICE_DATA = {
       "star_bonus_per_level": {
         "atk": 0,
         "def": 0,
-        "hp": 1,
-        "spd": 1
+        "hp": 2,
+        "spd": 2
       },
       "source_id": "EQP120"
     }
@@ -10084,6 +16246,22 @@ window.HK_SLICE_DATA = {
     {
       "id": "star_up",
       "label": "升星"
+    },
+    {
+      "id": "gear_upgrade",
+      "label": "裝備強化"
+    },
+    {
+      "id": "fighter_train",
+      "label": "練功"
+    },
+    {
+      "id": "fighter_revive",
+      "label": "復活"
+    },
+    {
+      "id": "card_draw",
+      "label": "抽卡"
     }
   ],
   "daily_missions": [
@@ -10174,6 +16352,143 @@ window.HK_SLICE_DATA = {
       }
     }
   ],
+  "tea_shop_cards": [
+    {
+      "id": "T01",
+      "name": "魚蛋妹",
+      "rarity": "稀有",
+      "slots": 5,
+      "tags": [
+        "街頭",
+        "人情"
+      ],
+      "atk": 12,
+      "spd": 15,
+      "basic": "竹籤連刺",
+      "skill": "一籤串三",
+      "skill_cd": 3,
+      "art": "assets/tea/T01.jpg",
+      "flavor": "斑馬線水氹照住黃燈，兩手一齊舉起魚蛋串。口中咬住嗰粒，係留返收工食嘅。",
+      "blurb": "兩手魚蛋串，口中咬住一粒。",
+      "skill_effect": "群傷 攻×0.8；命中者速−2（1 回）；自己下一發首通＋攻×0.25",
+      "rarity_slang": "靚牌",
+      "tod": "黃昏街市",
+      "fame": 45,
+      "dmg_mult": 0.8,
+      "hits": 1,
+      "target": "aoe",
+      "power": "phys"
+    },
+    {
+      "id": "T02",
+      "name": "炒栗大叔",
+      "rarity": "稀有",
+      "slots": 5,
+      "tags": [
+        "街頭",
+        "鑊氣"
+      ],
+      "atk": 16,
+      "spd": 10,
+      "basic": "鐵鑊翻",
+      "skill": "番薯栗子齊飛",
+      "skill_cd": 4,
+      "art": "assets/tea/T02.jpg",
+      "flavor": "木頭車兩個字：番薯、栗子。鐵鑊一翻，熱氣同沙一齊上，路人自動讓開三步。",
+      "blurb": "番薯栗子，鐵鑊一翻熱氣上。",
+      "skill_effect": "重擊 攻×1.75；命中後敵全體 攻−12%（1 回）",
+      "rarity_slang": "靚牌",
+      "tod": "日落街口",
+      "fame": 50,
+      "dmg_mult": 1.75,
+      "hits": 1,
+      "target": "single",
+      "power": "phys"
+    },
+    {
+      "id": "T03",
+      "name": "雲吞麵阿頭",
+      "rarity": "史詩",
+      "slots": 6,
+      "tags": [
+        "茶記",
+        "霓虹"
+      ],
+      "atk": 17,
+      "spd": 12,
+      "basic": "鑊鏟劈",
+      "skill": "一碗滾湯",
+      "skill_cd": 4,
+      "art": "assets/tea/T03.jpg",
+      "flavor": "雨夜後巷，霓虹寫住雲吞麵。圍裙上油跡一層疊一層，湯滾起嗰刻，佢連眼都唔眨。",
+      "blurb": "雨夜後巷，一碗滾湯定生死。",
+      "skill_effect": "治療全隊 HP 18%；同時敵全體 攻×0.55；自己減傷 10%（1 回）",
+      "rarity_slang": "勁牌",
+      "tod": "雨夜後巷",
+      "fame": 70,
+      "dmg_mult": 0.55,
+      "hits": 1,
+      "target": "aoe",
+      "power": "phys",
+      "support": true,
+      "heal_mult": 0.18
+    },
+    {
+      "id": "T04",
+      "name": "燒味刀姐",
+      "rarity": "史詩",
+      "slots": 6,
+      "tags": [
+        "茶記",
+        "街頭"
+      ],
+      "atk": 18,
+      "spd": 13,
+      "basic": "刀背拍",
+      "skill": "一斬兩件",
+      "skill_cd": 3,
+      "art": "assets/tea/T04.jpg",
+      "flavor": "砧板厚過手掌，刀落去冇聲。玻璃櫃掛住一排燒鴨，雨打落霓虹，映到油光都發亮。",
+      "blurb": "砧板一落，燒味兩件。",
+      "skill_effect": "單體 攻×2.0；若目標 HP 低於 50%，傷害再×1.3；命中後自己速＋2（1 回）",
+      "rarity_slang": "勁牌",
+      "tod": "雨夜燒味檔",
+      "fame": 75,
+      "dmg_mult": 2,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "execute_hp_pct": 50,
+      "execute_mult": 1.3
+    },
+    {
+      "id": "T05",
+      "name": "茶記掌門",
+      "rarity": "最高級",
+      "slots": 7,
+      "tags": [
+        "茶記",
+        "人情"
+      ],
+      "atk": 15,
+      "spd": 16,
+      "basic": "筷子點穴",
+      "skill": "全檯埋單",
+      "skill_cd": 3,
+      "art": "assets/tea/T05.jpg",
+      "flavor": "白恤衫、黑西褲，一雙木筷子當兵器。全間茶記照舊食飯，冇人覺得奇怪——因為佢一直係咁。",
+      "blurb": "一雙木筷子，鎮住全間茶記。",
+      "skill_effect": "全隊 攻＋20% 且 速＋3（2 回）；敵全體受 攻×0.5；自己減傷 15%（2 回）",
+      "rarity_slang": "鎮場王牌",
+      "tod": "午市茶記",
+      "fame": 120,
+      "dmg_mult": 0.5,
+      "hits": 1,
+      "target": "aoe",
+      "power": "phys",
+      "support": true
+    }
+  ],
   "account_avatar": "C241",
   "story_packs": [
     {
@@ -10186,19 +16501,723 @@ window.HK_SLICE_DATA = {
       "event_ids": [
         "EV19",
         "EV20"
+      ],
+      "tale_chain": [
+        "EV_CRXJ_01",
+        "EV_CRXJ_02",
+        "EV_CRXJ_03B",
+        "EV_CRXJ_03",
+        "EV_CRXJ_03C",
+        "EV_CRXJ_04",
+        "EV_CRXJ_04B",
+        "EV_CRXJ_05"
+      ],
+      "tale_start_age": 16,
+      "tale_age_per_step": 2,
+      "beats": [
+        "一九六幾年的冬天，你由鄉下坐火車落嚟。車廂玻璃結霜，你用手指抹開一個洞，看見城市像一片濕了的霓虹。",
+        "你只有一個紅白藍袋。袋入面有兩件衫、一張寫住錯字嘅紙、同阿媽塞落去嘅一包餅。餅已經硬，但你唔捨得食。",
+        "月台上有人舉牌。個姓寫錯咗一個字，但係全個月台只有佢一個舉牌。你行過去，因為你冇其他選擇。",
+        "香江唔會問你咩名，只會問你做唔做得。第一份工、第一次出糧、第一次捱夜——每一樣都係新嘅。",
+        "呢條街有好多人。有人教你行路，有人遞你一碗湯，有人用你個名借錢。",
+        "你開始明白，嚟呢度唔係為咗發達。係為咗有一日，有人叫得準你個名。",
+        "一年之後你再行過同一條巷，會唔會認得當初自己行路嘅聲？",
+        "八步之後，你會知自己係呢條街嘅人，定係只係路過。"
+      ],
+      "tale_endings": [
+        {
+          "id": "brother",
+          "label": "一條巷的人",
+          "blurb": "你冇發達，但整條巷都識你。七叔教你跳車，阿珍留你一個位，光仔叫你一聲哥。你阿媽嚟探你嗰年，你帶佢行咗全條街。",
+          "min_bond": 8,
+          "priority": 0
+        },
+        {
+          "id": "alone_rich",
+          "label": "有錢，但冇人",
+          "blurb": "你搬去半山，換咗三套西裝。有一日你返舊區，發現茶記已經執咗，冇人知你嚟過。你企喺舊址，突然記唔起阿珍個湯係咩味。",
+          "max_bond": -3,
+          "priority": 1
+        },
+        {
+          "id": "clean",
+          "label": "走得乾淨",
+          "blurb": "你冇欠人，亦冇人欠你。呢條街對你嚟講，只係一個地址。三十歲嗰年你搬走，冇同任何人道別。",
+          "route": "care",
+          "priority": 2
+        },
+        {
+          "id": "hard",
+          "label": "捱出頭",
+          "blurb": "你由碼頭做到有自己的車隊。條腰斷過兩次，但你企得返直。你請嘅人都係同鄉——你記得自己第一日嘅樣。",
+          "route": "hard",
+          "priority": 3
+        },
+        {
+          "id": "kind_soul",
+          "label": "傻人",
+          "blurb": "你成世都冇賺到大錢，但你托過無數個阿婆上樓。你走嗰日，整條街都嚟送。",
+          "route": "kind",
+          "priority": 4
+        },
+        {
+          "id": "neutral",
+          "label": "繼續行",
+          "blurb": "你仲喺呢條街。有時飲茶，有時唔飲。日子就咁過，冇咩特別，亦冇咩唔好。",
+          "priority": 9
+        }
+      ],
+      "tale_cast_profiles": [
+        {
+          "id": "seven",
+          "name": "七叔",
+          "role": "帶路人 · 前碼頭苦力",
+          "blurb": "喺月台第一個舉牌接你。佢唔會問你過去，只會問你跟唔跟得上。佢條腰係做碼頭做斷嘅，但佢從來冇怪過任何人。佢最憎人講「多謝」，因為講咗就係欠。",
+          "arc_stages": [
+            "試探你",
+            "願意帶你行",
+            "教你規矩",
+            "當你係自己人",
+            "交低條街俾你"
+          ]
+        },
+        {
+          "id": "zhen",
+          "name": "阿珍",
+          "role": "茶記阿姐 · 一個養兩個",
+          "blurb": "第一次見面就遞你一杯茶，講明「錢遲啲先講」。佢個仔十二歲走咗，佢煲湯煲咗十二年。佢唔會講大道理，但佢個門口永遠有張凳。",
+          "arc_stages": [
+            "防備你",
+            "鬆口",
+            "煲湯俾你",
+            "講自己個仔",
+            "永遠留個位"
+          ]
+        },
+        {
+          "id": "guang",
+          "name": "光仔",
+          "role": "跟車細路 · 十六歲",
+          "blurb": "你頂過佢三日工，佢記咗一世。但佢亦係用你個名借錢嗰個——因為佢阿媽要死，而全條街只有你唔識簽名。",
+          "arc_stages": [
+            "怕你搶位",
+            "欠你人情",
+            "冇面見你",
+            "求你原諒",
+            "一生記住"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kowloon_walled_ch1",
+      "name": "第一章：九龍城寨風雲",
+      "blurb": "一九七零，城寨西門。差佬唔入寨，字頭同義氣先講得通。",
+      "cover": "assets/events/ev-alley-wake.jpg",
+      "status": "available",
+      "legacy_pack": "walled_ch1",
+      "event_ids": [
+        "EV46"
+      ],
+      "tale_chain": [
+        "EV_KLW_01",
+        "EV_KLW_02",
+        "EV_KLW_02B",
+        "EV_KLW_03",
+        "EV_KLW_03B",
+        "EV_KLW_04",
+        "EV_KLW_04B",
+        "EV_KLW_05"
+      ],
+      "tale_start_age": 20,
+      "tale_age_per_step": 2,
+      "beats": [
+        "一九七〇年，城寨西門。差佬唔入寨，字頭同義氣先講得通。",
+        "城寨唔係一個地方，係一個唔受管嘅空隙。三十幾條巷，條條都通，但冇一條係出去嘅路。",
+        "呢度冇門牌。你住邊，就係你叫咩名。你叫咩名，就係你做過咩。",
+        "寨入面嘅規矩好簡單：唔好問人以前做過咩，唔好講自己以後會做咩，唔好帶外面嘅人入嚟。",
+        "但規矩係死嘅。人有時會為咗一個人，違反所有規矩。",
+        "呢度三日死兩個人。你唔知下一個係邊個，但你開始在意。",
+        "半年之後你會發現，最難唔係打贏，係打完之後仲有冇人肯同你坐低食飯。",
+        "城寨拆嗰年，你企喺封鎖線外面。你認得幾張臉，但冇一張行過嚟。"
+      ],
+      "tale_endings": [
+        {
+          "id": "walled_son",
+          "label": "寨內之子",
+          "blurb": "你冇離開過。寨門燈籠換過三次，你都仲喺度。有人叫你「權哥第二」，你聽到會笑。城寨拆嗰年，你係最後一個走嘅。",
+          "min_bond": 8,
+          "priority": 0
+        },
+        {
+          "id": "betrayer",
+          "label": "出賣者",
+          "blurb": "你走出去，著咗西裝。城寨拆嗰年，你冇返去睇。有人話你出賣咗全寨，你唔否認，亦冇解釋。",
+          "max_bond": -3,
+          "priority": 1
+        },
+        {
+          "id": "law_side",
+          "label": "白衫的人",
+          "blurb": "你最後著咗制服。城寨清拆嗰日，你企喺封鎖線外面，認得幾個熟面孔。你冇打招呼。",
+          "route": "law",
+          "priority": 2
+        },
+        {
+          "id": "burned",
+          "label": "燒簿的人",
+          "blurb": "數簿燒咗，債冇人還，亦冇人再找你。你走得乾淨，但冇人記得你嚟過。",
+          "route": "burn",
+          "priority": 3
+        },
+        {
+          "id": "guardian",
+          "label": "阿妹的人",
+          "blurb": "你留低咗，唔係為寨，係為一個人。之後幾十年，你每晚都經過藥房，睇一眼燈有冇亮。",
+          "require_bond": {
+            "mui": 3
+          },
+          "priority": 4
+        },
+        {
+          "id": "wanderer",
+          "label": "過客",
+          "blurb": "你入過寨，出過寨。冇人記得你叫咩名——連你自己都開始唔記得。",
+          "priority": 9
+        }
+      ],
+      "tale_cast_profiles": [
+        {
+          "id": "quan",
+          "name": "看更權",
+          "role": "寨口看更 · 三十年老江湖",
+          "blurb": "佢坐喺寨門三十年，見過嘅人比差佬多。佢唔會擋你入寨，只會問你入去做咩。答得實，佢就讓路。佢講過：入寨嘅人分三種——第一種死咗，第二種走咗，第三種留低。",
+          "arc_stages": [
+            "試探你",
+            "認你係自己人",
+            "教你規矩",
+            "撐你",
+            "交寨俾你"
+          ]
+        },
+        {
+          "id": "mui",
+          "name": "阿妹",
+          "role": "寨內藥房 · 十八歲",
+          "blurb": "佢手上有針筒，冇針頭。佢唔會問你係邊個，只會問你係咪嚟買藥。佢早就預備咗自己張紙，因為佢唔想再有人喺呢條巷死。",
+          "arc_stages": [
+            "戒心",
+            "留你食飯",
+            "講自己嘅事",
+            "預備犧牲",
+            "生死相托"
+          ]
+        },
+        {
+          "id": "bak",
+          "name": "白衫",
+          "role": "差佬 · 唔入寨",
+          "blurb": "佢企喺條線外面，永遠唔會行入去。但佢記得每一個行過條線嘅人。佢唔覺得自己壞——佢只係做緊一份工。",
+          "arc_stages": [
+            "冷眼",
+            "講條件",
+            "當你係棋",
+            "威脅你",
+            "或者當你係人"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fung_kau_mei_lok",
+      "name": "風球未落",
+      "blurb": "八號風球懸著。天星停航，碼頭茶記不收舖，窗上膠紙打著叉。",
+      "cover": "assets/events/ev-yum-cha.jpg",
+      "status": "available",
+      "legacy_pack": "typhoon_tea",
+      "event_ids": [
+        "EV47",
+        "EV48"
+      ],
+      "beats": [
+        "八號風球掛出的時候，維港先灰，後靜。天星的鐘響過一聲，綠船沒有再靠岸。",
+        "碼頭那間通宵茶記沒有拉閘。收銀機夾著紙條：「風球照常。」番茄醬瓶被侍應用手按住，免得它自己走路。",
+        "凍奶茶一一改成熱的。多士爐還亮。侍應說鑊先不要洗，洗了今晚就沒有鑊氣頂雨。",
+        "天星水手推門進來，外套能扭出水。哨子掛在頸上，沒有纜可解，哨子就只是一件飾物。",
+        "阿嬸站上凳，膠紙在窗上打叉。她說玻璃響就讓它響，人不要把臉貼上去跟風說話。",
+        "細路企喺門口，講咗一句「我搵唔到我阿媽」。之後佢一直冇放手。",
+        "凌晨四點，風球開始落。對岸嘅燈一盞一盞熄。水手話佢做咗十八年，未試過冇船開。",
+        "你問對岸還亮不亮。水手看了一眼什麼都看不清的海，說亮。風球未落，這杯他請，糖不要減。"
+      ],
+      "tale_chain": [
+        "EV_FKL_01",
+        "EV_FKL_02",
+        "EV_FKL_02B",
+        "EV_FKL_03",
+        "EV_FKL_03B",
+        "EV_FKL_04",
+        "EV_FKL_04B",
+        "EV_FKL_05"
+      ],
+      "tale_start_age": 24,
+      "tale_age_per_step": 1,
+      "tale_endings": [
+        {
+          "id": "street_family",
+          "label": "街上的人",
+          "blurb": "你冇上船，亦冇返屋企。風球年年有，你年年留低喺茶記。阿嬸話你係佢半個仔，你冇否認。",
+          "min_bond": 8,
+          "priority": 0
+        },
+        {
+          "id": "sailor_life",
+          "label": "跟船走",
+          "blurb": "你上咗船。之後十八年，你喺海上面過每一個風季。有人話你似水手，你話你只係唔想再留低。",
+          "require_bond": {
+            "sailor": 3
+          },
+          "priority": 1
+        },
+        {
+          "id": "aunt_heir",
+          "label": "茶記的第二代",
+          "blurb": "阿嬸走咗之後，你接手茶記。你唔拉閘，就算十號風球。有人問你為咩，你話：因為要有人喺度等。",
+          "require_bond": {
+            "aunt": 3
+          },
+          "priority": 2
+        },
+        {
+          "id": "alone",
+          "label": "獨自避風",
+          "blurb": "你冇入茶記，冇上船，冇幫手。風球落嗰朝，你喺屋企眠到中午，醒咗發現冇人搵過你。",
+          "max_bond": -3,
+          "priority": 3
+        },
+        {
+          "id": "reckless",
+          "label": "衝出去的人",
+          "blurb": "你成晚都喺風裡面搬招牌、救人。有人話你傻，有人話你係條街嘅燈。",
+          "route": "hard",
+          "priority": 4
+        },
+        {
+          "id": "neutral",
+          "label": "避過一場風",
+          "blurb": "風球落，你行返工。條街濕咗，茶記照開。日子就咁過。",
+          "priority": 9
+        }
+      ],
+      "tale_cast_profiles": [
+        {
+          "id": "sailor",
+          "name": "水手",
+          "role": "天星小輪 · 十八年",
+          "blurb": "做咗十八年，第一次喺風球下面冇船開。佢唔知冇船開嘅時候自己係咩。佢嘅人生綁喺條纜上面，纜一鬆，佢就唔知自己係邊個。",
+          "arc_stages": [
+            "一個人在船上",
+            "同你講嘢",
+            "當你係同伴",
+            "講自己嘅迷茫",
+            "或者唔再望你"
+          ]
+        },
+        {
+          "id": "aunt",
+          "name": "阿嬸",
+          "role": "通宵茶記老闆娘",
+          "blurb": "八號風球都唔拉閘，因為「拉咗閘，今晚邊個有熱嘢飲」。佢老公都係做船，有一年八號風球照樣開船，之後冇返嚟。佢唔拉閘，係因為要有人喺度等。",
+          "arc_stages": [
+            "當你係熟客",
+            "叫你幫手",
+            "講自己個老公",
+            "當你係半個仔",
+            "留位俾你"
+          ]
+        },
+        {
+          "id": "kid",
+          "name": "細路",
+          "role": "走失 · 十歲",
+          "blurb": "風球下面，佢企喺茶記門口，講咗一句「我搵唔到我阿媽」。佢仲有一隻貓叫阿花，佢話隻貓驚風。",
+          "arc_stages": [
+            "驚",
+            "捉實你隻手",
+            "帶你搵貓",
+            "跟你行",
+            "記得你"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "shou_dai_nv_xia",
+      "name": "手袋三夜",
+      "blurb": "雨夜天台、樓梯轉角、旺角後巷。三個女人，一個欠單，三條數最後算埋同一張。",
+      "cover": "assets/story-packs/shou-dai-san-ye.jpg",
+      "status": "available",
+      "legacy_pack": "bag_night",
+      "event_ids": [
+        "EV55",
+        "EV56",
+        "EV57"
+      ],
+      "beats": [
+        "雨夜天台、樓梯轉角、旺角後巷。三個女人，一個欠單，三條數最後算埋同一張。",
+        "第一個女人戴眼鏡，講嘢好快。佢阿媽借錢，係為咗一個佢唔識嘅拳手。",
+        "第二個女人唔識字，但記得每一條樓梯有幾多級。佢執到一個手袋，袋入面有一張紙。",
+        "第三個男人打斷咗人條肋骨。佢手背有血，但佢冇還手。",
+        "三張欠單，同一個筆跡。有人用三個名借錢，然後坐喺暗處睇三個人互相對峙。",
+        "你唔係債主，唔係警察，唔係佢哋任何一個嘅親人。你只係行過。",
+        "但行過嘅人，有時係唯一肯停低嘅。",
+        "一個月之後，天台冇雨。三個人企喺同一位置，冇人講嘢。"
+      ],
+      "tale_chain": [
+        "EV_SDN_01",
+        "EV_SDN_02",
+        "EV_SDN_02B",
+        "EV_SDN_03",
+        "EV_SDN_03B",
+        "EV_SDN_04",
+        "EV_SDN_04B",
+        "EV_SDN_05"
+      ],
+      "tale_start_age": 26,
+      "tale_age_per_step": 1,
+      "tale_endings": [
+        {
+          "id": "four_people",
+          "label": "四個人",
+          "blurb": "欠單解決咗，但你哋多咗三個朋友。之後每年盂蘭，你哋都會去天台坐一次，冇人講欠單。",
+          "min_bond": 8,
+          "priority": 0
+        },
+        {
+          "id": "walked_away",
+          "label": "行過的人",
+          "blurb": "你冇幫，亦冇害。三個人各有各解決。你之後行過同一條後巷，冇人認得你。",
+          "max_bond": -3,
+          "priority": 1
+        },
+        {
+          "id": "truth",
+          "label": "查到底的人",
+          "blurb": "你查出咗真相，但真相冇令任何人好過。有人搬走咗，冇留低地址。",
+          "route": "trust",
+          "priority": 2
+        },
+        {
+          "id": "law",
+          "label": "交咗俾警察",
+          "blurb": "程序行完，事情結束。你收到一張感謝狀，冇收到任何人嘅電話。",
+          "route": "law",
+          "priority": 3
+        },
+        {
+          "id": "protector",
+          "label": "擋在中間的人",
+          "blurb": "你擋咗好多次。有人話你多事，但三個人冇一個再受過傷。",
+          "route": "kind",
+          "priority": 4
+        },
+        {
+          "id": "neutral",
+          "label": "三條數，三個人",
+          "blurb": "最後三條數各自解決。你唔知邊個對邊個錯，亦唔需要知。",
+          "priority": 9
+        }
+      ],
+      "tale_cast_profiles": [
+        {
+          "id": "glasses",
+          "name": "眼鏡女",
+          "role": "欠單上的名字",
+          "blurb": "欠單寫住佢阿媽個名。佢講嘢好快，因為佢知道講慢啲就會輸。佢由頭到尾冇求過人，但佢阿媽走咗之後，佢係第一個喊嘅。",
+          "arc_stages": [
+            "防備你",
+            "接受你幫",
+            "講自己嘅事",
+            "信你",
+            "當你係朋友"
+          ]
+        },
+        {
+          "id": "mover",
+          "name": "搬嘢女人",
+          "role": "唔識字",
+          "blurb": "佢唔識字，但記得每一條樓梯有幾多級。佢知邊個做嘅，但講咗之後就要搬走。佢執到個手袋，三個月都冇打開。",
+          "arc_stages": [
+            "唔敢講",
+            "信你",
+            "講真話",
+            "或者搬走"
+          ]
+        },
+        {
+          "id": "boxer",
+          "name": "打拳",
+          "role": "後巷拳手",
+          "blurb": "佢唔識眼鏡女，但眼鏡女阿媽借錢係為咗佢——佢打斷咗人條肋骨，要賠。佢手背有血，但佢冇還手。",
+          "arc_stages": [
+            "唔關我事",
+            "認咗佢",
+            "講自己嘅事",
+            "當你係兄弟",
+            "或者各走各路"
+          ]
+        }
       ]
     },
     {
       "id": "neon_mei_wan",
       "name": "霓虹未完",
-      "blurb": "缺劃燈管仍閃——旺角雨巷、廟街燈箱帳，霓虹未完的一夜。",
-      "cover": "assets/story-packs/neon-mei-wan.jpg",
+      "blurb": "招牌一盞一盞熄，補燈師傅仍在棚上。拆得甩招牌，拆唔甩條街嘅記性。",
+      "cover": "assets/story-packs/neon-mei-wan-neon.jpg",
       "status": "available",
-      "legacy_pack": null,
+      "legacy_pack": "neon_sign",
       "event_ids": [
-        "EV46",
-        "EV47",
-        "EV48"
+        "EV58",
+        "EV59",
+        "EV60"
+      ],
+      "beats": [
+        "招牌一盞一盞熄，補燈師傅仍在棚上。拆得甩招牌，拆唔甩條街嘅記性。",
+        "第一個晚上，師傅補咗第十一支燈。佢話呢支燈著咗三十七年，比佢個仔仲老。",
+        "第二個晚上，招牌漆喺圍板上寫字。佢寫字嘅手好定，寫完之後會退後三步睇。",
+        "第三個晚上，吊臂車嚟到。三噸招牌吊到半空，螺絲鬆咗一半。",
+        "拆遷隊唔係壞人。佢都要養家，但佢每次拆一塊招牌，都會記住個名。",
+        "招牌落咗。牆上面留低一個印，係招牌擋住咗幾十年嘅位置。",
+        "半年之後，圍板中間嘅縫透出一線光。有人重新拉咗電線。",
+        "拆得甩招牌，拆唔甩條街嘅記性——但記性都要有人接落去。"
+      ],
+      "tale_chain": [
+        "EV_NMW_01",
+        "EV_NMW_02",
+        "EV_NMW_02B",
+        "EV_NMW_03",
+        "EV_NMW_03B",
+        "EV_NMW_04",
+        "EV_NMW_04B",
+        "EV_NMW_05"
+      ],
+      "tale_start_age": 30,
+      "tale_age_per_step": 1,
+      "tale_endings": [
+        {
+          "id": "relit",
+          "label": "重新接燈的人",
+          "blurb": "你冇阻止拆遷，但你令條街仲有光。之後幾年，你不時入圍板後面接燈。師傅死嗰年，工具箱留咗俾你。",
+          "min_bond": 8,
+          "priority": 0
+        },
+        {
+          "id": "wrote_names",
+          "label": "寫低條街",
+          "blurb": "你同招牌漆寫咗四十七個名。拆遷之後，冇人記得個招牌，但記得個名單。",
+          "require_bond": {
+            "paint": 3
+          },
+          "priority": 1
+        },
+        {
+          "id": "crane_friend",
+          "label": "兩個都係做工",
+          "blurb": "你同拆遷隊變咗朋友。佢話你係第一個唔鬧佢嘅人。之後佢拆嘢，會先打俾你。",
+          "require_bond": {
+            "crane": 3
+          },
+          "priority": 2
+        },
+        {
+          "id": "bystander",
+          "label": "睇住熄燈",
+          "blurb": "你每晚都企喺對面街。燈一盞一盞熄，你一直冇行過去。",
+          "max_bond": -3,
+          "priority": 3
+        },
+        {
+          "id": "saved_lives",
+          "label": "拉走人的人",
+          "blurb": "你冇保住支燈，但你拉走咗七個人。有人話你實際，有人話你冇情。",
+          "route": "care",
+          "priority": 4
+        },
+        {
+          "id": "neutral",
+          "label": "條街拆完",
+          "blurb": "招牌落咗，圍板拆咗，新樓起到。你行過，認得個位置。",
+          "priority": 9
+        }
+      ],
+      "tale_cast_profiles": [
+        {
+          "id": "lamp",
+          "name": "補燈師傅",
+          "role": "棚上 · 三十七年",
+          "blurb": "佢補過同一支燈十一次。佢唔係唔想走，係唔知落嚟之後可以做咩。佢師傅留低一把螺絲批，而佢而家冇人接。",
+          "arc_stages": [
+            "唔理你",
+            "教你睇燈",
+            "講自己嘅事",
+            "當你係徒弟",
+            "交低個棚"
+          ]
+        },
+        {
+          "id": "paint",
+          "name": "招牌漆",
+          "role": "寫字的人 · 四十年",
+          "blurb": "佢寫過三百幾個招牌，記得每一個名點解要寫成咁。佢話拆得甩招牌，拆唔甩條街嘅記性——但佢自己都開始唔記得。",
+          "arc_stages": [
+            "自己寫自己",
+            "問你寫咩",
+            "俾你睇本簿",
+            "一齊寫",
+            "或者收埋毛筆"
+          ]
+        },
+        {
+          "id": "crane",
+          "name": "拆遷隊",
+          "role": "揸吊臂嘅人",
+          "blurb": "佢唔係壞人。佢只係執行一張紙。但佢記得每一塊招牌落嚟嘅聲，仲數過自己拆過三百一十二塊。",
+          "arc_stages": [
+            "照做",
+            "同你講實話",
+            "幫你拖一個鐘",
+            "講自己嘅難處",
+            "或者唔再講嘢"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "office_ballad",
+      "name": "打工仔輓歌",
+      "blurb": "由信差做到部門主管，定係由舖頭做到天橋底。香港上班族一生，十個分岔，五個結局。",
+      "cover": "assets/story-packs/office-ballad.jpg",
+      "status": "available",
+      "legacy_pack": "office_ballad",
+      "event_ids": [
+        "EV_OF_01",
+        "EV_OF_02",
+        "EV_OF_03",
+        "EV_OF_04",
+        "EV_OF_05",
+        "EV_OF_06",
+        "EV_OF_07",
+        "EV_OF_08",
+        "EV_OF_09",
+        "EV_OF_10"
+      ],
+      "office_chain": [
+        "EV_OF_01",
+        "EV_OF_02",
+        "EV_OF_03",
+        "EV_OF_04",
+        "EV_OF_05",
+        "EV_OF_06",
+        "EV_OF_07",
+        "EV_OF_08",
+        "EV_OF_09",
+        "EV_OF_10"
+      ],
+      "office_endings": [
+        {
+          "id": "rich",
+          "label": "成功打工致富",
+          "blurb": "由信差做到部門主管，供滿層樓，仲有閒錢買馬。你冇發達，但你企得穩。"
+        },
+        {
+          "id": "biz_fail",
+          "label": "生意失敗",
+          "blurb": "舖頭開咗三年，租加咗兩次，伙記走淨一個。你冇破產，但你冇咗間舖。"
+        },
+        {
+          "id": "flat",
+          "label": "成功買樓成家立室",
+          "blurb": "抽到居屋，簽紙嗰日手震。層樓唔大，但門牌上面有你同佢嘅名。"
+        },
+        {
+          "id": "street",
+          "label": "創業失敗露宿街頭",
+          "blurb": "你借盡所有人，押上所有嘢，最後剩返一個紅白藍袋同一個紙皮箱。"
+        },
+        {
+          "id": "scam",
+          "label": "被詐騙後自殺身亡",
+          "blurb": "一個保證回報的電話，一次轉帳，一世人積蓄。你冇勇氣面對第二日。"
+        }
+      ],
+      "office_entry": "EV_OF_01",
+      "beats": [
+        "中五畢業那年，你屋企嘅天花板開始漏水。阿媽用紅膠桶接，一晚倒三次。",
+        "第一份工唔係揀出嚟嘅，係剩落嚟嘅。你去到邊，邊度就話「請人」。",
+        "寫字樓嘅電梯有鐵閘，要用手拉。你第一次拉嗰陣，鐵閘夾到你手指。你冇講，因為怕人覺得你唔識做。",
+        "入職第三日，主管叫你打一份私人文件。影印機旁邊，有個做咗十九年嘅阿姐望住你。",
+        "第三年，你喺茶記見到數簿有一條數對唔上。差嘅錢，剛好夠一個伙記一日人工。",
+        "第四年，你第一次自己接單。客人要十日交貨，但你手上現金只夠入三分一。",
+        "第五年，公司裁員。你冇被裁，但隔籬位嘅阿姐走咗。佢做咗十九年，一個紙箱裝得晒。",
+        "老闆叫你入房，話阿姐嗰份你接，加五百。你想起佢臨走講嘅話：「唔好以為做多有用。」",
+        "第六年，你自己間舖租約到期。業主加租四成。你計過，加咗租就冇錢賺。",
+        "你請咗兩個伙記，兩個都有家。你望住支筆，好耐。",
+        "第七年，你同嗰個人抽到居屋。號碼好前。簽紙嗰日，佢問你：你確定要供三十年？",
+        "你今年二十八。供完你五十八歲。張紙上面有兩個空格，兩個都未簽。",
+        "第八年，有個舊同學搵你。佢話有內幕消息，一隻股票下星期會升三倍。佢自己已經落重注五十萬。",
+        "你查過，間公司冇咩業務。但係你嘅積蓄，剛好夠首期一半。",
+        "第九年。有個人搵你合夥。佢出錢，你出力。合約最後三頁字好細，你睇唔明。",
+        "佢話「唔使睇，我做人做咗三十年」。你想起阿姐，想起業主，想起所有講過類似說話嘅人。",
+        "第十年。你企喺天橋上面，望住下面啲車。有一架停咗喺路邊，車入面有人喺度食飯盒。",
+        "你數咗十個分岔，每一個你都真係揀過。但冇一個係你最初想要嘅。",
+        "你想起阿媽問你開唔開心。你當時冇答。你而家都答唔到。",
+        "電話響起，係一個陌生號碼。天橋下面，車龍開始動。",
+        "香港嘅人生唔係一條路，係一個又一個分岔口，每個都要即刻決定。",
+        "每一個分岔口，你都以為自己仲有時間。",
+        "十個分岔，五個結局。你行到邊個，唔完全係你揀。",
+        "但每一個分岔口，你都真係揀過。而每一次揀，你都放棄咗其他所有可能。",
+        "呢個就係打工仔嘅一生：你冇輸，但你都冇贏。",
+        "你只係一直行，行到有一日，冇人再問你幾時返嚟食飯。"
+      ],
+      "tale_cast_profiles": [
+        {
+          "id": "mom",
+          "name": "阿媽",
+          "role": "由頭到尾都喺度",
+          "blurb": "佢唔會問你賺幾多，只會問你食咗飯未。你每一次轉工，佢都係第一個知，亦係最後一個怨。",
+          "arc_stages": [
+            "等你養家",
+            "唔敢問你",
+            "開始唔明你",
+            "只求你平安",
+            "等你返嚟食飯"
+          ]
+        },
+        {
+          "id": "colleague",
+          "name": "隔籬位阿姐",
+          "role": "教你點生存",
+          "blurb": "佢做咗十九年同一份工。佢話呢個世界冇忠誠，只有慣性。你走嗰年，佢冇送你。",
+          "arc_stages": [
+            "教你規矩",
+            "幫你頂過一次",
+            "覺得你太急",
+            "同你講咗真話",
+            "冇再聯絡"
+          ]
+        },
+        {
+          "id": "partner",
+          "name": "嗰個人",
+          "role": "你以為會陪你行落去",
+          "blurb": "你哋一齊捱過最難嗰兩年。之後你開始忙，佢開始唔問。分開嗰日冇吵架。",
+          "arc_stages": [
+            "一齊諗將來",
+            "開始等你",
+            "唔再等你",
+            "講清楚",
+            "各走各路"
+          ]
+        }
       ]
     }
   ],

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <filter id="eg" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="390" height="844" fill="#160a22"/>
+  <rect x="0" y="0" width="120" height="844" fill="#100818"/>
+  <rect x="270" y="0" width="120" height="844" fill="#100818"/>
+  <g filter="url(#eg)">
+    <rect x="28" y="180" width="24" height="200" fill="#ff2d95"/>
+    <rect x="338" y="160" width="20" height="220" fill="#2de2ff"/>
+  </g>
+  <circle cx="150" cy="460" r="36" fill="#241430"/>
+  <rect x="132" y="500" width="36" height="90" rx="8" fill="#2a1844"/>
+  <circle cx="246" cy="470" r="34" fill="#1a2030"/>
+  <rect x="228" y="508" width="36" height="86" rx="8" fill="#243044"/>
+  <path d="M0 720 L390 690 L390 844 L0 844 Z" fill="#0c0612"/>
+  <path d="M40 760 Q195 740 350 770" fill="none" stroke="#ffd36a" stroke-width="3" opacity="0.45"/>
+</svg>

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 844" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="alley" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#241038"/>
+      <stop offset="1" stop-color="#0c0612"/>
+    </linearGradient>
+    <filter id="ng" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="390" height="844" fill="url(#alley)"/>
+  <path d="M150 0 L190 0 L230 844 L110 844 Z" fill="#1a0c28"/>
+  <g stroke="#2a1840" stroke-width="8">
+    <path d="M40 80 H160"/>
+    <path d="M40 140 H150"/>
+    <path d="M250 100 H360"/>
+    <path d="M240 180 H370"/>
+  </g>
+  <g fill="#c8d0d8" opacity="0.8">
+    <rect x="70" y="200" width="36" height="28"/>
+    <rect x="78" y="228" width="4" height="40"/>
+    <rect x="96" y="228" width="4" height="50"/>
+    <rect x="300" y="240" width="40" height="26"/>
+    <rect x="308" y="266" width="4" height="36"/>
+  </g>
+  <g filter="url(#ng)">
+    <rect x="20" y="300" width="22" height="140" rx="3" fill="#ff2d95"/>
+    <rect x="348" y="280" width="16" height="160" rx="3" fill="#2de2ff"/>
+  </g>
+  <g stroke="#9fdfff" stroke-width="2" opacity="0.35">
+    <path d="M20 40 L10 120"/>
+    <path d="M80 20 L60 140"/>
+    <path d="M200 10 L190 160"/>
+    <path d="M300 30 L286 150"/>
+    <path d="M360 16 L348 130"/>
+  </g>
+  <ellipse cx="195" cy="760" rx="70" ry="16" fill="#2de2ff" opacity="0.25"/>
+  <path d="M0 700 L390 680 L390 844 L0 844 Z" fill="#100818"/>
+</svg>
