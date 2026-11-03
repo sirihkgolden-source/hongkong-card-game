@@ -315,6 +315,16 @@ html, body {
   border-radius: 12px;
   cursor: pointer;
   width: 100%;
+  /*
+   * t379：主掣唔好斷行（總導演：「金掣斷行」）。
+   * 原本冇 nowrap，「繼續上次未完人生」等長文案喺窄屏會斷成兩行，
+   * 按鈕高度由 55px 變 78px，擠壓下方版面。
+   * 改為 nowrap + 自動縮字級（clamp），窄屏仍然一行。
+   */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: clamp(0.82rem, 3.6vw, 1.05rem);
   transition: transform 0.08s, box-shadow 0.15s;
   box-shadow:
     0 4px 0 #0a0610,
@@ -4312,6 +4322,46 @@ button.side-icon {
   gap: 1px 2px;
   min-width: 0;
 }
+.lh-attrs[hidden] { display: none !important; }
+
+/* ===== t379：六維收摺開關 ===== */
+.lh-attrs-wrap {
+  grid-area: attrs;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+.lh-attrs-wrap .lh-attrs { grid-area: auto; flex: 1 1 auto; }
+.lh-attrs-toggle {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 1.5px solid #0a0610;
+  background: #1a1028;
+  color: #9fb4c8;
+  font-family: inherit;
+  font-size: 0.58rem;
+  font-weight: 900;
+  cursor: pointer;
+  white-space: nowrap;
+  flex: 0 0 auto;
+  box-shadow: 0 0 0 1px rgba(45, 226, 255, 0.25);
+  transition: color 0.15s ease, box-shadow 0.15s ease;
+}
+.lh-attrs-toggle:hover,
+.lh-attrs-toggle:focus-visible {
+  color: var(--neon-cyan);
+  box-shadow: 0 0 0 1px rgba(45, 226, 255, 0.65);
+}
+.lh-attrs-toggle.collapsed { color: var(--neon-gold); }
+.lhat-ico { font-size: 0.62rem; line-height: 1; }
+.lhat-txt { letter-spacing: 0.04em; }
+.lhat-caret { font-size: 0.54rem; opacity: 0.85; }
 .lh-a {
   display: inline-flex;
   align-items: center;
@@ -4754,7 +4804,8 @@ button.side-icon {
   background-position: bottom;
   background-attachment: local;
 }
-/* t377：清單底部提示（有更多時顯示） */
+/* t379：清單底部提示（有更多時顯示；hidden 屬性控制） */
+.pack-list-more[hidden] { display: none !important; }
 .pack-list-more {
   flex: 0 0 auto;
   text-align: center;
@@ -4765,6 +4816,7 @@ button.side-icon {
   padding: 2px 0 0;
   animation: pack-more-bounce 1.4s ease-in-out infinite;
 }
+.pack-list-more b { color: var(--neon-gold); font-size: 0.72rem; }
 @keyframes pack-more-bounce {
   0%, 100% { opacity: 0.55; transform: translateY(0); }
   50% { opacity: 1; transform: translateY(2px); }
@@ -5609,6 +5661,16 @@ button.side-icon {
   gap: 6px;
   padding: 8px 6px 4px;
   border-top: 1px dashed #3a2a48;
+  /*
+   * t379：升星區改為 sticky 貼底（總導演：「卡詳情裁切」）。
+   * 實測 sheet 高 735px、內容 779px → 溢出 44px，升星按鈕被推到視野外。
+   * sticky 之後按鈕常駐底部，內容可以正常滾動。
+   */
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  background: linear-gradient(180deg, rgba(18, 8, 28, 0.86), #0c0612 55%);
+  margin-top: 2px;
 }
 .album-starup-label {
   font-size: 0.85rem;
@@ -6085,6 +6147,63 @@ button.side-icon {
     box-shadow: 0 0 8px rgba(45, 226, 255, 0.85);
   }
 
+  /* ===== t379：輸入階段倒數（總導演：加長輸入窗或顯示剩餘時間） ===== */
+  .mg-input-timer {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex: 0 0 auto;
+    padding: 3px 8px;
+    border-radius: 8px;
+    background: rgba(10, 6, 20, 0.72);
+    border: 1.5px solid rgba(45, 226, 255, 0.35);
+  }
+  .mit-label {
+    font-size: 0.58rem;
+    font-weight: 900;
+    color: #9fb4c8;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+  .mit-bar {
+    flex: 1 1 auto;
+    min-width: 40px;
+    height: 5px;
+    border-radius: 999px;
+    background: #14091f;
+    border: 1px solid #0a0610;
+    overflow: hidden;
+  }
+  .mit-bar > i {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--neon-cyan, #3dfff0), var(--neon-gold, #ffd36a));
+    transition: width 0.9s linear;
+    box-shadow: 0 0 8px rgba(45, 226, 255, 0.6);
+  }
+  .mit-num {
+    font-size: 0.62rem;
+    font-weight: 900;
+    color: var(--neon-cyan, #3dfff0);
+    min-width: 22px;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .mg-input-timer.urgent {
+    border-color: rgba(255, 77, 106, 0.75);
+    animation: mg-urgent-pulse 0.7s ease-in-out infinite;
+  }
+  .mg-input-timer.urgent .mit-bar > i {
+    background: linear-gradient(90deg, #ffb347, #ff4d6a);
+    box-shadow: 0 0 10px rgba(255, 77, 106, 0.9);
+  }
+  .mg-input-timer.urgent .mit-num { color: #ff8fa3; }
+  @keyframes mg-urgent-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 77, 106, 0); }
+    50% { box-shadow: 0 0 0 3px rgba(255, 77, 106, 0.28); }
+  }
+
   /* 結果橫幅 */
   .mg-result-banner {
     flex: 0 0 auto;
@@ -6105,6 +6224,84 @@ button.side-icon {
     background: linear-gradient(180deg, rgba(255, 77, 106, 0.2), rgba(255, 77, 106, 0.05));
     color: #ff8fa3;
     box-shadow: 0 0 0 2px rgba(255, 77, 106, 0.5), 0 0 22px rgba(255, 77, 106, 0.3);
+  }
+
+  /* ===== t379：事件結算結果條（半秒回饋） ===== */
+  .soft-result-bar {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+    padding: 7px 10px;
+    border-radius: 10px;
+    border: 2px solid #0a0610;
+    border-left: 4px solid var(--neon-lime, #b8ff4a);
+    background: linear-gradient(90deg, rgba(184, 255, 74, 0.16), rgba(184, 255, 74, 0.03));
+    box-shadow: 0 0 0 1.5px rgba(184, 255, 74, 0.35), 0 2px 0 #0a0610;
+    flex: 0 0 auto;
+    animation: srb-slide-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .soft-result-bar.ending {
+    border-left-color: var(--neon-gold, #ffd36a);
+    background: linear-gradient(90deg, rgba(255, 211, 106, 0.18), rgba(255, 211, 106, 0.03));
+    box-shadow: 0 0 0 1.5px rgba(255, 211, 106, 0.4), 0 2px 0 #0a0610;
+  }
+  .soft-result-bar.muted {
+    border-left-color: #6a5878;
+    background: rgba(30, 20, 40, 0.7);
+    box-shadow: 0 2px 0 #0a0610;
+  }
+  .srb-ico {
+    font-size: 0.92rem;
+    font-weight: 900;
+    color: var(--neon-lime, #b8ff4a);
+    text-shadow: 0 0 10px rgba(184, 255, 74, 0.8);
+    flex: 0 0 auto;
+  }
+  .soft-result-bar.ending .srb-ico {
+    color: var(--neon-gold, #ffd36a);
+    text-shadow: 0 0 10px rgba(255, 211, 106, 0.8);
+  }
+  .srb-text {
+    font-size: 0.72rem;
+    font-weight: 900;
+    color: #eaf6ff;
+    letter-spacing: 0.02em;
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .srb-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-left: auto;
+  }
+  .srb-chip {
+    font-size: 0.62rem;
+    font-weight: 900;
+    padding: 1px 7px;
+    border-radius: 999px;
+    border: 1.5px solid #0a0610;
+    background: #1a1028;
+    color: #c9b8d8;
+    white-space: nowrap;
+    animation: srb-chip-pop 0.4s ease-out both;
+  }
+  .srb-chip.soul { color: var(--neon-gold, #ffd36a); box-shadow: 0 0 0 1px rgba(255,211,106,0.4); }
+  .srb-chip.xp { color: var(--neon-cyan, #3dfff0); box-shadow: 0 0 0 1px rgba(45,226,255,0.4); }
+  .srb-chip.gold { color: #ffc857; box-shadow: 0 0 0 1px rgba(255,200,87,0.4); }
+  .srb-chip.attr { color: var(--neon-lime, #b8ff4a); }
+  @keyframes srb-slide-in {
+    from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes srb-chip-pop {
+    0% { opacity: 0; transform: scale(0.82); }
+    60% { transform: scale(1.06); }
+    100% { opacity: 1; transform: scale(1); }
   }
 
 /* --- faction side-quest choice (v0) --- */
@@ -8959,9 +9156,46 @@ html, body {
   font-weight: 800;
   color: var(--neon-cyan);
 }
-.tl-node .of-choices {
-  margin-top: 4px;
-}
+  .tl-node .of-choices {
+    margin-top: 4px;
+  }
+
+  /* ===== t379：故事步之間嘅場面過渡 ===== */
+  .tl-transition {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+    width: 100%;
+    padding: 1px 0 2px;
+    animation: tl-fade-in 0.42s ease-out both;
+  }
+  .tl-transition-rule {
+    flex: 1 1 auto;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(45, 226, 255, 0.5), transparent);
+  }
+  .tl-transition-label {
+    flex: 0 0 auto;
+    font-size: 0.62rem;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    color: rgba(45, 226, 255, 0.92);
+    text-shadow: 0 0 10px rgba(45, 226, 255, 0.55);
+    white-space: nowrap;
+  }
+  @keyframes tl-fade-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  /* 整個節點內容淡入（減少「跳戲」） */
+  .tl-node {
+    animation: tl-node-in 0.34s ease-out both;
+  }
+  @keyframes tl-node-in {
+    from { opacity: 0.55; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
 /* t369：故事包詳情頁的人物介紹 */
 .tl-profile-list {

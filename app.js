@@ -462,6 +462,41 @@
     return (DATA.events || []).find((e) => e.id === id && e.office_node) || null;
   }
 
+  /*
+   * t384：職種分岔（修「第 1 步揀茶記，但之後全部寫字樓」）。
+   *
+   * 第 1 步三個選項帶 `track`（office／tea／deal），之後第 2–6 步每個節點有
+   * `track_variants[track] = { name, desc, dialogue, office_choices }`。
+   * 三個變體的 route 權重完全一致（由腳本按原本第 i 個選擇複製），
+   * 所以五個結局的可達比例不變。
+   */
+  const OFFICE_TRACK_LABELS = { office: "寫字樓信差", tea: "茶記樓面", deal: "親戚買賣" };
+
+  /** 由已走過嘅選擇找回職種（第一個帶 track 的選擇） */
+  function officeTrackOf(run) {
+    const r = run || state.officeRun;
+    if (!r) return null;
+    const hit = (r.chosen || []).find((c) => c && c.track);
+    return hit ? hit.track : null;
+  }
+
+  /**
+   * 取出「當前職種」的節點內容。
+   * 冇變體 → 原樣返回；有變體但未揀職種 → 用第一個變體（寫字樓）頂住。
+   */
+  function officeNodeView(node, run) {
+    if (!node || !node.track_variants) return node;
+    const track = officeTrackOf(run) || "office";
+    const v = node.track_variants[track] || node.track_variants.office;
+    if (!v) return node;
+    return Object.assign({}, node, {
+      name: v.name || node.name,
+      desc: v.desc || node.desc,
+      dialogue: Array.isArray(v.dialogue) ? v.dialogue : node.dialogue,
+      office_choices: Array.isArray(v.office_choices) ? v.office_choices : node.office_choices,
+    });
+  }
+
   function officeEndingEvent(routeKey) {
     const endingId = OFFICE_ENDING_BY_ROUTE[routeKey];
     if (!endingId) return null;
@@ -525,7 +560,7 @@
   function officeApplyChoice(choiceIdx) {
     const run = state.officeRun;
     if (!run) return null;
-    const node = officeNodeById(run.nodeId);
+    const node = officeNodeView(officeNodeById(run.nodeId), run);
     if (!node) return null;
     const choices = Array.isArray(node.office_choices) ? node.office_choices : [];
     const pick = choices[choiceIdx | 0];
@@ -541,6 +576,8 @@
       nodeName: node.name,
       choiceIdx: choiceIdx | 0,
       text: pick.text || "",
+      // t384：記住職種（第 1 步的選擇），之後每一步都按佢揀變體
+      track: pick.track || null,
     });
     // 揭示文案：只講「你揀了什麼」，唔講分數／加減
     run.reveal = {
@@ -781,6 +818,12 @@
     gachaReveal: false,
     /** 扭蛋演出階段：idle → coin → spin → egg_out → crack → reveal → result */
     gachaPhase: "idle",
+    /**
+     * t379：六維收摺（頂欄資訊分層）。
+     * true = 收起六維（只顯示「六維」掣），false = 展開。
+     * 預設收起：玩家多數時間只關心膠幣／金幣，六維可隨時點開。
+     */
+    attrsCollapsed: true,
   };
 
   /* 茶記特殊卡同屬戰鬥卡；合併入同一批卡池，卡冊／選卡／戰鬥都認得 */
@@ -911,7 +954,7 @@
     const star = albumFighterStar(f.id);
     const head = [
       `<div class="ht-title">「${esc(f.name || "")}」</div>`,
-      `<div class="ht-line">Lv.${lv}｜★${star}｜稀有 ${esc(rare)}｜${esc(bits.join(" "))}</div>`,
+      `<div class="ht-line">Lv.${lv}｜★${star}｜${esc(rare)}｜${esc(bits.join(" "))}</div>`,
     ];
     if (tags) head.push(`<div class="ht-line">主題：${esc(tags)}</div>`);
     const equipped = opts.skipEquip ? [] : fighterEquippedForHelp(f.id);
@@ -982,7 +1025,7 @@
     const art = e.art || def.art || null;
     const head = [
       `<div class="ht-title">「${esc(name)}」</div>`,
-      `<div class="ht-line">稀有 ${esc(rare)}｜攻${atk ?? "?"} 速${spd ?? "?"} 血${hp ?? "?"}</div>`,
+      `<div class="ht-line">${esc(rare)}｜攻${atk ?? "?"} 速${spd ?? "?"} 血${hp ?? "?"}</div>`,
     ];
     const bpSrc = {
       basic_power: e.basic_power != null ? e.basic_power : def.basic_power,
@@ -2539,6 +2582,21 @@
 
   /** 結算今世／放棄今世：重置今世進度返外層 hub（accountGear 保留） */
   function abandonLife() {
+    /*
+     * t379：膠幣結算透明化（總導演：「統一放棄／結束分支同主存檔嘅膠幣結算，唔好隱形回滾」）。
+     *
+     * 原本：abandonLife() 直接 `state.soul = SOUL_START` → 今世賺到嘅膠幣**無聲消失**，
+     * 玩家只會見到個數字突然變返 260，完全唔知發生咩事。
+     * 現在：先計出「今世淨賺」並寫入 `state.lastSoulSettle`，
+     * 由 UI 喺放棄前／結算頁明確顯示，然後才重置。
+     */
+    const soulNow = Math.max(0, state.soul | 0);
+    state.lastSoulSettle = {
+      before: soulNow,
+      after: SOUL_START,
+      delta: SOUL_START - soulNow,
+      at: Date.now(),
+    };
     state.year = 1;
     state.age = 10;
     state.lv = 1;
@@ -2598,8 +2656,21 @@
     abandonLife();
   }
 
+  /**
+   * t379：放棄今世確認 —— 明確列出膠幣會點變，唔好靜靜清走。
+   * 同時顯示今世淨賺，令玩家知道自己放低咗幾多。
+   */
   function requestAbandonLife() {
-    if (!confirm("確定放棄今世？進度會重置，返主頁 hub。")) return;
+    const soulNow = Math.max(0, state.soul | 0);
+    const delta = SOUL_START - soulNow;
+    const deltaTxt = delta > 0 ? `+${delta}` : (delta < 0 ? String(delta) : "±0");
+    const msg =
+      "確定放棄今世？\n\n" +
+      `．今世膠幣：${soulNow} → 新一世 ${SOUL_START}（${deltaTxt}）\n` +
+      "．戰鬥卡、技能、裝備收藏（卡冊）會保留\n" +
+      "．今世進度（年份、六維、事件、勢力好感）會重置\n\n" +
+      "放棄後會返主頁 hub。";
+    if (!confirm(msg)) return;
     abandonLife();
   }
 
@@ -3130,7 +3201,7 @@
     const blurb = f.flavor || f.blurb || "";
     const lv = (opts.preview && opts.preview.level) ? opts.preview.level : fighterLevelOf(f.id);
     const star = albumFighterStar(f.id);
-    const lines = [`「${f.name || ""}」`, `Lv.${lv}｜★${star}｜稀有 ${rare}｜${bits.join(" ")}`];
+    const lines = [`「${f.name || ""}」`, `Lv.${lv}｜★${star}｜${rare}｜${bits.join(" ")}`];
     if (opts.preview && ((opts.preview.growAtk | 0) || (opts.preview.growHp | 0))) {
       lines.push(`成長加成：攻+${opts.preview.growAtk | 0} 血+${opts.preview.growHp | 0}（等級＋升星可疊加）`);
     }
@@ -3320,7 +3391,7 @@
     const rare = def.rarity_slang || def.rarity || "敵方";
     const lines = [
       `「${name}」`,
-      `稀有 ${rare}｜攻${atk ?? "?"} 速${spd ?? "?"} 血${hp ?? "?"}`,
+      `${rare}｜攻${atk ?? "?"} 速${spd ?? "?"} 血${hp ?? "?"}`,
       `普攻：${basic}（${basicPowerParenLabel({ basic_power: e.basic_power != null ? e.basic_power : def.basic_power })}）`,
       `自帶：${skill} · CD${skillCd}${skillEffect ? "\n效果：" + skillEffect : ""}`,
       flavor,
@@ -3347,6 +3418,7 @@
     "btn-ready": "準備出發——確認今世帶入的主人裝備＋戰鬥卡口袋＋技能（每世一次）。確認後先選身世，再進入人生命運（第1–3年），之後才一般遭遇。口袋最少 1 張。",
     "prep-fighter": "戰鬥卡：面板只顯示已選隊（大圖＋星）。點選面板／空位＋ →「選擇初始戰鬥卡」由已獲得戰鬥卡選入／剔出；上限＝統率（硬頂 25）。每場最多 3 張部署。長按查看卡內容。",
     "gear-slot": "帳號裝備（頭／身／武／副／飾／足）——點選槽位或「更換裝備」開啟「選擇初始裝備卡」；選擇裝上／取消卸下；數值加乘套用全體出戰卡。",
+    "attrs-toggle": "六維（力量／敏捷／智力／幸運／統率／壽命）——點擊展開或收起。收摺後頂欄只顯示膠幣／金幣／聲望，畫面留多啲位。",
     "btn-equip-star": "裝備升星只可在卡冊進行：卡冊 → 裝備卡 → 點卡 → 「升星」（消耗同名卡）。扭蛋抽到重複卡只會累積張數，唔會自動升星。",
     "btn-fight": "開始戰鬥——全自動戰，可加速／放棄。",
     "btn-speed": "切換 ×1／×2／×3 播放速度。",
@@ -3592,6 +3664,33 @@
       return fighterHelpRichHtml(f, opts);
     }
     return null;
+  }
+
+  /**
+   * t379：六維收摺 toggle（頂欄資訊分層）。
+   * 用事件委派，任何畫面只要有 #btn-attrs-toggle 都生效，
+   * 唔需要在每個 view 各自接線。
+   */
+  function wireAttrsToggle(root) {
+    if (!root) return;
+    const btn = root.querySelector("#btn-attrs-toggle");
+    if (!btn || btn.dataset.wired === "1") return;
+    btn.dataset.wired = "1";
+    btn.onclick = (e) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      state.attrsCollapsed = !state.attrsCollapsed;
+      const list = root.querySelector("#lh-attrs-list");
+      const collapsed = !!state.attrsCollapsed;
+      if (list) list.hidden = collapsed;
+      btn.classList.toggle("collapsed", collapsed);
+      btn.setAttribute("aria-expanded", collapsed ? "false" : "true");
+      btn.title = collapsed ? "展開六維" : "收起六維";
+      const caret = btn.querySelector(".lhat-caret");
+      if (caret) caret.textContent = collapsed ? "▸" : "▾";
+    };
   }
 
   function wireScreenHelp(root) {
@@ -3880,6 +3979,7 @@
     };
     (map[state.screen] || viewTitle)(root);
     wireScreenHelp(root);
+    wireAttrsToggle(root);
     wireGachaEntry(root);
     saveGame();
   }
@@ -4069,13 +4169,14 @@
       }).join("")}</div>`;
     }
     /*
-     * t377：顯示「仲有 N 個」提示。
-     * 總導演手機睇唔到「打工仔輓歌」——實際上它係第 6 個，被切在清單底部，
-     * 而清單冇任何「可以捲」嘅視覺提示，玩家以為只得 5 個。
+     * t379：捲動提示數量改為「實際被切走的格數」，唔再寫死 length - 4。
+     * 原本用 `packs.length - 4`，但唔同屏高、橫屏兩欄時可見數量唔同，
+     * 提示數字會對唔上（例如屏高大時實際全見，仍然寫「仲有 2 個」）。
+     * 現在改由 JS 量度 `scrollHeight > clientHeight` 才顯示，
+     * 數量用「總數 − 實際完整可見數」。
      */
-    const hiddenCount = Math.max(0, (packs || []).length - 4);
-    const moreHint = hiddenCount > 0
-      ? `<div class="pack-list-more" id="pack-list-more">▾ 向下捲，仲有 ${hiddenCount} 個故事 ▾</div>`
+    const moreHint = (packs || []).length > 3
+      ? `<div class="pack-list-more" id="pack-list-more" hidden>▾ 向下捲，仲有 <b>0</b> 個故事 ▾</div>`
       : "";
     root.innerHTML = `
       <div class="hud">
@@ -4090,16 +4191,35 @@
       <div id="home-toast" class="home-toast" hidden></div>
     `;
 
-    // t377：捲到底就收起提示
+    // t379：捲動提示 —— 按實際可見格數計算，捲到底自動收起
     const packListEl = $(".pack-list", root);
     const moreEl = $("#pack-list-more", root);
     if (packListEl && moreEl) {
       const syncMore = () => {
+        const cards = packListEl.querySelectorAll("[data-pack]");
+        const listRect = packListEl.getBoundingClientRect();
+        // 完整可見 = 卡片底邊 <= 清單可見底邊（容差 2px）
+        let fullyVisible = 0;
+        cards.forEach((c) => {
+          const r = c.getBoundingClientRect();
+          if (r.bottom <= listRect.bottom + 2 && r.top >= listRect.top - 2) fullyVisible += 1;
+        });
+        const hidden = Math.max(0, cards.length - fullyVisible);
         const atBottom = packListEl.scrollTop + packListEl.clientHeight >= packListEl.scrollHeight - 8;
-        moreEl.style.display = atBottom ? "none" : "";
+        if (hidden <= 0 || atBottom) {
+          moreEl.hidden = true;
+        } else {
+          moreEl.hidden = false;
+          const b = moreEl.querySelector("b");
+          if (b) b.textContent = String(hidden);
+        }
       };
       packListEl.addEventListener("scroll", syncMore, { passive: true });
       syncMore();
+      // 首次 render 後格高未定，延一幀再量一次
+      if (typeof requestAnimationFrame === "function") {
+        requestAnimationFrame(syncMore);
+      }
     }
     const toast = (msg) => {
       const el = $("#home-toast", root);
@@ -4757,7 +4877,7 @@
   /** 分支節點畫面：卡面只顯示兩個「未知後果」；選完才揭示傾向 */
   function viewOffice(root) {
     const run = state.officeRun;
-    const node = run ? officeNodeById(run.nodeId) : officeStartNode();
+    const node = run ? officeNodeView(officeNodeById(run.nodeId), run) : officeStartNode();
     if (!node) {
       state.screen = "events";
       render();
@@ -4881,6 +5001,37 @@
     state.screen = "events";
   }
 
+  /**
+   * t379：故事步之間嘅場面過渡（小標題 + 淡入）。
+   *
+   * 問題（總導演回報「跳戲」）：每一步之間冇任何轉場，
+   * 玩家由第 3 步直接跳到第 4 步，只見到節點名改變，冇「過咗一段時間」嘅感覺。
+   * 修法：每步頂部加一條「第 N 步 · XX 歲 · 場景」小標題，並用淡入動畫。
+   * 場景由節點 `tale_scene` 指定；冇指定就用節點名的前綴推導。
+   */
+  function taleSceneLabel(node) {
+    if (!node) return "";
+    if (node.tale_scene) return String(node.tale_scene);
+    // 由節點名推導：例如「第一夜・天台」→「天台」
+    const nm = String(node.name || "");
+    const parts = nm.split(/[・·]/);
+    return parts.length > 1 ? parts[parts.length - 1].trim() : "";
+  }
+
+  function taleTransitionHtml(pack, run, node, stepNo, totalSteps) {
+    const age = taleAge(run);
+    const scene = taleSceneLabel(node);
+    const bits = [`第 ${stepNo} 步`];
+    if (age) bits.push(`${age} 歲`);
+    if (scene) bits.push(scene);
+    const label = bits.join(" · ");
+    return `<div class="tl-transition" aria-label="場面過渡">
+      <span class="tl-transition-rule" aria-hidden="true"></span>
+      <span class="tl-transition-label">${esc(label)}</span>
+      <span class="tl-transition-rule" aria-hidden="true"></span>
+    </div>`;
+  }
+
   /** t369：通用故事鏈畫面（含角色關係顯示） */
   function viewTale(root) {
     const run = state.taleRun;
@@ -4974,6 +5125,7 @@
       <div class="of-hud">${esc(pack ? pack.name : "故事")} · ${taleAge(run)}歲 · 第 ${stepNo} / ${totalSteps} 步</div>
       <div class="office-node tl-node">
         ${revealHtml}
+        ${taleTransitionHtml(pack, run, node, stepNo, totalSteps)}
         <div class="of-node-head">
           ${node.art ? `<img class="of-node-art" src="${esc(node.art)}" alt="" />` : ""}
           <div class="of-node-copy">
@@ -6439,6 +6591,34 @@
     wireStoryDock(root);
   }
 
+  /**
+   * t379：四揀一結果嘅即時回饋（總導演：「結果加半秒回饋，唔好即跳年」）。
+   *
+   * 原本玩家揀完一張事件卡，畫面即刻變成結算頁，獎勵只係一行細字，
+   * 好似「點完就冇咗」，冇獲得感。
+   * 現在結算頁頂部加一條結果條：圖示 + 獎勵 chips，帶滑入動畫（約 0.45s）。
+   * 純顯示用，唔改任何數值。
+   */
+  function softResultBarHtml(ev, gain, goldGain, isEnding, endingClaimable) {
+    if (isEnding) {
+      return `<div class="soft-result-bar ending${endingClaimable ? "" : " muted"}" role="status">
+        <span class="srb-ico">✦</span>
+        <span class="srb-text">${endingClaimable ? "分支結局達成" : "此結局已領過"}</span>
+      </div>`;
+    }
+    const chips = [];
+    if (gain) chips.push(`<span class="srb-chip soul">膠幣 +${gain}</span>`);
+    if ((ev.reward_xp | 0) > 0) chips.push(`<span class="srb-chip xp">經驗 +${ev.reward_xp | 0}</span>`);
+    if (goldGain) chips.push(`<span class="srb-chip gold">金幣 +${goldGain}</span>`);
+    const attrs = formatAttrsDelta(ev.attrs_delta);
+    attrs.forEach((a) => chips.push(`<span class="srb-chip attr">${esc(a)}</span>`));
+    return `<div class="soft-result-bar" role="status">
+      <span class="srb-ico">✔</span>
+      <span class="srb-text">${esc(ev.name || "事件")} · 已結算</span>
+      <span class="srb-chips">${chips.join("") || `<span class="srb-chip">無獎勵</span>`}</span>
+    </div>`;
+  }
+
   function viewSoft(root) {
     const ev = state.selectedEvent;
     // t364：結局事件只有 50 膠幣，而且只發一次（已領過就 0）
@@ -6469,6 +6649,7 @@
         : ageRibbon(esc(ev.name))}</div>
       <div class="soft-scroll">
         ${endingBanner}
+        ${softResultBarHtml(ev, gain, goldGain, isEnding, endingClaimable)}
         <img class="result-art soft-art" src="${esc(ev.art)}" alt="" />
         <div class="bubble neon">${esc(ev.desc)}</div>
         ${eventDialogueHtml(ev, "soft-dialogue")}
@@ -6514,6 +6695,13 @@
   }
 
 
+  /**
+   * t379：小遊戲輸入時限（秒）。原本寫死 10000ms，玩家完全唔知幾時夠鐘；
+   * 現在延長至 12 秒並在畫面顯示倒數。抽成常數，避免倒數條同實際計時不一致。
+   */
+  const MG_INPUT_LIMIT_S = 12;
+  const MG_INPUT_LIMIT_MS = MG_INPUT_LIMIT_S * 1000;
+
   /** 小遊戲關：記憶鍵位破關（約 20–40 秒）；勝滿獎／敗半獎；可放棄＝半獎 */
   function viewMinigame(root) {
     const ev = state.selectedEvent;
@@ -6555,6 +6743,11 @@
     const clearMgTimers = () => {
       (mg.timers || []).forEach((t) => clearTimeout(t));
       mg.timers = [];
+      // t379：連每秒倒數 interval 一齊清
+      if (mg.inputTick) {
+        try { clearInterval(mg.inputTick); } catch (_) {}
+        mg.inputTick = null;
+      }
     };
 
     const baseSoul = () => listedEventSoul(ev);
@@ -6620,6 +6813,12 @@
           ` · <span style="color:var(--neon-cyan)">下一歲 ${state.age + 1}歲（第 ${state.year + 1} 年）</span></div>`
         : "";
 
+      // t379：輸入階段顯示「輸入剩餘秒數」（原本 10 秒時限完全睇唔到）
+      const inputLeft = mg.phase === "input" && mg.inputDeadlineAt
+        ? Math.max(0, Math.ceil((mg.inputDeadlineAt - Date.now()) / 1000))
+        : null;
+      const inputUrgent = inputLeft != null && inputLeft <= 3;
+
       root.innerHTML = `
         ${lifeHudHtml()}
         <div class="ribbon">${ageRibbon(esc(ev.name) + " · 小遊戲")}</div>
@@ -6632,6 +6831,15 @@
               <span class="mg-phase">${esc(phaseLabel)}</span>
               <span>剩餘 <b>${remain}</b>s</span>
             </div>
+            ${
+              inputLeft != null
+                ? `<div class="mg-input-timer${inputUrgent ? " urgent" : ""}" role="timer" aria-live="off">
+                     <span class="mit-label">輸入時間</span>
+                     <span class="mit-bar"><i style="width:${Math.max(0, Math.min(100, (inputLeft / MG_INPUT_LIMIT_S) * 100))}%"></i></span>
+                     <span class="mit-num">${inputLeft}s</span>
+                   </div>`
+                : ""
+            }
             ${
               isResult
                 ? `<div class="mg-result-banner ${mg.won ? "win" : "lose"}">${mg.won ? "★ 破關成功 ★" : "破關失敗"}</div>`
@@ -6714,13 +6922,26 @@
           mg.phase = "input";
           mg.inputIdx = 0;
           mg.message = "依同樣順序點選鍵位。";
-          mg.inputDeadlineAt = Date.now() + 10000;
+          /*
+           * t379：輸入時限延長至 12 秒（原本 10 秒），並加入每秒倒數刷新。
+           * 總導演反映「街機要加長輸入窗或顯示剩餘時間」——兩樣都做。
+           */
+          const inputLimitMs = MG_INPUT_LIMIT_MS;
+          mg.inputDeadlineAt = Date.now() + inputLimitMs;
           paint();
+          // 每秒刷新倒數（只喺 input 階段生效）
+          if (mg.inputTick) clearInterval(mg.inputTick);
+          mg.inputTick = (typeof setInterval === "function")
+            ? setInterval(() => {
+                if (mg.phase !== "input") { clearInterval(mg.inputTick); mg.inputTick = null; return; }
+                paint();
+              }, 1000)
+            : null;
           // t378b：記錄計時器 id，方便下一關開始時取消（避免舊超時誤判新關卡）
           if (mg.inputTimer) clearTimeout(mg.inputTimer);
           mg.inputTimer = schedule(() => {
             if (mg.phase === "input") endRun(false, "輸入逾時——半獎，人生繼續。");
-          }, 10000);
+          }, inputLimitMs);
           return;
         }
         mg.flashIdx = mg.sequence[step];
@@ -7019,14 +7240,27 @@
             <div class="lh-xp" title="經驗 ${xp}/${xpTo}"><i style="width:${xpPct}%"></i><span>${xp}/${xpTo}</span></div>
           </div>
         </div>
-        <div class="lh-attrs" role="list">
-          <span class="lh-a" role="listitem" title="力量：每 1 點＝所有戰鬥卡 +1 物攻、+5 HP">💪${a.str}</span>
-          <span class="lh-a" role="listitem" title="敏捷：每 1 點＝所有戰鬥卡 +1 物防、+1 魔防">⚡${a.agi}</span>
-          <span class="lh-a" role="listitem" title="智力：每 1 點＝所有戰鬥卡 +1 魔攻、+5 HP">🧠${a.intel}</span>
-          <span class="lh-a" role="listitem" title="幸運：用於人生事件或奇遇事件獎勵">🍀${a.luck}</span>
-          <span class="lh-a" role="listitem" title="統率：今世戰鬥卡數量上限">👑${a.lead}</span>
-          <span class="lh-a" role="listitem" title="壽命：今次人生歲數上限">⏳${a.life}</span>
-        </div>
+        ${(() => {
+          /*
+           * t379：六維可收摺（總導演：「頂欄資訊分層，六圍可收摺」）。
+           * 六維佔一整行，但多數時間玩家只關心膠幣／金幣。
+           * 收摺後只顯示「六維」按鈕，點一下展開；狀態記喺 state.attrsCollapsed。
+           */
+          const collapsed = !!state.attrsCollapsed;
+          return `<div class="lh-attrs-wrap">
+            <button type="button" class="lh-attrs-toggle${collapsed ? " collapsed" : ""}" id="btn-attrs-toggle" aria-expanded="${collapsed ? "false" : "true"}" aria-controls="lh-attrs-list" title="${collapsed ? "展開六維" : "收起六維"}" data-help="attrs-toggle">
+              <span class="lhat-ico">📊</span><span class="lhat-txt">六維</span><span class="lhat-caret">${collapsed ? "▸" : "▾"}</span>
+            </button>
+            <div class="lh-attrs" id="lh-attrs-list" role="list"${collapsed ? ' hidden' : ""}>
+              <span class="lh-a" role="listitem" title="力量：每 1 點＝所有戰鬥卡 +1 物攻、+5 HP">💪${a.str}</span>
+              <span class="lh-a" role="listitem" title="敏捷：每 1 點＝所有戰鬥卡 +1 物防、+1 魔防">⚡${a.agi}</span>
+              <span class="lh-a" role="listitem" title="智力：每 1 點＝所有戰鬥卡 +1 魔攻、+5 HP">🧠${a.intel}</span>
+              <span class="lh-a" role="listitem" title="幸運：用於人生事件或奇遇事件獎勵">🍀${a.luck}</span>
+              <span class="lh-a" role="listitem" title="統率：今世戰鬥卡數量上限">👑${a.lead}</span>
+              <span class="lh-a" role="listitem" title="壽命：今次人生歲數上限">⏳${a.life}</span>
+            </div>
+          </div>`;
+        })()}
         <div class="lh-right">
           <span class="chip soul" title="膠幣"><span class="dot"></span>${state.soul}</span>
           <span class="chip fame" title="聲望（茶記買特殊卡）"><span class="dot"></span>聲望 ${state.fame | 0}</span>
@@ -8671,7 +8905,7 @@
     ensureGachaPity();
     clearGachaAnim();
     if (gachaEntryLocked()) {
-      toastMsg("進入人生後不可抽扭蛋——完咗今世先再嚟。");
+      toastMsg("戰鬥進行中唔可以抽扭蛋——打完先抽。");
       return;
     }
     if (state.screen !== "gacha") {
@@ -8688,15 +8922,25 @@
   }
 
   /** 進入人生後停止扭蛋：準備出發／今世進行中一律鎖；只可喺今世主頁（未開始）抽 */
+  /**
+   * t379：扭蛋開放至人生中（總導演：「人生中允許扭蛋，或主頁寫清楚『結算後先抽』」）。
+   *
+   * 原本 `gachaEntryLocked()` 喺 `lifePrepped` 之後就鎖死，玩家喺人生中途完全抽唔到，
+   * 而 UI 只顯示「人生中停抽」四個字，冇解釋。
+   * 現在改為**人生中都可以抽**（膠幣係跨世保留嘅帳號資源，抽卡提升卡冊合理），
+   * 唯一限制：戰鬥進行中唔可以抽（避免中途改動隊伍／卡冊狀態）。
+   */
   function gachaEntryLocked() {
-    return !!state.lifePrepped || state.screen === "prep";
+    // 只喺實際戰鬥進行中鎖（其他任何畫面都開放）
+    const inBattle = state.screen === "battle" && state.battle && state.battle.running;
+    return !!inBattle;
   }
 
   function gachaEntryHtml() {
     if (gachaEntryLocked()) {
-      return `<button type="button" class="chip gacha-entry locked" id="btn-gacha-entry" data-gacha-entry data-gacha-locked="1" title="進入人生後不可抽扭蛋" aria-disabled="true">霓虹扭蛋 · 人生中停抽</button>`;
+      return `<button type="button" class="chip gacha-entry locked" id="btn-gacha-entry" data-gacha-entry data-gacha-locked="1" title="戰鬥進行中不可抽扭蛋——打完先抽" aria-disabled="true">霓虹扭蛋 · 戰鬥中停抽</button>`;
     }
-    return `<button type="button" class="chip gacha-entry" id="btn-gacha-entry" data-gacha-entry title="廟街霓虹扭蛋機">霓虹扭蛋</button>`;
+    return `<button type="button" class="chip gacha-entry" id="btn-gacha-entry" data-gacha-entry title="廟街霓虹扭蛋機（人生中亦可抽）">霓虹扭蛋</button>`;
   }
 
   function wireGachaEntry(root) {
@@ -8708,7 +8952,7 @@
           e.stopPropagation();
         }
         if (gachaEntryLocked()) {
-          toastMsg("進入人生後不可抽扭蛋——完咗今世先再嚟。");
+          toastMsg("戰鬥進行中唔可以抽扭蛋——打完先抽。");
           return;
         }
         enterGachaScreen();
@@ -8718,7 +8962,7 @@
 
   function viewGacha(root) {
     ensureGachaPity();
-    // 已經入咗人生（或舊存檔殘留扭蛋畫面）就擋返出去，唔可以中途抽卡
+    // t379：只有戰鬥進行中才擋（人生其他畫面都可以抽）
     if (gachaEntryLocked()) {
       state.gachaReturnScreen = null;
       state.gachaResults = [];
@@ -8726,7 +8970,7 @@
       state.gachaPhase = "idle";
       state.screen = "home";
       render();
-      toastMsg("進入人生後不可抽扭蛋——完咗今世先再嚟。");
+      toastMsg("戰鬥進行中唔可以抽扭蛋——打完先抽。");
       return;
     }
     const soul = state.soul | 0;
@@ -11320,6 +11564,17 @@
           ${(r.deadNames && r.deadNames.length) ? `<br/><span style="color:var(--neon-pink)">陣亡：${esc(r.deadNames.join("、"))}（技能一併不可再用）</span>` : ""}
           ${r.softRevive ? `<br/><span style="color:var(--neon-cyan)">教學期——出戰卡暫時倒下，下局可再出戰；本年遭遇可再揀。</span>` : ""}
           ${lifeDone ? `<br/><span style="color:var(--neon-pink)">${lifeOver() ? "壽命已到——" : "出戰卡已死光——"}可結算今世返主頁。</span>` : ""}
+          ${lifeDone ? (() => {
+            /*
+             * t379：結算前明確講清楚膠幣會點變（唔好隱形回滾）。
+             * 放棄／結算後 soul 會重置為 SOUL_START，玩家應該事先知道。
+             */
+            const cur = Math.max(0, state.soul | 0);
+            const dl = SOUL_START - cur;
+            const dlTxt = dl > 0 ? `+${dl}` : (dl < 0 ? String(dl) : "±0");
+            const tone = dl < 0 ? "var(--neon-pink)" : "var(--neon-lime)";
+            return `<br/><span style="color:${tone}">結算後膠幣：${cur} → 新一世 ${SOUL_START}（${dlTxt}）· 卡冊收藏保留</span>`;
+          })() : ""}
         </div>
       </div>
       <div class="result-cta">

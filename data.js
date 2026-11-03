@@ -6305,7 +6305,7 @@ window.HK_SLICE_DATA = {
       "type": "後巷",
       "desc": "夜巷石屎濕漉漉，影在牆角站了很久。有人拍你肩膀：醒了嗎？這裡是香港。",
       "reward_blurb": "教學戰・膠幣少許",
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/events/ev-mtr-crowd.jpg",
       "battle": "E01",
       "reward_soul": 8,
       "category": "trial",
@@ -6373,7 +6373,7 @@ window.HK_SLICE_DATA = {
       "type": "天氣",
       "desc": "天文台掛波，簷篷鐵皮啪啪響。雨衣都要上路——舊帳不等人。",
       "reward_blurb": "天氣關・可遇敵",
-      "art": "assets/events/ev-expired-can.jpg",
+      "art": "assets/events/ev-rooftop-night.jpg",
       "battle": "E02",
       "reward_soul": 11,
       "category": "adventure",
@@ -6407,7 +6407,7 @@ window.HK_SLICE_DATA = {
       "type": "舊帳",
       "desc": "隧道燈一閃一閃，的士夜更收音機嘈住粵語長篇。後鏡有車——亦有帳。",
       "reward_blurb": "舊帳精英向",
-      "art": "assets/events/ev-expired-can.jpg",
+      "art": "assets/events/ev-mtr-crowd.jpg",
       "battle": "E04",
       "reward_soul": 18,
       "category": "trial",
@@ -6487,7 +6487,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 20,
       "reward_xp": 4,
       "battle": null,
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/events/ev-rooftop-night.jpg",
       "category_label": "特殊"
     },
     {
@@ -6626,7 +6626,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 40,
       "reward_xp": 10,
       "stage": "五年一劫",
-      "art": "assets/events/ev-expired-can.jpg",
+      "art": "assets/events/ev-mtr-crowd.jpg",
       "category_label": "宿敵"
     },
     {
@@ -6723,7 +6723,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 16,
       "reward_xp": 5,
       "pack": "gang_walled",
-      "art": "assets/events/ev-expired-can.jpg",
+      "art": "assets/events/ev-rooftop-night.jpg",
       "category_label": "支線"
     },
     {
@@ -6761,7 +6761,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 10,
       "reward_xp": 4,
       "battle": null,
-      "art": "assets/events/ev-yum-cha.jpg",
+      "art": "assets/events/ev-alley-wake.jpg",
       "category_label": "裝備店"
     },
     {
@@ -6799,7 +6799,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 10,
       "reward_xp": 4,
       "battle": null,
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/events/ev-rooftop-night.jpg",
       "category_label": "戰鬥卡店"
     },
     {
@@ -6837,7 +6837,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 10,
       "reward_xp": 4,
       "battle": null,
-      "art": "assets/events/ev-expired-can.jpg",
+      "art": "assets/events/ev-alley-wake.jpg",
       "category_label": "技能店"
     },
     {
@@ -6856,7 +6856,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 12,
       "reward_xp": 4,
       "battle": null,
-      "art": "assets/events/ev-expired-can.jpg",
+      "art": "assets/events/ev-mtr-crowd.jpg",
       "category_label": "技能店"
     },
     {
@@ -7000,7 +7000,7 @@ window.HK_SLICE_DATA = {
       "battle": null,
       "reward_soul": 8,
       "reward_xp": 4,
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/events/ev-rooftop-night.jpg",
       "category_label": "換技"
     },
     {
@@ -7038,7 +7038,7 @@ window.HK_SLICE_DATA = {
       "type": "勢力",
       "desc": "霓虹燈下，廟街義氣的阿哥招呼你：今晚檔口缺一對手，願意幫忙嗎？幫或不幫，皆可繼續人生。",
       "reward_blurb": "選邊站・改好感・人生不停",
-      "art": "assets/events/ev-yum-cha.jpg",
+      "art": "assets/events/ev-mtr-crowd.jpg",
       "battle": null,
       "reward_soul": 12,
       "reward_xp": 4,
@@ -7084,7 +7084,7 @@ window.HK_SLICE_DATA = {
       "type": "勢力",
       "desc": "城寨鐵閘旁，兄弟遞來一袋雜務：送口信、看門口。願意接手嗎？拒絕也不會卡死人生。",
       "reward_blurb": "選邊站・改好感・人生不停",
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/events/ev-mtr-crowd.jpg",
       "battle": null,
       "reward_soul": 12,
       "reward_xp": 4,
@@ -7130,7 +7130,7 @@ window.HK_SLICE_DATA = {
       "type": "勢力",
       "desc": "廟街義氣記得你幫過忙。阿哥塞來一個紅包，並指點一條「走位」——人情有回報。",
       "reward_blurb": "好感達閾・幸運＋金幣",
-      "art": "assets/events/ev-yum-cha.jpg",
+      "art": "assets/events/ev-mtr-crowd.jpg",
       "battle": null,
       "reward_soul": 25,
       "reward_xp": 6,
@@ -7169,7 +7169,7 @@ window.HK_SLICE_DATA = {
       "type": "勢力",
       "desc": "城寨兄弟把你當自己人，塞來一袋零錢，並傳授半式「看門口」的竅門。",
       "reward_blurb": "好感達閾・力量＋金幣",
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/events/ev-mtr-crowd.jpg",
       "battle": null,
       "reward_soul": 25,
       "reward_xp": 6,
@@ -7236,7 +7236,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 8,
       "reward_xp": 3,
       "battle": null,
-      "art": "assets/events/ev-yum-cha.jpg"
+      "art": "assets/events/ev-rooftop-night.jpg"
     },
     {
       "id": "EV46",
@@ -7349,7 +7349,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 8,
       "reward_xp": 3,
       "battle": null,
-      "art": "assets/events/ev-alley-wake.jpg"
+      "art": "assets/events/ev-rooftop-night.jpg"
     },
     {
       "id": "EV50",
@@ -7368,7 +7368,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 10,
       "reward_xp": 3,
       "battle": null,
-      "art": "assets/events/ev-yum-cha.jpg"
+      "art": "assets/events/ev-rooftop-night.jpg"
     },
     {
       "id": "EV51",
@@ -7425,7 +7425,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 8,
       "reward_xp": 3,
       "battle": null,
-      "art": "assets/events/ev-expired-can.jpg"
+      "art": "assets/events/ev-yum-cha.jpg"
     },
     {
       "id": "EV54",
@@ -7480,7 +7480,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 26,
       "reward_xp": 9,
       "pack": "shou_dai_nv_xia",
-      "art": "assets/fighters/C251.jpg",
+      "art": "assets/events/ev-rooftop-night.jpg",
       "category_label": "主線",
       "story_pack_id": "shou_dai_nv_xia"
     },
@@ -7514,7 +7514,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 22,
       "reward_xp": 7,
       "pack": "shou_dai_nv_xia",
-      "art": "assets/fighters/C252.jpg",
+      "art": "assets/events/ev-rooftop-night.jpg",
       "category_label": "主線",
       "story_pack_id": "shou_dai_nv_xia"
     },
@@ -7590,7 +7590,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 20,
       "reward_xp": 6,
       "pack": "neon_mei_wan",
-      "art": "assets/fighters/C73.png",
+      "art": "assets/events/ev-rooftop-night.jpg",
       "category_label": "主線",
       "story_pack_id": "neon_mei_wan"
     },
@@ -7636,7 +7636,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 32,
       "reward_xp": 11,
       "pack": "neon_mei_wan",
-      "art": "assets/fighters/C115.png",
+      "art": "assets/events/ev-rooftop-night.jpg",
       "category_label": "主線",
       "story_pack_id": "neon_mei_wan"
     },
@@ -7727,7 +7727,7 @@ window.HK_SLICE_DATA = {
           "text": "（湯好燙。你飲咗好耐）"
         }
       ],
-      "art": "assets/events/ev-mtr-crowd.jpg",
+      "art": "assets/events/ev-yum-cha.jpg",
       "battle": null,
       "story_pack_id": "office_ballad",
       "pack": "office_ballad",
@@ -7741,24 +7741,28 @@ window.HK_SLICE_DATA = {
         {
           "text": "入寫字樓做信差，睇清楚西裝係點著",
           "delta": {
-            "rich": 4,
-            "biz": 1,
-            "flat": 1
-          }
+            "rich": 6,
+            "scam": 1,
+            "street": 1
+          },
+          "track": "office"
         },
         {
           "text": "去茶記做樓面，實實在在搵現金",
           "delta": {
-            "biz": 4,
-            "flat": 1
-          }
+            "biz": 6,
+            "flat": 2
+          },
+          "track": "tea"
         },
         {
           "text": "跟親戚做買賣，學人做生意",
           "delta": {
-            "street": 4,
-            "scam": 1
-          }
+            "street": 6,
+            "scam": 2,
+            "flat": 1
+          },
+          "track": "deal"
         }
       ],
       "office_final": false,
@@ -7802,6 +7806,10 @@ window.HK_SLICE_DATA = {
         },
         {
           "speaker": "隔籬位阿姐",
+          "text": "打好咗，你就係佢嘅人。唔打，你就係冇用嘅人。"
+        },
+        {
+          "speaker": "隔籬位阿姐",
           "text": "第一次有人叫你打嘢？"
         },
         {
@@ -7810,15 +7818,11 @@ window.HK_SLICE_DATA = {
         },
         {
           "speaker": "隔籬位阿姐",
-          "text": "打好咗，你就係佢嘅人。唔打，你就係冇用嘅人。"
+          "text": "打好咗，你就係佢嘅人。"
         },
         {
           "speaker": "隔籬位阿姐",
           "text": "我十九年前揀咗第一個。"
-        },
-        {
-          "speaker": "你",
-          "text": "（佢打字的聲停咗一下）"
         },
         {
           "speaker": "隔籬位阿姐",
@@ -7839,24 +7843,23 @@ window.HK_SLICE_DATA = {
         {
           "text": "照打，順手學埋佢點睇數",
           "delta": {
-            "rich": 2,
             "biz": 3,
-            "street": 1,
-            "scam": 1
+            "street": 2
           }
         },
         {
           "text": "拒絕，守返自己崗位",
           "delta": {
-            "rich": 1,
-            "flat": 4
+            "flat": 5,
+            "rich": 1
           }
         },
         {
           "text": "打，但要佢寫推薦信",
           "delta": {
-            "rich": 3,
-            "biz": 2
+            "rich": 5,
+            "street": 1,
+            "biz": 1
           }
         }
       ],
@@ -7884,54 +7887,266 @@ window.HK_SLICE_DATA = {
             "cold": "唔敢問你（佢已經唔想講）"
           }
         }
-      ]
+      ],
+      "track_variants": {
+        "office": {
+          "desc": "入職第三日，主管叫你幫佢打一份私人文件——唔係公司嘅。影印機旁邊，有個做咗十九年嘅阿姐望住你。",
+          "dialogue": [
+            {
+              "speaker": "主管",
+              "text": "後生仔，幫我打呢份。唔使問係咩。"
+            },
+            {
+              "speaker": "主管",
+              "text": "打好咗放我枱面，唔好話畀人知。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你望住份文件，上面有另一個公司嘅名）"
+            },
+            {
+              "speaker": "隔籬位阿姐",
+              "text": "（佢冇望你，一路打字）"
+            },
+            {
+              "speaker": "隔籬位阿姐",
+              "text": "打好咗，你就係佢嘅人。唔打，你就係冇用嘅人。"
+            },
+            {
+              "speaker": "隔籬位阿姐",
+              "text": "第一次有人叫你打嘢？"
+            },
+            {
+              "speaker": "你",
+              "text": "嗯。"
+            },
+            {
+              "speaker": "隔籬位阿姐",
+              "text": "打好咗，你就係佢嘅人。"
+            },
+            {
+              "speaker": "隔籬位阿姐",
+              "text": "我十九年前揀咗第一個。"
+            },
+            {
+              "speaker": "隔籬位阿姐",
+              "text": "你自己決定。我唔會幫你。"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "照打，順手學埋佢點睇數",
+              "delta": {
+                "biz": 3,
+                "street": 2
+              }
+            },
+            {
+              "text": "拒絕，守返自己崗位",
+              "delta": {
+                "flat": 5,
+                "rich": 1
+              }
+            },
+            {
+              "text": "打，但要佢寫推薦信",
+              "delta": {
+                "rich": 5,
+                "street": 1,
+                "biz": 1
+              }
+            }
+          ],
+          "name": "影印機旁的那個人"
+        },
+        "tea": {
+          "desc": "做咗兩個月，老細叫你「執靚」張單——幾枱冇開單嘅數，寫成員工飯。水吧阿姐企喺後面抹杯，由頭到尾望住你隻手。",
+          "dialogue": [
+            {
+              "speaker": "老細",
+              "text": "呢幾枱，寫落「員工飯」度。"
+            },
+            {
+              "speaker": "老細",
+              "text": "一枱一個飯，冇人查到。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你望住張單，上面有五枱）"
+            },
+            {
+              "speaker": "水吧阿姐",
+              "text": "（冇望你，一路抹杯）"
+            },
+            {
+              "speaker": "水吧阿姐",
+              "text": "呢間舖做咗四十年，靠嘅唔係手勢，係冇人記得我做過咩。"
+            },
+            {
+              "speaker": "水吧阿姐",
+              "text": "我第一次做呢件事，係一九八五年。"
+            },
+            {
+              "speaker": "你",
+              "text": "跟住呢？"
+            },
+            {
+              "speaker": "水吧阿姐",
+              "text": "跟住做咗三十幾年。"
+            },
+            {
+              "speaker": "水吧阿姐",
+              "text": "你寫，你就多一份人工。你唔寫，你就少一個位。"
+            },
+            {
+              "speaker": "水吧阿姐",
+              "text": "我唔會話你聽點揀。我只係話你知，我揀過。"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "照寫，順手學埋佢點計呢條數",
+              "delta": {
+                "biz": 3,
+                "street": 2
+              }
+            },
+            {
+              "text": "唔寫，話呢啲唔關我事",
+              "delta": {
+                "flat": 5,
+                "rich": 1
+              }
+            },
+            {
+              "text": "寫，但要求加人工",
+              "delta": {
+                "rich": 5,
+                "street": 1,
+                "biz": 1
+              }
+            }
+          ],
+          "name": "水吧阿姐"
+        },
+        "deal": {
+          "desc": "跟親戚做咗三個月，佢叫你「走一轉」——收現金唔開單，錢入另一個袋。貨倉門口有個做咗十幾年嘅送貨，望住你手上個紙袋。",
+          "dialogue": [
+            {
+              "speaker": "親戚",
+              "text": "呢單唔開單。錢你拎返嚟得喇。"
+            },
+            {
+              "speaker": "親戚",
+              "text": "開單要打稅。打稅你估邊個畀？"
+            },
+            {
+              "speaker": "你",
+              "text": "（你望住個紙袋，入面夠你三個月人工）"
+            },
+            {
+              "speaker": "送貨",
+              "text": "（喺貨倉門口，一路食煙）"
+            },
+            {
+              "speaker": "送貨",
+              "text": "我第一次袋住嗰筆錢，行到街口就拐咗入巷，數咗三次。"
+            },
+            {
+              "speaker": "送貨",
+              "text": "第一次？"
+            },
+            {
+              "speaker": "你",
+              "text": "（點頭）"
+            },
+            {
+              "speaker": "送貨",
+              "text": "我第一次都係咁。袋住一袋錢，行半條街，手心出汗。"
+            },
+            {
+              "speaker": "送貨",
+              "text": "後來就唔出汗。"
+            },
+            {
+              "speaker": "送貨",
+              "text": "你自己決定。我唔會教你。"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "照走，順手學埋佢點同人講價",
+              "delta": {
+                "biz": 3,
+                "street": 2
+              }
+            },
+            {
+              "text": "唔走，話呢啲唔關我事",
+              "delta": {
+                "flat": 5,
+                "rich": 1
+              }
+            },
+            {
+              "text": "走，但要佢分你一份",
+              "delta": {
+                "rich": 5,
+                "street": 1,
+                "biz": 1
+              }
+            }
+          ],
+          "name": "貨倉門口那個送貨"
+        }
+      }
     },
     {
       "id": "EV_OF_03",
-      "name": "茶記的數簿",
+      "name": "對唔上的報銷單",
       "type": "主線",
       "category": "main",
       "category_label": "主線",
-      "desc": "第三年，你喺茶記幫手。收工嗰陣你見到數簿——有一條數對唔上，差嘅唔多，但每次都係同一個位。",
+      "desc": "第三年，你調去會計部幫手。收工嗰陣你見到一疊報銷單——有一條數對唔上，差嘅唔多，但每次都係同一個位。",
       "dialogue": [
         {
           "speaker": "你",
-          "text": "（你翻咗三次，三次都係差同一個數）"
+          "text": "（你翻咗三次，三次都係同一張單）"
         },
         {
           "speaker": "你",
-          "text": "（差嘅錢，剛好夠一個伙記一日人工）"
+          "text": "（單上面嘅車費，夠坐三日車）"
         },
         {
           "speaker": "你",
-          "text": "（你認得嗰個伙記——佢個仔今年升中一）"
+          "text": "（簽名嗰個人，就坐喺你後面）"
         },
         {
-          "speaker": "伙記",
-          "text": "（佢見你望住本簿）……你睇到咩？"
+          "speaker": "同事",
+          "text": "（佢見你望住疊單）……你睇到咩？"
         },
         {
           "speaker": "你",
           "text": "（你未答）"
         },
         {
-          "speaker": "伙記",
+          "speaker": "同事",
           "text": "我知我唔應該。"
         },
         {
-          "speaker": "伙記",
-          "text": "但我個仔要交書簿費。"
+          "speaker": "同事",
+          "text": "我老婆啱啱生。醫院條數……"
         },
         {
-          "speaker": "伙記",
-          "text": "我下個月還返。我發誓。"
+          "speaker": "同事",
+          "text": "我下個月補返。我發誓。"
         },
         {
           "speaker": "你",
-          "text": "（你想起天花板上個紅膠桶）"
+          "text": "（你想起屋企天花板上個紅膠桶）"
         },
         {
-          "speaker": "伙記",
+          "speaker": "同事",
           "text": "你講啦。你要講就講。"
         }
       ],
@@ -7949,23 +8164,23 @@ window.HK_SLICE_DATA = {
         {
           "text": "照實講，指條數出嚟",
           "delta": {
-            "rich": 3,
-            "biz": 1,
+            "rich": 5,
             "flat": 1
           }
         },
         {
           "text": "唔出聲，自己暗中補返",
           "delta": {
-            "flat": 4
+            "flat": 6,
+            "scam": 1
           }
         },
         {
-          "text": "趁機自己開間舖",
+          "text": "唔講，但自己開始接出面嘅單",
           "delta": {
             "biz": 3,
-            "street": 2,
-            "scam": 1
+            "scam": 1,
+            "street": 2
           }
         }
       ],
@@ -7982,55 +8197,267 @@ window.HK_SLICE_DATA = {
             "cold": "幫你頂過一次（佢已經唔想講）"
           }
         }
-      ]
+      ],
+      "track_variants": {
+        "office": {
+          "desc": "第三年，你調去會計部幫手。收工嗰陣你見到一疊報銷單——有一條數對唔上，差嘅唔多，但每次都係同一個位。",
+          "dialogue": [
+            {
+              "speaker": "你",
+              "text": "（你翻咗三次，三次都係同一張單）"
+            },
+            {
+              "speaker": "你",
+              "text": "（單上面嘅車費，夠坐三日車）"
+            },
+            {
+              "speaker": "你",
+              "text": "（簽名嗰個人，就坐喺你後面）"
+            },
+            {
+              "speaker": "同事",
+              "text": "（佢見你望住疊單）……你睇到咩？"
+            },
+            {
+              "speaker": "你",
+              "text": "（你未答）"
+            },
+            {
+              "speaker": "同事",
+              "text": "我知我唔應該。"
+            },
+            {
+              "speaker": "同事",
+              "text": "我老婆啱啱生。醫院條數……"
+            },
+            {
+              "speaker": "同事",
+              "text": "我下個月補返。我發誓。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你想起屋企天花板上個紅膠桶）"
+            },
+            {
+              "speaker": "同事",
+              "text": "你講啦。你要講就講。"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "照實講，指條數出嚟",
+              "delta": {
+                "rich": 5,
+                "flat": 1
+              }
+            },
+            {
+              "text": "唔出聲，自己暗中補返",
+              "delta": {
+                "flat": 6,
+                "scam": 1
+              }
+            },
+            {
+              "text": "唔講，但自己開始接出面嘅單",
+              "delta": {
+                "biz": 3,
+                "scam": 1,
+                "street": 2
+              }
+            }
+          ],
+          "name": "對唔上的報銷單"
+        },
+        "tea": {
+          "desc": "第三年，你喺茶記幫手。收工嗰陣你見到數簿——有一條數對唔上，差嘅唔多，但每次都係同一個位。",
+          "dialogue": [
+            {
+              "speaker": "你",
+              "text": "（你翻咗三次，三次都係差同一個數）"
+            },
+            {
+              "speaker": "你",
+              "text": "（差嘅錢，剛好夠一個伙記一日人工）"
+            },
+            {
+              "speaker": "你",
+              "text": "（你認得嗰個伙記——佢個仔今年升中一）"
+            },
+            {
+              "speaker": "伙記",
+              "text": "（佢見你望住本簿）……你睇到咩？"
+            },
+            {
+              "speaker": "你",
+              "text": "（你未答）"
+            },
+            {
+              "speaker": "伙記",
+              "text": "我知我唔應該。"
+            },
+            {
+              "speaker": "伙記",
+              "text": "但我個仔要交書簿費。"
+            },
+            {
+              "speaker": "伙記",
+              "text": "我下個月還返。我發誓。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你想起天花板上個紅膠桶）"
+            },
+            {
+              "speaker": "伙記",
+              "text": "你講啦。你要講就講。"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "照實講，指條數出嚟",
+              "delta": {
+                "rich": 5,
+                "flat": 1
+              }
+            },
+            {
+              "text": "唔出聲，自己暗中補返",
+              "delta": {
+                "flat": 6,
+                "scam": 1
+              }
+            },
+            {
+              "text": "趁機自己開間舖",
+              "delta": {
+                "biz": 3,
+                "scam": 1,
+                "street": 2
+              }
+            }
+          ],
+          "name": "茶記的數簿"
+        },
+        "deal": {
+          "desc": "第三年，你開始睇親戚舖頭嘅數簿。有一條數對唔上——差嘅唔多，但每次都係同一個位。",
+          "dialogue": [
+            {
+              "speaker": "你",
+              "text": "（你翻咗三次，三次都係同一個位）"
+            },
+            {
+              "speaker": "你",
+              "text": "（抽走嘅錢，夠找一個月貨款）"
+            },
+            {
+              "speaker": "你",
+              "text": "（經手嘅人——係你親戚）"
+            },
+            {
+              "speaker": "親戚",
+              "text": "（佢見你望住本簿）……你睇到咩？"
+            },
+            {
+              "speaker": "你",
+              "text": "（你未答）"
+            },
+            {
+              "speaker": "親戚",
+              "text": "我知唔應該。"
+            },
+            {
+              "speaker": "親戚",
+              "text": "但間舖係我開嘅。我拿自己舖頭嘅錢，算唔算偷？"
+            },
+            {
+              "speaker": "你",
+              "text": "（你想起阿媽講：親戚唔同外人）"
+            },
+            {
+              "speaker": "親戚",
+              "text": "你講啦。你講咗，我認。"
+            },
+            {
+              "speaker": "親戚",
+              "text": "不過間舖就要關。"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "照實講，指條數出嚟",
+              "delta": {
+                "rich": 5,
+                "flat": 1
+              }
+            },
+            {
+              "text": "唔出聲，當冇睇到",
+              "delta": {
+                "flat": 6,
+                "scam": 1
+              }
+            },
+            {
+              "text": "唔講，但自己開始搵自己嘅貨源",
+              "delta": {
+                "biz": 3,
+                "scam": 1,
+                "street": 2
+              }
+            }
+          ],
+          "name": "數簿"
+        }
+      }
     },
     {
       "id": "EV_OF_04",
-      "name": "第一單生意",
+      "name": "私下接單",
       "type": "主線",
       "category": "main",
       "category_label": "主線",
-      "desc": "第四年，你第一次自己接單。客人要一批貨，交貨期十日，但你手上現金只夠入三分一。",
+      "desc": "第四年，有個客人私下搵你。佢話唔想經公司，直接同你落單，價錢低三成，中間嗰筆你袋。單上面印住公司個名。",
       "dialogue": [
         {
           "speaker": "客人",
-          "text": "十日。做唔做到？"
-        },
-        {
-          "speaker": "你",
-          "text": "（你計過，正常要十四日）"
+          "text": "你唔使經公司。你自己收錢，自己交貨。"
         },
         {
           "speaker": "客人",
-          "text": "做唔到我就搵第二個。後面排住隊。"
+          "text": "公司唔會知。你老闆一年見唔到我一次。"
         },
         {
           "speaker": "你",
-          "text": "（你望住張訂單，上面嘅數夠你半年人工）"
+          "text": "（你計過，嗰筆佣夠你半年人工）"
         },
         {
           "speaker": "你",
-          "text": "（但你冇現金入貨）"
+          "text": "（但你冇報價權，冇車，冇公司個名可以用）"
         },
         {
-          "speaker": "朋友",
-          "text": "（電話）借？我介紹個財仔畀你。"
+          "speaker": "同事",
+          "text": "（隔籬位，細聲）我聽過呢個人。"
         },
         {
-          "speaker": "朋友",
-          "text": "三分息，一個月還。你頂唔頂得住？"
+          "speaker": "同事",
+          "text": "佢之前搵過阿姐。阿姐冇做。"
+        },
+        {
+          "speaker": "同事",
+          "text": "之後阿姐就冇再升。"
         },
         {
           "speaker": "你",
-          "text": "（三分息，一個月＝你賺嘅全部）"
+          "text": "（你望住張單，上面印住公司個名）"
         },
         {
           "speaker": "客人",
-          "text": "（催）點呀？"
+          "text": "你唔使即刻答。我等到星期五。"
         },
         {
           "speaker": "你",
-          "text": "（你發現自己手心出汗）"
+          "text": "（星期五，你放假）"
         }
       ],
       "art": "assets/events/ev-alley-wake.jpg",
@@ -8045,25 +8472,25 @@ window.HK_SLICE_DATA = {
       "office_node": "trade",
       "office_choices": [
         {
-          "text": "老實報價，逐個客傾（放棄呢單）",
+          "text": "老實同公司報，唔接呢單",
           "delta": {
-            "biz": 4,
-            "flat": 2
-          }
-        },
-        {
-          "text": "搏一鋪，借錢入多批貨",
-          "delta": {
-            "flat": 1,
-            "street": 4,
+            "biz": 3,
             "scam": 1
           }
         },
         {
-          "text": "聽朋友講，跟人炒一轉快錢",
+          "text": "搏一鋪，自己接，借錢入貨",
           "delta": {
-            "street": 1,
-            "scam": 4
+            "street": 6,
+            "rich": 1
+          }
+        },
+        {
+          "text": "唔接單，但收佢錢做中間人",
+          "delta": {
+            "scam": 4,
+            "rich": 2,
+            "street": 1
           }
         }
       ],
@@ -8080,7 +8507,219 @@ window.HK_SLICE_DATA = {
             "cold": "一齊諗將來（佢已經唔想講）"
           }
         }
-      ]
+      ],
+      "track_variants": {
+        "office": {
+          "desc": "第四年，有個客人私下搵你。佢話唔想經公司，直接同你落單，價錢低三成，中間嗰筆你袋。單上面印住公司個名。",
+          "dialogue": [
+            {
+              "speaker": "客人",
+              "text": "你唔使經公司。你自己收錢，自己交貨。"
+            },
+            {
+              "speaker": "客人",
+              "text": "公司唔會知。你老闆一年見唔到我一次。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你計過，嗰筆佣夠你半年人工）"
+            },
+            {
+              "speaker": "你",
+              "text": "（但你冇報價權，冇車，冇公司個名可以用）"
+            },
+            {
+              "speaker": "同事",
+              "text": "（隔籬位，細聲）我聽過呢個人。"
+            },
+            {
+              "speaker": "同事",
+              "text": "佢之前搵過阿姐。阿姐冇做。"
+            },
+            {
+              "speaker": "同事",
+              "text": "之後阿姐就冇再升。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你望住張單，上面印住公司個名）"
+            },
+            {
+              "speaker": "客人",
+              "text": "你唔使即刻答。我等到星期五。"
+            },
+            {
+              "speaker": "你",
+              "text": "（星期五，你放假）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "老實同公司報，唔接呢單",
+              "delta": {
+                "biz": 3,
+                "scam": 1
+              }
+            },
+            {
+              "text": "搏一鋪，自己接，借錢入貨",
+              "delta": {
+                "street": 6,
+                "rich": 1
+              }
+            },
+            {
+              "text": "唔接單，但收佢錢做中間人",
+              "delta": {
+                "scam": 4,
+                "rich": 2,
+                "street": 1
+              }
+            }
+          ],
+          "name": "私下接單"
+        },
+        "tea": {
+          "desc": "第四年，有個熟客搵你。佢要一個四十人到會，唔想經茶記落單——想你自己接、自己收錢。你手上現金只夠入三分一貨。",
+          "dialogue": [
+            {
+              "speaker": "熟客",
+              "text": "你手勢好。我唔想俾老細賺。"
+            },
+            {
+              "speaker": "熟客",
+              "text": "你自己接，我俾現金你。你賺晒。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你計過，四十人嘅到會，夠你半年人工）"
+            },
+            {
+              "speaker": "你",
+              "text": "（但你冇廚房，冇伙記，冇雪櫃）"
+            },
+            {
+              "speaker": "老細",
+              "text": "（喺水吧後面）你同客人講咩？"
+            },
+            {
+              "speaker": "你",
+              "text": "（你未答）"
+            },
+            {
+              "speaker": "水吧阿姐",
+              "text": "（細聲）我以前都接過一單。"
+            },
+            {
+              "speaker": "水吧阿姐",
+              "text": "接完之後，我就冇得再喺呢區做。"
+            },
+            {
+              "speaker": "熟客",
+              "text": "星期五。我等到星期五。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你望住舖頭個招牌，招牌唔係你嘅）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "同老細講，當舖頭生意接",
+              "delta": {
+                "biz": 3,
+                "scam": 1
+              }
+            },
+            {
+              "text": "搏一鋪，自己接，借錢入貨",
+              "delta": {
+                "street": 6,
+                "rich": 1
+              }
+            },
+            {
+              "text": "唔接單，但收錢介紹第二檔",
+              "delta": {
+                "scam": 4,
+                "rich": 2,
+                "street": 1
+              }
+            }
+          ],
+          "name": "四十人到會"
+        },
+        "deal": {
+          "desc": "第四年，你第一次自己接單。客人要一批貨，交貨期十日，但你手上現金只夠入三分一。",
+          "dialogue": [
+            {
+              "speaker": "客人",
+              "text": "十日。做唔做到？"
+            },
+            {
+              "speaker": "你",
+              "text": "（你計過，正常要十四日）"
+            },
+            {
+              "speaker": "客人",
+              "text": "做唔到我就搵第二個。後面排住隊。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你望住張訂單，上面嘅數夠你半年人工）"
+            },
+            {
+              "speaker": "你",
+              "text": "（但你冇現金入貨）"
+            },
+            {
+              "speaker": "朋友",
+              "text": "（電話）借？我介紹個財仔畀你。"
+            },
+            {
+              "speaker": "朋友",
+              "text": "三分息，一個月還。你頂唔頂得住？"
+            },
+            {
+              "speaker": "你",
+              "text": "（三分息，一個月＝你賺嘅全部）"
+            },
+            {
+              "speaker": "客人",
+              "text": "（催）點呀？"
+            },
+            {
+              "speaker": "你",
+              "text": "（你發現自己手心出汗）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "老實報價，逐個客傾（放棄呢單）",
+              "delta": {
+                "biz": 3,
+                "scam": 1
+              }
+            },
+            {
+              "text": "搏一鋪，借錢入多批貨",
+              "delta": {
+                "street": 6,
+                "rich": 1
+              }
+            },
+            {
+              "text": "聽朋友講，跟人炒一轉快錢",
+              "delta": {
+                "scam": 4,
+                "rich": 2,
+                "street": 1
+              }
+            }
+          ],
+          "name": "第一單生意"
+        }
+      }
     },
     {
       "id": "EV_OF_05",
@@ -8145,25 +8784,24 @@ window.HK_SLICE_DATA = {
         {
           "text": "留低升職，慢慢爬",
           "delta": {
-            "rich": 4,
-            "biz": 1,
-            "flat": 2
+            "rich": 6,
+            "biz": 1
           }
         },
         {
           "text": "跳槽，博更高人工",
           "delta": {
-            "rich": 1,
-            "biz": 4,
-            "street": 1
+            "biz": 6,
+            "flat": 2,
+            "rich": 2
           }
         },
         {
           "text": "辭職，自己做老闆",
           "delta": {
-            "biz": 2,
-            "street": 4,
-            "scam": 1
+            "street": 5,
+            "scam": 2,
+            "rich": 1
           }
         }
       ],
@@ -8191,43 +8829,258 @@ window.HK_SLICE_DATA = {
             "cold": "開始唔明你（佢已經唔想講）"
           }
         }
-      ]
+      ],
+      "track_variants": {
+        "office": {
+          "desc": "第五年，公司裁員。你冇被裁，但隔籬位嘅阿姐走咗。佢張枱放咗三個月冇人坐。老闆叫你入房。",
+          "dialogue": [
+            {
+              "speaker": "老闆",
+              "text": "坐。"
+            },
+            {
+              "speaker": "老闆",
+              "text": "阿姐走咗，佢嗰份你接。"
+            },
+            {
+              "speaker": "你",
+              "text": "人工呢？"
+            },
+            {
+              "speaker": "老闆",
+              "text": "加五百。"
+            },
+            {
+              "speaker": "你",
+              "text": "（阿姐做咗十九年，佢份糧唔止呢個數）"
+            },
+            {
+              "speaker": "老闆",
+              "text": "你想清楚。外面而家唔易搵工。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你想起阿姐臨走講嘅話）"
+            },
+            {
+              "speaker": "你",
+              "text": "（「唔好以為做多有用」）"
+            },
+            {
+              "speaker": "老闆",
+              "text": "（推一份新合約過嚟）簽咗就當你應承。"
+            },
+            {
+              "speaker": "你",
+              "text": "（筆喺你手上）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "留低升職，慢慢爬",
+              "delta": {
+                "rich": 6,
+                "biz": 1
+              }
+            },
+            {
+              "text": "跳槽，博更高人工",
+              "delta": {
+                "biz": 6,
+                "flat": 2,
+                "rich": 2
+              }
+            },
+            {
+              "text": "辭職，自己做老闆",
+              "delta": {
+                "street": 5,
+                "scam": 2,
+                "rich": 1
+              }
+            }
+          ],
+          "name": "升職還是跳槽"
+        },
+        "tea": {
+          "desc": "第五年，老細話想退休。佢話間茶記可以頂讓俾你——頂手費唔貴，但你要接晒兩個伙記同所有舊債。水吧阿姐企喺後面，冇講嘢。",
+          "dialogue": [
+            {
+              "speaker": "老細",
+              "text": "我做到今年就夠。"
+            },
+            {
+              "speaker": "老細",
+              "text": "間舖頂俾你。頂手費，你分三年還。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你計過，頂手費唔貴。但舊債唔止）"
+            },
+            {
+              "speaker": "老細",
+              "text": "兩個伙記跟我十幾年。你唔要，佢哋就冇工開。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你望住水吧阿姐）"
+            },
+            {
+              "speaker": "水吧阿姐",
+              "text": "（抹杯）我唔會求你。"
+            },
+            {
+              "speaker": "老細",
+              "text": "外面仲有份工請你。人工高過呢度。"
+            },
+            {
+              "speaker": "老細",
+              "text": "你揀。我唔會怪你。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你望住個招牌，招牌有幾個字已經甩漆）"
+            },
+            {
+              "speaker": "你",
+              "text": "（你想起第一日，你連茶都唔識叫）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "留低，頂咗間茶記，慢慢還",
+              "delta": {
+                "rich": 6,
+                "biz": 1
+              }
+            },
+            {
+              "text": "跳槽，去大酒店做樓面",
+              "delta": {
+                "biz": 6,
+                "flat": 2,
+                "rich": 2
+              }
+            },
+            {
+              "text": "唔接呢間，自己去開一間",
+              "delta": {
+                "street": 5,
+                "scam": 2,
+                "rich": 1
+              }
+            }
+          ],
+          "name": "頂唔頂間舖"
+        },
+        "deal": {
+          "desc": "第五年，親戚話想收你入股。佢出錢，你出力，股份三成。但你要簽一份文件——放棄追究之前數簿嗰條數。",
+          "dialogue": [
+            {
+              "speaker": "親戚",
+              "text": "三成。你唔使出一分錢。"
+            },
+            {
+              "speaker": "親戚",
+              "text": "但你簽咗，之前條數就當冇事。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你計過，三成股份，一年夠你買樓）"
+            },
+            {
+              "speaker": "你",
+              "text": "（但條數，係你發現嘅）"
+            },
+            {
+              "speaker": "伙記",
+              "text": "（細聲）佢之前都咁同人講。"
+            },
+            {
+              "speaker": "親戚",
+              "text": "你唔簽，我都照做。只係冇你份。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你望住份文件，最後一頁係空白）"
+            },
+            {
+              "speaker": "親戚",
+              "text": "你慢慢諗。我唔急。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你想起佢講過：親戚唔同外人）"
+            },
+            {
+              "speaker": "你",
+              "text": "（原來親戚，都要講數）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "簽，攞三成股份，慢慢做",
+              "delta": {
+                "rich": 6,
+                "biz": 1
+              }
+            },
+            {
+              "text": "唔簽，自己出去搵貨源",
+              "delta": {
+                "biz": 6,
+                "flat": 2,
+                "rich": 2
+              }
+            },
+            {
+              "text": "辭職，自己開一間同佢爭",
+              "delta": {
+                "street": 5,
+                "scam": 2,
+                "rich": 1
+              }
+            }
+          ],
+          "name": "三成股份"
+        }
+      }
     },
     {
       "id": "EV_OF_06",
-      "name": "租約到期",
+      "name": "控制成本",
       "type": "主線",
       "category": "main",
       "category_label": "主線",
-      "desc": "第六年，你自己間舖租約到期。業主加租四成。你計過，加咗租就冇錢賺。",
+      "desc": "第六年，公司搬寫字樓。新址租金貴一倍，老闆話要每個部門自己「控制成本」——即係交一個人出嚟。",
       "dialogue": [
         {
-          "speaker": "業主",
-          "text": "四成。唔簽就搬。"
+          "speaker": "老闆",
+          "text": "新寫字樓，租金貴一倍。"
+        },
+        {
+          "speaker": "老闆",
+          "text": "每個部門交返一個人出嚟。"
         },
         {
           "speaker": "你",
-          "text": "四成？我賺嘅都冇咁多。"
+          "text": "（你部門六個人）"
         },
         {
-          "speaker": "業主",
-          "text": "隔籬個位有人出更高。我唔急。"
-        },
-        {
-          "speaker": "你",
-          "text": "（你望住舖頭，貨架係你自己一手一腳搭嘅）"
-        },
-        {
-          "speaker": "伙記",
-          "text": "（細聲）老闆……我哋搬唔搬？"
+          "speaker": "老闆",
+          "text": "你揀。我唔想揀。"
         },
         {
           "speaker": "你",
-          "text": "（你請咗兩個伙記，兩個都有家）"
+          "text": "（你望住隔籬位，佢個仔今年升中一）"
         },
         {
-          "speaker": "業主",
-          "text": "（遞筆）下星期一之前答我。"
+          "speaker": "同事",
+          "text": "（佢唔知你望住佢）"
+        },
+        {
+          "speaker": "老闆",
+          "text": "（遞一份名單）下星期一之前答我。"
         },
         {
           "speaker": "你",
@@ -8239,7 +9092,7 @@ window.HK_SLICE_DATA = {
         },
         {
           "speaker": "你",
-          "text": "（你望住支筆，好耐）"
+          "text": "（你望住份名單，好耐）"
         }
       ],
       "art": "assets/events/ev-alley-wake.jpg",
@@ -8254,25 +9107,25 @@ window.HK_SLICE_DATA = {
       "office_node": "rent",
       "office_choices": [
         {
-          "text": "簽，縮細規模頂住",
+          "text": "簽，交一個人出去，自己留低",
           "delta": {
-            "biz": 2,
-            "flat": 4
+            "flat": 5,
+            "scam": 1
           }
         },
         {
-          "text": "搬去更遠更平嘅舖",
+          "text": "搬去分公司，人工低啲但唔使交人",
           "delta": {
             "biz": 4,
-            "flat": 1,
-            "street": 1
+            "street": 2
           }
         },
         {
-          "text": "借錢擴充，一次過做大",
+          "text": "辭職，自己出去開一間",
           "delta": {
             "street": 4,
-            "scam": 2
+            "scam": 2,
+            "flat": 1
           }
         }
       ],
@@ -8289,7 +9142,219 @@ window.HK_SLICE_DATA = {
             "cold": "覺得你太急（佢已經唔想講）"
           }
         }
-      ]
+      ],
+      "track_variants": {
+        "office": {
+          "desc": "第六年，公司搬寫字樓。新址租金貴一倍，老闆話要每個部門自己「控制成本」——即係交一個人出嚟。",
+          "dialogue": [
+            {
+              "speaker": "老闆",
+              "text": "新寫字樓，租金貴一倍。"
+            },
+            {
+              "speaker": "老闆",
+              "text": "每個部門交返一個人出嚟。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你部門六個人）"
+            },
+            {
+              "speaker": "老闆",
+              "text": "你揀。我唔想揀。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你望住隔籬位，佢個仔今年升中一）"
+            },
+            {
+              "speaker": "同事",
+              "text": "（佢唔知你望住佢）"
+            },
+            {
+              "speaker": "老闆",
+              "text": "（遞一份名單）下星期一之前答我。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你想起第一日返工，阿媽講嘅「穩定」）"
+            },
+            {
+              "speaker": "你",
+              "text": "（原來穩定係要買嘅，而且年年加價）"
+            },
+            {
+              "speaker": "你",
+              "text": "（你望住份名單，好耐）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "簽，交一個人出去，自己留低",
+              "delta": {
+                "flat": 5,
+                "scam": 1
+              }
+            },
+            {
+              "text": "搬去分公司，人工低啲但唔使交人",
+              "delta": {
+                "biz": 4,
+                "street": 2
+              }
+            },
+            {
+              "text": "辭職，自己出去開一間",
+              "delta": {
+                "street": 4,
+                "scam": 2,
+                "flat": 1
+              }
+            }
+          ],
+          "name": "控制成本"
+        },
+        "tea": {
+          "name": "租約到期",
+          "desc": "第六年，茶記租約到期。業主加租四成。你計過，加咗租就要減一個伙記。",
+          "dialogue": [
+            {
+              "speaker": "業主",
+              "text": "四成。唔簽就搬。"
+            },
+            {
+              "speaker": "你",
+              "text": "四成？我一日賣幾多杯奶茶，你知唔知？"
+            },
+            {
+              "speaker": "業主",
+              "text": "隔籬個位有人出更高。我唔急。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你望住舖頭，卡位係你自己一手一腳裝嘅）"
+            },
+            {
+              "speaker": "伙記",
+              "text": "（細聲）老細……我哋搬唔搬？"
+            },
+            {
+              "speaker": "你",
+              "text": "（兩個伙記跟咗上手老細十幾年，兩個都有家）"
+            },
+            {
+              "speaker": "業主",
+              "text": "（遞筆）下星期一之前答我。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你想起第一日，你連茶都唔識叫）"
+            },
+            {
+              "speaker": "你",
+              "text": "（原來呢個位，都係租返嚟嘅）"
+            },
+            {
+              "speaker": "你",
+              "text": "（你望住支筆，好耐）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "簽，減一個伙記頂住",
+              "delta": {
+                "flat": 5,
+                "scam": 1
+              }
+            },
+            {
+              "text": "搬去更遠更平嘅舖",
+              "delta": {
+                "biz": 4,
+                "street": 2
+              }
+            },
+            {
+              "text": "借錢擴充，一次過做大",
+              "delta": {
+                "street": 4,
+                "scam": 2,
+                "flat": 1
+              }
+            }
+          ]
+        },
+        "deal": {
+          "name": "搬倉",
+          "desc": "第六年，你嘅舖租約到期。業主加租四成，而貨倉業主話要收返個位自用。你計過，兩邊一齊加就冇錢賺。",
+          "dialogue": [
+            {
+              "speaker": "業主",
+              "text": "四成。唔簽就搬。"
+            },
+            {
+              "speaker": "你",
+              "text": "四成？我賺嘅都冇咁多。"
+            },
+            {
+              "speaker": "業主",
+              "text": "隔籬個位有人出更高。我唔急。"
+            },
+            {
+              "speaker": "倉主",
+              "text": "（另一邊，電話）個倉我仔要用。你搵過第二個位。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你望住舖頭，貨架係你自己一手一腳搭嘅）"
+            },
+            {
+              "speaker": "伙記",
+              "text": "（細聲）老闆……我哋搬唔搬？"
+            },
+            {
+              "speaker": "你",
+              "text": "（你請咗兩個伙計，兩個都有家）"
+            },
+            {
+              "speaker": "業主",
+              "text": "（遞筆）下星期一之前答我。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你想起第一日返工，阿媽講嘅「穩定」）"
+            },
+            {
+              "speaker": "你",
+              "text": "（原來穩定係要買嘅，而且年年加價）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "簽，縮細舖面、貨搬去新界",
+              "delta": {
+                "flat": 5,
+                "scam": 1
+              }
+            },
+            {
+              "text": "搬去更遠更平嘅舖",
+              "delta": {
+                "biz": 4,
+                "street": 2
+              }
+            },
+            {
+              "text": "借錢擴充，一次過做大",
+              "delta": {
+                "street": 4,
+                "scam": 2,
+                "flat": 1
+              }
+            }
+          ]
+        }
+      }
     },
     {
       "id": "EV_OF_07",
@@ -8354,24 +9419,22 @@ window.HK_SLICE_DATA = {
         {
           "text": "抽，同時開始儲首期",
           "delta": {
-            "rich": 1,
-            "flat": 5
+            "flat": 4,
+            "scam": 1
           }
         },
         {
           "text": "唔抽，租樓住先",
           "delta": {
-            "biz": 3,
-            "flat": 1,
-            "street": 1
+            "biz": 4,
+            "rich": 2
           }
         },
         {
           "text": "跟朋友夾份炒一層",
           "delta": {
-            "rich": 1,
-            "street": 2,
-            "scam": 4
+            "scam": 5,
+            "flat": 2
           }
         }
       ],
@@ -8416,7 +9479,7 @@ window.HK_SLICE_DATA = {
         },
         {
           "speaker": "你",
-          "text": "（你查過，間公司冇咩業務）"
+          "text": "（你查過，嗰間廠冇咩生意）"
         },
         {
           "speaker": "你",
@@ -8454,22 +9517,22 @@ window.HK_SLICE_DATA = {
           "text": "唔落，繼續做自己嘢",
           "delta": {
             "rich": 4,
-            "biz": 1,
-            "flat": 1
+            "flat": 1,
+            "scam": 1
           }
         },
         {
           "text": "落少少，試下水溫",
           "delta": {
-            "flat": 1,
-            "scam": 4
+            "scam": 4,
+            "flat": 1
           }
         },
         {
           "text": "All in，借埋錢",
           "delta": {
             "street": 4,
-            "scam": 4
+            "scam": 1
           }
         }
       ],
@@ -8551,25 +9614,23 @@ window.HK_SLICE_DATA = {
         {
           "text": "簽合約，寫清楚條款",
           "delta": {
-            "rich": 2,
-            "biz": 4
+            "biz": 5,
+            "flat": 2
           }
         },
         {
           "text": "口頭應承，先睇一段時間",
           "delta": {
-            "biz": 1,
-            "flat": 2,
-            "street": 1,
-            "scam": 3
+            "scam": 5,
+            "street": 2,
+            "flat": 1
           }
         },
         {
           "text": "唔合作，自己做",
           "delta": {
-            "rich": 1,
             "flat": 4,
-            "street": 1
+            "scam": 1
           }
         }
       ],
@@ -8637,7 +9698,7 @@ window.HK_SLICE_DATA = {
           "text": "（你仲有得揀）"
         }
       ],
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/events/ev-yum-cha.jpg",
       "battle": null,
       "story_pack_id": "office_ballad",
       "pack": "office_ballad",
@@ -8651,23 +9712,23 @@ window.HK_SLICE_DATA = {
         {
           "text": "守住份工，唔再搏",
           "delta": {
-            "rich": 3,
-            "flat": 4
+            "flat": 5,
+            "rich": 1
           }
         },
         {
           "text": "再搏最後一次",
           "delta": {
-            "biz": 2,
-            "street": 4,
-            "scam": 1
+            "street": 5,
+            "rich": 2,
+            "biz": 2
           }
         },
         {
           "text": "接聽嗰個陌生電話",
           "delta": {
-            "street": 1,
-            "scam": 5
+            "scam": 5,
+            "street": 2
           }
         }
       ],
@@ -8773,7 +9834,7 @@ window.HK_SLICE_DATA = {
           "text": "我仲有手有腳。只係唔知下次仲敢唔敢。"
         }
       ],
-      "art": "assets/fighters/C94.png",
+      "art": "assets/events/ev-yum-cha.jpg",
       "battle": null,
       "story_pack_id": "office_ballad",
       "pack": "office_ballad",
@@ -8960,7 +10021,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 10,
       "reward_xp": 3,
       "battle": null,
-      "art": "assets/events/ev-alley-wake.jpg"
+      "art": "assets/events/ev-mtr-crowd.jpg"
     },
     {
       "id": "EV62",
@@ -8978,7 +10039,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 12,
       "reward_xp": 4,
       "battle": null,
-      "art": "assets/events/ev-alley-wake.jpg"
+      "art": "assets/events/ev-rooftop-night.jpg"
     },
     {
       "id": "EV63",
@@ -8996,7 +10057,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 11,
       "reward_xp": 3,
       "battle": null,
-      "art": "assets/events/ev-alley-wake.jpg"
+      "art": "assets/events/ev-rooftop-night.jpg"
     },
     {
       "id": "EV64",
@@ -9014,7 +10075,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 9,
       "reward_xp": 5,
       "battle": null,
-      "art": "assets/events/ev-alley-wake.jpg"
+      "art": "assets/events/ev-rooftop-night.jpg"
     },
     {
       "id": "EV65",
@@ -9032,7 +10093,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 10,
       "reward_xp": 6,
       "battle": null,
-      "art": "assets/events/ev-alley-wake.jpg"
+      "art": "assets/events/ev-rooftop-night.jpg"
     },
     {
       "id": "EV66",
@@ -9068,7 +10129,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 15,
       "reward_xp": 5,
       "battle": null,
-      "art": "assets/events/ev-alley-wake.jpg"
+      "art": "assets/events/ev-rooftop-night.jpg"
     },
     {
       "id": "EV68",
@@ -9086,7 +10147,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 16,
       "reward_xp": 6,
       "battle": null,
-      "art": "assets/events/ev-alley-wake.jpg"
+      "art": "assets/events/ev-rooftop-night.jpg"
     },
     {
       "id": "EV69",
@@ -9123,7 +10184,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 8,
       "reward_xp": 4,
       "battle": null,
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/events/ev-expired-can.jpg",
       "gift": "fighter"
     },
     {
@@ -9176,6 +10237,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（你想講多謝，但嘴巴乾得開唔到）"
+        },
+        {
+          "speaker": "七叔",
+          "text": "行啦。企喺月台，蒸氣會將你件衫焗乾，人唔會。"
+        },
+        {
+          "speaker": "阿珍",
+          "text": "（遞你一隻瓷杯）燙手就放枱。"
+        },
+        {
+          "speaker": "你",
+          "text": "（蒸氣散咗，你先見到條街有幾多人）"
         }
       ],
       "tale_cast": [
@@ -9238,7 +10311,8 @@ window.HK_SLICE_DATA = {
           "outcome": "七叔門口等你，踱步踱到第三支煙。阿珍遞你一碟多士：「唔收錢。」",
           "bond_note": "阿珍 · 覺得你識做人｜七叔 · 嫌你慢"
         }
-      ]
+      ],
+      "tale_scene": "九廣鐵路月台"
     },
     {
       "type": "主線",
@@ -9255,7 +10329,7 @@ window.HK_SLICE_DATA = {
       "id": "EV_CRXJ_02",
       "name": "第一份工",
       "desc": "七叔帶你去見工。三個地方：碼頭搬貨（即日現金，傷腰）、茶記樓面（阿珍缺人）、跟車（光仔個位，佢病咗三日）。三家都喺同一條街，行完一圈唔使十五分鐘。",
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/events/ev-yum-cha.jpg",
       "tale_node": "job",
       "tale_pack": "chu_ru_xiang_jiang",
       "dialogue": [
@@ -9286,6 +10360,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（三個人望住你，冇一個催你）"
+        },
+        {
+          "speaker": "七叔",
+          "text": "揀工唔係揀錢。係揀你跌低嗰陣，邊個會扶你。"
+        },
+        {
+          "speaker": "光仔",
+          "text": "（咳）你唔使理我。我聽日就好。"
+        },
+        {
+          "speaker": "你",
+          "text": "（三個門口，三道燈）"
         }
       ],
       "tale_cast": [
@@ -9350,7 +10436,8 @@ window.HK_SLICE_DATA = {
           "outcome": "光仔呆咗半晌。「你……真係頂我？」之後三日，佢日日嚟看你跳車。",
           "bond_note": "光仔 · 欠你一個大人情"
         }
-      ]
+      ],
+      "tale_scene": "同一條街．三個門口"
     },
     {
       "type": "主線",
@@ -9406,6 +10493,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "阿珍",
           "text": "呢個門口關我事。"
+        },
+        {
+          "speaker": "西裝帶頭",
+          "text": "你屋企幾多人住？"
+        },
+        {
+          "speaker": "七叔",
+          "text": "（企前一步）佢一個人住。你有事同我講。"
+        },
+        {
+          "speaker": "你",
+          "text": "（走廊盡頭，有人開咗門又關返）"
         }
       ],
       "tale_cast": [
@@ -9470,7 +10569,8 @@ window.HK_SLICE_DATA = {
           "outcome": "七叔吹了一聲哨。樓梯口出現三個人——全部都係碼頭舊伙記。",
           "bond_note": "七叔 · 你信佢，佢記住"
         }
-      ]
+      ],
+      "tale_scene": "唐樓三樓．走廊"
     },
     {
       "type": "主線",
@@ -9518,6 +10618,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（你想起第一日，佢教你點跳車）"
+        },
+        {
+          "speaker": "光仔",
+          "text": "我唔會求你。你點做都得。"
+        },
+        {
+          "speaker": "七叔",
+          "text": "（搭你膊頭）呢條街，認名嘅人唔多。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住光仔手上嘅醫院單，紙邊捲起）"
         }
       ],
       "tale_cast": [
@@ -9584,7 +10696,8 @@ window.HK_SLICE_DATA = {
           "outcome": "警車嚟嗰陣，七叔已經走咗。阿珍關咗閘。",
           "bond_note": "全條街 · 都知你係咩人"
         }
-      ]
+      ],
+      "tale_scene": "茶記後巷"
     },
     {
       "type": "主線",
@@ -9600,7 +10713,7 @@ window.HK_SLICE_DATA = {
       "pack": "chu_ru_xiang_jiang",
       "id": "EV_CRXJ_05",
       "name": "一年之後",
-      "desc": "一年過去。你企喺同一條巷，紅白藍袋已經換成一個真皮公事包。有人喺後面叫你個名——叫得好準，冇一個錯字。",
+      "desc": "一年過去。同一條巷，同一塊招牌。有人喺後面叫你個名——叫得好準，冇一個錯字。",
       "art": "assets/events/ev-yum-cha.jpg",
       "tale_node": "after",
       "tale_pack": "chu_ru_xiang_jiang",
@@ -9628,6 +10741,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（你望住個公事包，突然覺得好重）"
+        },
+        {
+          "speaker": "七叔",
+          "text": "行慢啲。行快咗，人會以為你急住走。"
+        },
+        {
+          "speaker": "阿珍",
+          "text": "（望你個袋）換咗袋？（你點頭）好睇。唔好用。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你冇答。街口嘅燈同一年前一樣）"
         }
       ],
       "tale_cast": [
@@ -9701,7 +10826,8 @@ window.HK_SLICE_DATA = {
           "outcome": "錢放喺枱面。阿珍冇收，七叔冇望。",
           "bond_note": "你以為錢可以還清一切"
         }
-      ]
+      ],
+      "tale_scene": "一年後．同一條巷"
     },
     {
       "type": "主線",
@@ -9741,6 +10867,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（兩邊都望住你，冇一邊催你）"
+        },
+        {
+          "speaker": "看更權",
+          "text": "你識邊個？"
+        },
+        {
+          "speaker": "白衫",
+          "text": "（喺遠處）佢識我。"
+        },
+        {
+          "speaker": "看更權",
+          "text": "（望你）咁你自己講。你識唔識佢？"
         }
       ],
       "tale_cast": [
@@ -9804,7 +10942,8 @@ window.HK_SLICE_DATA = {
           "outcome": "看更權冇再望你。白衫遞你一支煙：「聰明。」",
           "bond_note": "白衫 · 覺得你識時務｜看更權 · 當你係外人"
         }
-      ]
+      ],
+      "tale_scene": "城寨西門"
     },
     {
       "type": "主線",
@@ -9844,6 +10983,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（你回頭，後面冇人）"
+        },
+        {
+          "speaker": "阿妹",
+          "text": "你唔使答我。你答你自己。"
+        },
+        {
+          "speaker": "阿妹",
+          "text": "你入嚟，係為咗搵人，定係為咗避人？"
+        },
+        {
+          "speaker": "你",
+          "text": "（藥櫃上面嘅紙條，有一張寫住你個名）"
         }
       ],
       "tale_cast": [
@@ -9894,7 +11045,8 @@ window.HK_SLICE_DATA = {
           "outcome": "阿妹停低抹枱嘅手。「怕。但走唔甩。」",
           "bond_note": "阿妹 · 第一次有人問佢怕唔怕"
         }
-      ]
+      ],
+      "tale_scene": "寨內藥房"
     },
     {
       "type": "主線",
@@ -9942,6 +11094,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（你發現自己冇答案）"
+        },
+        {
+          "speaker": "打拳佬",
+          "text": "你睇住把刀，定睇住本簿？"
+        },
+        {
+          "speaker": "你",
+          "text": "（你睇住本簿）"
+        },
+        {
+          "speaker": "打拳佬",
+          "text": "（笑）咁你仲有得救。"
         }
       ],
       "tale_cast": [
@@ -10006,7 +11170,8 @@ window.HK_SLICE_DATA = {
           "outcome": "火燒起。阿妹望住你，然後轉身走入藥房，關門。",
           "bond_note": "阿妹 · 唔會再信你｜看更權 · 覺得你搞亂晒"
         }
-      ]
+      ],
+      "tale_scene": "寨內天井"
     },
     {
       "type": "主線",
@@ -10046,6 +11211,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（你望住張紙，上面有一個名）"
+        },
+        {
+          "speaker": "白衫",
+          "text": "你唔使即刻答我。我等到聽朝。"
+        },
+        {
+          "speaker": "白衫",
+          "text": "聽朝你唔嚟，我就當你揀咗另一邊。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你將張紙摺好，收入衫袋）"
         }
       ],
       "tale_cast": [
@@ -10112,7 +11289,8 @@ window.HK_SLICE_DATA = {
           "outcome": "你講咗個名。白衫笑住收紙。身後天井，有人開始搬嘢走。",
           "bond_note": "白衫 · 你係佢嘅人｜看更權 · 你出賣咗寨"
         }
-      ]
+      ],
+      "tale_scene": "寨門巷口"
     },
     {
       "type": "主線",
@@ -10128,7 +11306,7 @@ window.HK_SLICE_DATA = {
       "pack": "kowloon_walled_ch1",
       "id": "EV_KLW_05",
       "name": "燈籠再亮",
-      "desc": "半年後，寨門燈籠重新點起。你行過，看更換咗人。舊看更坐喺巷口剝花生，見你嚟，冇起身。",
+      "desc": "半年後，寨門燈籠重新點起。看更換咗人。舊看更坐喺巷口剝花生，見有人行過，冇起身。",
       "art": "assets/events/ev-yum-cha.jpg",
       "tale_node": "after",
       "tale_pack": "kowloon_walled_ch1",
@@ -10152,6 +11330,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（你低頭望自己隻手，上面有道疤）"
+        },
+        {
+          "speaker": "看更權",
+          "text": "你隻手受過傷？（你點頭）"
+        },
+        {
+          "speaker": "看更權",
+          "text": "傷痕會好。疤痕唔會。"
+        },
+        {
+          "speaker": "你",
+          "text": "（燈籠嘅光，照住你半邊面）"
         }
       ],
       "tale_cast": [
@@ -10228,7 +11418,8 @@ window.HK_SLICE_DATA = {
           "outcome": "白衫同你講咗五分鐘。你返轉頭嗰陣，花生已經收咗。",
           "bond_note": "白衫 · 你揀咗另一邊"
         }
-      ]
+      ],
+      "tale_scene": "半年後．寨門"
     },
     {
       "type": "主線",
@@ -10245,7 +11436,7 @@ window.HK_SLICE_DATA = {
       "id": "EV_FKL_01",
       "name": "八號",
       "desc": "八號風球掛出嘅時候，維港先灰，後靜。天星鐘響過一聲，綠船冇再靠岸。你企喺碼頭，傘已經反咗兩次，最後索性收埋。",
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/events/ev-mtr-crowd.jpg",
       "tale_node": "start",
       "tale_pack": "fung_kau_mei_lok",
       "dialogue": [
@@ -10276,6 +11467,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（三個人，三種原因，都喺呢間舖）"
+        },
+        {
+          "speaker": "阿嬸",
+          "text": "坐啦。位冇人。"
+        },
+        {
+          "speaker": "水手",
+          "text": "（讓開半張凳）你濕晒。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你坐低，雨水由褲腳滴落地磚）"
         }
       ],
       "tale_cast": [
@@ -10339,7 +11542,8 @@ window.HK_SLICE_DATA = {
           "outcome": "水手望你一眼。「你問得啱。開唔開，唔係我話事。」",
           "bond_note": "水手 · 覺得你識問嘢"
         }
-      ]
+      ],
+      "tale_scene": "碼頭．八號"
     },
     {
       "type": "主線",
@@ -10356,7 +11560,7 @@ window.HK_SLICE_DATA = {
       "id": "EV_FKL_02",
       "name": "膠紙打叉",
       "desc": "阿嬸站上凳，膠紙喺窗上打叉。她說玻璃響就讓它響，人不要把臉貼上去跟風說話。窗外面，招牌開始甩。",
-      "art": "assets/events/ev-yum-cha.jpg",
+      "art": "assets/events/ev-mtr-crowd.jpg",
       "tale_node": "tape",
       "tale_pack": "fung_kau_mei_lok",
       "dialogue": [
@@ -10383,6 +11587,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（你望出去，其實咩都睇唔清）"
+        },
+        {
+          "speaker": "阿嬸",
+          "text": "膠紙唔係擋風。係擋碎片。"
+        },
+        {
+          "speaker": "阿嬸",
+          "text": "玻璃爆嘅時候，你就知分別。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你按住膠紙另一邊，手都係膠水）"
         }
       ],
       "tale_cast": [
@@ -10435,7 +11651,8 @@ window.HK_SLICE_DATA = {
           "outcome": "你衝出去，水手跟住你。阿嬸喺門口叫：「痴線！返嚟！」",
           "bond_note": "水手 · 覺得你夠膽｜阿嬸 · 覺得你唔要命"
         }
-      ]
+      ],
+      "tale_scene": "茶記窗邊"
     },
     {
       "type": "主線",
@@ -10456,7 +11673,7 @@ window.HK_SLICE_DATA = {
       "id": "EV_FKL_03",
       "name": "九號",
       "desc": "風球升到九號。招牌開始甩，鐵皮喺半空轉。有人拍門——係隔離舖嘅人，話佢個女仲喺樓上。",
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/events/ev-rooftop-night.jpg",
       "tale_node": "nine",
       "tale_pack": "fung_kau_mei_lok",
       "dialogue": [
@@ -10487,6 +11704,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（你發現自己已經企咗起身）"
+        },
+        {
+          "speaker": "隔離舖",
+          "text": "三分鐘。三分鐘之後我報警。"
+        },
+        {
+          "speaker": "水手",
+          "text": "你報。警察唔會上樓。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你已經行到樓梯口）"
         }
       ],
       "tale_cast": [
@@ -10537,7 +11766,7 @@ window.HK_SLICE_DATA = {
             "aunt": -1,
             "sailor": -2
           },
-          "outcome": "你按住門。阿嬸喺後面煲水，一路冇停手。",
+          "outcome": "你按住門。阿嬸喺後面煲水，一路冇停手。過咗十分鐘，佢推你一把：「你上樓睇下。我睇住舖。」",
           "bond_note": "阿嬸 · 你揀咗留低"
         },
         {
@@ -10552,7 +11781,8 @@ window.HK_SLICE_DATA = {
           "outcome": "你嗌咗三聲。樓下陸續有人開門——四個、六個、十個。",
           "bond_note": "全條街 · 你叫得動人"
         }
-      ]
+      ],
+      "tale_scene": "茶記門口．九號"
     },
     {
       "type": "主線",
@@ -10596,6 +11826,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "水手",
           "text": "（佢接過杯，手震）"
+        },
+        {
+          "speaker": "阿嬸",
+          "text": "飲完先講嘢。"
+        },
+        {
+          "speaker": "水手",
+          "text": "（飲一啖）原來茶記嘅奶茶係咁味。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住窗外，對岸全黑）"
         }
       ],
       "tale_cast": [
@@ -10648,7 +11890,8 @@ window.HK_SLICE_DATA = {
           "outcome": "水手點咗個頭，起身。「講得啱。」但佢冇再望你。",
           "bond_note": "水手 · 你戳破咗啲嘢"
         }
-      ]
+      ],
+      "tale_scene": "茶記．凌晨四點"
     },
     {
       "type": "主線",
@@ -10692,6 +11935,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（你望住三個人，突然唔知答咩）"
+        },
+        {
+          "speaker": "細路",
+          "text": "我搵到我阿媽喇。佢喺樓上。"
+        },
+        {
+          "speaker": "細路",
+          "text": "佢冇死。佢只係冇落嚟。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你唔知應該講咩，所以冇講）"
         }
       ],
       "tale_cast": [
@@ -10757,7 +12012,8 @@ window.HK_SLICE_DATA = {
             "aunt": -2
           }
         }
-      ]
+      ],
+      "tale_scene": "碼頭閘口"
     },
     {
       "type": "主線",
@@ -10774,7 +12030,7 @@ window.HK_SLICE_DATA = {
       "id": "EV_SDN_01",
       "name": "第一夜・天台",
       "desc": "雨夜天台。眼鏡女企喺水箱邊，手上揸住一張欠單，紙邊已經濕透。樓梯口有三個人上緊嚟，腳步聲好齊，冇一個人講嘢。",
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/events/ev-rooftop-night.jpg",
       "tale_node": "start",
       "tale_pack": "shou_dai_nv_xia",
       "dialogue": [
@@ -10801,6 +12057,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（你企喺樓梯度，兩邊都望住你）"
+        },
+        {
+          "speaker": "眼鏡女",
+          "text": "你有冇見過我阿媽？冇。你哋邊個見過？"
+        },
+        {
+          "speaker": "西裝帶頭",
+          "text": "我見單，唔見人。"
+        },
+        {
+          "speaker": "你",
+          "text": "（雨打喺鐵皮上，你聽到自己吞口水嘅聲）"
         }
       ],
       "tale_cast": [
@@ -10863,7 +12131,8 @@ window.HK_SLICE_DATA = {
           "outcome": "你企喺暗處。眼鏡女望過嚟，然後別開面。",
           "bond_note": "眼鏡女 · 覺得你唔會幫"
         }
-      ]
+      ],
+      "tale_scene": "雨夜天台"
     },
     {
       "type": "主線",
@@ -10880,7 +12149,7 @@ window.HK_SLICE_DATA = {
       "id": "EV_SDN_02",
       "name": "第二夜・樓梯口",
       "desc": "樓梯口，一袋紅白藍。搬嘢嘅女人話佢只係幫人搬，唔關欠單事。袋底有個手袋，拉鏈半開，露出一個角。",
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/events/ev-rooftop-night.jpg",
       "tale_node": "stairs",
       "tale_pack": "shou_dai_nv_xia",
       "dialogue": [
@@ -10907,6 +12176,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（佢手一路摸住袋口嘅繩）"
+        },
+        {
+          "speaker": "搬嘢女人",
+          "text": "你係咪差人？唔似。差人唔會咁夜行樓梯。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你搖頭）"
+        },
+        {
+          "speaker": "搬嘢女人",
+          "text": "咁你走啦。呢個袋，唔關你事。"
         }
       ],
       "tale_cast": [
@@ -10956,7 +12237,8 @@ window.HK_SLICE_DATA = {
           "outcome": "你哋搬咗六層樓。佢一路講，一路唔敢望你。",
           "bond_note": "搬嘢女人 · 你係第一個幫佢嘅人"
         }
-      ]
+      ],
+      "tale_scene": "樓梯口"
     },
     {
       "type": "主線",
@@ -11004,6 +12286,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "眼鏡女",
           "text": "（後面）唔好認！"
+        },
+        {
+          "speaker": "打拳",
+          "text": "你唔係呢條巷嘅人。"
+        },
+        {
+          "speaker": "眼鏡女",
+          "text": "佢係我搵嚟嘅。"
+        },
+        {
+          "speaker": "打拳",
+          "text": "（望你一眼）咁你最好識走。"
         }
       ],
       "tale_cast": [
@@ -11070,7 +12364,8 @@ window.HK_SLICE_DATA = {
           "outcome": "打咗三分鐘。你冇動。之後冇人再同你講嘢。",
           "bond_note": "全部人 · 覺得你唔可靠"
         }
-      ]
+      ],
+      "tale_scene": "旺角後巷"
     },
     {
       "type": "主線",
@@ -11114,6 +12409,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（三個人望住你，等你要佢講）"
+        },
+        {
+          "speaker": "眼鏡女",
+          "text": "你叫我哋信你，你信唔信你自己？"
+        },
+        {
+          "speaker": "你",
+          "text": "（你冇答）"
+        },
+        {
+          "speaker": "搬嘢女人",
+          "text": "我信。我唔識字，但我識人。"
         }
       ],
       "tale_cast": [
@@ -11178,10 +12485,11 @@ window.HK_SLICE_DATA = {
             "glasses": -1,
             "suit": 1
           },
-          "outcome": "警察嚟咗。搬嘢女人第二日就搬走咗，冇留低地址。",
+          "outcome": "警察嚟咗，抄咗啲資料就走。搬嘢女人冇搬，但佢由嗰日起唔再同你講嘢。",
           "bond_note": "搬嘢女人 · 你出賣咗佢的信任"
         }
-      ]
+      ],
+      "tale_scene": "茶餐廳卡位"
     },
     {
       "type": "主線",
@@ -11198,7 +12506,7 @@ window.HK_SLICE_DATA = {
       "id": "EV_SDN_05",
       "name": "第四夜・冇雨",
       "desc": "一個月之後，天台冇雨。三個人企喺同一位置，冇人講嘢。欠單已經收咗，但冇人覺得贏。",
-      "art": "assets/events/ev-yum-cha.jpg",
+      "art": "assets/events/ev-rooftop-night.jpg",
       "tale_node": "after",
       "tale_pack": "shou_dai_nv_xia",
       "dialogue": [
@@ -11225,6 +12533,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（你發現自己係唯一一個仲企喺原地嘅人）"
+        },
+        {
+          "speaker": "搬嘢女人",
+          "text": "我下個月搬。呢區租貴。"
+        },
+        {
+          "speaker": "眼鏡女",
+          "text": "搬去邊？"
+        },
+        {
+          "speaker": "搬嘢女人",
+          "text": "（搖頭）唔知。有樓梯就得。"
         }
       ],
       "tale_cast": [
@@ -11300,7 +12620,8 @@ window.HK_SLICE_DATA = {
           "outcome": "眼鏡女想咗好耐。「我而家應該唔喺度。」",
           "bond_note": "你哋都知答案"
         }
-      ]
+      ],
+      "tale_scene": "第四夜・冇雨"
     },
     {
       "type": "主線",
@@ -11317,7 +12638,7 @@ window.HK_SLICE_DATA = {
       "id": "EV_NMW_01",
       "name": "熄燈之前",
       "desc": "凌晨兩點半，半條街仍然著。補燈師傅吊喺棚上，一手揸住燈管，一手揸住螺絲批。下面有人等緊佢落嚟，等咗兩個鐘。",
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/events/ev-rooftop-night.jpg",
       "tale_node": "start",
       "tale_pack": "neon_mei_wan",
       "dialogue": [
@@ -11348,6 +12669,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（三個人，三種立場，你企喺中間）"
+        },
+        {
+          "speaker": "補燈師傅",
+          "text": "你上唔上嚟？上嚟就知咩叫高。"
+        },
+        {
+          "speaker": "拆遷隊",
+          "text": "唔好上。跌落嚟冇人賠。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住棚上面嗰雙手，指節都係黑色）"
         }
       ],
       "tale_cast": [
@@ -11411,7 +12744,8 @@ window.HK_SLICE_DATA = {
           "outcome": "你企喺燈光邊緣。三個人各做各嘅嘢。",
           "bond_note": "兩邊 · 都覺得你唔會插手"
         }
-      ]
+      ],
+      "tale_scene": "廟街棚架"
     },
     {
       "type": "主線",
@@ -11455,6 +12789,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（兩邊都等你講嘢）"
+        },
+        {
+          "speaker": "招牌漆",
+          "text": "寫「拆」字？我寫過。寫完嗰晚睡得好好。"
+        },
+        {
+          "speaker": "補燈師傅",
+          "text": "咁你今晚寫咩？"
+        },
+        {
+          "speaker": "招牌漆",
+          "text": "（冇答，只係開咗罐新漆）"
         }
       ],
       "tale_cast": [
@@ -11519,7 +12865,8 @@ window.HK_SLICE_DATA = {
           "outcome": "拆遷隊聽你講完。「你以為我唔想？呢個決定唔係我做。」",
           "bond_note": "拆遷隊 · 第一次同你講實話"
         }
-      ]
+      ],
+      "tale_scene": "招牌之下"
     },
     {
       "type": "主線",
@@ -11540,7 +12887,7 @@ window.HK_SLICE_DATA = {
       "id": "EV_NMW_03",
       "name": "招牌上棚",
       "desc": "拆遷朝早，吊臂車已經到。三噸招牌吊到半空，螺絲鬆咗一半。有人喺下面叫停。",
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/events/ev-rooftop-night.jpg",
       "tale_node": "crane",
       "tale_pack": "neon_mei_wan",
       "dialogue": [
@@ -11567,6 +12914,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（吊臂嘅鋼纜開始響）"
+        },
+        {
+          "speaker": "拆遷隊",
+          "text": "你企開啲。呢個位食風。"
+        },
+        {
+          "speaker": "補燈師傅",
+          "text": "佢講得啱。你行開。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你冇行開。鋼纜又響一聲）"
         }
       ],
       "tale_cast": [
@@ -11632,7 +12991,8 @@ window.HK_SLICE_DATA = {
           "outcome": "你講咗二十分鐘。拆遷隊打咗三個電話。最後：「一個鐘。」",
           "bond_note": "你爭取到一個鐘"
         }
-      ]
+      ],
+      "tale_scene": "半空三噸"
     },
     {
       "type": "主線",
@@ -11672,6 +13032,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（你望住個印，形狀有啲似一個字）"
+        },
+        {
+          "speaker": "補燈師傅",
+          "text": "你摸下呢幅牆。仲暖。"
+        },
+        {
+          "speaker": "招牌漆",
+          "text": "唔係暖。係你手凍。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你縮手。印上面有油漆味）"
         }
       ],
       "tale_cast": [
@@ -11735,7 +13107,8 @@ window.HK_SLICE_DATA = {
           "outcome": "你行到街口，回頭見到兩個人都仲企喺原地。",
           "bond_note": "兩個人都 · 覺得你走得太快"
         }
-      ]
+      ],
+      "tale_scene": "拆完嘅牆"
     },
     {
       "type": "主線",
@@ -11775,6 +13148,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（你認得其中一個名——係你自己）"
+        },
+        {
+          "speaker": "招牌漆",
+          "text": "你個名，你寫定我寫？"
+        },
+        {
+          "speaker": "補燈師傅",
+          "text": "（笑）佢自己寫。咁大個人。"
+        },
+        {
+          "speaker": "你",
+          "text": "（毛筆擺喺圍板上面，等緊人接）"
         }
       ],
       "tale_cast": [
@@ -11840,7 +13225,8 @@ window.HK_SLICE_DATA = {
           "outcome": "你企咗一個鐘。光冇熄。你行返屋企。",
           "bond_note": "你只係睇住"
         }
-      ]
+      ],
+      "tale_scene": "圍板後面"
     },
     {
       "type": "主線",
@@ -11884,6 +13270,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（你數咗兩次，兩次都係咁多）"
+        },
+        {
+          "speaker": "七叔",
+          "text": "你數咗兩次。數第三次唔會多。"
+        },
+        {
+          "speaker": "阿珍",
+          "text": "（喺門口）今晚有飯。你唔嚟，我就當你唔肚餓。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你把錢對摺，放喺最入嗰格）"
         }
       ],
       "tale_cast": [
@@ -11950,7 +13348,8 @@ window.HK_SLICE_DATA = {
           "outcome": "你將錢收喺床下底。光仔望住你，然後走咗。七叔咩都冇講。",
           "bond_note": "光仔 · 覺得你孤寒"
         }
-      ]
+      ],
+      "tale_scene": "街口．第一次出糧"
     },
     {
       "type": "主線",
@@ -11966,8 +13365,8 @@ window.HK_SLICE_DATA = {
       "pack": "chu_ru_xiang_jiang",
       "id": "EV_CRXJ_03C",
       "name": "第一次捱夜",
-      "desc": "加班到凌晨三點。你行返屋企，條街只剩霓虹燈同清潔工人。有個阿婆蹲喺騎樓底執紙皮。",
-      "art": "assets/events/ev-alley-wake.jpg",
+      "desc": "收夜已經係凌晨三點。你行返屋企，條街只剩霓虹燈同清潔工人。有個阿婆蹲喺騎樓底執紙皮。",
+      "art": "assets/events/ev-expired-can.jpg",
       "tale_node": "night",
       "tale_pack": "chu_ru_xiang_jiang",
       "dialogue": [
@@ -11986,6 +13385,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（你想起鄉下阿媽，佢都係咁蹲喺門口執嘢）"
+        },
+        {
+          "speaker": "阿婆",
+          "text": "你唔使幫我。你返去睇下你自己。」"
+        },
+        {
+          "speaker": "你",
+          "text": "（你托起籮紙皮，手指即刻黑）"
+        },
+        {
+          "speaker": "阿婆",
+          "text": "（細聲）多謝。呢兩個字，我講咗幾十年，講完都係要還。"
         }
       ],
       "tale_cast": [
@@ -12028,7 +13439,7 @@ window.HK_SLICE_DATA = {
           "bond_note": "你盡咗力"
         },
         {
-          "text": "唔幫，趕住返屋企",
+          "text": "唔幫，繼續行",
           "delta": {
             "hard": 3
           },
@@ -12038,7 +13449,8 @@ window.HK_SLICE_DATA = {
           "outcome": "你行過。行到巷尾，你回頭望——阿婆仲蹲喺度，一個人托。",
           "bond_note": "七叔 · 若佢知，會失望"
         }
-      ]
+      ],
+      "tale_scene": "凌晨三點．騎樓底"
     },
     {
       "type": "主線",
@@ -12081,7 +13493,19 @@ window.HK_SLICE_DATA = {
         },
         {
           "speaker": "你",
-          "text": "（你接過碗，湯好燙）"
+          "text": "（一碗湯放咗喺你面前。湯好燙）"
+        },
+        {
+          "speaker": "阿珍",
+          "text": "飲晒佢。飲剩我會嬲。"
+        },
+        {
+          "speaker": "你",
+          "text": "（湯入面有一塊好腍嘅肉）"
+        },
+        {
+          "speaker": "阿珍",
+          "text": "（轉過身）碗放喺水槽就得。唔使你洗。"
         }
       ],
       "tale_cast": [
@@ -12133,7 +13557,8 @@ window.HK_SLICE_DATA = {
           "outcome": "阿珍停手。「病。醫院話冇得救。」之後佢冇再講，但佢冇趕你走。",
           "bond_note": "阿珍 · 你肯問，佢肯講"
         }
-      ]
+      ],
+      "tale_scene": "茶記廚房"
     },
     {
       "type": "主線",
@@ -12173,6 +13598,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "看更權",
           "text": "（門口經過，冇入嚟，只係望咗一眼）"
+        },
+        {
+          "speaker": "阿妹",
+          "text": "你食得慢。你以前食得慢？定係而家先慢？"
+        },
+        {
+          "speaker": "你",
+          "text": "（你冇答）"
+        },
+        {
+          "speaker": "阿妹",
+          "text": "慢慢食。呢度唔趕人。"
         }
       ],
       "tale_cast": [
@@ -12235,7 +13672,8 @@ window.HK_SLICE_DATA = {
           "outcome": "你放低筷子就走。阿妹冇叫你，但你聽到佢收碗嘅聲好慢。",
           "bond_note": "阿妹 · 覺得你唔想留"
         }
-      ]
+      ],
+      "tale_scene": "藥房後巷飯枱"
     },
     {
       "type": "主線",
@@ -12279,6 +13717,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（你望住巷尾，盡頭係一幅牆）"
+        },
+        {
+          "speaker": "看更權",
+          "text": "你行得快。行得快嘅人，通常想走。"
+        },
+        {
+          "speaker": "看更權",
+          "text": "呢度冇得走。你不如行慢啲。"
+        },
+        {
+          "speaker": "你",
+          "text": "（巷尾嗰幅牆，一路都喺度）"
         }
       ],
       "tale_cast": [
@@ -12329,7 +13779,8 @@ window.HK_SLICE_DATA = {
           "outcome": "看更權冇再講嘢。行到巷尾，佢指一指牆：「呢度係盡頭。」",
           "bond_note": "看更權 · 覺得你唔想聽"
         }
-      ]
+      ],
+      "tale_scene": "三十幾條巷"
     },
     {
       "type": "主線",
@@ -12373,6 +13824,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（佢手冇震，但佢望住枱面）"
+        },
+        {
+          "speaker": "阿妹",
+          "text": "你唔好以為我唔驚。我驚到腳都軟。"
+        },
+        {
+          "speaker": "阿妹",
+          "text": "但係我唔會交你出去。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你伸手出去，又收返）"
         }
       ],
       "tale_cast": [
@@ -12428,7 +13891,8 @@ window.HK_SLICE_DATA = {
           "outcome": "你冇望佢。阿妹望住你，然後收返自己張紙，行入藥房。",
           "bond_note": "阿妹 · 你出賣咗佢"
         }
-      ]
+      ],
+      "tale_scene": "藥房後巷"
     },
     {
       "type": "主線",
@@ -12445,7 +13909,7 @@ window.HK_SLICE_DATA = {
       "id": "EV_FKL_02B",
       "name": "細路的貓",
       "desc": "細路拉住你行去後巷。佢話佢隻貓跑咗出去，喺隔離樓嘅天台。風咁大，貓應該唔會走遠。",
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/events/ev-rooftop-night.jpg",
       "tale_node": "cat",
       "tale_pack": "fung_kau_mei_lok",
       "dialogue": [
@@ -12468,6 +13932,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "阿嬸",
           "text": "（遠處）喂！唔好爬！"
+        },
+        {
+          "speaker": "細路",
+          "text": "你驚唔驚？我唔驚。我驚貓驚。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住鐵閘上面嘅鐵線）"
+        },
+        {
+          "speaker": "細路",
+          "text": "你爬過去，我幫你睇住。"
         }
       ],
       "tale_cast": [
@@ -12533,7 +14009,8 @@ window.HK_SLICE_DATA = {
           "outcome": "你哋蹲咗半個鐘。貓喺雨裡面自己行返嚟，一身泥。",
           "bond_note": "細路 · 你陪佢等過"
         }
-      ]
+      ],
+      "tale_scene": "後巷鐵閘"
     },
     {
       "type": "主線",
@@ -12549,8 +14026,8 @@ window.HK_SLICE_DATA = {
       "pack": "fung_kau_mei_lok",
       "id": "EV_FKL_03B",
       "name": "三樓",
-      "desc": "你同水手爬樓梯。三樓走廊冇燈，水退到腳眼。有扇門半開。",
-      "art": "assets/events/ev-alley-wake.jpg",
+      "desc": "樓梯好暗，水退到腳眼。三樓走廊冇燈，有扇門半開。水手行前面，一路數住級數。",
+      "art": "assets/events/ev-rooftop-night.jpg",
       "tale_node": "stairs",
       "tale_pack": "fung_kau_mei_lok",
       "dialogue": [
@@ -12577,6 +14054,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（你聽到——係貓叫）"
+        },
+        {
+          "speaker": "水手",
+          "text": "貓叫喺左手邊。你聽。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你聽到，仲有另一種聲）"
+        },
+        {
+          "speaker": "水手",
+          "text": "（細聲）有人喺度。唔好出聲。"
         }
       ],
       "tale_cast": [
@@ -12627,7 +14116,8 @@ window.HK_SLICE_DATA = {
           "outcome": "你轉身落樓。水手喺後面叫咗一聲，但你冇停。",
           "bond_note": "水手 · 覺得你走咗"
         }
-      ]
+      ],
+      "tale_scene": "三樓走廊"
     },
     {
       "type": "主線",
@@ -12671,6 +14161,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（你望住張相，個男人笑得好開心）"
+        },
+        {
+          "speaker": "阿嬸",
+          "text": "佢走嗰年，我留咗佢對鞋。"
+        },
+        {
+          "speaker": "阿嬸",
+          "text": "就喺廚房後面。你唔好笑我。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你冇笑。你望住張相好耐）"
         }
       ],
       "tale_cast": [
@@ -12723,7 +14225,8 @@ window.HK_SLICE_DATA = {
           "outcome": "阿嬸望住你。「你唔明。有啲人唔開船就唔知自己係邊個。」",
           "bond_note": "阿嬸 · 覺得你未明白"
         }
-      ]
+      ],
+      "tale_scene": "茶記廚房"
     },
     {
       "type": "主線",
@@ -12739,8 +14242,8 @@ window.HK_SLICE_DATA = {
       "pack": "shou_dai_nv_xia",
       "id": "EV_SDN_02B",
       "name": "手袋裡的字",
-      "desc": "你同搬嘢女人喺樓梯坐低。佢打開手袋，裡面有一張紙，寫住一個地址同一個名。佢話佢唔識字，但佢認得個名嘅形狀。",
-      "art": "assets/events/ev-alley-wake.jpg",
+      "desc": "樓梯級上面，手袋攤開咗。裡面有一張紙，寫住一個地址同一個名。搬嘢女人望住張紙，話佢唔識字，但認得個名嘅形狀。",
+      "art": "assets/events/ev-rooftop-night.jpg",
       "tale_node": "bag",
       "tale_pack": "shou_dai_nv_xia",
       "dialogue": [
@@ -12763,6 +14266,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（佢把手袋遞你）"
+        },
+        {
+          "speaker": "搬嘢女人",
+          "text": "你讀過書？（你點頭）咁你讀俾我聽。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你把張紙攤平，讀到一半停低）"
+        },
+        {
+          "speaker": "搬嘢女人",
+          "text": "唔使讀晒。我知最後一句寫咩。"
         }
       ],
       "tale_cast": [
@@ -12813,7 +14328,8 @@ window.HK_SLICE_DATA = {
           "outcome": "你把紙收埋。佢望住你手，然後起身走。",
           "bond_note": "搬嘢女人 · 覺得你同其他人一樣"
         }
-      ]
+      ],
+      "tale_scene": "樓梯轉角"
     },
     {
       "type": "主線",
@@ -12829,7 +14345,7 @@ window.HK_SLICE_DATA = {
       "pack": "shou_dai_nv_xia",
       "id": "EV_SDN_03B",
       "name": "打拳的手",
-      "desc": "打拳嗰個男人坐喺後巷膠凳，手背仲流緊血。你遞佢一卷紗布。",
+      "desc": "後巷靜咗。打拳嗰個男人坐喺膠凳，手背仲流緊血。佢冇望你，亦都冇叫你走。",
       "art": "assets/events/ev-alley-wake.jpg",
       "tale_node": "hand",
       "tale_pack": "shou_dai_nv_xia",
@@ -12856,7 +14372,19 @@ window.HK_SLICE_DATA = {
         },
         {
           "speaker": "你",
-          "text": "（你幫佢包紮。佢冇再拒絕）"
+          "text": "（紗布擺咗喺膠凳上。佢冇叫你，亦都冇叫你走）"
+        },
+        {
+          "speaker": "打拳",
+          "text": "我打咗十幾年，第一次有人幫我包手。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你想講咩，但冇講）"
+        },
+        {
+          "speaker": "打拳",
+          "text": "下次你唔使嚟。真嘅。"
         }
       ],
       "tale_cast": [
@@ -12874,7 +14402,7 @@ window.HK_SLICE_DATA = {
       ],
       "tale_choices": [
         {
-          "text": "包完，問佢為咩要打",
+          "text": "過去幫佢包手，順便問佢為咩要打",
           "delta": {
             "care": 3,
             "trust": 2
@@ -12886,7 +14414,7 @@ window.HK_SLICE_DATA = {
           "bond_note": "打拳 · 你問到佢痛處"
         },
         {
-          "text": "包完就走，唔問",
+          "text": "過去幫佢包手，包完就走",
           "delta": {
             "care": 3
           },
@@ -12897,7 +14425,7 @@ window.HK_SLICE_DATA = {
           "bond_note": "打拳 · 你冇多事"
         },
         {
-          "text": "叫佢去自首",
+          "text": "唔包手，叫佢去自首",
           "delta": {
             "law": 3
           },
@@ -12907,7 +14435,8 @@ window.HK_SLICE_DATA = {
           "outcome": "打拳扯走紗布。「你同佢哋一樣。」",
           "bond_note": "打拳 · 覺得你同收數隊一樣"
         }
-      ]
+      ],
+      "tale_scene": "後巷膠凳"
     },
     {
       "type": "主線",
@@ -12923,8 +14452,8 @@ window.HK_SLICE_DATA = {
       "pack": "shou_dai_nv_xia",
       "id": "EV_SDN_04B",
       "name": "三個人的天台",
-      "desc": "你叫三個人上天台。眼鏡女、搬嘢女人、打拳，三個第一次見面。冇人講嘢，雨開始落。",
-      "art": "assets/events/ev-alley-wake.jpg",
+      "desc": "天台。眼鏡女、搬嘢女人、打拳，三個人第一次企喺同一個位置。冇人講嘢，雨開始落。",
+      "art": "assets/events/ev-rooftop-night.jpg",
       "tale_node": "three",
       "tale_pack": "shou_dai_nv_xia",
       "dialogue": [
@@ -12951,6 +14480,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "眼鏡女",
           "text": "唔係巧合。"
+        },
+        {
+          "speaker": "打拳",
+          "text": "我以為我係唯一一個受害者。"
+        },
+        {
+          "speaker": "眼鏡女",
+          "text": "你唔係。冇人係。"
+        },
+        {
+          "speaker": "你",
+          "text": "（三個人望住同一個方向，乜都冇）"
         }
       ],
       "tale_cast": [
@@ -13018,7 +14559,8 @@ window.HK_SLICE_DATA = {
           "outcome": "三個人互相望一眼，然後各自落樓。",
           "bond_note": "三個人 · 覺得你唔想插手"
         }
-      ]
+      ],
+      "tale_scene": "三個人的天台"
     },
     {
       "type": "主線",
@@ -13034,8 +14576,8 @@ window.HK_SLICE_DATA = {
       "pack": "neon_mei_wan",
       "id": "EV_NMW_02B",
       "name": "師傅的工具箱",
-      "desc": "師傅叫你上棚幫手。佢打開工具箱，裡面每一件工具都有名，用膠紙寫住。",
-      "art": "assets/events/ev-alley-wake.jpg",
+      "desc": "棚上面，師傅打開工具箱。裡面每一件工具都有名，用膠紙寫住。佢冇叫你上嚟，但亦都冇叫你走。",
+      "art": "assets/events/ev-rooftop-night.jpg",
       "tale_node": "toolbox",
       "tale_pack": "neon_mei_wan",
       "dialogue": [
@@ -13062,6 +14604,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "補燈師傅",
           "text": "（佢見到你望）唔使睇。舊嘢。"
+        },
+        {
+          "speaker": "補燈師傅",
+          "text": "呢張相，係我師傅同我。"
+        },
+        {
+          "speaker": "補燈師傅",
+          "text": "佢教我唔好用死力。燈管會斷。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你把相放返工具箱最底）"
         }
       ],
       "tale_cast": [
@@ -13103,7 +14657,7 @@ window.HK_SLICE_DATA = {
           "bond_note": "補燈師傅 · 你問到佢心裡話"
         },
         {
-          "text": "唔問，繼續幫手",
+          "text": "唔問，靜靜企喺旁邊睇",
           "delta": {
             "care": 2
           },
@@ -13113,7 +14667,8 @@ window.HK_SLICE_DATA = {
           "outcome": "你哋補咗兩個鐘。冇人講嘢。",
           "bond_note": "補燈師傅 · 你識做"
         }
-      ]
+      ],
+      "tale_scene": "棚上工具箱"
     },
     {
       "type": "主線",
@@ -13129,7 +14684,7 @@ window.HK_SLICE_DATA = {
       "pack": "neon_mei_wan",
       "id": "EV_NMW_03B",
       "name": "招牌漆的帳簿",
-      "desc": "招牌漆帶你入佢嘅寫字檔。牆上掛住幾十張草圖，每一張都係一條街嘅招牌。",
+      "desc": "招牌漆嘅寫字檔。牆上掛住幾十張草圖，每一張都係一條街嘅招牌。佢企喺門口，冇話畀你入，亦都冇關門。",
       "art": "assets/events/ev-yum-cha.jpg",
       "tale_node": "ledger",
       "tale_pack": "neon_mei_wan",
@@ -13157,6 +14712,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（你翻到最後一頁，係空白）"
+        },
+        {
+          "speaker": "招牌漆",
+          "text": "你知唔知點解招牌要寫得咁大？"
+        },
+        {
+          "speaker": "招牌漆",
+          "text": "因為條街好長，人要喺對面都認得。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住最後一頁空白，好耐）"
         }
       ],
       "tale_cast": [
@@ -13207,7 +14774,8 @@ window.HK_SLICE_DATA = {
           "outcome": "你行到門口，招牌漆講：「喂。多謝你睇完。」",
           "bond_note": "招牌漆 · 你尊重佢嘅一生"
         }
-      ]
+      ],
+      "tale_scene": "招牌漆的寫字檔"
     },
     {
       "type": "主線",
@@ -13247,6 +14815,18 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（你望住張紙，上面嘅字好細）"
+        },
+        {
+          "speaker": "拆遷隊",
+          "text": "我以前都寫過字。寫得唔靚。"
+        },
+        {
+          "speaker": "拆遷隊",
+          "text": "所以我去拆。拆嘢唔使靚。"
+        },
+        {
+          "speaker": "你",
+          "text": "（張紙上面嘅日期，係下個月）"
         }
       ],
       "tale_cast": [
@@ -13299,7 +14879,8 @@ window.HK_SLICE_DATA = {
           "outcome": "拆遷隊望住碎紙。「你以為撕咗就冇事？」",
           "bond_note": "拆遷隊 · 你同佢反面"
         }
-      ]
+      ],
+      "tale_scene": "街口圍板"
     }
   ],
   "locale": {
@@ -17237,4 +18818,5 @@ window.HK_SLICE_DATA = {
       "favor_max": 5
     }
   ]
-};
+}
+;
