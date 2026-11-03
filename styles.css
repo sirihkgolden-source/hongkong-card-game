@@ -10506,3 +10506,152 @@ html, body {
   min-height: 0 !important;
   margin: 2px 0 4px;
 }
+
+/* ===================================================================
+   t406：office_ballad 四拍敘事
+   intro（進場短敘） → dialogue（分頁對白） → choose（選擇） → outcome（專屬後果）
+   =================================================================== */
+
+/* 進場短敘 */
+.of-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 2px;
+}
+.of-intro-art {
+  width: 100%;
+  max-height: 34vh;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid #0a0610;
+}
+.of-intro-name {
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--neon-gold, #ffcc6a);
+  letter-spacing: 0.04em;
+}
+.of-intro-desc {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.62;
+  color: #efe6f8;
+}
+
+/* 分頁對白 */
+.of-dialogue-paged {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(26, 16, 40, 0.72);
+  border: 1.5px solid #2a1c36;
+  min-height: 92px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.of-dialogue-paged .dlg-line {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+.of-dialogue-foot {
+  margin-top: auto;
+  text-align: right;
+}
+.of-page-no {
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: rgba(233, 220, 255, 0.5);
+  letter-spacing: 0.06em;
+}
+
+/* 專屬後果 */
+.of-outcome {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 2px solid rgba(61, 255, 240, 0.45);
+  background:
+    linear-gradient(180deg, rgba(61, 255, 240, 0.1), rgba(10, 6, 18, 0.6));
+  animation: ofOutcomeIn 0.42s cubic-bezier(0.22, 0.9, 0.3, 1) both;
+}
+@keyframes ofOutcomeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+.of-outcome-kicker {
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: var(--neon-cyan, #3dfff0);
+  margin-bottom: 4px;
+}
+.of-outcome-choice {
+  margin: 0 0 8px;
+  font-size: 0.86rem;
+  font-weight: 900;
+  line-height: 1.4;
+  color: #fff;
+}
+.of-outcome-body {
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: #efe6f8;
+  white-space: pre-wrap;
+}
+
+/* CTA 掣（分階段） */
+.of-cta-main {
+  width: 100%;
+  margin: 0 0 4px;
+}
+
+/* 詳情頁未解鎖提示 */
+.of-locked-note {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  margin: 4px 0 8px;
+  border-radius: 10px;
+  border: 1.5px dashed rgba(255, 200, 106, 0.4);
+  background: rgba(255, 200, 106, 0.06);
+  font-size: 0.74rem;
+  line-height: 1.55;
+  color: rgba(255, 233, 184, 0.82);
+}
+.of-locked-ico { font-size: 1rem; line-height: 1.2; }
+
+/* 結局卡：全屏停住 */
+.of-ending-scroll { padding-bottom: 6px; }
+.of-ending-voice {
+  margin: 8px 4px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border-left: 3px solid var(--neon-pink, #ff2d95);
+  background: rgba(255, 45, 149, 0.08);
+}
+.of-ending-who {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: var(--neon-pink, #ff2d95);
+  margin-bottom: 3px;
+}
+.of-ending-voice p {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: #efe6f8;
+}
+.of-ending-ok {
+  width: 100%;
+  margin: 0 0 4px;
+}
+
+@media (orientation: landscape) and (max-width: 1024px) {
+  .of-intro-art { max-height: 26vh; }
+  .of-outcome-body { font-size: 0.76rem; line-height: 1.55; }
+  .of-dialogue-paged { min-height: 70px; }
+}

@@ -590,14 +590,32 @@
       text: pick.text || "",
       // t384：記住職種（第 1 步的選擇），之後每一步都按佢揀變體
       track: pick.track || null,
+      // t406：記住該選擇的專屬後果，供回顧時顯示
+      outcome: String(pick.outcome || "").trim(),
     });
-    // 揭示文案：只講「你揀了什麼」，唔講分數／加減
+    /*
+     * t406：選後揭示改為「專屬後果文」。
+     *
+     * 舊行為：粉紅一句「你行近咗「穩打穩紮」呢條路」——抽象、同具體選擇無關，
+     * 而且玩家唔知實際發生咩事。
+     *
+     * 新行為：用 `pick.outcome`（每個選擇專屬寫好，2–4 句），
+     * 講角色／金錢／處境的具體變化。唔再顯示抽象路線。
+     */
     run.reveal = {
       nodeName: node.name || "",
       choiceText: pick.text || "",
-      // 隱藏增益減益：選完才出現，且只顯示「傾向」而非數字
-      hint: officeChoiceHint(delta),
+      outcome: String(pick.outcome || "").trim(),
+      step: run.step | 0,
     };
+    /*
+     * t406：四拍流程的階段。
+     *   "intro"   進場短敘（desc）
+     *   "dialogue" 對白逐句
+     *   "choose"   選擇
+     *   "outcome"  專屬後果文（選後，唔可以即刻跳下一節）
+     */
+    run.phase = "outcome";
     return run.reveal;
   }
 
@@ -4574,29 +4592,56 @@
          <p class="of-chain-note">每一步 2–3 個選擇。人物對你嘅態度會隨選擇改變——同一段對白，唔同關係會有唔同講法。行到最後，關係決定結局。</p>`
       : "";
 
-    // 分支包：結局一覽（已達成會打勾）
+    /*
+     * t406：詳情頁唔再劇透。
+     *
+     * 舊版一次列出 26 段 beats + 5 個結局全文 + 全部對白，
+     * 玩家未玩就知晒結局。總導演：「只留 blurb + 角色名片；
+     * 場面 beats／結局全文收起，通關或步數後先解鎖回想。」
+     *
+     * 解鎖條件：完成任意一個結局（lifeFlags 有 office_ending_*）。
+     */
+    const officeCleared = (() => {
+      if (!isOfficeChain) return false;
+      const flags = state.lifeFlags || {};
+      return Object.keys(flags).some((k) => k.indexOf("office_ending_") === 0 && flags[k]);
+    })();
+
+    // 分支包：結局一覽（未通關只顯示數量與提示，唔顯示 label／blurb）
     const endingsHtml = isOfficeChain && Array.isArray(pack.office_endings)
-      ? `<div class="pack-ev-title">五個結局（行到最後才會知道）</div>
-         <div class="of-ending-list">${pack.office_endings.map((e) => {
-           const done = !!(state.lifeFlags && state.lifeFlags["office_ending_" + e.id]);
-           return `<div class="of-ending-item${done ? " done" : ""}">
-             <span class="of-ending-mark">${done ? "✓" : "○"}</span>
-             <div class="of-ending-body">
-               <div class="of-ending-title">${esc(e.label)}</div>
-               <p class="of-ending-blurb">${esc(e.blurb)}</p>
+      ? (officeCleared
+          ? `<div class="pack-ev-title">五個結局（已完成 ${pack.office_endings.filter((e) => !!(state.lifeFlags && state.lifeFlags["office_ending_" + e.id])).length} / ${pack.office_endings.length}）</div>
+             <div class="of-ending-list">${pack.office_endings.map((e) => {
+               const done = !!(state.lifeFlags && state.lifeFlags["office_ending_" + e.id]);
+               return `<div class="of-ending-item${done ? " done" : ""}">
+                 <span class="of-ending-mark">${done ? "✓" : "○"}</span>
+                 <div class="of-ending-body">
+                   <div class="of-ending-title">${esc(e.label)}</div>
+                   <p class="of-ending-blurb">${esc(e.blurb)}</p>
+                 </div>
+               </div>`;
+             }).join("")}</div>
+             <div class="pack-ev-title">十步分支</div>
+             <p class="of-chain-note">每一步三個選擇，後果喺選擇之後才揭示。共 10 幕，行到最後才見結局。本包不設中途獎賞、不設升級。</p>`
+          : `<div class="pack-ev-title">${pack.office_endings.length} 個結局</div>
+             <div class="of-locked-note" role="status">
+               <span class="of-locked-ico">🔒</span>
+               <span>結局一覽同場面回想，行完一次之後才會解鎖。<br/>首次遊玩時完全唔會劇透。</span>
              </div>
-           </div>`;
-         }).join("")}</div>
-         <div class="pack-ev-title">十步分支</div>
-         <p class="of-chain-note">每一步三個選擇，後果隱藏至選擇之後才揭示。共 10 步，行到最後才見結局。本包不設中途獎賞、不設升級。</p>`
+             <div class="pack-ev-title">十步分支</div>
+             <p class="of-chain-note">每一步三個選擇，後果喺選擇之後才揭示。共 10 幕，行到最後才見結局。本包不設中途獎賞、不設升級。</p>`)
       : "";
-    const beatHtml = Array.isArray(pack.beats) && pack.beats.length
-      ? `<div class="pack-ev-title">場面</div><div class="pack-beats">${pack.beats.map((b) => `<p class="pack-beat">${esc(b)}</p>`).join("")}</div>`
+    /* t406：beats 只喺通關後顯示（原本一次列出全部場面＝劇透） */
+    const beatHtml = (Array.isArray(pack.beats) && pack.beats.length && (!isOfficeChain || officeCleared))
+      ? `<div class="pack-ev-title">場面回想</div><div class="pack-beats">${pack.beats.map((b) => `<p class="pack-beat">${esc(b)}</p>`).join("")}</div>`
       : "";
-    const dlgHtml = (DATA.events || [])
-      .filter((e) => (boost.has(e.id) || (pack.event_ids || []).includes(e.id)) && Array.isArray(e.dialogue) && e.dialogue.length)
-      .map((e) => `<div class="pack-ev-title">對白</div>${eventDialogueHtml(e, "pack-dialogue")}`)
-      .join("");
+    /* t406：對白亦只喺通關後顯示 */
+    const dlgHtml = (isOfficeChain && !officeCleared)
+      ? ""
+      : (DATA.events || [])
+        .filter((e) => (boost.has(e.id) || (pack.event_ids || []).includes(e.id)) && Array.isArray(e.dialogue) && e.dialogue.length)
+        .map((e) => `<div class="pack-ev-title">對白</div>${eventDialogueHtml(e, "pack-dialogue")}`)
+        .join("");
     const active = state.activeStoryPackId === pack.id;
     root.innerHTML = `
       <div class="hud">
@@ -5146,9 +5191,53 @@
     }
   }
 
-  /* ---------- t364：故事包分支畫面「打工仔輓歌」 ---------- */
+  /* ---------- t364／t406：故事包分支畫面「打工仔輓歌」 ---------- */
 
-  /** 分支節點畫面：卡面只顯示兩個「未知後果」；選完才揭示傾向 */
+  /**
+   * t406：四拍敘事（總導演要求）
+   *
+   *   進場短敘（desc） → 對白（可逐句／分頁） → 選擇 → 專屬後果文 → 下一幕
+   *
+   * 舊版係「三選一選單 → 即刻跳下一步」，選後只有一句抽象路線提示，
+   * 玩家睇唔到場面後果。現在每步都分階段顯示，`run.phase` 控制。
+   *
+   * 時間軸：改用「第 N 幕」，唔再每步 +1 歲（原本 18→27 歲同正文對唔上）。
+   */
+  const OFFICE_TOTAL_ACTS = 10;
+
+  function officeActOf(run) {
+    const r = run || state.officeRun;
+    if (!r) return 1;
+    return Math.max(1, Math.min(OFFICE_TOTAL_ACTS, r.step | 0));
+  }
+
+  /** 分頁顯示對白：每頁 2 句（避免一次倒出成牆字） */
+  function officeDialoguePages(node) {
+    const lines = (node && Array.isArray(node.dialogue)) ? node.dialogue.filter((x) => x && String(x.text || "").trim()) : [];
+    const per = 2;
+    const pages = [];
+    for (let i = 0; i < lines.length; i += per) pages.push(lines.slice(i, i + per));
+    return pages;
+  }
+
+  /** 對白區（當前頁） */
+  function officeDialoguePageHtml(node, page) {
+    const pages = officeDialoguePages(node);
+    if (!pages.length) return "";
+    const p = Math.max(0, Math.min(pages.length - 1, page | 0));
+    const lines = pages[p];
+    const rows = lines.map((d) => {
+      const who = d.speaker || d.who || "";
+      const text = d.text || d.line || "";
+      const whoHtml = who ? `<b class="dlg-who">${esc(who)}</b>：` : "";
+      return `<p class="dlg-line">${whoHtml}${esc(text)}</p>`;
+    }).join("");
+    return `<div class="of-dialogue of-dialogue-paged" data-page="${p}" data-total="${pages.length}">
+      ${rows}
+      <div class="of-dialogue-foot"><span class="of-page-no">${p + 1} / ${pages.length}</span></div>
+    </div>`;
+  }
+
   function viewOffice(root) {
     const run = state.officeRun;
     const node = run ? officeNodeView(officeNodeById(run.nodeId), run) : officeStartNode();
@@ -5166,62 +5255,131 @@
     const pack = officePack();
     const totalSteps = Math.max(1, ((pack && pack.office_chain) || []).length);
     const stepNo = Math.min(totalSteps, Math.max(1, run.step | 0));
+    const actNo = officeActOf(run);
     const choices = Array.isArray(node.office_choices) ? node.office_choices : [];
-    const reveal = run.reveal;
+    const pages = officeDialoguePages(node);
+    const page = Math.max(0, Math.min(Math.max(0, pages.length - 1), run.dlgPage | 0));
 
-    // 已揭示上一步：只在同一節點第一次進入時顯示，選完之後清空
-    const revealHtml = reveal
-      ? `<div class="of-reveal" role="status">
-           <div class="of-reveal-label">上一步（${esc(reveal.nodeName)}）</div>
-           <p class="of-reveal-choice">「${esc(reveal.choiceText)}」</p>
-           <p class="of-reveal-hint">${esc(reveal.hint)}</p>
+    /* 階段：intro → dialogue → choose → outcome */
+    let phase = run.phase || "intro";
+    if (phase === "dialogue" && !pages.length) phase = "choose";
+    if (phase === "outcome" && !(run.reveal && run.reveal.outcome)) phase = "choose";
+    run.phase = phase;
+
+    const reveal = (phase === "outcome") ? run.reveal : null;
+
+    /* HUD：主線用「第 N 幕」，唔再顯示歲數（避免同正文對唔上） */
+    const hudLeft = `${esc(pack ? pack.name : "故事包")} · 第 ${actNo} 幕 / ${totalSteps}`;
+
+    /* 進場短敘（desc）— intro 階段只顯示這一段 */
+    const introHtml = phase === "intro"
+      ? `<div class="of-intro">
+           <img class="of-node-art of-intro-art" src="${esc(node.art || "")}" alt="" />
+           <div class="of-intro-name">${esc(node.name)}</div>
+           <p class="of-intro-desc">${esc(node.desc || "")}</p>
          </div>`
       : "";
 
-    // 選擇卡：全部標「未知」，唔預先透露加減（符合「選完才顯示」）
-    const choiceHtml = choices.map((c, i) => {
+    /* 對白階段 */
+    const dialogueHtml = phase === "dialogue" ? officeDialoguePageHtml(node, page) : "";
+
+    /* 選擇卡：唔預先透露結果 */
+    const choiceHtml = phase === "choose" ? choices.map((c, i) => {
       const label = String.fromCharCode(65 + i);
       return `<button type="button" class="of-choice" data-choice="${i}" aria-label="選項${label}：${esc(c.text)}">
         <span class="of-choice-tag">選項 ${label}</span>
         <span class="of-choice-text">${esc(c.text)}</span>
         <span class="of-choice-unknown">後果未知 · 選後揭曉</span>
       </button>`;
-    }).join("");
+    }).join("") : "";
 
-    // 歷程（只顯示做過什麼，唔顯示分數）
+    /* 專屬後果（選後 2–4 句，講角色／金錢／處境） */
+    const outcomeHtml = reveal
+      ? `<div class="of-outcome" role="status" data-step="${esc(String(reveal.step || stepNo))}">
+           <div class="of-outcome-kicker">第 ${esc(String(reveal.step || stepNo))} 幕・你揀了</div>
+           <p class="of-outcome-choice">「${esc(reveal.choiceText)}」</p>
+           <div class="of-outcome-body">${esc(reveal.outcome)}</div>
+         </div>`
+      : "";
+
+    /* 主要 CTA（按階段不同） */
+    let cta = "";
+    if (phase === "intro") {
+      cta = `<button class="btn gold of-cta-main" id="of-next" type="button">${pages.length ? "繼續" : "揀"}</button>`;
+    } else if (phase === "dialogue") {
+      const last = page >= pages.length - 1;
+      cta = `<button class="btn gold of-cta-main" id="of-next" type="button">${last ? "揀" : "下一句"}</button>`;
+    } else if (phase === "choose") {
+      cta = "";  /* 選擇用卡本身 */
+    } else {
+      /* outcome：明確「繼續下一幕」，唔可以同其他地方共用點擊 */
+      const isFinal = stepNo >= totalSteps;
+      cta = `<button class="btn gold of-cta-main" id="of-next" type="button">${isFinal ? "睇結局" : `去第 ${stepNo + 1} 幕`}</button>`;
+    }
+
     const trail = (run.chosen || []).map((c, i) =>
       `<li class="of-trail-item"><span class="of-trail-step">${i + 1}</span>${esc(c.text)}</li>`
     ).join("");
 
     root.innerHTML = `
-      <div class="of-hud">${esc(pack ? pack.name : "故事包")} · ${officeAge(run)}歲 · 第 ${stepNo} / ${totalSteps} 步</div>
-      <div class="office-node">
-        ${revealHtml}
-        <div class="of-node-head">
-          <img class="of-node-art" src="${esc(node.art || "")}" alt="" />
-          <div class="of-node-copy">
-            <div class="of-node-name">${esc(node.name)}</div>
-            <p class="of-node-desc">${esc(node.desc || "")}</p>
-          </div>
-        </div>
-        ${eventDialogueHtml(node, "of-dialogue")}
-        <div class="of-choices">${choiceHtml}</div>
-        ${trail ? `<details class="of-trail"><summary>已行過嘅路（${run.chosen.length}）</summary><ol>${trail}</ol></details>` : ""}
+      <div class="of-hud">${hudLeft}</div>
+      <div class="office-node of-phase-${esc(phase)}">
+        ${introHtml}
+        ${dialogueHtml}
+        ${choiceHtml}
+        ${outcomeHtml}
+        ${trail && phase === "choose" ? `<details class="of-trail"><summary>已行過嘅路（${run.chosen.length}）</summary><ol>${trail}</ol></details>` : ""}
         <p class="of-note">此故事包不設獎賞與升級；行到最後才知道結果。</p>
       </div>
+      ${cta}
       <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
       ${storyDockHtml()}
     `;
 
+    /* 選擇 */
     root.querySelectorAll(".of-choice[data-choice]").forEach((btn) => {
       btn.onclick = () => {
+        if (run.phase !== "choose") return;
         const idx = parseInt(btn.dataset.choice, 10) | 0;
         const info = officeApplyChoice(idx);
         if (!info) return;
-        officeAdvanceAfterChoice();
+        /* t406：唔即刻跳下一步，先顯示專屬後果（outcome 階段） */
         render();
       };
     });
+
+    /* CTA（分階段推進，唔會同選擇或其他點擊衝突） */
+    const nextBtn = $("#of-next", root);
+    if (nextBtn) {
+      nextBtn.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        if (run.phase === "intro") {
+          run.phase = pages.length ? "dialogue" : "choose";
+          run.dlgPage = 0;
+          render();
+          return;
+        }
+        if (run.phase === "dialogue") {
+          if (page < pages.length - 1) {
+            run.dlgPage = page + 1;
+            render();
+          } else {
+            run.phase = "choose";
+            render();
+          }
+          return;
+        }
+        if (run.phase === "outcome") {
+          run.reveal = null;
+          run.phase = "intro";
+          run.dlgPage = 0;
+          officeAdvanceAfterChoice();
+          render();
+          return;
+        }
+      };
+    }
+
     const ab = $("#btn-abandon", root);
     if (ab) ab.onclick = () => requestAbandonLife();
     wireStoryDock(root);
@@ -7024,23 +7182,44 @@
     // t365：分支結局用「故事包 · 結局」頂條，唔顯示人生 HUD（避免 10 歲等不相干歲數）
     const endingAge = state.officeEndAge | 0;
     const packMeta = storyPackById("office_ballad");
+    /*
+     * t406：結局要「全屏停住」——結語 + 角色一句 + 獎勵 + 明確按鈕。
+     * 唔用 autoAdvanceBarHtml（點畫面即跳），改為單一確認掣。
+     */
+    const endingVoice = isEnding
+      ? (() => {
+          const cast = (packMeta && Array.isArray(packMeta.tale_cast_profiles)) ? packMeta.tale_cast_profiles : [];
+          /* 揀一個角色講最後一句；優先用「嗰個人」，否則第一個 */
+          const pick = cast.find((c) => c.id === "partner") || cast[0] || null;
+          if (!pick) return "";
+          const q = {
+            mom: "你返嚟食飯啦。今日煲咗湯。",
+            colleague: "我走咗之後，你坐我個位？（佢笑）小心啲。",
+            partner: "（望住你）我哋……仲有下一次嗎？",
+          }[pick.id] || "（佢冇再講嘢，只係望住你）";
+          return `<div class="of-ending-voice"><b class="of-ending-who">${esc(pick.name)}</b><p>${esc(q)}</p></div>`;
+        })()
+      : "";
     root.innerHTML = `
       ${isEnding
-        ? `<div class="of-hud">${esc(packMeta ? packMeta.name : "故事包")} · ${endingAge ? endingAge + "歲 · " : ""}結局</div>`
+        ? `<div class="of-hud">${esc(packMeta ? packMeta.name : "故事包")} · 結局</div>`
         : lifeHudHtml()}
       <div class="ribbon">${isEnding
         ? esc(ev.office_ending_label || ev.name || "")
         : ageRibbon(esc(ev.name))}</div>
-      <div class="soft-scroll soft-reveal">
+      <div class="soft-scroll soft-reveal${isEnding ? " of-ending-scroll" : ""}">
         ${endingBanner}
         ${softResultBarHtml(ev, gain, goldGain, isEnding, endingClaimable)}
         <img class="result-art soft-art" src="${esc(ev.art)}" alt="" />
         <div class="bubble neon">${esc(ev.desc)}</div>
         ${eventDialogueHtml(ev, "soft-dialogue")}
+        ${endingVoice}
         <div class="soft-panel">${state.softNote ? `<span style="color:var(--neon-pink);font-weight:800">${esc(state.softNote)}</span><br/>` : ""}${isEnding ? "" : esc(eventCategoryLabel(ev) || "日常") + "<br/>"}${rewardLine}</div>
       </div>
       <div class="soft-cta">
-        ${autoAdvanceBarHtml(lifeDoneFlag() ? "結算今世" : `下一歲 ${state.age + 1}歲`)}
+        ${isEnding
+          ? `<button class="btn gold of-ending-ok" id="btn-ok-ending" type="button">睇完，返回人生</button>`
+          : autoAdvanceBarHtml(lifeDoneFlag() ? "結算今世" : `下一歲 ${state.age + 1}歲`)}
         <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
       </div>
       ${storyDockHtml()}
@@ -7077,6 +7256,37 @@
      * t387：唔再需要撳「繼續」——結果浮現之後自動前進。
      * 玩家想快啲，點畫面任何位置即可（wireTapToAdvance）。
      */
+    /*
+     * t406：結局卡要全屏停住，唔可以被同一點擊食掉。
+     *
+     * 舊問題：`wireTapToAdvance(root, advance)` 令點任何空白都前進。
+     * 玩家點完最後一個選擇、手勢落在空白 → 結局卡一閃即逝，
+     * 直接跳去人生命運事件，完全冇睇到結語。
+     *
+     * 新行為（isEnding）：
+     *   1. 唔呼叫 wireTapToAdvance（點空白唔會前進）
+     *   2. 全屏結果 + 角色一句話
+     *   3. 只有明確撳「繼續」/「重玩此包」才前進，且加短暫延遲防誤觸
+     */
+    if (isEnding) {
+      /* 結局：只靠按鈕，唔接受點空白 */
+      const okBtn = $("#btn-ok-ending", root);
+      if (okBtn) {
+        /* 首 900ms 內唔接受點擊，避免最後一個選擇的手勢誤觸 */
+        let armed = false;
+        okBtn.disabled = true;
+        setTimeout(() => { armed = true; okBtn.disabled = false; }, 900);
+        okBtn.onclick = (e) => {
+          if (e) { e.preventDefault(); e.stopPropagation(); }
+          if (!armed) return;
+          settleTo(afterFateOrEventScreen());
+        };
+      }
+      const abEnd = $("#btn-abandon", root);
+      if (abEnd) abEnd.onclick = () => requestAbandonLife();
+      wireStoryDock(root);
+      return;
+    }
     let advanced = false;
     const advance = () => {
       if (advanced) return;

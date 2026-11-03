@@ -1,3 +1,101 @@
+## t406（2026-11-04 ~04:30 HKT）— office_ballad 敘事演出重構
+
+**只改敘事／UI 流程，戰鬥數值零改動。**
+
+### 一、問題（總導演回報）
+1. 流程係「三選一選單 → 跳歲 → 下一張選單」，選完**冇場面後果**
+2. HUD 歲數同正文「第 N 日／第 N 年」**對唔齊**
+3. 選包詳情**一次列出全部 beats 同五個結局**（劇透）
+4. 對白**成牆一次倒出**，且有重複句
+5. 「嗰個人」**第 7 步先出現**，前面完全冇鋪
+6. **結局卡被同一點擊食掉**，直接跳去人生命運事件
+
+### 二、六項改動
+
+**1) 每步四拍（`viewOffice()` 完全重寫）**
+`run.phase` 狀態機：`intro → dialogue → choose → outcome → 下一幕`
+| 拍 | 畫面 | CTA |
+|---|---|---|
+| intro | `.of-intro` 封面圖＋名稱＋desc | 「繼續」 |
+| dialogue | `.of-dialogue-paged`，**每頁 2 句**＋「N / M」頁碼 | 「下一句」 |
+| choose | 3 個 `.of-choice`（唔預先透露結果） | — |
+| outcome | `.of-outcome`＋`.of-outcome-body` 專屬後果 2–4 句 | 「去第 N+1 幕」 |
+
+- `officeApplyChoice()` 新增寫入 `run.reveal.outcome`、`run.reveal.step`，並設 `run.phase = "outcome"`
+- 新增 `officeDialoguePages()`（每頁 2 句）／`officeDialoguePageHtml()`
+- 所有 CTA 統一 `id="of-next"`，handler 按 `run.phase` 分流，**唔會同選擇或其他點擊衝突**
+- 移除 `officeChoiceHint()` 路線提示（後果文改講角色／金錢／處境）
+
+**2) 時間軸統一 → 改用「第 N 幕」**
+- 新增 `OFFICE_TOTAL_ACTS = 10`、`officeActOf(run)`（1–10，超出夾住）
+- HUD 改為 `第 N 幕 / 10`，**唔再顯示歲數**
+- 後果場小標題亦用「第 N 幕・你揀了」
+
+**3) 詳情頁防劇透（`viewStoryPackDetail()`）**
+```js
+const officeCleared = Object.keys(state.lifeFlags || {})
+  .some((k) => k.indexOf("office_ending_") === 0 && flags[k]);
+```
+- 未通關：只顯示 blurb、角色名片、「5 個結局」＋ `.of-locked-note`（🔒 行完一次解鎖）
+- 未通關時 `beatHtml` 與 `dlgHtml` 一律回空字串
+- 通關後才顯示結局 label／blurb、`pack.beats`、全部對白
+
+**4) 30 個選擇全部加 `outcome`（專屬後果文）**
+- 每句 ≥20 字，同步驟三個選項**互不相同**
+- `data.json` / `data.js` 同步，並套用到 `track_variants`（第 2–6 幕職種變體）
+- 內容一律講**角色／金錢／處境**，例如：
+  - 「你入咗寫字樓做信差。第一日著住件唔合身嘅白恤衫，電梯鐵閘夾到手指…」
+  - 「你簽約，縮細規模。交咗一個伙記走，佢走嗰日冇講嘢，只係擺低條圍裙。」
+- 掃描全 126 事件：**對白零重複**
+
+**5)「嗰個人」提前登場（31 處）**
+- 第 5 幕 `EV_OF_05`：加 3 句對白（等最後一班車相遇）＋ `tale_cast` 加 `partner`
+- 第 6 幕 `EV_OF_06`：加 3 句對白（一齊睇租約）＋ `tale_cast` 加 `partner`
+- 每個 `track_variants` 同步加 → **居屋節（第 7 幕）之前已登場**
+
+**6) 結局卡全屏停住（`viewSoft()`）**
+- `ev.office_ending` 有值時**唔再呼叫 `wireTapToAdvance`** → 點空白唔會前進
+- 獨立確認掣 `id="btn-ok-ending"`「睇完，返回人生」
+- **900ms 防誤觸**：`okBtn.disabled = true` → `setTimeout(..., 900)` 後才啟用
+- 新增 `.of-ending-voice` 角色一句：
+  - `mom`：「你返嚟食飯啦。今日煲咗湯。」
+  - `colleague`：「我走咗之後，你坐我個位？（佢笑）小心啲。」
+  - `partner`：「（望住你）我哋……仲有下一次嗎？」
+- 非結局 soft 頁維持原 `wireTapToAdvance`
+
+### 三、`styles.css` 新增
+`.of-intro` / `.of-intro-art` / `.of-intro-name` / `.of-intro-desc` /
+`.of-dialogue-paged` / `.of-dialogue-foot` / `.of-page-no` /
+`.of-outcome` / `@keyframes ofOutcomeIn` / `.of-outcome-kicker` / `.of-outcome-choice` / `.of-outcome-body` /
+`.of-cta-main` / `.of-locked-note` / `.of-locked-ico` /
+`.of-ending-scroll` / `.of-ending-voice` / `.of-ending-who` / `.of-ending-ok` + landscape 微調
+
+### 四、測試
+- **新增 `_selftest_t406.js`：46 項全過**
+- **`_selftest_t373.js` 更新：91 項全過**（原本斷言假設一次顯示全部，已改為分階段驗證）
+- **全套 51 個 `_selftest_*.js` 全過**
+
+**瀏覽器實測（`_t406_test.html`，真實 `app.js`）**
+- ✅ 第 1 拍：HUD「第 1 幕 / 10」、進場短敘、只有「繼續」、冇選擇
+- ✅ 第 2 拍：分頁對白「1 / 5」、每頁 2 句、「下一句」
+- ✅ 第 3 拍：3 個選擇
+- ✅ 第 4 拍：專屬後果文
+- ✅ **走完 10 幕**：幕數 1→10 與 HUD 完全一致、每幕都有 outcome、10 句後果互不相同
+- ✅ 結局卡：`.of-ending-scroll` + 角色一句 + 獨立確認掣，無 auto-advance bar
+- ✅ 詳情頁未通關：無任何結局名稱、有 🔒 提示、無 beats、無對白（1,669 字元）
+  → 通關後解鎖（14,149 字元，含結局名）
+
+### 五、備份
+`app.js.bak-t406` / `data.json.bak-t406` / `data.js.bak-t406` / `styles.css.bak-t406`
+
+### 六、瀏覽器自動化註記
+Cursor 內建瀏覽器（`cursor-ide-browser`）的此分頁**攔截了 `click` 事件**：
+連一個冇 `app.js` 的空白頁、普通 `<button>` 都收不到 `click`（`pointerdown`/`mousedown` 有到，
+`click` 在 document capture 後被 isolated world 吞掉）。
+**已用 `onclick()` 直接呼叫 + 截圖完成驗證**，非 `app.js` 問題。
+
+---
+
 ## t405（2026-11-04 ~03:30 HKT）
 - **⚠️ 一次嚴重的改動遺失 + 完整修復**
 
