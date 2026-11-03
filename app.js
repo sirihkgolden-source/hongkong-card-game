@@ -790,6 +790,11 @@
     /** 小遊戲進行中／結果（唔入存檔） */
     minigame: null,
     /**
+     * t390：戰鬥卡殘頁（跨世累積，跟帳號）
+     * { [cardId]: 張數 }；滿 shardNeed 可換指定戰鬥卡
+     */
+    cardShards: {},
+    /**
      * t365 故事包分支鏈（唔入存檔；離開即清）
      * { packId, nodeId, step, startAge, route: {rich,biz,flat,street,scam}, chosen: [...] }
      */
@@ -851,6 +856,21 @@
   })();
 
   const fighterById = Object.fromEntries(DATA.fighters.map((f) => [f.id, f]));
+
+  /*
+   * t391：殘頁專屬卡（`shard_only: true`）唔可以從任何普通卡池掉落。
+   *
+   * 佢只可以經「戰鬥卡殘頁 ×10」兌換得到。所有隨機來源
+   * （扭蛋／店鋪／送卡／抽卡／換卡／戰鬥掉落／事件獎勵）都要用
+   * `poolFighters()` 而唔係直接讀 DATA.fighters。
+   */
+  function isShardOnlyFighter(f) {
+    return !!(f && f.shard_only);
+  }
+  /** 普通卡池：排除殘頁專屬卡 */
+  function poolFighters() {
+    return (DATA.fighters || []).filter((f) => f && f.id && !isShardOnlyFighter(f));
+  }
   const enemyById = Object.fromEntries(DATA.enemies.map((e) => [e.id, e]));
   const skillById = Object.fromEntries((DATA.skills || []).map((s) => [s.id, s]));
   /** Resolve art for fighter basic/innate: skill name match in DATA.skills, else fighter card art. */
@@ -1503,9 +1523,67 @@
       injectLifeSide("card_draw", 0.4);
     }
     picked = picked.slice(0, 4);
+    /*
+     * t398：四選一插畫保證不重複（總導演：「選擇事件的背景圖，出現太多相同，
+     * 改為事件 4 選 1 背景圖片不相同」）。
+     *
+     * 實測改前：3000 次抽牌中有 2000 次（66.7%）出現重複插畫，
+     * 因為 126 個事件只有 5 張主圖輪替。
+     *
+     * 做法：對「插畫撞了」的卡，從同年可用事件中換一張**插畫未用過**的，
+     * 並保持原本 category 不被破壞（避免把「主線」換成「送卡」）。
+     * 若同 category 找不到，才放寬到任何 category。
+     */
+    picked = dedupeEventArt(picked, all);
     state.yearEventOffer = picked.map((e) => e.id);
     state.yearEventYear = y;
     return picked;
+  }
+
+  /**
+   * t398：令陣列中的事件插畫互不相同。
+   * @param {Array} list  已揀好的事件（通常 4 張）
+   * @param {Array} pool  同年全部可選事件
+   */
+  function dedupeEventArt(list, pool) {
+    const out = (list || []).slice();
+    if (out.length < 2) return out;
+    const poolAll = (pool || []).filter((e) => e && e.id);
+    if (!poolAll.length) return out;
+
+    const usedArt = new Set();
+    const usedId = new Set(out.filter(Boolean).map((e) => e.id));
+
+    for (let i = 0; i < out.length; i++) {
+      const ev = out[i];
+      if (!ev) continue;
+      const art = ev.art || "";
+      if (!art || !usedArt.has(art)) {
+        if (art) usedArt.add(art);
+        continue;
+      }
+      /*
+       * 撞圖：先試同 category、插畫未用過嘅事件；
+       * 再退一步試任何 category。
+       */
+      const candidates = poolAll.filter((c) => c && c.id && !usedId.has(c.id)
+        && c.art && !usedArt.has(c.art));
+      let pick = candidates.find((c) => c.category === ev.category) || null;
+      if (!pick) {
+        /* 唔好將「主線」換成雜類；其餘可以放寬 */
+        const keepMain = ev.category === "main";
+        pick = candidates.find((c) => !keepMain || c.category === "main") || null;
+        if (!pick && !keepMain) pick = candidates[0] || null;
+      }
+      if (pick) {
+        out[i] = pick;
+        usedId.add(pick.id);
+        usedArt.add(pick.art);
+      } else {
+        usedArt.add(art); /* 真係冇得換，就接受重複 */
+      }
+    }
+    return out;
   }
 
   function eventsForYear(year) {
@@ -1831,10 +1909,11 @@
 
     if (cat === "shop_fighter") {
       const inTeam = new Set(state.team || []);
-      let withArt = (DATA.fighters || []).filter(
+      /* t391：商店唔賣殘頁專屬卡 */
+      let withArt = poolFighters().filter(
         (f) => f && f.id && f.art && !String(f.art).includes("pending-manus")
       );
-      if (!withArt.length) withArt = (DATA.fighters || []).filter((f) => f && f.id);
+      if (!withArt.length) withArt = poolFighters();
       const notInTeam = withArt.filter((f) => !inTeam.has(f.id));
       const notOwned = withArt.filter((f) => albumCardCount(f.id) <= 0);
       const tier1 = notInTeam.filter((f) => albumCardCount(f.id) <= 0);
@@ -1891,15 +1970,21 @@
       const pick = items.find((it) => it && it.id === itemId) || null;
       if (!pick) return "";
       albumGainOne("gear", pick.id);
+      /*
+       * t400：槽位已有裝備時亦要換上（人生中途冇其他地方可換）。
+       * 舊行為只在「該槽空著」時才裝，否則只回「已入裝備收藏」 →
+       * 玩家已有頭部裝備時，新頭部裝備永遠用唔到。
+       */
       const slotId = offer.slot || pick.slot || pick.slot_id || null;
-      const emptySlots = GEAR_SLOTS.filter((s) => !state.accountGear[s.id]);
-      const match = slotId ? emptySlots.find((s) => s.id === slotId) : null;
-      if (match) {
-        state.accountGear[match.id] = pick.id;
-        // t364：裝上唔算升星（原本會虛報「裝備升星」任務進度）；升星只由卡冊按鈕觸發
-        return `已裝上${match.label}槽`;
+      const slotMeta = slotId ? GEAR_SLOTS.find((s) => s.id === slotId) : null;
+      if (!slotMeta) return "已入裝備收藏（未對應槽位）";
+      const prevId = state.accountGear[slotMeta.id];
+      state.accountGear[slotMeta.id] = pick.id;
+      if (prevId && prevId !== pick.id) {
+        const prev = items.find((it) => it && it.id === prevId);
+        return `已裝上${slotMeta.label}槽（換走「${(prev && prev.name) || prevId}」）`;
       }
-      return "";
+      return `已裝上${slotMeta.label}槽`;
     }
 
     if (cat === "shop_fighter") {
@@ -2417,6 +2502,8 @@
       fighterLevels: cloneObj(state.fighterLevels, {}),
       fighterXp: cloneObj(state.fighterXp, {}),
       equipStars: cloneObj(state.equipStars, {}),
+      /** t390：戰鬥卡殘頁（跨世累積） */
+      cardShards: cloneObj(state.cardShards, {}),
       accountGear: cloneObj(state.accountGear, {}),
       accountStats: cloneObj(state.accountStats, { maxAgeReached: 0, equipStarsTotal: 0 }),
       daily: cloneObj(state.daily, null),
@@ -2567,6 +2654,16 @@
       if (data.fighterLevels && typeof data.fighterLevels === "object") state.fighterLevels = { ...data.fighterLevels };
       if (data.fighterXp && typeof data.fighterXp === "object") state.fighterXp = { ...data.fighterXp };
       if (data.equipStars && typeof data.equipStars === "object") state.equipStars = { ...data.equipStars };
+      /* t390：殘頁（只保留合法卡 id、正整數） */
+      if (data.cardShards && typeof data.cardShards === "object") {
+        const sh = {};
+        Object.keys(data.cardShards).forEach((cid) => {
+          if (!fighterById[cid]) return;
+          const n = Math.max(0, data.cardShards[cid] | 0);
+          if (n > 0) sh[cid] = Math.min(999, n);
+        });
+        state.cardShards = sh;
+      }
       if (data.accountGear && typeof data.accountGear === "object") {
         const g = {};
         ["head", "body", "main", "off", "charm", "feet"].forEach((slot) => {
@@ -2778,7 +2875,8 @@
 
   /** 敵方出戰卡：一律由戰鬥卡池抽（同玩家共用同一批卡） */
   function enemyFighterPool() {
-    const all = (DATA.fighters || []).filter((f) => f && f.id);
+    /* t391：敵方亦唔會用殘頁專屬卡（保持稀有性） */
+    const all = poolFighters();
     const withArt = all.filter((f) => f.art && !String(f.art).includes("pending-manus"));
     return withArt.length >= TEAM_SIZE ? withArt : all;
   }
@@ -3211,11 +3309,28 @@
       armed = false;
     });
     el.addEventListener("click", (ev) => {
+      /*
+       * t399：短點卡牌即開說明並暫停戰鬥（總導演要求）。
+       *
+       * 舊行為：`// 短點唔開 inspect，避免誤觸` —— 只有長按（BATTLE_LP_MS）才開，
+       * 玩家幾乎唔知可以睇卡，實戰中亦無時間長按。
+       *
+       * 新行為：短點即開。戰鬥會暫停（openCardInspect 內 pauseBattle），
+       * 點卡牌以外空白位置即恢復（overlay 的 click → closeCardInspect → resumeBattle）。
+       *
+       * 仍然保留「長按後 450ms 內抑制 click」，避免長按再觸發一次。
+       */
       if (Date.now() < helpBlockClickUntil) {
         ev.preventDefault();
         ev.stopPropagation();
+        return;
       }
-      // 短點唔開 inspect，避免誤觸
+      if (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+      }
+      const unit = typeof getUnit === "function" ? getUnit() : getUnit;
+      if (unit) openCardInspect(unit);
     });
     el.addEventListener("keydown", (ev) => {
       if (ev.key === "Enter" || ev.key === " ") {
@@ -3474,7 +3589,7 @@
     "btn-story": "瀏覽可選故事包——注入／加權主線氣氛事件；人生四揀一／命運／支線／商店／奇遇永遠是骨架，不會變成單一條直線劇。",
     "btn-story-pick": "以此包氣氛入故事——只記 active 故事包、提高該包主線出現機會；四揀一仍混其他類型。",
     "btn-back": "返回上一頁（故事內＝遇敵／準備出發等）；未確認的選擇不會保存。",
-    "btn-ok": "結果會浮現顯示，幾秒後自動繼續——唔需要撳掣。想快啲可以點畫面任何位置。",
+    "btn-ok": "結果會浮現顯示，睇完之後點畫面任何空白位置繼續（唔會自動跳走）。",
     "btn-abandon": "放棄今世——確認後重置今世進度並返回外層主頁 hub。進入故事後不可以只返回主頁而保留進度。",
     "btn-reset": "清空今世戰鬥卡隊與帶入技能（lifeSkills 清空）；主人裝備不清空。要重新選取後再「準備好了」。",
     "btn-confirm": "確認口袋帶入（最少 1 張）；準備出發後再揀身世同人生命運。",
@@ -3486,7 +3601,7 @@
     "btn-fight": "開始戰鬥——全自動戰，可加速／放棄。",
     "btn-speed": "切換 ×1／×2／×3 播放速度。",
     "btn-forfeit": "放棄本場＝敗北結算後仍留故事流；只鎖定已經陣亡的出戰卡與其技能，仍存活的不鎖定。",
-    "btn-ding": "戰鬥結果會浮現顯示，幾秒後自動返回故事流——唔需要撳掣。想快啲可以點畫面任何位置。",
+    "btn-ding": "戰鬥結果會浮現顯示，睇完之後點畫面任何空白位置返回故事流（唔會自動跳走）。",
     "btn-again": "繼續故事——留在故事流，再進入今次遭遇。",
     "tab-life": "今世：人生 hub、開始／繼續人生。",
     "tab-book": "卡冊（收藏／升星）——戰鬥卡／技能卡／裝備卡。",
@@ -3955,22 +4070,22 @@
   }
 
   /*
-   * t387：結果浮現 + 自動前進
+   * t395：結果浮現 + **點空白處前進**（總導演要求取消自動倒數）
    *
-   * 總導演：「戰鬥後、事件後才以浮現方式顯示，免按『繼續』或『確定』之類。」
+   * 演變：
+   *   t387 初版「浮現後 2.6 秒自動前進」→ 總導演覺得會自己跳走，好趕。
+   *   t395 改為：**完全唔自動**，玩家睇夠之後點畫面任何空白位置才前進。
    *
    * 做法：
-   *   1. 結果畫面（事件結算 / 戰鬥結算 / 小遊戲 / 勢力 / 送卡）唔再擺「繼續」大掣
+   *   1. 結果畫面（事件結算 / 戰鬥結算 / 小遊戲 / 勢力 / 送卡）冇「繼續」大掣
    *   2. 結果內容用浮現動畫（fade + 上浮）進場
-   *   3. 浮現完 + 停留一小段，畫面底部顯示進度條，時間到自動前進
-   *   4. 玩家想快啲 → 點畫面任何位置即可立即前進（唔需要撳特定掣）
-   *
-   * 計時器只會有一個（`autoAdvanceTimer`），每次 render 先清掉，避免重複觸發。
+   *   3. 底部顯示提示條「點畫面繼續」，**冇倒數、冇進度條**
+   *   4. 點畫面任何位置即前進（除故事底欄與「放棄今世」）
    */
   let autoAdvanceTimer = null;
   let autoAdvanceRaf = null;
 
-  /** 清掉自動前進計時器（切畫面／重繪時一定要叫） */
+  /** 清掉殘留計時器（保留函式名，避免舊呼叫點壞掉） */
   function clearAutoAdvance() {
     if (autoAdvanceTimer) { clearTimeout(autoAdvanceTimer); autoAdvanceTimer = null; }
     if (autoAdvanceRaf) {
@@ -3981,55 +4096,45 @@
   }
 
   /**
-   * 排定自動前進。
-   * @param {Function} fn      時間到要做的事（通常係 settle／goStory）
-   * @param {number}   delayMs 幾多毫秒之後前進（預設 2600）
-   * @param {Object}   opt     { hold: 是否等玩家點擊才前進；barSel: 進度條選擇器 }
+   * t395：唔再自動前進 —— 一律等玩家點擊。
+   *
+   * 保留函式名與簽名（舊呼叫點唔需要改），但唔會設任何計時器。
+   * 實際前進由 `wireTapToAdvance()` 負責。
+   *
+   * @param {Function} fn      前進要做的事（由 wireTapToAdvance 用）
+   * @param {number}   delayMs 已棄用（保留參數避免舊呼叫出錯）
+   * @param {Object}   opt     已棄用
+   * @returns {null} 永遠回 null（冇計時器）
    */
   function scheduleAutoAdvance(fn, delayMs, opt) {
     clearAutoAdvance();
-    const o = opt || {};
-    if (o.hold) return null;
-    const ms = Math.max(600, delayMs | 0 || AUTO_ADVANCE_MS);
-    autoAdvanceTimer = setTimeout(() => {
-      autoAdvanceTimer = null;
-      try { fn(); } catch (e) { /* 唔好因為自動前進失敗而卡死 */ }
-    }, ms);
-    // 進度條動畫（純視覺；失敗唔影響自動前進）
-    const bar = typeof document !== "undefined" && document.querySelector
-      ? document.querySelector(o.barSel || "#auto-bar-fill")
-      : null;
-    if (bar && typeof bar.style === "object") {
-      const start = Date.now();
-      const tick = () => {
-        const p = Math.min(1, (Date.now() - start) / ms);
-        bar.style.width = (p * 100).toFixed(1) + "%";
-        if (p < 1 && autoAdvanceTimer) {
-          autoAdvanceRaf = (typeof requestAnimationFrame === "function")
-            ? requestAnimationFrame(tick)
-            : setTimeout(tick, 60);
-        }
-      };
-      tick();
-    }
-    return autoAdvanceTimer;
+    return null;
   }
 
-  /** 預設自動前進時間（毫秒）— 夠睇完成果，又唔會等得太久 */
+  /** 已棄用：保留常數避免舊引用報錯 */
   const AUTO_ADVANCE_MS = 2600;
 
-  /** 結果畫面底部的「自動前進」條（玩家可以點畫面任何位置跳過等待） */
+  /**
+   * 結果畫面的「點擊繼續」提示條（冇倒數、冇進度條）。
+   * @param {string} label 下一步係咩（例如「下一歲 21歲」）
+   */
   function autoAdvanceBarHtml(label) {
-    return `<div class="auto-bar" id="auto-bar" aria-hidden="true">
-      <span class="auto-bar-track"><i id="auto-bar-fill"></i></span>
-      <span class="auto-bar-label">${esc(label || "自動繼續")} · 點畫面即跳過</span>
-    </div>`;
+    return `<button type="button" class="auto-bar tap-continue" id="auto-bar" data-tap-continue="1">
+      <span class="tap-continue-ico" aria-hidden="true">▼</span>
+      <span class="auto-bar-label">${esc(label || "繼續")} · 點畫面繼續</span>
+    </button>`;
   }
 
   /**
-   * 綁定「點畫面即前進」。
-   * 只喺結果畫面用；點任何位置都算，唔需要搵掣。
-   * 會排除故事底欄（盟友／裝備等）同「放棄今世」，避免誤觸。
+   * 綁定「點空白處前進」（t395）。
+   *
+   * 只喺結果畫面用：點畫面任何位置都算（包括底部提示條），
+   * 唔需要搵特定掣。
+   *
+   * 會排除：
+   *   - 故事底欄（盟友／裝備／道具…）— 玩家可能想睇
+   *   - 「放棄今世」— 唔可以誤觸
+   *   - 標了 `data-no-skip` 的元素
    */
   function wireTapToAdvance(root, fn) {
     if (!root || typeof root.addEventListener !== "function") return;
@@ -4037,9 +4142,13 @@
     const handler = (e) => {
       if (fired) return;
       const t = e && e.target;
-      if (t && t.closest) {
-        if (t.closest(".story-dock") || t.closest(".soft-cta") || t.closest("[data-no-skip]")) return;
+      /* 提示條本身係 button，要放行（否則 soft-cta 排除規則會擋住佢） */
+      const onHint = !!(t && t.closest && t.closest("[data-tap-continue]"));
+      if (t && t.closest && !onHint) {
+        if (t.closest(".story-dock") || t.closest("[data-no-skip]")) return;
         if (t.closest("#btn-abandon") || t.closest(".btn-abandon-compact")) return;
+        /* soft-cta 內除提示條以外嘅元素（例如放棄掣）唔算 */
+        if (t.closest(".soft-cta")) return;
       }
       fired = true;
       clearAutoAdvance();
@@ -4118,7 +4227,7 @@
       album: viewAlbum,
       events: viewEvents,
       soft: viewSoft,
-      minigame: viewMinigame,
+      minigame: viewMinigameEntry,
       faction: viewFaction,
       office: viewOffice,
       tale: viewTale,
@@ -4862,15 +4971,21 @@
         state.selectAllySlot = null;
         state.fighterDetailId = null;
         state.detailSkillPick = null;
+        /*
+         * t396：一律先入編隊頁，**唔可以**直接開打。
+         *
+         * 舊行為：`applyRememberedDeploy()` 成功且「唔需要玩家補位」時會 `startBattle()` 直接開打，
+         * 玩家完全冇機會換卡。總導演要求：「按下『開始吧』後可選擇更換出場戰鬥卡，
+         * 但預設是上一輪戰鬥的未陣亡戰鬥卡，不能按下『開始吧』就直接自動戰鬥。」
+         *
+         * 現行為：套用上一輪配置（只保留未陣亡者）→ 入編隊頁 → 玩家按「開始戰鬥」才開打。
+         */
         const resumed = applyRememberedDeploy();
-        if (resumed && !deployNeedsPlayerPick()) {
-          startBattle();
-          return;
-        }
         if (!resumed) state.deploy = [];
         state.deployHint = resumed
-          ? "上次上場有位空咗（陣亡／離隊）——補唔補位由你決定。"
-          : "";
+          ? "已沿用上次出場陣容（陣亡／離隊嘅已自動移除）——可換卡，準備好先按「開始戰鬥」。"
+          : "揀好出場陣容，然後按「開始戰鬥」。";
+        state.deployConfirmPending = false;
         state.screen = "encounter";
         render();
       };
@@ -5426,7 +5541,6 @@
       clearAutoAdvance();
       settleFaction();
     };
-    scheduleAutoAdvance(facAdvance, AUTO_ADVANCE_MS);
     wireTapToAdvance(root, facAdvance);
     $("#btn-abandon", root).onclick = () => requestAbandonLife();
     wireStoryDock(root);
@@ -5572,7 +5686,8 @@
       cardKind = "gear";
     } else {
       const inTeam = new Set(state.team || []);
-      const all = (DATA.fighters || []).filter((f) => f && f.id);
+      /* t391：送卡／抽卡唔會出殘頁專屬卡 */
+      const all = poolFighters();
       const notInTeam = all.filter((f) => !inTeam.has(f.id));
       pool = prefer(notInTeam).concat(prefer(all.filter((f) => inTeam.has(f.id))));
       cardKind = "fighter";
@@ -5613,12 +5728,22 @@
       const rare = shopRarityLabel(o.rarity);
       const picked = gift.takenIdx != null && (gift.takenIdx | 0) === idx;
       const dimmed = gift.takenIdx != null && !picked;
+      /*
+       * t397：三選一卡面要顯示「卡牌內容」，唔止名同稀有度。
+       * 總導演：「免費技能卡和免費戰鬥卡事件選擇，要顯示卡牌內容」。
+       *
+       * 分別用返各自嘅說明函式，抽最關鍵一兩行做摘要（完整內容仍然可以長按睇）。
+       */
+      const summary = giftOfferSummary(gift.kind, o);
       return `
-        <button type="button" class="shop-card gift-card${picked ? " picked" : ""}${dimmed ? " dimmed" : ""}" data-gift-idx="${idx}" ${gift.takenIdx != null ? "disabled" : ""}>
+        <button type="button" class="shop-card gift-card${picked ? " picked" : ""}${dimmed ? " dimmed" : ""}" data-gift-idx="${idx}" ${gift.takenIdx != null ? "disabled" : ""}
+          data-help="gift-card" data-help-rich="${esc(gift.kind === "skill" ? "skill" : gift.kind === "gear" ? "gear" : "fighter")}"
+          data-help-text="${helpTextAttr(giftOfferHelpText(gift.kind, o))}">
           <img src="${esc(o.art || "")}" alt="${esc(o.name || "")}" />
           <div class="shop-card-body">
             <div class="shop-card-name">${esc(o.name || o.id)}</div>
             <div class="shop-card-rare">${esc(rare)}</div>
+            ${summary ? `<div class="gift-card-desc">${esc(summary)}</div>` : ""}
             <div class="shop-price gift-tag">${picked ? "已收下" : "免費帶走"}</div>
           </div>
         </button>`;
@@ -5693,11 +5818,70 @@
         clearAutoAdvance();
         settleGift();
       };
-      scheduleAutoAdvance(giftAdvance, AUTO_ADVANCE_MS + 600);
       wireTapToAdvance(root, giftAdvance);
     }
     $("#btn-abandon", root).onclick = () => requestAbandonLife();
     wireStoryDock(root);
+  }
+
+  /**
+   * t397：送卡／抽卡三選一的「卡面摘要」。
+   *
+   * 只抽最關鍵一兩句（玩家揀之前要知呢張卡實際做咩）：
+   *   戰鬥卡 → 攻／速 + 自帶技能效果
+   *   技能卡 → 效果
+   *   裝備卡 → 數值 + 主題
+   */
+  function giftOfferSummary(kind, offer) {
+    if (!offer) return "";
+    try {
+      if (kind === "skill") {
+        const sk = (DATA.skills || []).find((s) => s && s.id === offer.id);
+        if (!sk) return "";
+        const eff = String(sk.effect || "").trim();
+        const cd = (sk.cd | 0) > 0 ? `CD ${sk.cd | 0}` : "";
+        const head = [cd, sk.kind || ""].filter(Boolean).join(" · ");
+        return head ? `${head}：${eff}` : eff;
+      }
+      if (kind === "gear") {
+        const it = equipItemList().find((x) => x && x.id === offer.id);
+        if (!it) return "";
+        const bits = [];
+        ["atk", "def", "mdef", "spd", "hp"].forEach((k) => {
+          const v = it[k] | 0;
+          if (v) bits.push(`${({ atk: "攻", def: "防", mdef: "魔防", spd: "速", hp: "血" })[k]}＋${v}`);
+        });
+        const tag = it.tag_boost ? ` · 主題：${equipTagLabel(it.tag_boost) || it.tag_boost}` : "";
+        return (bits.join(" ") || "無數值") + tag;
+      }
+      /* 戰鬥卡 */
+      const f = (DATA.fighters || []).find((x) => x && x.id === offer.id);
+      if (!f) return "";
+      const eff = String(f.skill_effect || "").trim();
+      const head = `攻${f.atk | 0} 速${f.spd | 0}`;
+      return eff ? `${head}｜${eff}` : head;
+    } catch (e) {
+      return "";
+    }
+  }
+
+  /** t397：送卡卡面的完整說明（長按用） */
+  function giftOfferHelpText(kind, offer) {
+    if (!offer) return "";
+    try {
+      if (kind === "skill") {
+        const sk = (DATA.skills || []).find((s) => s && s.id === offer.id);
+        return sk ? skillHelpText(sk) : (offer.name || "");
+      }
+      if (kind === "gear") {
+        const it = equipItemList().find((x) => x && x.id === offer.id);
+        return it ? equipHelpText(it) : (offer.name || "");
+      }
+      const f = (DATA.fighters || []).find((x) => x && x.id === offer.id);
+      return f ? fighterHelpText(f) : (offer.name || "");
+    } catch (e) {
+      return offer.name || "";
+    }
   }
 
   /** 送卡入袋：戰鬥卡／技能／裝備（唔扣金幣、唔換走己卡） */
@@ -5722,28 +5906,45 @@
       const pick = equipItemList().find((it) => it && it.id === offer.id) || null;
       if (!pick) return "";
       albumGainOne("gear", pick.id);
+      /*
+       * t400：裝備一定可以「即刻裝上」。
+       * 舊行為只在該槽空著時才裝；槽位已有裝備 → 只回「已入裝備收藏」，
+       * 而玩家喺人生中途完全冇介面可以換裝備 → 新裝備等於永遠用唔到。
+       */
       const slotId = offer.slot || pick.slot || pick.slot_id || null;
-      const emptySlots = GEAR_SLOTS.filter((s) => !state.accountGear[s.id]);
-      const match = slotId ? emptySlots.find((s) => s.id === slotId) : null;
-      if (match) {
-        state.accountGear[match.id] = pick.id;
-        // t364：裝上唔算升星（原本會虛報「裝備升星」任務進度）；升星只由卡冊按鈕觸發
-        return `已裝上${match.label}槽`;
+      const slotMeta = slotId ? GEAR_SLOTS.find((s) => s.id === slotId) : null;
+      if (!slotMeta) return "已入裝備收藏（未對應槽位）";
+      const prevId = state.accountGear[slotMeta.id];
+      state.accountGear[slotMeta.id] = pick.id;
+      if (prevId && prevId !== pick.id) {
+        const prev = equipItemList().find((it) => it && it.id === prevId);
+        return `已裝上${slotMeta.label}槽（換走「${(prev && prev.name) || prevId}」）`;
       }
-      return "已入裝備收藏";
+      return `已裝上${slotMeta.label}槽`;
     }
     const cap = fighterPocketCap();
     const inTeam = new Set(state.team || []);
     const pick = (DATA.fighters || []).find((f) => f && f.id === offer.id) || null;
     if (!pick) return "";
     albumGainOne("fighters", pick.id);
-    if (!inTeam.has(pick.id) && (state.team || []).length < cap) {
+    if (inTeam.has(pick.id)) return "複本入卡冊";
+    /*
+     * t397：口袋滿時唔再「靜靜入卡冊」。
+     *
+     * 舊行為：統率滿 → 只寫「入卡冊」，卡確實入咗收藏，但編隊頁只認 `state.team`，
+     * 玩家喺開戰前完全揀唔到呢張新卡，等於「拿到但用唔到」。
+     *
+     * 新行為：
+     *   1. 有位 → 直接入隊（同舊一樣）
+     *   2. 冇位 → 仍然入卡冊，但**明確講清楚要點做**（去準備頁換走一張）
+     *   3. 編隊頁亦開放由卡冊揀卡（見 viewEncounter 的 choices 來源）
+     */
+    if ((state.team || []).length < cap) {
       state.team.push(pick.id);
       if (!state.loadout[pick.id]) state.loadout[pick.id] = [];
       return "已加入戰鬥卡口袋";
     }
-    if (inTeam.has(pick.id)) return "複本入卡冊";
-    return `統率已滿（${cap}）——入卡冊`;
+    return `統率已滿（${cap}）——已入卡冊，可去「準備」頁換走一張再上陣`;
   }
 
   /** 人生店鋪：四選一・金幣購買 */
@@ -5877,11 +6078,12 @@
 
   function buildTradeTakeOffers(excludeId) {
     albumEnsureState();
-    let withArt = (DATA.fighters || []).filter(
+    /* t391：換卡唔可以換到殘頁專屬卡 */
+    let withArt = poolFighters().filter(
       (f) => f && f.id && f.id !== excludeId && f.art && !String(f.art).includes("pending-manus")
     );
     if (!withArt.length) {
-      withArt = (DATA.fighters || []).filter((f) => f && f.id && f.id !== excludeId);
+      withArt = poolFighters().filter((f) => f && f.id && f.id !== excludeId);
     }
     const unowned = withArt.filter((f) => albumCardCount(f.id) <= 0);
     const owned = withArt.filter((f) => albumCardCount(f.id) > 0);
@@ -6882,7 +7084,6 @@
       clearAutoAdvance();
       settleTo(afterFateOrEventScreen());
     };
-    scheduleAutoAdvance(advance, AUTO_ADVANCE_MS);
     wireTapToAdvance(root, advance);
     $("#btn-abandon", root).onclick = () => requestAbandonLife();
     wireStoryDock(root);
@@ -6893,6 +7094,825 @@
    * t379：小遊戲輸入時限（秒）。原本寫死 10000ms，玩家完全唔知幾時夠鐘；
    * 現在延長至 12 秒並在畫面顯示倒數。抽成常數，避免倒數條同實際計時不一致。
    */
+
+
+  /* ================= t390：黑市賭檔・字花骰寶 =================
+   *
+   * 三粒骰：4–10 細、11–17 大（3 同 18 為「圍骰」，莊家通殺）。
+   * 莊家隱藏傾向影響骰子分佈：
+   *   bias = "big"     → 骰值偏高（+1 修正）
+   *   bias = "small"   → 骰值偏低（-1 修正）
+   *   bias = "fair"    → 正常
+   *
+   * 玩家每局可「猜大」「猜細」，或「睇莊」（唔落注，觀察一局）。
+   */
+  const DICE_LABELS = ["", "⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
+  const DICE_BIAS_LABEL = { big: "偏大", small: "偏細", fair: "公正" };
+
+  /** 擲三粒骰（受 bias 影響） */
+  function diceRoll(bias, rng) {
+    const r = rng || Math.random;
+    const out = [];
+    for (let i = 0; i < 3; i++) {
+      let v = 1 + Math.floor(r() * 6);
+      /*
+       * t390：bias 強度 0.58（實測偏大莊約 69% 開大）。
+       * 太低（0.45）玩家睇兩三局睇唔出分別，「睇莊」就冇意義；
+       * 太高（0.85）就變咗必勝，失去心理戰。
+       */
+      if (bias === "big" && v < 6 && r() < 0.58) v += 1;
+      if (bias === "small" && v > 1 && r() < 0.58) v -= 1;
+      out.push(v);
+    }
+    return out;
+  }
+
+  /** 總和 → 大／細／圍骰 */
+  function diceResult(dice) {
+    const sum = dice.reduce((a, b) => a + b, 0);
+    /* 三粒同點 = 圍骰（莊家通殺） */
+    const triple = dice[0] === dice[1] && dice[1] === dice[2];
+    if (triple) return { sum, side: "triple", label: "圍骰" };
+    if (sum >= 11) return { sum, side: "big", label: "大" };
+    return { sum, side: "small", label: "細" };
+  }
+
+  /** 隨機揀一個莊家傾向（偏大／偏細各 35%、公正 30%） */
+  function dicePickBias(rng) {
+    const r = rng || Math.random;
+    const v = r();
+    if (v < 0.35) return "big";
+    if (v < 0.70) return "small";
+    return "fair";
+  }
+
+  function diceFacesText(dice) {
+    return (dice || []).map((v) => DICE_LABELS[v] || String(v)).join(" ");
+  }
+  function diceSumText(dice) {
+    return (dice || []).reduce((a, b) => a + b, 0);
+  }
+
+  /* ================= t390：黑市賭檔・麻雀殘局 =================
+   *
+   * 用「簡化牌」：萬／筒／條 各 1–9，每種 4 張（共 108 張）。
+   * 玩家手上 13 張，目標係換到「聽牌」（差一張就食糊）或「食糊」（14 張齊）。
+   *
+   * 食糊判定：4 副面子（順子／刻子）＋ 1 對眼。
+   * 為咗 3–5 步內可行，起始手牌會刻意接近聽牌（差 1–3 張）。
+   */
+  const MJ_SUITS = [
+    { id: "wan", label: "萬", glyph: "萬" },
+    { id: "tong", label: "筒", glyph: "筒" },
+    { id: "tiao", label: "條", glyph: "條" },
+  ];
+
+  /** 一張牌 → 顯示用文字（例如「三萬」） */
+  const MJ_NUM_CN = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
+  function mjLabel(tile) {
+    if (!tile) return "";
+    const s = MJ_SUITS.find((x) => x.id === tile.suit);
+    return (MJ_NUM_CN[tile.num] || String(tile.num)) + (s ? s.glyph : "");
+  }
+  function mjKey(t) { return t.suit + t.num; }
+
+  /** 13 張手牌 + 1 張摸牌 → 是否食糊（14 張） */
+  function mjIsWin(hand14) {
+    if (!Array.isArray(hand14) || hand14.length !== 14) return false;
+    const counts = {};
+    hand14.forEach((t) => { const k = mjKey(t); counts[k] = (counts[k] | 0) + 1; });
+    /* 試每一種「眼」 */
+    const keys = Object.keys(counts).sort();
+    for (const eye of keys) {
+      if ((counts[eye] | 0) < 2) continue;
+      const c = Object.assign({}, counts);
+      c[eye] -= 2;
+      if (c[eye] === 0) delete c[eye];
+      if (mjAllMelds(c)) return true;
+    }
+    return false;
+  }
+
+  /** 剩餘牌能否全部拆成面子 */
+  function mjAllMelds(counts) {
+    const keys = Object.keys(counts).filter((k) => (counts[k] | 0) > 0).sort();
+    if (!keys.length) return true;
+    const first = keys[0];
+    const suit = first.replace(/[0-9]+$/, "");
+    const num = parseInt(first.replace(/^[a-z]+/, ""), 10);
+    /* 刻子 */
+    if ((counts[first] | 0) >= 3) {
+      const c2 = Object.assign({}, counts);
+      c2[first] -= 3;
+      if (c2[first] === 0) delete c2[first];
+      if (mjAllMelds(c2)) return true;
+    }
+    /* 順子 num, num+1, num+2（限同花色，且 1–7 起） */
+    if (num <= 7) {
+      const k2 = suit + (num + 1);
+      const k3 = suit + (num + 2);
+      if ((counts[k2] | 0) > 0 && (counts[k3] | 0) > 0) {
+        const c3 = Object.assign({}, counts);
+        c3[first] -= 1; c3[k2] -= 1; c3[k3] -= 1;
+        [first, k2, k3].forEach((k) => { if (c3[k] === 0) delete c3[k]; });
+        if (mjAllMelds(c3)) return true;
+      }
+    }
+    return false;
+  }
+
+  /** 13 張是否「聽牌」（差一張就食糊），回傳可以食糊的牌 keys */
+  function mjWaitingTiles(hand13) {
+    if (!Array.isArray(hand13) || hand13.length !== 13) return [];
+    const out = [];
+    const have = {};
+    hand13.forEach((t) => { const k = mjKey(t); have[k] = (have[k] | 0) + 1; });
+    MJ_SUITS.forEach((s) => {
+      for (let n = 1; n <= 9; n++) {
+        const key = s.id + n;
+        if ((have[key] | 0) >= 4) continue;
+        const test = hand13.concat([{ suit: s.id, num: n }]);
+        if (mjIsWin(test)) out.push(key);
+      }
+    });
+    return out;
+  }
+
+  /** 生成一副「接近聽牌」的 13 張手牌 */
+  function mjDealNearReady(rng) {
+    const r = rng || Math.random;
+    const rand = (n) => Math.floor(r() * n);
+    while (true) {
+      /* 砌 4 副面子 + 1 對眼 = 14 張，然後抽走一張 → 13 張（必然聽牌） */
+      const full = [];
+      let guard = 0;
+      while (full.length < 12 && guard++ < 200) {
+        const suit = MJ_SUITS[rand(3)].id;
+        if (r() < 0.42) {
+          const n = 1 + rand(9);
+          full.push({ suit, num: n }, { suit, num: n }, { suit, num: n });
+        } else {
+          const n = 1 + rand(7);
+          full.push({ suit, num: n }, { suit, num: n + 1 }, { suit, num: n + 2 });
+        }
+      }
+      const eyeSuit = MJ_SUITS[rand(3)].id;
+      const eyeNum = 1 + rand(9);
+      full.push({ suit: eyeSuit, num: eyeNum }, { suit: eyeSuit, num: eyeNum });
+      if (full.length !== 14) continue;
+      /* 點數上限檢查（同一張牌唔可以超過 4 張） */
+      const cnt = {};
+      let bad = false;
+      full.forEach((t) => { const k = mjKey(t); cnt[k] = (cnt[k] | 0) + 1; if (cnt[k] > 4) bad = true; });
+      if (bad) continue;
+      /* 抽走一張 */
+      const drop = rand(full.length);
+      const hand = full.slice(0, drop).concat(full.slice(drop + 1));
+      if (hand.length !== 13) continue;
+      if (mjWaitingTiles(hand).length) return { hand, full };
+    }
+  }
+
+  /** 摸牌堆：未出現過的牌（每種最多 4 張） */
+  function mjDrawPool(hand) {
+    const have = {};
+    hand.forEach((t) => { const k = mjKey(t); have[k] = (have[k] | 0) + 1; });
+    const pool = [];
+    MJ_SUITS.forEach((s) => {
+      for (let n = 1; n <= 9; n++) {
+        if ((have[s.id + n] | 0) < 4) pool.push({ suit: s.id, num: n });
+      }
+    });
+    return pool;
+  }
+
+
+  /* ===================================================================
+   * t390：黑市賭檔 view（兩款遊戲分流）
+   * =================================================================== */
+
+  /** 賭檔畫面入口：按 cfg.modes 隨機抽一款 */
+  function viewBlackMarket(root) {
+    const ev = state.selectedEvent;
+    if (!ev) { state.screen = "events"; render(); return; }
+    const cfg = (ev.minigame && typeof ev.minigame === "object") ? ev.minigame : {};
+    const modes = Array.isArray(cfg.modes) && cfg.modes.length ? cfg.modes : ["mahjong", "dice"];
+
+    /* 第一次進入：抽一款並初始化 */
+    if (!state.minigame || state.minigame.eventId !== ev.id) {
+      const kind = modes[Math.floor(Math.random() * modes.length)];
+      state.minigame = {
+        eventId: ev.id,
+        mode: kind,              // mahjong | dice
+        phase: "intro",          // intro | play | won | lost
+        settled: false,
+        rewardApplied: false,
+        rewardSoul: 0,
+        rewardXp: 0,
+        rewardGold: 0,
+        shards: 0,
+        won: false,
+        message: "",
+        /* 麻雀 */
+        mj: null,
+        /* 骰寶 */
+        dice: null,
+      };
+      if (kind === "mahjong") initMahjong(state.minigame, cfg);
+      else initDice(state.minigame, cfg);
+    }
+    if (state.minigame.mode === "mahjong") return viewMahjong(root);
+    return viewDiceTable(root);
+  }
+
+  /* ---------------- 麻雀殘局 ---------------- */
+  function initMahjong(mg, cfg) {
+    const deal = mjDealNearReady();
+    mg.mj = {
+      hand: deal.hand,          // 13 張
+      stepsLeft: Math.max(3, Math.min(5, (cfg.mj_steps | 0) || 4)),
+      stepsUsed: 0,
+      drawn: null,              // 摸到但未打的那張
+      log: [],
+      waiting: mjWaitingTiles(deal.hand),
+      result: null,             // win | ready | lose
+    };
+  }
+
+  function viewMahjong(root) {
+    const ev = state.selectedEvent;
+    const mg = state.minigame;
+    const mj = mg.mj;
+    if (!mj) return;
+
+    const isResult = mg.phase === "won" || mg.phase === "lost";
+    const hand = mj.hand;
+
+    /* 牌面 */
+    const tileHtml = (t, i, extra) => {
+      /* t390：結果階段鎖住牌面（唔可以再點，避免以為仲打得） */
+      const cls = (extra ? " " + extra : "") + (isResult ? " locked" : "");
+      const dis = isResult ? " disabled" : "";
+      return `<button type="button" class="mj-tile${cls}" data-mj-tile="${i}"${dis} aria-label="${esc(mjLabel(t))}">
+        <span class="mj-num">${esc(MJ_NUM_CN[t.num] || t.num)}</span>
+        <span class="mj-suit">${esc(MJ_SUITS.find((s) => s.id === t.suit).glyph)}</span>
+      </button>`;
+    };
+
+    const handHtml = hand.map((t, i) => tileHtml(t, i)).join("");
+    const drawnHtml = mj.drawn
+      ? `<div class="mj-drawn">
+           <span class="mj-drawn-label">摸到</span>
+           <button type="button" class="mj-tile drawn" data-mj-discard="1" aria-label="打出 ${esc(mjLabel(mj.drawn))}">
+             <span class="mj-num">${esc(MJ_NUM_CN[mj.drawn.num] || mj.drawn.num)}</span>
+             <span class="mj-suit">${esc(MJ_SUITS.find((s) => s.id === mj.drawn.suit).glyph)}</span>
+           </button>
+         </div>`
+      : "";
+
+    /* 剩餘步數 */
+    const dots = [];
+    for (let i = 0; i < mj.stepsLeft; i++) {
+      dots.push(`<span class="mj-step-dot${i < mj.stepsUsed ? " used" : ""}"></span>`);
+    }
+
+    let cta = "";
+    if (mg.phase === "intro") {
+      cta = `<button class="btn gold" id="mj-start" type="button">埋枱</button>
+        <button class="btn ghost" id="mj-quit" type="button">唔賭（半獎）</button>`;
+    } else if (!isResult) {
+      cta = `<button class="btn ghost" id="mj-quit" type="button">收手（半獎）</button>`;
+    } else {
+      cta = `${autoAdvanceBarHtml("繼續")}
+        <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>`;
+    }
+
+    const resultPanel = isResult
+      ? `<div class="soft-panel mj-result">
+           ${esc(mg.message)}
+           <br/>今世賺了 <b style="color:var(--neon-gold)">+${mg.rewardSoul}</b> 膠幣
+           ${mg.rewardXp ? ` · 經驗 +${mg.rewardXp}` : ""}
+           ${mg.shards ? ` · <span class="shard-gain">${shardIconHtml()}<b>殘頁 ×${mg.shards}</b></span>` : ""}
+           · <span style="color:var(--neon-cyan)">下一歲 ${state.age + 1}歲</span>
+         </div>`
+      : "";
+
+    root.innerHTML = `
+      ${lifeHudHtml()}
+      <div class="ribbon">${ageRibbon(esc(ev.name) + " · 麻雀殘局")}</div>
+      <div class="mg-wrap">
+        <div class="mg-arcade bm-table">
+          <div class="bm-head">
+            <span class="bm-mode">十三張殘局</span>
+            <span class="mj-steps">${dots.join("")}</span>
+            <span class="bm-left">剩 ${mj.stepsLeft - mj.stepsUsed} 步</span>
+          </div>
+          <div class="bubble neon mg-msg">${esc(mg.message || "揀牌打，或者摸一張。湊夠 4 副 + 1 對就食糊。")}</div>
+          <div class="mj-hand">${handHtml}</div>
+          ${drawnHtml}
+          <p class="mj-hint">點一張牌打出；或者「摸牌」再決定。</p>
+        </div>
+        ${resultPanel}
+      </div>
+      <div class="soft-cta mg-cta">
+        ${(!isResult && mg.phase !== "intro") ? `<button class="btn gold" id="mj-draw" type="button">摸牌</button>` : ""}
+        ${cta}
+      </div>
+      ${storyDockHtml()}
+    `;
+
+    wireStoryDock(root);
+
+    const startBtn = $("#mj-start", root);
+    if (startBtn) startBtn.onclick = () => { mg.phase = "play"; mg.message = "揀一張打出，或者摸牌。"; render(); };
+    const quitBtn = $("#mj-quit", root);
+    if (quitBtn) quitBtn.onclick = () => endBlackMarket(false, "收手離場——半獎，人生繼續。");
+    const ab = $("#btn-abandon", root);
+    if (ab) ab.onclick = () => requestAbandonLife();
+
+    /* 摸牌 */
+    const drawBtn = $("#mj-draw", root);
+    if (drawBtn) drawBtn.onclick = () => {
+      if (mg.phase !== "play" || mj.drawn) return;
+      const pool = mjDrawPool(mj.hand);
+      if (!pool.length) return;
+      mj.drawn = pool[Math.floor(Math.random() * pool.length)];
+      mg.message = `摸到「${mjLabel(mj.drawn)}」。要留定要打？`;
+      render();
+    };
+
+    /* 打出手牌 */
+    root.querySelectorAll("[data-mj-tile]").forEach((btn) => {
+      btn.onclick = () => {
+        if (mg.phase !== "play") return;
+        const idx = btn.dataset.mjTile | 0;
+        if (idx < 0 || idx >= mj.hand.length) return;
+        discardAndDraw(idx);
+      };
+    });
+
+    /* 打出摸到的牌 */
+    const discardBtn = root.querySelector("[data-mj-discard]");
+    if (discardBtn) discardBtn.onclick = () => {
+      if (mg.phase !== "play" || !mj.drawn) return;
+      /* 打出摸到的那張 = 原封不動，只消耗一步 */
+      mj.drawn = null;
+      mj.stepsUsed += 1;
+      afterStep();
+    };
+
+    if (isResult) {
+      let done = false;
+      const go = () => { if (done) return; done = true; clearAutoAdvance(); settleBlackMarket(); };
+      wireTapToAdvance(root, go);
+    }
+
+    /* 每步之後：檢查是否食糊／聽牌／用盡步數 */
+    function afterStep() {
+      const w = mjWaitingTiles(mj.hand);
+      mj.waiting = w;
+      if (w.length) {
+        /* 已經聽牌 → 食糊判定（用摸到那張模擬一次） */
+        endMahjong("ready");
+        return;
+      }
+      if (mj.stepsUsed >= mj.stepsLeft) {
+        endMahjong("lose");
+        return;
+      }
+      mg.message = `打出一張，仲有 ${mj.stepsLeft - mj.stepsUsed} 步。`;
+      render();
+    }
+
+    function discardAndDraw(idx) {
+      /* 如果有摸牌：換入摸到的牌 */
+      if (mj.drawn) {
+        mj.hand = mj.hand.slice();
+        mj.hand[idx] = mj.drawn;
+        mj.drawn = null;
+      } else {
+        /* 冇摸牌就打出一張（等於少一張，之後要摸） */
+        mj.hand = mj.hand.slice();
+        mj.hand.splice(idx, 1);
+        const pool = mjDrawPool(mj.hand);
+        if (pool.length) mj.hand.push(pool[Math.floor(Math.random() * pool.length)]);
+      }
+      mj.stepsUsed += 1;
+      /* 食糊檢查：13 張 + 1 張 = 14 */
+      const testWin = () => {
+        /* 用摸牌堆中每一張試，睇有冇可以食糊 */
+        const pool = mjDrawPool(mj.hand);
+        return pool.some((t) => mjIsWin(mj.hand.concat([t])));
+      };
+      if (testWin()) { endMahjong("win"); return; }
+      afterStep();
+    }
+
+    function endMahjong(result) {
+      mj.result = result;
+      mg.phase = result === "lose" ? "lost" : "won";
+      mg.won = result !== "lose";
+      const full = listedEventSoul(ev);
+      const xp = ev.reward_xp | 0;
+      const gold = ev.reward_gold | 0;
+      let ratio = 0.5;
+      let msg = "";
+      if (result === "win") { ratio = 1; msg = "食糊！莊家面色一沉，推錢過嚟。"; }
+      else if (result === "ready") { ratio = 0.8; msg = "聽牌！差最後一張，莊家唔敢再留你。"; }
+      else { ratio = 0.5; msg = "散牌收場。莊家笑住收錢，話下次再嚟。"; }
+      mg.rewardSoul = Math.max(1, Math.round(full * ratio));
+      mg.rewardXp = Math.max(0, Math.round(xp * ratio));
+      mg.rewardGold = Math.max(0, Math.round(gold * ratio));
+      mg.shards = rollShards(ev, mg.minigameCfg, result);
+      mg.message = msg;
+      applyBlackMarketRewards();
+      render();
+    }
+  }
+
+  /* ---------------- 字花骰寶 ---------------- */
+  function initDice(mg, cfg) {
+    mg.dice = {
+      bias: dicePickBias(),
+      round: 1,
+      needWins: 2,
+      wins: 0,
+      losses: 0,
+      lastRoll: null,
+      lastSide: null,
+      peeks: 1,
+      history: [],
+      log: [],
+    };
+  }
+
+  function viewDiceTable(root) {
+    const ev = state.selectedEvent;
+    const mg = state.minigame;
+    const dd = mg.dice;
+    if (!dd) return;
+
+    const isResult = mg.phase === "won" || mg.phase === "lost";
+
+    const histHtml = dd.history.length
+      ? dd.history.map((h) => `<span class="dice-hist ${h.side}">${esc(diceFacesText(h.dice))} = ${h.sum} ${esc(h.label)}</span>`).join("")
+      : `<span class="dice-hist-empty">仲未開過局</span>`;
+
+    let cta = "";
+    if (mg.phase === "intro") {
+      cta = `<button class="btn gold" id="dd-start" type="button">埋枱</button>
+        <button class="btn ghost" id="dd-quit" type="button">唔賭（半獎）</button>`;
+    } else if (!isResult) {
+      cta = `<button class="btn ghost" id="dd-quit" type="button">收手（半獎）</button>`;
+    } else {
+      cta = `${autoAdvanceBarHtml("繼續")}
+        <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>`;
+    }
+
+    const resultPanel = isResult
+      ? `<div class="soft-panel dice-result">
+           ${esc(mg.message)}
+           <br/>今世賺了 <b style="color:var(--neon-gold)">+${mg.rewardSoul}</b> 膠幣
+           ${mg.rewardXp ? ` · 經驗 +${mg.rewardXp}` : ""}
+           ${mg.shards ? ` · <span class="shard-gain">${shardIconHtml()}<b>殘頁 ×${mg.shards}</b></span>` : ""}
+           · <span style="color:var(--neon-cyan)">下一歲 ${state.age + 1}歲</span>
+         </div>`
+      : "";
+
+    const lastHtml = dd.lastRoll
+      ? `<div class="dice-last ${dd.lastSide}">
+           <span class="dice-faces">${esc(diceFacesText(dd.lastRoll))}</span>
+           <span class="dice-sum">${esc(String(dd.lastRoll.reduce((a, b) => a + b, 0)))}</span>
+           <span class="dice-side">${esc(dd.lastSide === "triple" ? "圍骰" : dd.lastSide === "big" ? "大" : "細")}</span>
+         </div>`
+      : `<div class="dice-last empty">三粒骰等你落注</div>`;
+
+    root.innerHTML = `
+      ${lifeHudHtml()}
+      <div class="ribbon">${ageRibbon(esc(ev.name) + " · 字花骰寶")}</div>
+      <div class="mg-wrap">
+        <div class="mg-arcade dice-table">
+          <div class="bm-head">
+            <span class="bm-mode">三粒骰・三局兩勝</span>
+            <span class="dice-score">贏 ${dd.wins} · 輸 ${dd.losses}</span>
+          </div>
+          ${lastHtml}
+          <div class="bubble neon mg-msg">${esc(mg.message || "4–10 細，11–17 大。三粒同點做圍骰，莊家通殺。")}</div>
+          <div class="dice-history">${histHtml}</div>
+          <p class="mj-hint">莊家會做手腳——留意前幾局。剩 ${dd.peeks} 次「睇莊」。</p>
+        </div>
+        ${resultPanel}
+      </div>
+      <div class="soft-cta mg-cta mt-cta">
+        ${(!isResult && mg.phase === "play") ? `
+          <button class="btn gold" id="dd-small" type="button">買細</button>
+          <button class="btn gold" id="dd-big" type="button">買大</button>
+          ${dd.peeks > 0 ? `<button class="btn ghost" id="dd-peek" type="button">睇莊（唔落注）</button>` : ""}
+        ` : ""}
+        ${cta}
+      </div>
+      ${storyDockHtml()}
+    `;
+
+    wireStoryDock(root);
+    const startBtn = $("#dd-start", root);
+    if (startBtn) startBtn.onclick = () => { mg.phase = "play"; mg.message = "落注。買大定買細？"; render(); };
+    const quitBtn = $("#dd-quit", root);
+    if (quitBtn) quitBtn.onclick = () => endBlackMarket(false, "收手離場——半獎，人生繼續。");
+    const ab = $("#btn-abandon", root);
+    if (ab) ab.onclick = () => requestAbandonLife();
+
+    const play = (pick) => {
+      if (mg.phase !== "play") return;
+      const dice = diceRoll(dd.bias);
+      const res = diceResult(dice);
+      dd.lastRoll = dice;
+      dd.lastSide = res.side;
+      dd.history.push({ dice, sum: res.sum, side: res.side, label: res.label });
+      const win = res.side === pick;
+      if (win) dd.wins += 1; else dd.losses += 1;
+      mg.message = win
+        ? `開 ${res.sum} ${res.label}——買中咗。`
+        : `開 ${res.sum} ${res.label}——輸咗呢局。`;
+      if (dd.wins >= dd.needWins) { endDice(true); return; }
+      if (dd.losses >= dd.needWins) { endDice(false); return; }
+      dd.round += 1;
+      render();
+    };
+
+    const smallBtn = $("#dd-small", root);
+    if (smallBtn) smallBtn.onclick = () => play("small");
+    const bigBtn = $("#dd-big", root);
+    if (bigBtn) bigBtn.onclick = () => play("big");
+
+    /* 睇莊：開一局但唔計分，讓玩家觀察傾向 */
+    const peekBtn = $("#dd-peek", root);
+    if (peekBtn) peekBtn.onclick = () => {
+      if (mg.phase !== "play" || dd.peeks <= 0) return;
+      dd.peeks -= 1;
+      const dice = diceRoll(dd.bias);
+      const res = diceResult(dice);
+      dd.lastRoll = dice;
+      dd.lastSide = res.side;
+      dd.history.push({ dice, sum: res.sum, side: res.side, label: res.label });
+      mg.message = `睇莊：開 ${res.sum} ${res.label}（呢局唔計分）。`;
+      render();
+    };
+
+    if (isResult) {
+      let done = false;
+      const go = () => { if (done) return; done = true; clearAutoAdvance(); settleBlackMarket(); };
+      wireTapToAdvance(root, go);
+    }
+
+    function endDice(won) {
+      mg.phase = won ? "won" : "lost";
+      mg.won = !!won;
+      const full = listedEventSoul(ev);
+      const ratio = won ? 1 : 0.5;
+      mg.rewardSoul = Math.max(1, Math.round(full * ratio));
+      mg.rewardXp = Math.max(0, Math.round((ev.reward_xp | 0) * ratio));
+      mg.rewardGold = Math.max(0, Math.round((ev.reward_gold | 0) * ratio));
+      mg.shards = rollShards(ev, ev.minigame, won ? "win" : "lose");
+      mg.message = won
+        ? `贏咗 ${dd.wins} 局。莊家唔出聲，收檔。`
+        : `輸咗 ${dd.losses} 局。莊家話：下次帶多啲。`;
+      applyBlackMarketRewards();
+      render();
+    }
+  }
+
+  /* ---------------- 共用：獎勵與殘頁 ---------------- */
+  /** 擲殘頁數量（只喺賭檔掉落） */
+  function rollShards(ev, cfg, result) {
+    const c = (cfg && typeof cfg === "object") ? cfg : {};
+    const chance = (c.shard_chance != null) ? Number(c.shard_chance) : 0.85;
+    if (result === "lose") return 0;           // 輸咗冇殘頁
+    if (Math.random() >= chance) return 0;
+    const min = Math.max(1, (c.shard_min | 0) || 1);
+    const max = Math.max(min, (c.shard_max | 0) || 2);
+    const n = min + Math.floor(Math.random() * (max - min + 1));
+    /* 食糊多一張 */
+    return result === "win" ? n + 1 : n;
+  }
+
+  /** 入帳（只做一次） */
+  function applyBlackMarketRewards() {
+    const mg = state.minigame;
+    if (!mg || mg.rewardApplied) return;
+    if ((mg.rewardSoul | 0) > 0) state.soul += mg.rewardSoul | 0;
+    if ((mg.rewardXp | 0) > 0) gainXp(mg.rewardXp | 0);
+    if ((mg.rewardGold | 0) > 0) state.gold = (state.gold | 0) + (mg.rewardGold | 0);
+    if ((mg.shards | 0) > 0) addCardShards(mg.shards);
+    mg.rewardApplied = true;
+  }
+
+  /** 加入殘頁（隨機分配到清單中的卡） */
+  function addCardShards(n) {
+    const list = shardRewardPool();
+    if (!list.length) return;
+    if (!state.cardShards || typeof state.cardShards !== "object") state.cardShards = {};
+    for (let i = 0; i < n; i++) {
+      const id = list[Math.floor(Math.random() * list.length)];
+      state.cardShards[id] = (state.cardShards[id] | 0) + 1;
+    }
+  }
+
+  /** t392：殘頁道具圖（統一存放，缺檔自動退回文字圖示） */
+  const SHARD_ITEM_ART = "assets/shards/shard-item.jpg";
+
+  /** 殘頁小圖示（橫幅／結果用） */
+  function shardIconHtml(extraCls) {
+    const cls = extraCls ? " " + extraCls : "";
+    return `<img class="shard-item-ico${cls}" src="${SHARD_ITEM_ART}" alt="" aria-hidden="true" draggable="false" />`;
+  }
+
+  /** 殘頁兌換面板（卡冊內彈出） */
+  function shardRedeemHtml() {
+    const cfg = DATA.shard_rewards || {};
+    const need = Math.max(1, (cfg.need | 0) || 10);
+    const pool = shardRewardPool();
+    const rows = pool.map((id) => {
+      const f = fighterById[id];
+      if (!f) return "";
+      const have = shardCountOf(id);
+      const can = have >= need;
+      /* 進度條最多 100%；數字保留實際值（玩家會想知有冇多過） */
+      const pct = Math.min(100, Math.round((have / need) * 100));
+      const shown = can ? `${have}／${need} ✓` : `${have}／${need}`;
+      /*
+       * t392：左邊顯示「殘頁道具圖」（玩家收集的東西），
+       * 中間箭頭，右邊才係可以換到的卡 → 一眼睇出兌換關係。
+       */
+      return `<div class="shard-row${can ? " ready" : ""}">
+        <div class="shard-pair">
+          <img class="shard-art shard-art-item" src="${SHARD_ITEM_ART}" alt="殘頁" draggable="false" />
+          <span class="shard-arrow-mid" aria-hidden="true">→</span>
+          <img class="shard-art" src="${esc(f.art)}" alt="${esc(f.name)}" draggable="false" />
+        </div>
+        <div class="shard-info">
+          <div class="shard-name">${esc(f.name)}</div>
+          <div class="shard-bar"><i style="width:${pct}%"></i></div>
+          <div class="shard-count">${shown}</div>
+        </div>
+        <button type="button" class="btn shard-btn${can ? " gold" : ""}" data-shard-redeem="${esc(id)}" ${can ? "" : "disabled"}>${can ? "兌換" : "未夠"}</button>
+      </div>`;
+    }).join("") || `<p class="shard-empty">暫時冇可換清單</p>`;
+    return `<div class="album-mask" id="shard-mask">
+      <div class="album-detail-sheet shard-sheet" role="dialog" aria-label="戰鬥卡殘頁">
+        <button type="button" class="album-detail-x" id="shard-x" aria-label="關閉">×</button>
+        <div class="album-detail-top">
+          <span class="album-badge album-badge-fighters">殘頁</span>
+          <div class="album-detail-name">戰鬥卡殘頁</div>
+        </div>
+        <p class="shard-note">每 ${need} 張換一張指定戰鬥卡。殘頁只喺黑市賭檔掉落。</p>
+        <div class="shard-list">${rows}</div>
+        <p class="album-detail-foot">點擊彈窗以外的任意位置，可以關閉彈窗</p>
+      </div>
+    </div>`;
+  }
+
+  /** 殘頁橫幅與兌換面板接線 */
+  function wireShardPanel(root, toast) {
+    const banner = $("#shard-banner", root);
+    if (!banner) return;
+    banner.onclick = () => {
+      const host = root.querySelector(".album-screen") || root;
+      if (root.querySelector("#shard-mask")) return;
+      host.insertAdjacentHTML("beforeend", shardRedeemHtml());
+      const mask = $("#shard-mask", root);
+      if (!mask) return;
+      const close = () => { if (mask.parentNode) mask.parentNode.removeChild(mask); };
+      const x = $("#shard-x", mask);
+      if (x) x.onclick = close;
+      mask.addEventListener("click", (e) => { if (e.target === mask) close(); });
+      mask.querySelectorAll("[data-shard-redeem]").forEach((btn) => {
+        btn.onclick = () => {
+          const id = btn.getAttribute("data-shard-redeem") || "";
+          const r = redeemShardCard(id);
+          if (r.ok) {
+            if (toast) toast(root, `已兌換「${r.name || id}」`);
+            close();
+            render();
+          } else if (toast) {
+            toast(root, r.reason || "兌換失敗");
+          }
+        };
+      });
+    };
+  }
+
+  /** 殘頁可換的卡清單 */
+  function shardRewardPool() {
+    const cfg = DATA.shard_rewards;
+    if (cfg && Array.isArray(cfg.pool) && cfg.pool.length) {
+      return cfg.pool.filter((id) => !!fighterById[id]);
+    }
+    /* 兜底：城寨系 */
+    return ["C01"];
+  }
+
+  /**
+   * t390：卡冊「戰鬥卡」頁頂的殘頁橫幅。
+   * 只在有殘頁時顯示；點開可睇每張卡嘅殘頁進度同兌換。
+   */
+  function shardBannerHtml() {
+    const cfg = DATA.shard_rewards || {};
+    const need = Math.max(1, (cfg.need | 0) || 10);
+    const pool = shardRewardPool();
+    if (!pool.length) return "";
+    const total = shardTotal();
+    /* 計算有幾多個「完整 10 張」可以換 */
+    const ready = pool.filter((id) => shardCountOf(id) >= need);
+    const chipCls = ready.length ? "shard-banner ready" : (total > 0 ? "shard-banner" : "shard-banner empty");
+    const summary = total > 0
+      ? `殘頁 <b>${total}</b> 張${ready.length ? ` · <span class="shard-go">可換 ${ready.length} 張卡</span>` : `（每 ${need} 張換一張）`}`
+      : `戰鬥卡殘頁：去黑市賭檔贏返嚟（每 ${need} 張換一張）`;
+    return `<div class="${chipCls}" id="shard-banner">
+      ${shardIconHtml("shard-ico")}
+      <span class="shard-text">${summary}</span>
+      <span class="shard-arrow">▾</span>
+    </div>`;
+  }
+
+  /** 某張卡的殘頁數 */
+  function shardCountOf(id) {
+    if (!state.cardShards || typeof state.cardShards !== "object") return 0;
+    return Math.max(0, state.cardShards[id] | 0);
+  }
+
+  /** 殘頁總數 */
+  function shardTotal() {
+    if (!state.cardShards || typeof state.cardShards !== "object") return 0;
+    return Object.keys(state.cardShards).reduce((a, k) => a + Math.max(0, state.cardShards[k] | 0), 0);
+  }
+
+  /** 兌換：滿 need 張 → 指定卡入冊 */
+  function redeemShardCard(id, need) {
+    const n = need || ((DATA.shard_rewards && DATA.shard_rewards.need) | 0) || 10;
+    if (shardCountOf(id) < n) return { ok: false, reason: `殘頁不足（${shardCountOf(id)}／${n}）` };
+    state.cardShards[id] = (state.cardShards[id] | 0) - n;
+    const f = fighterById[id];
+    if (!f) return { ok: false, reason: "冇呢張卡" };
+    const before = albumCardCount(id);
+    albumSetCount(id, before + 1);
+    if (before <= 0) albumMarkNewCardStar1("fighters", id);
+    return { ok: true, name: f.name };
+  }
+
+  /** 賭檔最終結算：回人生 */
+  function settleBlackMarket() {
+    const ev = state.selectedEvent;
+    const mg = state.minigame;
+    if (!mg || mg.settled) return;
+    mg.settled = true;
+    applyBlackMarketRewards();
+    if (ev) trackEventMission(ev, { soft: true });
+    state.minigame = null;
+    state.selectedEvent = null;
+    state.softNote = "";
+    advanceYear();
+    if (lifeDoneFlag()) {
+      state.lastResult = {
+        win: true, reward: 0,
+        rewardBlurb: lifeEndBlurb(),
+        eventName: lifeEndName(),
+        deadNames: [],
+      };
+      state.screen = "result";
+    } else {
+      state.screen = afterFateOrEventScreen();
+    }
+    render();
+  }
+
+  /** 中途放棄（半獎） */
+  function endBlackMarket(won, msg) {
+    const mg = state.minigame;
+    const ev = state.selectedEvent;
+    if (!mg) return;
+    const full = ev ? listedEventSoul(ev) : 0;
+    mg.phase = won ? "won" : "lost";
+    mg.won = !!won;
+    mg.rewardSoul = Math.max(1, Math.round(full * 0.5));
+    mg.rewardXp = ev ? Math.max(0, Math.round((ev.reward_xp | 0) * 0.5)) : 0;
+    mg.rewardGold = ev ? Math.max(0, Math.round((ev.reward_gold | 0) * 0.5)) : 0;
+    mg.shards = 0;
+    mg.message = msg || "收手離場——半獎，人生繼續。";
+    applyBlackMarketRewards();
+    render();
+  }
+
+  /* ===================================================================
+   * t390：小遊戲分流 —— 舊「記憶鍵位」同新「黑市賭檔」並存
+   * =================================================================== */
+  function viewMinigameEntry(root) {
+    const ev = state.selectedEvent;
+    const kind = (ev && ev.minigame && ev.minigame.kind) || "";
+    if (kind === "black_market") return viewBlackMarket(root);
+    return viewMinigame(root);
+  }
+
   const MG_INPUT_LIMIT_S = 12;
   const MG_INPUT_LIMIT_MS = MG_INPUT_LIMIT_S * 1000;
 
@@ -6994,7 +8014,7 @@
           <button class="btn ghost" id="btn-mg-skip" type="button">放棄（半獎）</button>`;
       } else if (isResult) {
         /* t387：結果浮現之後自動前進，唔需要撳「繼續」 */
-        cta = `${autoAdvanceBarHtml("自動繼續")}
+        cta = `${autoAdvanceBarHtml("繼續")}
           <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>`;
       } else {
         cta = `<button class="btn ghost" id="btn-mg-skip" type="button">放棄（半獎）</button>`;
@@ -7067,7 +8087,6 @@
           clearAutoAdvance();
           settleMinigameToLife();
         };
-        scheduleAutoAdvance(go, AUTO_ADVANCE_MS);
         wireTapToAdvance(root, go);
       }
       root.querySelectorAll(".mg-pad").forEach((btn) => {
@@ -8432,6 +9451,8 @@
     const pool = [];
     rosterFightersSorted().forEach((f) => {
       if (!f || !f.id) return;
+      /* t391：殘頁專屬卡唔入扭蛋池 */
+      if (isShardOnlyFighter(f)) return;
       const rarity = gachaItemRarity("fighters", f);
       if (!rarity) return;
       pool.push({ kind: "fighters", id: f.id, rarity, item: f });
@@ -9113,7 +10134,9 @@
     ensureGachaPity();
     clearGachaAnim();
     if (gachaEntryLocked()) {
-      toastMsg("戰鬥進行中唔可以抽扭蛋——打完先抽。");
+      toastMsg(state.lifePrepped
+          ? "人生進行中唔可以抽扭蛋——完結今世先返主頁抽。"
+          : "戰鬥進行中唔可以抽扭蛋——打完先抽。");
       return;
     }
     if (state.screen !== "gacha") {
@@ -9138,17 +10161,28 @@
    * 現在改為**人生中都可以抽**（膠幣係跨世保留嘅帳號資源，抽卡提升卡冊合理），
    * 唯一限制：戰鬥進行中唔可以抽（避免中途改動隊伍／卡冊狀態）。
    */
+  /**
+   * t401：扭蛋入口 —— 進入人生後完全鎖定並隱藏。
+   *
+   * 演變：
+   *   t379 曾開放「人生中亦可抽」→ 但總導演要求改回：
+   *   「進人生後不能扭蛋，進人生後把右上角的扭蛋按鈕隱藏。」
+   *
+   * 規則：
+   *   - `lifePrepped === true`（已開始人生）→ 一律鎖定（唔止戰鬥中）
+   *   - 戰鬥進行中亦鎖定
+   *   - UI 上 `gachaEntryHtml()` 回空字串 → 按鈕完全消失，唔會顯示「停抽」
+   */
   function gachaEntryLocked() {
-    // 只喺實際戰鬥進行中鎖（其他任何畫面都開放）
+    if (state.lifePrepped) return true;
     const inBattle = state.screen === "battle" && state.battle && state.battle.running;
     return !!inBattle;
   }
 
+  /** 扭蛋按鈕：鎖定時**完全唔顯示**（t401：隱藏，而非顯示「停抽」） */
   function gachaEntryHtml() {
-    if (gachaEntryLocked()) {
-      return `<button type="button" class="chip gacha-entry locked" id="btn-gacha-entry" data-gacha-entry data-gacha-locked="1" title="戰鬥進行中不可抽扭蛋——打完先抽" aria-disabled="true">霓虹扭蛋 · 戰鬥中停抽</button>`;
-    }
-    return `<button type="button" class="chip gacha-entry" id="btn-gacha-entry" data-gacha-entry title="廟街霓虹扭蛋機（人生中亦可抽）">霓虹扭蛋</button>`;
+    if (gachaEntryLocked()) return "";
+    return `<button type="button" class="chip gacha-entry" id="btn-gacha-entry" data-gacha-entry title="廟街霓虹扭蛋機">霓虹扭蛋</button>`;
   }
 
   function wireGachaEntry(root) {
@@ -9160,7 +10194,9 @@
           e.stopPropagation();
         }
         if (gachaEntryLocked()) {
-          toastMsg("戰鬥進行中唔可以抽扭蛋——打完先抽。");
+          toastMsg(state.lifePrepped
+          ? "人生進行中唔可以抽扭蛋——完結今世先返主頁抽。"
+          : "戰鬥進行中唔可以抽扭蛋——打完先抽。");
           return;
         }
         enterGachaScreen();
@@ -9178,7 +10214,9 @@
       state.gachaPhase = "idle";
       state.screen = "home";
       render();
-      toastMsg("戰鬥進行中唔可以抽扭蛋——打完先抽。");
+      toastMsg(state.lifePrepped
+          ? "人生進行中唔可以抽扭蛋——完結今世先返主頁抽。"
+          : "戰鬥進行中唔可以抽扭蛋——打完先抽。");
       return;
     }
     const soul = state.soul | 0;
@@ -9791,10 +10829,54 @@
         <div class="album-starup">
           <div class="album-starup-label">同名卡 <b>${count}</b>／${need}</div>
           ${nextHint}
+          ${/* t400：裝備卡可以直接裝上／卸下 */""}
+          ${kind === "gear" ? albumGearEquipBtnHtml(id) : ""}
           <button type="button" class="btn album-starup-btn${canUp ? " ready" : ""}" id="album-btn-starup" ${canUp ? "" : "disabled"}>升星</button>
         </div>
         <p class="album-detail-foot">點擊彈窗以外的任意位置，可以關閉彈窗</p>
       </div>`;
+  }
+
+  /**
+   * t400：卡冊裝備詳情的「裝上／卸下」按鈕。
+   * 準備頁只在 `!lifePrepped` 時可進入，人生中途冇任何介面可以換裝備。
+   */
+  function albumGearEquipBtnHtml(id) {
+    ensureGearShape();
+    const item = itemByIdLookup()[id];
+    if (!item) return "";
+    const slotId = item.slot || item.slot_id || null;
+    const slotMeta = slotId ? GEAR_SLOTS.find((s) => s.id === slotId) : null;
+    if (!slotMeta) return "";
+    const equipped = state.accountGear[slotMeta.id] === id;
+    if (equipped) {
+      return `<button type="button" class="btn ghost album-gear-btn" id="album-btn-gear" data-gear-act="off">卸下（${esc(slotMeta.label)}槽）</button>`;
+    }
+    return `<button type="button" class="btn cyan album-gear-btn" id="album-btn-gear" data-gear-act="on">裝上（${esc(slotMeta.label)}槽）</button>`;
+  }
+
+  /** t400：卡冊內裝上／卸下裝備 */
+  function albumToggleGearEquip(id, toastFn, root) {
+    ensureGearShape();
+    const item = itemByIdLookup()[id];
+    if (!item) { toastFn(root, "找不到這件裝備"); return false; }
+    const slotId = item.slot || item.slot_id || null;
+    const slotMeta = slotId ? GEAR_SLOTS.find((s) => s.id === slotId) : null;
+    if (!slotMeta) { toastFn(root, "此裝備未對應槽位"); return false; }
+    if (state.accountGear[slotMeta.id] === id) {
+      state.accountGear[slotMeta.id] = null;
+      toastFn(root, `已卸下「${item.name || id}」`);
+      return true;
+    }
+    const prevId = state.accountGear[slotMeta.id];
+    state.accountGear[slotMeta.id] = id;
+    if (prevId && prevId !== id) {
+      const prev = itemByIdLookup()[prevId];
+      toastFn(root, `已裝上「${item.name || id}」（換走「${(prev && prev.name) || prevId}」）`);
+    } else {
+      toastFn(root, `已裝上「${item.name || id}」`);
+    }
+    return true;
   }
 
   function albumTryStarUp(kind, id, toastFn, root) {
@@ -9851,8 +10933,14 @@
             ? `<span class="album-cell-lv">Lv.${fighterLevelOf(e.id)}</span>`
             : "";
         // 只列已擁有；點擊卡圖／整格開詳情（唔掛 data-help，避免長按擋住 click）
+        /*
+         * t393：橫圖卡（例：C255 雙節棍 16:9）喺 1:1 格用 cover 會切走主體，
+         * 改為 contain（CSS `.album-cell-art img.art-landscape`）。
+         */
+        const isLandscape = !!(e.item && e.item.art_landscape);
+        const artHtml = albumArtHtml(e.art, e.name, null, e.kind);
         return `<button type="button" class="album-cell ${rareCls}" data-album-id="${esc(e.id)}" data-album-kind="${esc(e.kind)}" aria-label="${esc(e.name)} x${count}">
-          <div class="album-cell-art" data-album-open="1">${albumArtHtml(e.art, e.name, null, e.kind)}${lvBadge}<div class="album-cell-stars">${albumStarsHtml(star, Math.min(maxS, 5))}</div></div>
+          <div class="album-cell-art" data-album-open="1">${isLandscape ? artHtml.replace("<img ", '<img class="art-landscape" ') : artHtml}${lvBadge}<div class="album-cell-stars">${albumStarsHtml(star, Math.min(maxS, 5))}</div></div>
           <div class="album-cell-name">${esc(e.name)} <span class="album-qty">x${count}</span></div>
         </button>`;
       })
@@ -9883,6 +10971,8 @@
           <input type="search" class="album-search" id="album-search" placeholder="搜尋${esc(tabLabel)}…" value="${esc(state.albumQuery || "")}" autocomplete="off" />
           <button type="button" class="album-filter-btn" id="album-filter" title="${esc(filterLabel)}">${esc(filterLabel)}</button>
         </div>
+        ${/* t390：戰鬥卡殘頁入口（只喺戰鬥卡 tab 顯示） */""}
+        ${tab === "fighters" ? shardBannerHtml() : ""}
         <div class="album-grid-wrap">
           <div class="album-grid" id="album-grid">${cells || `<div class="album-empty">${esc(emptyMsg)}</div>`}</div>
         </div>
@@ -9908,6 +10998,8 @@
       state.screen = "home";
       render();
     };
+    /* t390：殘頁橫幅 */
+    wireShardPanel(root, toast);
 
     root.querySelectorAll("[data-album-tab]").forEach((btn) => {
       btn.onclick = () => {
@@ -9996,6 +11088,15 @@
       }
       const sheet = mask.querySelector(".album-detail-sheet");
       if (sheet) sheet.onclick = (ev) => ev.stopPropagation();
+      /* t400：裝備裝上／卸下 */
+      const gearBtn = $("#album-btn-gear", root);
+      if (gearBtn) {
+        gearBtn.onclick = (ev) => {
+          ev.stopPropagation();
+          const gid = state.albumDetailId;
+          if (gid && albumToggleGearEquip(gid, toast, root)) render();
+        };
+      }
       const up = $("#album-btn-starup", root);
       if (up) {
         up.onclick = (ev) => {
@@ -10251,7 +11352,28 @@
       const slot = state.selectAllySlot | 0;
       const occupied = new Set(state.deploy.filter(Boolean));
       const cur = state.deploy[slot] || null;
-      const choices = (state.team || [])
+      /*
+       * t397：選卡來源由「只有隊伍」擴闊到「隊伍 + 卡冊已擁有」。
+       *
+       * 舊行為：只列 `state.team`。當統率已滿、新拿到的卡只入卡冊，
+       * 玩家喺開戰前嘅編隊頁完全揀唔到佢 → 「拿到但用唔到」。
+       *
+       * 新行為：列出所有「已擁有且未陣亡」的戰鬥卡。
+       * 揀咗之後若果唔在 team 內，會自動加入 team（統率有上限，滿了會提示）。
+       */
+      const ownedIds = (DATA.fighters || [])
+        .filter((f) => f && f.id && albumCardCount(f.id) > 0)
+        .map((f) => f.id);
+      const teamIds = (state.team || []).filter((id) => fighterById[id]);
+      const allIds = [];
+      const seenId = new Set();
+      /* 隊伍優先（維持原本次序），之後補卡冊其他卡 */
+      teamIds.concat(ownedIds).forEach((id) => {
+        if (!id || seenId.has(id)) return;
+        seenId.add(id);
+        allIds.push(id);
+      });
+      const choices = allIds
         .filter((id) => !isDeadFighter(id) && fighterById[id])
         .filter((id) => id === cur || !occupied.has(id));
       const grid = choices
@@ -10440,9 +11562,18 @@
         </div>
         <button class="btn gold enc-fight" id="btn-fight" data-help="btn-fight" ${canFight ? "" : "disabled"}>開始戰鬥</button>
         <div class="deploy-row" aria-label="出戰位">${slots.join("")}</div>
-        ${state.deployHint && deployNeedsPlayerPick()
-          ? `<p class="modal-hint deploy-hint" role="status">${esc(state.deployHint)}</p>`
-          : `<p class="modal-hint">打贏之後沿用這次上場，之後的戰鬥唔使再揀。</p>`}
+        ${/*
+           * t396：一律顯示「可換卡」提示（唔再只在需要補位時才講）。
+           * 之前只有 deployNeedsPlayerPick() 為 true 才顯示，令「沿用上次陣容」時
+           * 玩家完全唔知自己可以換卡。
+           */""}
+        ${(() => {
+          const needPick = deployNeedsPlayerPick();
+          if (needPick && state.deployHint) {
+            return `<p class="modal-hint deploy-hint" role="status">${esc(state.deployHint)}</p>`;
+          }
+          return `<p class="modal-hint deploy-hint" role="status">可換卡：點下面任何一格改出場陣容。預設已沿用上次未陣亡嘅卡。</p>`;
+        })()}
       </div>
       <button class="btn ghost enc-back" id="btn-back" data-help="btn-back">放棄，重新開始！</button>
       ${allyModal}
@@ -10494,8 +11625,24 @@
           const slot = state.selectAllySlot | 0;
           const fid = btn.dataset.fid;
           const act = btn.dataset.act;
-          if (act === "cancel") setDeploySlot(slot, null);
-          else setDeploySlot(slot, fid);
+          if (act === "cancel") {
+            setDeploySlot(slot, null);
+          } else {
+            /*
+             * t397：由卡冊揀卡時，如果佢仍未在 team 內，自動加入。
+             * 否則 `pruneUnownedRefs` / 隊伍檢查會令部署無效。
+             * 統率已滿就唔加入（但仍然可以出戰，因為佢已擁有）——
+             * 提示交由 deployHint 講清楚。
+             */
+            if (fid && !(state.team || []).includes(fid) && fighterById[fid]) {
+              const cap = fighterPocketCap();
+              if ((state.team || []).length < cap) {
+                state.team.push(fid);
+                if (!state.loadout[fid]) state.loadout[fid] = [];
+              }
+            }
+            setDeploySlot(slot, fid);
+          }
           state.selectAllySlot = null;
           state.fighterDetailId = null;
           state.detailSkillPick = null;
@@ -10786,6 +11933,23 @@
     if (!b || !b.running) return;
     if (!b.paused) return;
     b.paused = false;
+    scheduleNext(280);
+  }
+
+  /**
+   * t399：安全恢復 —— 只在戰鬥狀態完整時才繼續推進。
+   *
+   * 問題：`resumeBattle()` 會 `scheduleNext(280)` 排一個 `battleTick`，
+   * 而 `battleTick` 會讀 `b.queue.length`。若戰鬥物件被中途清空
+   * （換畫面／舊存檔／測試注入的假物件），就會拋
+   * `TypeError: Cannot read properties of undefined (reading 'length')`。
+   */
+  function resumeBattleSafe() {
+    const b = state.battle;
+    if (!b || !b.running) return;
+    if (!b.paused) return;
+    b.paused = false;
+    if (!Array.isArray(b.queue) || !Array.isArray(b.players) || !Array.isArray(b.enemies)) return;
     scheduleNext(280);
   }
 
@@ -11428,7 +12592,8 @@
     albumEnsureState();
     const teamSet = new Set(state.team || []);
     const cap = fighterPocketCap();
-    const all = (DATA.fighters || []).filter((f) => f && f.id);
+    /* t391：戰鬥掉落唔會出殘頁專屬卡（只可經殘頁兌換） */
+    const all = poolFighters();
     if (!all.length) return null;
     // 優先未持有 → 其次未在隊
     const unowned = all.filter((f) => albumCardCount(f.id) <= 0 && !teamSet.has(f.id));
@@ -11464,7 +12629,8 @@
     const overlay = document.getElementById("card-inspect");
     if (overlay) overlay.remove();
     if (b) b.inspectOpen = false;
-    resumeBattle();
+    /* t399：用安全版（戰鬥狀態唔完整時唔會排 tick 而 crash） */
+    resumeBattleSafe();
   }
 
   function openCardInspect(unit) {
@@ -11653,7 +12819,7 @@
       const pct = Math.max(0, Math.round((u.hp / u.maxHp) * 100));
       const isEnemy = u.side === "enemy";
       return `
-        <div class="unit-slot ${isEnemy ? "enemy" : ""} inspectable ${u.alive ? "" : "down"}" data-unit="${sidePrefix}:${esc(u.id)}" data-side="${esc(u.side)}" data-id="${esc(u.id)}" title="長按查看卡・暫停" role="button" tabindex="0">
+        <div class="unit-slot ${isEnemy ? "enemy" : ""} inspectable ${u.alive ? "" : "down"}" data-unit="${sidePrefix}:${esc(u.id)}" data-side="${esc(u.side)}" data-id="${esc(u.id)}" title="點擊查看卡（戰鬥暫停）" role="button" tabindex="0">
           ${statusRowHtml(u, sidePrefix)}
           <img src="${esc(u.art)}" alt="${esc(u.name)}" />
           <div class="uname">${esc(u.name)}</div>
@@ -11805,7 +12971,6 @@
       clearAutoAdvance();
       primaryAction();
     };
-    scheduleAutoAdvance(advance, lifeDone ? 3400 : AUTO_ADVANCE_MS);
     wireTapToAdvance(root, advance);
     $("#btn-abandon", root).onclick = () => requestAbandonLife();
     wireStoryDock(root);

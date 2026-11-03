@@ -6127,6 +6127,138 @@ window.HK_SLICE_DATA = {
       "power": "phys",
       "execute_hp_pct": 40,
       "execute_mult": 1.35
+    },
+    {
+      "id": "C254",
+      "name": "籠鬥之王",
+      "rarity": "最高級",
+      "slots": 7,
+      "tags": [
+        "城寨"
+      ],
+      "atk": 19,
+      "spd": 13,
+      "basic": "籠邊肘擊",
+      "skill": "鐵籠終局",
+      "skill_cd": 5,
+      "art": "assets/fighters/C254.jpg",
+      "tod": "鐵籠夜戰",
+      "flavor": "鐵絲網圍住半個城寨。你數過，今晚第七個倒下嘅人仲喺度喘氣——但你已經唔記得自己流緊邊個嘅血。",
+      "blurb": "最後一個站起嘅人",
+      "skill_effect": "對血量最低敵 攻×2.3；若擊殺，本場我方 攻＋12%（最後一個站起嘅人）",
+      "rarity_slang": "鎮場王牌",
+      "dmg_mult": 2.3,
+      "hits": 1,
+      "target": "lowest",
+      "power": "phys",
+      "shard_only": true
+    },
+    {
+      "id": "C255",
+      "name": "雙節棍",
+      "rarity": "最高級",
+      "slots": 7,
+      "tags": [
+        "城寨",
+        "商場"
+      ],
+      "atk": 17,
+      "spd": 16,
+      "basic": "棍尾掃",
+      "skill": "雙棍連環",
+      "skill_cd": 4,
+      "art": "assets/fighters/C255.jpg",
+      "art_landscape": true,
+      "tod": "商場正午",
+      "flavor": "崇光中庭，玻璃天花透落嚟嘅光，啱啱好照住你。下面幾百人舉住購物袋叫緊你個名——但你只係聽到自己條氣。",
+      "blurb": "棍影未停，人已經貼到面前",
+      "skill_effect": "連擊 3 次，每次 攻×0.85；每次命中 速＋1（本場，上限 +3）",
+      "rarity_slang": "鎮場王牌",
+      "dmg_mult": 0.85,
+      "hits": 3,
+      "target": "single",
+      "power": "phys",
+      "shard_only": true
+    },
+    {
+      "id": "C256",
+      "name": "馬拉松",
+      "rarity": "最高級",
+      "slots": 7,
+      "tags": [
+        "城寨",
+        "茶記"
+      ],
+      "atk": 15,
+      "spd": 19,
+      "basic": "終點衝刺",
+      "skill": "終點衝線",
+      "skill_cd": 4,
+      "art": "assets/fighters/C256.jpg",
+      "art_landscape": true,
+      "tod": "茶記正午",
+      "flavor": "四十二公里之後，你踩住最後一級樓梯入茶記。全場舉杯，蒸籠仲冒住煙。你冇喊，只係企喺度喘——終於有人遞你一杯凍檸茶。",
+      "blurb": "衝線嗰下，成條街都追唔上",
+      "skill_effect": "對敵全體 攻×1.15；命中後本場我方 速＋3",
+      "rarity_slang": "鎮場王牌",
+      "dmg_mult": 1.15,
+      "hits": 1,
+      "target": "aoe",
+      "power": "phys",
+      "shard_only": true
+    },
+    {
+      "id": "C257",
+      "name": "無畏",
+      "rarity": "最高級",
+      "slots": 7,
+      "tags": [
+        "城寨",
+        "武館"
+      ],
+      "atk": 18,
+      "spd": 14,
+      "basic": "竹刀橫掃",
+      "skill": "無畏一閃",
+      "skill_cd": 5,
+      "art": "assets/fighters/C257.jpg",
+      "tod": "商場午後",
+      "flavor": "護胸上兩個字：無畏。你唔係唔怕，只係怕都照樣行前。竹刀舉起嗰刻，全場靜咗——連蒸籠嘅蒸氣都好似停低。",
+      "blurb": "刀未落，人已經站定",
+      "skill_effect": "必中一擊 攻×2.0；命中後自身 防＋4（2 回）",
+      "rarity_slang": "鎮場王牌",
+      "dmg_mult": 2,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "shard_only": true
+    },
+    {
+      "id": "C258",
+      "name": "香港加油",
+      "rarity": "最高級",
+      "slots": 7,
+      "tags": [
+        "城寨",
+        "球場"
+      ],
+      "atk": 16,
+      "spd": 17,
+      "basic": "過人變向",
+      "skill": "香港加油",
+      "skill_cd": 4,
+      "art": "assets/fighters/C258.webp",
+      "art_square": true,
+      "tod": "球場夜燈",
+      "flavor": "手臂上四個字，係自己紋嘅。全場幾千人叫緊，但你只聽到自己條氣同籃球撞地嗰聲。落後十二分，仲有六分鐘。",
+      "blurb": "未到最後都唔會停",
+      "skill_effect": "全隊 攻＋15%（2 回）、速＋2（2 回）",
+      "rarity_slang": "鎮場王牌",
+      "dmg_mult": 0,
+      "hits": 1,
+      "target": "aoe",
+      "power": "phys",
+      "shard_only": true
     }
   ],
   "enemies": [
@@ -6305,7 +6437,7 @@ window.HK_SLICE_DATA = {
       "type": "後巷",
       "desc": "夜巷石屎濕漉漉，影在牆角站了很久。有人拍你肩膀：醒了嗎？這裡是香港。",
       "reward_blurb": "教學戰・膠幣少許",
-      "art": "assets/events/ev-mtr-crowd.jpg",
+      "art": "assets/bg/bg-alley-mahjong-night.jpg",
       "battle": "E01",
       "reward_soul": 8,
       "category": "trial",
@@ -6322,7 +6454,7 @@ window.HK_SLICE_DATA = {
       "type": "舊帳",
       "desc": "快餐店燈箱半熄，雪櫃有罐過期東西——開門那一刻，酸味同人影一齊出。",
       "reward_blurb": "衰運氣氛戰・膠幣中",
-      "art": "assets/events/ev-expired-can.jpg",
+      "art": "assets/bg/bg-neon-street-day.jpg",
       "battle": "E02",
       "reward_soul": 12,
       "category": "trial",
@@ -6339,7 +6471,7 @@ window.HK_SLICE_DATA = {
       "type": "交通",
       "desc": "月台擠到動不了，閘機叮完又叮。潮水湧來——借过都無用。",
       "reward_blurb": "開場速−1・膠幣中",
-      "art": "assets/events/ev-mtr-crowd.jpg",
+      "art": "assets/bg/bg-mtr-platform.jpg",
       "battle": "E03",
       "reward_soul": 10,
       "category": "trial",
@@ -6356,7 +6488,7 @@ window.HK_SLICE_DATA = {
       "type": "人情",
       "desc": "茶樓二樓，一個侍應托住點心盤經過，順手幫你加底。佢笑住講：做人最緊要開心。",
       "reward_blurb": "免戰・膠幣偏多",
-      "art": "assets/events/ev-yum-cha.jpg",
+      "art": "assets/bg/bg-cha-chaan-teng-window.jpg",
       "battle": null,
       "reward_soul": 15,
       "category": "adventure",
@@ -6373,7 +6505,7 @@ window.HK_SLICE_DATA = {
       "type": "天氣",
       "desc": "天文台掛波，簷篷鐵皮啪啪響。雨衣都要上路——舊帳不等人。",
       "reward_blurb": "天氣關・可遇敵",
-      "art": "assets/events/ev-rooftop-night.jpg",
+      "art": "assets/bg/bg-estate-courtyard-up.jpg",
       "battle": "E02",
       "reward_soul": 11,
       "category": "adventure",
@@ -6390,7 +6522,7 @@ window.HK_SLICE_DATA = {
       "type": "搵食",
       "desc": "朝早街市，執輸行頭慘過敗家。飛刀檔口排隊——搶到手先算贏。",
       "reward_blurb": "搵食・膠幣／碎片感",
-      "art": "assets/events/ev-yum-cha.jpg",
+      "art": "assets/bg/bg-neon-street-day.jpg",
       "battle": null,
       "reward_soul": 9,
       "category": "adventure",
@@ -6407,7 +6539,7 @@ window.HK_SLICE_DATA = {
       "type": "舊帳",
       "desc": "隧道燈一閃一閃，的士夜更收音機嘈住粵語長篇。後鏡有車——亦有帳。",
       "reward_blurb": "舊帳精英向",
-      "art": "assets/events/ev-mtr-crowd.jpg",
+      "art": "assets/bg/bg-tram-interior.jpg",
       "battle": "E04",
       "reward_soul": 18,
       "category": "trial",
@@ -6424,7 +6556,7 @@ window.HK_SLICE_DATA = {
       "type": "打機舖",
       "desc": "螢幕問 Continue？荷包只剩幾毫殘幣。夾定不夾——差一毫秒。",
       "reward_blurb": "打機舖節奏・輕戰或獎勵",
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/bg/bg-park-chess-table.jpg",
       "battle": "E01",
       "reward_soul": 10,
       "category": "trial",
@@ -6441,7 +6573,7 @@ window.HK_SLICE_DATA = {
       "type": "節慶",
       "desc": "街口香火直，花牌色塊晃。開壇那時，未渡的影都會停一停。",
       "reward_blurb": "節慶淨場・治療向",
-      "art": "assets/events/ev-yum-cha.jpg",
+      "art": "assets/bg/bg-estate-courtyard-up.jpg",
       "battle": null,
       "reward_soul": 12,
       "category": "adventure",
@@ -6458,7 +6590,7 @@ window.HK_SLICE_DATA = {
       "type": "天氣",
       "desc": "牆身出水，證件糊成一團。行路黏答答——對手一樣動不開。",
       "reward_blurb": "減速氣氛",
-      "art": "assets/events/ev-mtr-crowd.jpg",
+      "art": "assets/bg/bg-estate-corridor.jpg",
       "battle": "E03",
       "reward_soul": 10,
       "category": "trial",
@@ -6487,7 +6619,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 20,
       "reward_xp": 4,
       "battle": null,
-      "art": "assets/events/ev-rooftop-night.jpg",
+      "art": "assets/bg/bg-rooftop-wooden-dummy.jpg",
       "category_label": "特殊"
     },
     {
@@ -6508,7 +6640,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 15,
       "reward_xp": 4,
       "battle": null,
-      "art": "assets/events/ev-yum-cha.jpg",
+      "art": "assets/bg/bg-star-ferry-pier.jpg",
       "category_label": "特殊"
     },
     {
@@ -6529,7 +6661,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 15,
       "reward_xp": 4,
       "battle": null,
-      "art": "assets/events/ev-mtr-crowd.jpg",
+      "art": "assets/bg/bg-rooftop-playground.jpg",
       "category_label": "特殊"
     },
     {
@@ -6550,7 +6682,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 25,
       "reward_xp": 4,
       "battle": null,
-      "art": "assets/events/ev-expired-can.jpg",
+      "art": "assets/bg/bg-censer-bookstall.jpg",
       "category_label": "特殊"
     },
     {
@@ -6569,7 +6701,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 30,
       "reward_xp": 8,
       "stage": "五年一劫",
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/bg/bg-fire-crisis.jpg",
       "category_label": "宿敵",
       "card_name": "後巷",
       "card_label": "街尾"
@@ -6590,7 +6722,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 32,
       "reward_xp": 8,
       "stage": "五年一劫",
-      "art": "assets/events/ev-expired-can.jpg",
+      "art": "assets/bg/bg-fire-crisis.jpg",
       "category_label": "宿敵",
       "card_name": "罐頭",
       "card_label": "雜貨"
@@ -6611,7 +6743,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 28,
       "reward_xp": 8,
       "stage": "五年一劫",
-      "art": "assets/events/ev-mtr-crowd.jpg",
+      "art": "assets/bg/bg-fire-crisis.jpg",
       "category_label": "宿敵",
       "card_name": "逼爆",
       "card_label": "月台"
@@ -6632,7 +6764,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 40,
       "reward_xp": 10,
       "stage": "五年一劫",
-      "art": "assets/events/ev-mtr-crowd.jpg",
+      "art": "assets/bg/bg-fire-crisis.jpg",
       "category_label": "宿敵",
       "card_name": "睇門口",
       "card_label": "鐵閘"
@@ -6653,7 +6785,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 20,
       "reward_xp": 6,
       "pack": "main_intro",
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/bg/bg-estate-corridor-long.jpg",
       "category_label": "主線",
       "story_pack_id": "chu_ru_xiang_jiang"
     },
@@ -6673,7 +6805,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 22,
       "reward_xp": 6,
       "pack": "main_intro",
-      "art": "assets/events/ev-yum-cha.jpg",
+      "art": "assets/bg/bg-dai-pai-dong-night.jpg",
       "category_label": "主線",
       "story_pack_id": "chu_ru_xiang_jiang"
     },
@@ -6693,7 +6825,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 18,
       "reward_xp": 5,
       "pack": "gang_walled",
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/bg/bg-alley-mahjong-night.jpg",
       "category_label": "支線"
     },
     {
@@ -6712,7 +6844,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 18,
       "reward_xp": 5,
       "pack": "gang_neon",
-      "art": "assets/events/ev-mtr-crowd.jpg",
+      "art": "assets/bg/bg-estate-courtyard-up.jpg",
       "category_label": "支線"
     },
     {
@@ -6731,7 +6863,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 16,
       "reward_xp": 5,
       "pack": "gang_walled",
-      "art": "assets/events/ev-rooftop-night.jpg",
+      "art": "assets/bg/bg-rooftop-playground.jpg",
       "category_label": "支線"
     },
     {
@@ -6750,7 +6882,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 20,
       "reward_xp": 5,
       "pack": "gang_neon",
-      "art": "assets/events/ev-mtr-crowd.jpg",
+      "art": "assets/bg/bg-neon-street-day.jpg",
       "category_label": "支線"
     },
     {
@@ -6769,7 +6901,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 10,
       "reward_xp": 4,
       "battle": null,
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/bg/bg-barber-1970s.jpg",
       "category_label": "裝備店"
     },
     {
@@ -6788,7 +6920,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 12,
       "reward_xp": 4,
       "battle": null,
-      "art": "assets/events/ev-yum-cha.jpg",
+      "art": "assets/bg/bg-cha-chaan-teng.jpg",
       "category_label": "裝備店"
     },
     {
@@ -6807,7 +6939,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 10,
       "reward_xp": 4,
       "battle": null,
-      "art": "assets/events/ev-rooftop-night.jpg",
+      "art": "assets/bg/bg-neon-street-day.jpg",
       "category_label": "戰鬥卡店"
     },
     {
@@ -6826,7 +6958,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 12,
       "reward_xp": 4,
       "battle": null,
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/bg/bg-park-chess-table.jpg",
       "category_label": "戰鬥卡店"
     },
     {
@@ -6845,7 +6977,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 10,
       "reward_xp": 4,
       "battle": null,
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/bg/bg-park-chess-table.jpg",
       "category_label": "技能店"
     },
     {
@@ -6864,7 +6996,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 12,
       "reward_xp": 4,
       "battle": null,
-      "art": "assets/events/ev-mtr-crowd.jpg",
+      "art": "assets/bg/bg-bus-stop-street.jpg",
       "category_label": "技能店"
     },
     {
@@ -6882,7 +7014,7 @@ window.HK_SLICE_DATA = {
       "battle": "E01",
       "reward_soul": 14,
       "reward_xp": 4,
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/bg/bg-neon-street-day.jpg",
       "category_label": "試煉"
     },
     {
@@ -6900,7 +7032,7 @@ window.HK_SLICE_DATA = {
       "battle": "E02",
       "reward_soul": 14,
       "reward_xp": 4,
-      "art": "assets/events/ev-yum-cha.jpg",
+      "art": "assets/bg/bg-cha-chaan-teng-window.jpg",
       "category_label": "試煉"
     },
     {
@@ -6918,7 +7050,7 @@ window.HK_SLICE_DATA = {
       "battle": "E03",
       "reward_soul": 14,
       "reward_xp": 4,
-      "art": "assets/events/ev-mtr-crowd.jpg",
+      "art": "assets/bg/bg-bus-stop-street.jpg",
       "category_label": "試煉"
     },
     {
@@ -6936,7 +7068,7 @@ window.HK_SLICE_DATA = {
       "battle": null,
       "reward_soul": 20,
       "reward_xp": 4,
-      "art": "assets/events/ev-mtr-crowd.jpg",
+      "art": "assets/bg/bg-sampan-harbour.jpg",
       "category_label": "奇遇"
     },
     {
@@ -6954,7 +7086,7 @@ window.HK_SLICE_DATA = {
       "battle": null,
       "reward_soul": 18,
       "reward_xp": 4,
-      "art": "assets/events/ev-yum-cha.jpg",
+      "art": "assets/bg/bg-estate-happiness.jpg",
       "category_label": "奇遇"
     },
     {
@@ -6972,7 +7104,7 @@ window.HK_SLICE_DATA = {
       "battle": null,
       "reward_soul": 16,
       "reward_xp": 4,
-      "art": "assets/events/ev-expired-can.jpg",
+      "art": "assets/bg/bg-estate-corridor-long.jpg",
       "category_label": "奇遇"
     },
     {
@@ -6990,7 +7122,7 @@ window.HK_SLICE_DATA = {
       "battle": null,
       "reward_soul": 8,
       "reward_xp": 4,
-      "art": "assets/events/ev-yum-cha.jpg",
+      "art": "assets/bg/bg-cha-chaan-teng-miduo.jpg",
       "category_label": "換技"
     },
     {
@@ -7008,7 +7140,7 @@ window.HK_SLICE_DATA = {
       "battle": null,
       "reward_soul": 8,
       "reward_xp": 4,
-      "art": "assets/events/ev-rooftop-night.jpg",
+      "art": "assets/bg/bg-rooftop-playground.jpg",
       "category_label": "換技"
     },
     {
@@ -7017,7 +7149,7 @@ window.HK_SLICE_DATA = {
       "type": "打機舖",
       "desc": "商場二樓的舊街機仍亮著霓虹。投入一枚硬幣，螢幕跳出記憶破關——依序點選亮起的鍵位，闖過關卡即可領取滿額獎勵。",
       "reward_blurb": "破關滿獎・失敗半獎・人生不停",
-      "art": "assets/events/ev-mtr-crowd.jpg",
+      "art": "assets/bg/bg-park-chess-table.jpg",
       "battle": null,
       "reward_soul": 22,
       "reward_xp": 6,
@@ -7046,7 +7178,7 @@ window.HK_SLICE_DATA = {
       "type": "勢力",
       "desc": "霓虹燈下，廟街義氣的阿哥招呼你：今晚檔口缺一對手，願意幫忙嗎？幫或不幫，皆可繼續人生。",
       "reward_blurb": "選邊站・改好感・人生不停",
-      "art": "assets/events/ev-mtr-crowd.jpg",
+      "art": "assets/bg/bg-dai-pai-dong-night.jpg",
       "battle": null,
       "reward_soul": 12,
       "reward_xp": 4,
@@ -7092,7 +7224,7 @@ window.HK_SLICE_DATA = {
       "type": "勢力",
       "desc": "城寨鐵閘旁，兄弟遞來一袋雜務：送口信、看門口。願意接手嗎？拒絕也不會卡死人生。",
       "reward_blurb": "選邊站・改好感・人生不停",
-      "art": "assets/events/ev-mtr-crowd.jpg",
+      "art": "assets/bg/bg-estate-corridor-long.jpg",
       "battle": null,
       "reward_soul": 12,
       "reward_xp": 4,
@@ -7138,7 +7270,7 @@ window.HK_SLICE_DATA = {
       "type": "勢力",
       "desc": "廟街義氣記得你幫過忙。阿哥塞來一個紅包，並指點一條「走位」——人情有回報。",
       "reward_blurb": "好感達閾・幸運＋金幣",
-      "art": "assets/events/ev-mtr-crowd.jpg",
+      "art": "assets/bg/bg-dai-pai-dong-night.jpg",
       "battle": null,
       "reward_soul": 25,
       "reward_xp": 6,
@@ -7177,7 +7309,7 @@ window.HK_SLICE_DATA = {
       "type": "勢力",
       "desc": "城寨兄弟把你當自己人，塞來一袋零錢，並傳授半式「看門口」的竅門。",
       "reward_blurb": "好感達閾・力量＋金幣",
-      "art": "assets/events/ev-mtr-crowd.jpg",
+      "art": "assets/bg/bg-estate-happiness.jpg",
       "battle": null,
       "reward_soul": 25,
       "reward_xp": 6,
@@ -7226,7 +7358,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 8,
       "reward_xp": 3,
       "battle": null,
-      "art": "assets/events/ev-alley-wake.jpg"
+      "art": "assets/bg/bg-alley-mahjong-night.jpg"
     },
     {
       "id": "EV45",
@@ -7244,7 +7376,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 8,
       "reward_xp": 3,
       "battle": null,
-      "art": "assets/events/ev-rooftop-night.jpg"
+      "art": "assets/bg/bg-dai-pai-dong-night.jpg"
     },
     {
       "id": "EV46",
@@ -7296,7 +7428,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 28,
       "reward_xp": 8,
       "pack": "walled_ch1",
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/bg/bg-alley-mahjong-night.jpg",
       "category_label": "主線",
       "story_pack_id": "kowloon_walled_ch1"
     },
@@ -7316,7 +7448,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 16,
       "reward_xp": 5,
       "pack": "typhoon_tea",
-      "art": "assets/events/ev-yum-cha.jpg",
+      "art": "assets/bg/bg-cha-chaan-teng-window.jpg",
       "category_label": "主線",
       "story_pack_id": "fung_kau_mei_lok"
     },
@@ -7336,7 +7468,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 22,
       "reward_xp": 7,
       "pack": "typhoon_tea",
-      "art": "assets/events/ev-yum-cha.jpg",
+      "art": "assets/bg/bg-cha-chaan-teng.jpg",
       "category_label": "主線",
       "story_pack_id": "fung_kau_mei_lok"
     },
@@ -7357,7 +7489,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 8,
       "reward_xp": 3,
       "battle": null,
-      "art": "assets/events/ev-rooftop-night.jpg"
+      "art": "assets/bg/bg-rooftop-wooden-dummy.jpg"
     },
     {
       "id": "EV50",
@@ -7376,7 +7508,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 10,
       "reward_xp": 3,
       "battle": null,
-      "art": "assets/events/ev-rooftop-night.jpg"
+      "art": "assets/bg/bg-estate-corridor-long.jpg"
     },
     {
       "id": "EV51",
@@ -7395,7 +7527,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 9,
       "reward_xp": 3,
       "battle": null,
-      "art": "assets/events/ev-yum-cha.jpg"
+      "art": "assets/bg/bg-cha-chaan-teng-miduo.jpg"
     },
     {
       "id": "EV52",
@@ -7414,7 +7546,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 11,
       "reward_xp": 3,
       "battle": null,
-      "art": "assets/events/ev-mtr-crowd.jpg"
+      "art": "assets/bg/bg-dai-pai-dong-night.jpg"
     },
     {
       "id": "EV53",
@@ -7433,7 +7565,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 8,
       "reward_xp": 3,
       "battle": null,
-      "art": "assets/events/ev-yum-cha.jpg"
+      "art": "assets/bg/bg-bus-stop-street.jpg"
     },
     {
       "id": "EV54",
@@ -7452,7 +7584,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 10,
       "reward_xp": 3,
       "battle": null,
-      "art": "assets/events/ev-alley-wake.jpg"
+      "art": "assets/bg/bg-rooftop-playground.jpg"
     },
     {
       "id": "EV55",
@@ -7488,7 +7620,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 26,
       "reward_xp": 9,
       "pack": "shou_dai_nv_xia",
-      "art": "assets/events/ev-rooftop-night.jpg",
+      "art": "assets/bg/bg-cha-chaan-teng-miduo.jpg",
       "category_label": "主線",
       "story_pack_id": "shou_dai_nv_xia"
     },
@@ -7522,7 +7654,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 22,
       "reward_xp": 7,
       "pack": "shou_dai_nv_xia",
-      "art": "assets/events/ev-rooftop-night.jpg",
+      "art": "assets/bg/bg-stairwell-old.jpg",
       "category_label": "主線",
       "story_pack_id": "shou_dai_nv_xia"
     },
@@ -7598,7 +7730,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 20,
       "reward_xp": 6,
       "pack": "neon_mei_wan",
-      "art": "assets/events/ev-rooftop-night.jpg",
+      "art": "assets/bg/bg-neon-street-day.jpg",
       "category_label": "主線",
       "story_pack_id": "neon_mei_wan"
     },
@@ -7644,7 +7776,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 32,
       "reward_xp": 11,
       "pack": "neon_mei_wan",
-      "art": "assets/events/ev-rooftop-night.jpg",
+      "art": "assets/bg/bg-rooftop-wooden-dummy.jpg",
       "category_label": "主線",
       "story_pack_id": "neon_mei_wan"
     },
@@ -7735,7 +7867,7 @@ window.HK_SLICE_DATA = {
           "text": "（湯好燙。你飲咗好耐）"
         }
       ],
-      "art": "assets/events/ev-yum-cha.jpg",
+      "art": "assets/bg/bg-neon-street-day.jpg",
       "battle": null,
       "story_pack_id": "office_ballad",
       "pack": "office_ballad",
@@ -9608,7 +9740,7 @@ window.HK_SLICE_DATA = {
           "text": "（你發現自己已經四十歲）"
         }
       ],
-      "art": "assets/events/ev-yum-cha.jpg",
+      "art": "assets/bg/bg-court-of-final-appeal.jpg",
       "battle": null,
       "story_pack_id": "office_ballad",
       "pack": "office_ballad",
@@ -9706,7 +9838,7 @@ window.HK_SLICE_DATA = {
           "text": "（你仲有得揀）"
         }
       ],
-      "art": "assets/events/ev-yum-cha.jpg",
+      "art": "assets/bg/bg-harbour-peak.jpg",
       "battle": null,
       "story_pack_id": "office_ballad",
       "pack": "office_ballad",
@@ -10029,7 +10161,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 10,
       "reward_xp": 3,
       "battle": null,
-      "art": "assets/events/ev-mtr-crowd.jpg"
+      "art": "assets/bg/bg-stairwell-old.jpg"
     },
     {
       "id": "EV62",
@@ -10047,7 +10179,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 12,
       "reward_xp": 4,
       "battle": null,
-      "art": "assets/events/ev-rooftop-night.jpg"
+      "art": "assets/bg/bg-dai-pai-dong-night.jpg"
     },
     {
       "id": "EV63",
@@ -10065,7 +10197,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 11,
       "reward_xp": 3,
       "battle": null,
-      "art": "assets/events/ev-rooftop-night.jpg"
+      "art": "assets/bg/bg-skyline-sunset.jpg"
     },
     {
       "id": "EV64",
@@ -10083,7 +10215,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 9,
       "reward_xp": 5,
       "battle": null,
-      "art": "assets/events/ev-rooftop-night.jpg"
+      "art": "assets/bg/bg-rooftop-wooden-dummy.jpg"
     },
     {
       "id": "EV65",
@@ -10101,7 +10233,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 10,
       "reward_xp": 6,
       "battle": null,
-      "art": "assets/events/ev-rooftop-night.jpg"
+      "art": "assets/bg/bg-rooftop-playground.jpg"
     },
     {
       "id": "EV66",
@@ -10119,7 +10251,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 8,
       "reward_xp": 4,
       "battle": null,
-      "art": "assets/events/ev-yum-cha.jpg"
+      "art": "assets/bg/bg-cha-chaan-teng.jpg"
     },
     {
       "id": "EV67",
@@ -10137,7 +10269,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 15,
       "reward_xp": 5,
       "battle": null,
-      "art": "assets/events/ev-rooftop-night.jpg"
+      "art": "assets/bg/bg-censer-bookstall.jpg"
     },
     {
       "id": "EV68",
@@ -10155,7 +10287,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 16,
       "reward_xp": 6,
       "battle": null,
-      "art": "assets/events/ev-rooftop-night.jpg"
+      "art": "assets/bg/bg-censer-bookstall.jpg"
     },
     {
       "id": "EV69",
@@ -10173,7 +10305,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 7,
       "reward_xp": 3,
       "battle": null,
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/bg/bg-alley-mahjong-night.jpg",
       "gift": "fighter"
     },
     {
@@ -10192,7 +10324,7 @@ window.HK_SLICE_DATA = {
       "reward_soul": 8,
       "reward_xp": 4,
       "battle": null,
-      "art": "assets/events/ev-expired-can.jpg",
+      "art": "assets/bg/bg-star-ferry-pier.jpg",
       "gift": "fighter"
     },
     {
@@ -14889,6 +15021,36 @@ window.HK_SLICE_DATA = {
         }
       ],
       "tale_scene": "街口圍板"
+    },
+    {
+      "id": "EV71",
+      "name": "黑市賭檔",
+      "type": "賭檔",
+      "category": "minigame",
+      "category_label": "小遊戲",
+      "desc": "城寨三樓，鐵閘後面有一檔。冇招牌，只有一盞黃燈、一張麻雀枱、一副骰。坐低嘅人唔多講嘢，錢擺枱面，輸贏自己認。",
+      "reward_blurb": "賭檔・殘頁",
+      "art": "assets/bg/bg-alley-mahjong-night.jpg",
+      "battle": null,
+      "reward_soul": 18,
+      "reward_xp": 5,
+      "reward_gold": 3,
+      "rewards_preview": [],
+      "attrs_delta": null,
+      "flag_on_win": "black_market_win",
+      "minigame": {
+        "kind": "black_market",
+        "modes": [
+          "mahjong",
+          "dice"
+        ],
+        "rounds": 3,
+        "time_limit_sec": 40,
+        "shard_chance": 0.85,
+        "shard_min": 1,
+        "shard_max": 2,
+        "shard_need": 10
+      }
     }
   ],
   "locale": {
@@ -14977,6 +15139,11 @@ window.HK_SLICE_DATA = {
       "id": "faction",
       "name": "勢力",
       "blurb": "幫派／勢力支線——選邊站、累積好感，換人情回報。"
+    },
+    {
+      "id": "gamble",
+      "name": "賭檔",
+      "blurb": "城寨暗角、鐵閘後面——麻雀、骰仔、字花，輸贏自己認。"
     }
   ],
   "rarities": [
@@ -16429,6 +16596,98 @@ window.HK_SLICE_DATA = {
       "target": "aoe",
       "power": "phys",
       "rarity": "稀有"
+    },
+    {
+      "id": "S73",
+      "name": "鐵籠終局",
+      "tag": "城寨",
+      "tags": [
+        "城寨"
+      ],
+      "cd": 5,
+      "effect": "對血量最低敵 攻×2.3；若擊殺，本場我方 攻＋12%（最後一個站起嘅人）",
+      "kind": "招式",
+      "blurb": "最後一個站起嘅人",
+      "art": "assets/fighters/C254.jpg",
+      "dmg_mult": 2.3,
+      "hits": 1,
+      "target": "lowest",
+      "power": "phys",
+      "rarity": "最高級"
+    },
+    {
+      "id": "S74",
+      "name": "雙棍連環",
+      "tag": "城寨",
+      "tags": [
+        "城寨"
+      ],
+      "cd": 4,
+      "effect": "連擊 3 次，每次 攻×0.85；每次命中 速＋1（本場，上限 +3）——棍影未停，人已經貼到面前",
+      "kind": "招式",
+      "blurb": "棍影未停，人已經貼到面前",
+      "art": "assets/fighters/C255.jpg",
+      "dmg_mult": 0.85,
+      "hits": 3,
+      "target": "single",
+      "power": "phys",
+      "rarity": "最高級"
+    },
+    {
+      "id": "S75",
+      "name": "終點衝線",
+      "tag": "城寨",
+      "tags": [
+        "城寨"
+      ],
+      "cd": 4,
+      "effect": "對敵全體 攻×1.15；命中後本場我方 速＋3（衝線嗰下，成條街都追唔上）",
+      "kind": "招式",
+      "blurb": "衝線嗰下，成條街都追唔上",
+      "art": "assets/fighters/C256.jpg",
+      "dmg_mult": 1.15,
+      "hits": 1,
+      "target": "aoe",
+      "power": "phys",
+      "rarity": "最高級"
+    },
+    {
+      "id": "S76",
+      "name": "無畏一閃",
+      "tag": "城寨",
+      "tags": [
+        "城寨"
+      ],
+      "cd": 5,
+      "effect": "必中一擊 攻×2.0；命中後自身 防＋4（2 回）——刀未落，人已經站定",
+      "kind": "招式",
+      "blurb": "刀未落，人已經站定",
+      "art": "assets/fighters/C257.jpg",
+      "dmg_mult": 2,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "rarity": "最高級"
+    },
+    {
+      "id": "S77",
+      "name": "香港加油",
+      "tag": "城寨",
+      "tags": [
+        "城寨",
+        "球場"
+      ],
+      "cd": 4,
+      "effect": "全隊 攻＋15%（2 回）、速＋2（2 回）——落後十二分都要追，未到最後都唔會停",
+      "kind": "機動",
+      "blurb": "未到最後都唔會停",
+      "art": "assets/fighters/C258.webp",
+      "dmg_mult": 0,
+      "hits": 1,
+      "target": "aoe",
+      "power": "phys",
+      "support": true,
+      "rarity": "最高級"
     }
   ],
   "year_pools": {
@@ -18825,6 +19084,17 @@ window.HK_SLICE_DATA = {
       "favor_min": 0,
       "favor_max": 5
     }
-  ]
+  ],
+  "shard_rewards": {
+    "need": 10,
+    "pool": [
+      "C254",
+      "C255",
+      "C256",
+      "C257",
+      "C258"
+    ],
+    "note": "戰鬥卡殘頁 ×10 可換殘頁專屬卡（籠鬥之王 / 雙節棍 / 馬拉松 / 無畏 / 香港加油）"
+  }
 }
 ;

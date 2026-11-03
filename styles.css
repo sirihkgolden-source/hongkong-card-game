@@ -5366,6 +5366,16 @@ button.side-icon {
   object-position: center top;
   display: block;
 }
+/*
+ * t393：橫圖卡（art_landscape: true）
+ * 卡冊格係 1:1，16:9 橫圖用 cover 會左右各裁約 22%（主體容易被切走）。
+ * 改用 contain + 上下留底色，保留完整畫面。
+ */
+.album-cell-art img.art-landscape {
+  object-fit: contain;
+  object-position: center;
+  background: #0f0818;
+}
 .album-cell-ph {
   display: flex;
   width: 100%;
@@ -5535,8 +5545,13 @@ button.side-icon {
 .album-detail-sheet {
   position: relative;
   width: 100%;
-  max-width: 340px;
-  max-height: 92%;
+  /*
+   * t388：卡圖要「全圖」顯示，彈窗亦要盡量用盡屏幕寬度。
+   * 原本 max-width: 340px，喺 390px 手機上左右各蝕 25px；
+   * 放寬到 420px（窄於手機者仍取 100%），卡圖由 304px 闊變 328px。
+   */
+  max-width: 420px;
+  max-height: 94%;
   overflow-y: auto;
   border-radius: 16px;
   border: 3px solid #0a0610;
@@ -5610,22 +5625,36 @@ button.side-icon {
   letter-spacing: 0.06em;
   clip-path: polygon(6% 0, 94% 0, 100% 50%, 94% 100%, 6% 100%, 0 50%);
 }
+/*
+ * t388：卡冊詳情要顯示「全圖」。
+ *
+ * 改前：容器鎖死 aspect-ratio 3/4 + img object-fit: cover
+ *   → 實際素材比例五花八門（2:3 佔 248 張、3:4 佔 67 張、1:1 佔 28 張、3:2 橫圖 12 張），
+ *     355 張之中有 288 張被裁（橫圖甚至裁走近半）。
+ * 改後：容器唔再鎖比例；img 用 width:auto + max-width:100% + max-height，
+ *   框自動貼合圖片真實比例 → 直圖、橫圖、方圖都完整顯示，冇裁切亦冇多餘留白。
+ */
 .album-detail-art {
   width: 100%;
-  max-height: 220px;
-  aspect-ratio: 3 / 4;
+  height: auto;
+  max-height: min(68vh, 620px);
   margin: 8px auto 10px;
   border-radius: 12px;
   border: 2.5px solid #0a0610;
   overflow: hidden;
-  background: #1a1028;
+  background: #0f0818;
   box-shadow: 0 0 0 2px rgba(255, 45, 149, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .album-detail-art img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  max-height: min(68vh, 620px);
+  object-fit: contain;
+  object-position: center;
   display: block;
 }
 .album-detail-art.unowned img { filter: brightness(0.4) saturate(0.5); }
@@ -9894,12 +9923,14 @@ html, body {
   opacity: 0.9;
 }
 .tea-detail-mask { z-index: 80; }
-.tea-detail-artbox { width: 100%; height: 100%; }
+.tea-detail-artbox { width: 100%; height: auto; display: flex; align-items: center; justify-content: center; }
 .tea-detail-artbox img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  max-height: min(68vh, 620px);
+  object-fit: contain;
+  object-position: center;
   display: block;
 }
 .tea-detail-rich .bc-skills { margin-top: 4px; }
@@ -9942,10 +9973,10 @@ html, body {
     grid-column: 1;
     grid-row: 1 / span 3;
     width: 100%;
-    max-height: none;
-    aspect-ratio: 3 / 4;
+    max-height: 100%;
     margin: 0;
     align-self: start;
+    /* t388：唔再鎖 3:4，改為完整顯示（contain），橫圖唔會被切 */
   }
   .tea-detail-mask .album-detail-body {
     grid-column: 2;
@@ -10011,41 +10042,60 @@ html, body {
   100% { opacity: 1; transform: scale(1); }
 }
 
-/* 自動前進進度條 */
+/* t395：點擊繼續提示條（取代 t387 的自動倒數進度條） */
 .auto-bar {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 3px;
-  padding: 2px 0 0;
-  pointer-events: none; /* 唔擋「點畫面即跳過」 */
+  justify-content: center;
+  gap: 6px;
+  padding: 5px 10px;
+  margin: 0 auto 2px;
+  width: auto;
+  max-width: 100%;
+  border-radius: 99px;
+  border: 1.5px solid rgba(61, 255, 240, 0.32);
+  background: rgba(61, 255, 240, 0.07);
+  color: rgba(233, 220, 255, 0.8);
+  cursor: pointer;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  font: inherit;
+  animation: tapContinuePulse 2.4s ease-in-out infinite;
+  /* soft-cta 係 column，要自己置中以保持藥丸形 */
+  align-self: center;
+  flex: 0 0 auto;
+  box-sizing: border-box;
 }
-.auto-bar-track {
-  display: block;
-  width: min(220px, 62%);
-  height: 4px;
-  border-radius: 99px;
-  background: rgba(255, 255, 255, 0.12);
-  overflow: hidden;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.5);
+.auto-bar:active { transform: translateY(1px); }
+
+/* 向下小箭頭（脈衝） */
+.tap-continue-ico {
+  font-size: 0.6rem;
+  line-height: 1;
+  color: rgba(61, 255, 240, 0.85);
+  animation: tapContinueBounce 1.5s ease-in-out infinite;
 }
-.auto-bar-track > i {
-  display: block;
-  width: 0%;
-  height: 100%;
-  border-radius: 99px;
-  background: linear-gradient(90deg, #3dfff0, #ffd36a);
-  box-shadow: 0 0 8px rgba(61, 255, 240, 0.65);
+@keyframes tapContinueBounce {
+  0%, 100% { transform: translateY(0); opacity: 0.7; }
+  50%      { transform: translateY(2px); opacity: 1; }
 }
+@keyframes tapContinuePulse {
+  0%, 100% { border-color: rgba(61, 255, 240, 0.28); }
+  50%      { border-color: rgba(61, 255, 240, 0.55); }
+}
+
 .auto-bar-label {
-  font-size: 0.62rem;
+  font-size: 0.66rem;
   font-weight: 800;
-  letter-spacing: 0.04em;
-  color: rgba(233, 220, 255, 0.62);
+  letter-spacing: 0.03em;
+  color: rgba(233, 220, 255, 0.82);
   text-align: center;
   line-height: 1.2;
+  white-space: nowrap;
 }
+
+/* 舊有的進度條元素（已不再輸出，保留安全） */
+.auto-bar-track { display: none; }
 
 /* 尊重系統「減少動態效果」設定 */
 @media (prefers-reduced-motion: reduce) {
@@ -10062,4 +10112,397 @@ html, body {
   .auto-bar { padding: 0; gap: 2px; }
   .auto-bar-track { height: 3px; width: min(180px, 48%); }
   .auto-bar-label { font-size: 0.54rem; }
+}
+
+/* ===================================================================
+   t390：九龍城寨黑市賭檔（麻雀殘局 + 字花骰寶）
+   風格：城寨三樓鐵閘後面，黃燈、木枱、煙味。
+   同 .mg-arcade 一樣用「枱面」概念，但色調偏暖（黃／棗紅），唔用街機青。
+   =================================================================== */
+
+/* 枱面（沿用 mg-arcade 結構，換暖色） */
+.mg-arcade.bm-table,
+.mg-arcade.dice-table {
+  background:
+    radial-gradient(120% 78% at 50% 0%, rgba(255, 200, 90, 0.14), transparent 62%),
+    radial-gradient(100% 70% at 50% 100%, rgba(190, 40, 60, 0.16), transparent 64%),
+    linear-gradient(180deg, #241a12 0%, #160e0a 58%, #0b0604 100%);
+  box-shadow:
+    0 0 0 2px rgba(255, 200, 106, 0.26),
+    0 6px 0 #0a0610,
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -28px 46px rgba(0, 0, 0, 0.62);
+}
+.mg-arcade.bm-table::after,
+.mg-arcade.dice-table::after {
+  background: linear-gradient(90deg, transparent, #ffcc6a, #c4304a, transparent);
+  opacity: 0.7;
+}
+/* 賭檔枱面嘅 CRT 掃描線可以淡啲（唔係街機） */
+.mg-arcade.bm-table::before,
+.mg-arcade.dice-table::before {
+  opacity: 0.22;
+}
+
+/* 頂條：模式 / 進度 / 剩餘 */
+.bm-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 0.64rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: rgba(255, 236, 200, 0.86);
+  white-space: nowrap;
+}
+.bm-mode {
+  padding: 1px 8px;
+  border-radius: 99px;
+  background: rgba(255, 200, 106, 0.16);
+  border: 1px solid rgba(255, 200, 106, 0.42);
+  color: #ffcc6a;
+}
+.bm-left { color: rgba(255, 236, 200, 0.7); }
+
+/* ---------------- 麻雀牌 ---------------- */
+.mj-steps { display: flex; gap: 3px; align-items: center; }
+.mj-step-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: rgba(255, 236, 200, 0.24);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.5);
+}
+.mj-step-dot.used { background: rgba(255, 120, 140, 0.28); }
+
+.mj-hand {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px 2px;
+  flex: 0 0 auto;
+  min-height: 0;
+}
+.mj-tile {
+  appearance: none;
+  border: 2px solid #20140c;
+  border-radius: 5px;
+  background: linear-gradient(180deg, #f6efdd 0%, #e2d5ba 62%, #cbb99a 100%);
+  color: #1a1008;
+  padding: 3px 1px 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 0 #120a06, 0 0 0 1px rgba(255, 255, 255, 0.35) inset;
+  transition: transform 0.07s, box-shadow 0.12s;
+  min-height: 44px;
+  touch-action: manipulation;
+}
+.mj-tile:active { transform: translateY(2px); box-shadow: 0 0 0 #120a06; }
+.mj-tile .mj-num { font-size: 0.92rem; font-weight: 900; letter-spacing: 0; }
+.mj-tile .mj-suit { font-size: 0.62rem; font-weight: 900; opacity: 0.78; }
+/* 萬／筒／條 用不同顏色區分（唔靠圖，靠色） */
+.mj-tile[data-mj-tile] .mj-suit { color: #1a1008; }
+.mj-tile.drawn {
+  background: linear-gradient(180deg, #fff6c8 0%, #ffe08a 60%, #f0c45c 100%);
+  box-shadow: 0 2px 0 #120a06, 0 0 0 2px rgba(255, 200, 106, 0.8) inset, 0 0 10px rgba(255, 200, 106, 0.5);
+}
+.mj-drawn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 4px;
+  flex: 0 0 auto;
+}
+.mj-drawn-label { font-size: 0.6rem; font-weight: 900; color: #ffcc6a; letter-spacing: 0.06em; }
+.mj-drawn .mj-tile { width: 46px; }
+.mj-hint {
+  margin: 0;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: rgba(255, 236, 200, 0.55);
+  text-align: center;
+  line-height: 1.3;
+  flex: 0 0 auto;
+}
+.mj-result { margin: 0 4px; }
+
+/* ---------------- 骰寶 ---------------- */
+.dice-table .dice-score { color: #ffcc6a; }
+.dice-last {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px 6px;
+  border-radius: 12px;
+  border: 2px solid #20140c;
+  background: linear-gradient(180deg, rgba(255, 240, 200, 0.08), rgba(0, 0, 0, 0.35));
+  flex: 0 0 auto;
+}
+.dice-last.empty {
+  font-size: 0.66rem;
+  font-weight: 800;
+  color: rgba(255, 236, 200, 0.5);
+  border-style: dashed;
+}
+.dice-last .dice-faces { font-size: 1.5rem; letter-spacing: 2px; line-height: 1; }
+.dice-last .dice-sum { font-size: 1.12rem; font-weight: 900; color: #ffcc6a; }
+.dice-last .dice-side {
+  font-size: 0.7rem; font-weight: 900;
+  padding: 2px 8px; border-radius: 99px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.dice-last.big .dice-side { background: rgba(255, 120, 90, 0.28); color: #ffd2c0; }
+.dice-last.small .dice-side { background: rgba(90, 200, 255, 0.26); color: #cbefff; }
+.dice-last.triple .dice-side { background: rgba(255, 200, 106, 0.3); color: #ffe9b8; }
+
+.dice-history {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 2px;
+  flex: 0 0 auto;
+}
+.dice-hist {
+  font-size: 0.56rem;
+  font-weight: 900;
+  padding: 1px 6px;
+  border-radius: 99px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.3);
+  white-space: nowrap;
+}
+.dice-hist.big { color: #ffb8a0; border-color: rgba(255, 120, 90, 0.45); }
+.dice-hist.small { color: #a8ddff; border-color: rgba(90, 200, 255, 0.45); }
+.dice-hist.triple { color: #ffe9b8; border-color: rgba(255, 200, 106, 0.55); }
+.dice-hist-empty { font-size: 0.58rem; font-weight: 700; color: rgba(255, 236, 200, 0.42); }
+.dice-result { margin: 0 4px; }
+
+/* 骰寶：大／細 兩粒大掣並排 */
+.mt-cta { flex-direction: row !important; flex-wrap: wrap; justify-content: center; }
+.mt-cta .btn { flex: 1 1 40%; min-width: 0; }
+.mt-cta .auto-bar, .mt-cta .btn-abandon-compact { flex: 1 1 100%; }
+
+/* 橫屏：牌再細一號，確保一屏睇完 */
+@media (orientation: landscape) and (max-width: 1024px) {
+  .mj-hand { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
+  .mj-tile { min-height: 34px; padding: 2px 1px; }
+  .mj-tile .mj-num { font-size: 0.78rem; }
+  .mj-tile .mj-suit { font-size: 0.54rem; }
+  .dice-last { padding: 4px; }
+  .dice-last .dice-faces { font-size: 1.15rem; }
+  .mj-hint { font-size: 0.54rem; }
+}
+
+/* t390：結果階段嘅麻雀牌鎖住（唔可以再點） */
+.mj-tile.locked,
+.mj-tile[disabled] {
+  cursor: default;
+  opacity: 0.62;
+  filter: saturate(0.55);
+  box-shadow: 0 2px 0 #120a06;
+}
+.mj-tile.locked:active { transform: none; }
+
+/* ===================================================================
+   t390：戰鬥卡殘頁（卡冊內）
+   =================================================================== */
+.shard-banner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 2px 5px;
+  padding: 5px 9px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(255, 200, 106, 0.42);
+  background: linear-gradient(180deg, rgba(255, 200, 106, 0.14), rgba(120, 60, 20, 0.2));
+  color: #ffe9b8;
+  font-size: 0.68rem;
+  font-weight: 800;
+  cursor: pointer;
+  line-height: 1.25;
+  flex: 0 0 auto;
+}
+.shard-banner.ready {
+  border-color: rgba(255, 200, 106, 0.9);
+  box-shadow: 0 0 10px rgba(255, 200, 106, 0.35);
+}
+.shard-banner.empty {
+  opacity: 0.72;
+  border-style: dashed;
+}
+.shard-banner b { color: #ffcc6a; }
+.shard-go { color: var(--neon-cyan, #3dfff0); font-weight: 900; }
+.shard-ico { font-size: 0.9rem; line-height: 1; }
+.shard-text { flex: 1 1 auto; min-width: 0; }
+.shard-arrow { color: rgba(255, 233, 184, 0.55); }
+
+/* 兌換面板 */
+.shard-sheet { max-width: 420px; }
+.shard-note {
+  margin: 0 0 8px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: var(--muted, #a08ab8);
+  line-height: 1.4;
+}
+.shard-list { display: flex; flex-direction: column; gap: 7px; margin-bottom: 10px; }
+.shard-row {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) 64px;
+  gap: 8px;
+  align-items: center;
+  padding: 6px;
+  border-radius: 10px;
+  border: 1.5px solid #2a1c36;
+  background: rgba(26, 16, 40, 0.8);
+}
+.shard-row.ready { border-color: rgba(255, 200, 106, 0.8); }
+.shard-art {
+  width: 46px; height: 61px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1.5px solid #0a0610;
+  display: block;
+}
+.shard-info { min-width: 0; }
+.shard-name {
+  font-size: 0.74rem; font-weight: 900;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 3px;
+}
+.shard-bar {
+  height: 5px; border-radius: 99px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+  margin-bottom: 2px;
+}
+.shard-bar > i {
+  display: block; height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #ffcc6a, #ff8a3d);
+}
+.shard-count { font-size: 0.6rem; font-weight: 800; color: rgba(255, 233, 184, 0.72); }
+.shard-btn {
+  font-size: 0.68rem !important;
+  padding: 6px 4px !important;
+  min-height: 0 !important;
+}
+.shard-empty { font-size: 0.7rem; color: var(--muted, #a08ab8); }
+
+/* ===================================================================
+   t392：殘頁道具圖（assets/shards/shard-item.jpg）
+   來源圖 765×1024（3:4 直圖，仿古殘破紙 + 木桌底）
+   - .shard-item-ico：橫幅上的小圖示（圓角、金邊）
+   - .shard-pair：兌換面板「殘頁 → 卡」的對照
+   - .shard-gain：結果頁「殘頁 ×N」連圖
+   =================================================================== */
+
+.shard-item-ico {
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 200, 106, 0.5);
+  box-shadow: 0 0 6px rgba(255, 200, 106, 0.28);
+  flex: 0 0 auto;
+  display: block;
+}
+
+/* 兌換面板：殘頁圖 → 可換卡 */
+.shard-pair {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex: 0 0 auto;
+}
+.shard-pair .shard-art { width: 38px; height: 51px; }
+.shard-pair .shard-art.shard-art-item {
+  width: 34px;
+  height: 45px;
+  border-color: rgba(255, 200, 106, 0.55);
+  box-shadow: 0 0 6px rgba(255, 200, 106, 0.3);
+}
+.shard-arrow-mid {
+  font-size: 0.62rem;
+  font-weight: 900;
+  color: rgba(255, 233, 184, 0.6);
+  line-height: 1;
+}
+
+/* 兌換面板 grid 要容納兩張圖 */
+.shard-row {
+  grid-template-columns: auto minmax(0, 1fr) 64px;
+}
+
+/* 結果頁「殘頁 ×N」連圖 */
+.shard-gain {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--neon-cyan, #3dfff0);
+  vertical-align: middle;
+}
+.shard-gain .shard-item-ico {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+}
+.shard-gain b { font-weight: 900; }
+
+/* 橫屏：再細一號，唔好擠 */
+@media (orientation: landscape) and (max-width: 1024px) {
+  .shard-pair .shard-art { width: 30px; height: 40px; }
+  .shard-pair .shard-art.shard-art-item { width: 27px; height: 36px; }
+  .shard-item-ico { width: 17px; height: 17px; }
+}
+
+/* ===================================================================
+   t397：送卡／抽卡三選一——顯示卡牌內容摘要
+   總導演：「免費技能卡和免費戰鬥卡事件選擇，要顯示卡牌內容」
+   =================================================================== */
+.gift-card-desc {
+  font-size: 0.58rem;
+  line-height: 1.32;
+  font-weight: 700;
+  color: rgba(233, 220, 255, 0.72);
+  margin: 2px 0 3px;
+  /* 最多 3 行，超出省略（完整內容可長按睇） */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+}
+/* 已收下／未揀的卡：摘要唔好搶眼 */
+.gift-card.dimmed .gift-card-desc { opacity: 0.45; }
+.gift-card.picked .gift-card-desc { color: rgba(255, 233, 184, 0.9); }
+
+/* 送卡卡身可以高少少容納摘要 */
+.shop-card.gift-card .shop-card-body { gap: 1px; }
+.shop-card.gift-card { min-height: 0; }
+
+/* 橫屏：摘要收成 2 行，避免擠爆 */
+@media (orientation: landscape) and (max-width: 1024px) {
+  .gift-card-desc {
+    font-size: 0.52rem;
+    -webkit-line-clamp: 2;
+    margin: 1px 0 2px;
+  }
+}
+
+/* ===================================================================
+   t400：卡冊裝備「裝上／卸下」按鈕
+   人生中途冇準備頁，玩家要喺卡冊換裝
+   =================================================================== */
+.album-gear-btn {
+  width: 100%;
+  font-size: 0.74rem !important;
+  padding: 7px 10px !important;
+  min-height: 0 !important;
+  margin: 2px 0 4px;
 }
