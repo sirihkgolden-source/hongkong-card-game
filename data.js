@@ -7867,7 +7867,7 @@ window.HK_SLICE_DATA = {
           "text": "（湯好燙。你飲咗好耐）"
         }
       ],
-      "art": "assets/bg/bg-neon-street-day.jpg",
+      "art": "assets/bg/bg-estate-happiness.jpg",
       "battle": null,
       "story_pack_id": "office_ballad",
       "pack": "office_ballad",
@@ -7886,7 +7886,10 @@ window.HK_SLICE_DATA = {
             "street": 1
           },
           "track": "office",
-          "outcome": "你入咗寫字樓做信差。第一日著住件唔合身嘅白恤衫，電梯鐵閘夾到手指，你冇出聲。月尾出糧，阿媽數咗兩次，冇講好定唔好。"
+          "outcome": "你入咗寫字樓做信差。第一日著住件唔合身嘅白恤衫，電梯鐵閘夾到手指，你冇出聲。月尾出糧，阿媽數咗兩次，冇講好定唔好。",
+          "flags": [
+            "of_reputation_high"
+          ]
         },
         {
           "text": "去茶記做樓面，實實在在搵現金",
@@ -7895,7 +7898,10 @@ window.HK_SLICE_DATA = {
             "flat": 2
           },
           "track": "tea",
-          "outcome": "你去做茶記樓面。第一日打爛兩隻杯，伙記幫你頂。收工嗰陣老細塞你一包飯，話：「做落去先算。」"
+          "outcome": "你去做茶記樓面。第一日打爛兩隻杯，伙記幫你頂。收工嗰陣老細塞你一包飯，話：「做落去先算。」",
+          "flags": [
+            "of_favour_high"
+          ]
         },
         {
           "text": "跟親戚做買賣，學人做生意",
@@ -7905,7 +7911,10 @@ window.HK_SLICE_DATA = {
             "flat": 1
           },
           "track": "deal",
-          "outcome": "你跟親戚做買賣。第一日就係點貨、抄數、聽大人講價。收工嗰晚，親戚拍你膊頭：「醒目仔，唔怕學。」"
+          "outcome": "你跟親戚做買賣。第一日就係點貨、抄數、聽大人講價。收工嗰晚，親戚拍你膊頭：「醒目仔，唔怕學。」",
+          "flags": [
+            "of_risk_high"
+          ]
         }
       ],
       "office_final": false,
@@ -7972,7 +7981,7 @@ window.HK_SLICE_DATA = {
           "text": "你自己決定。我唔會幫你。"
         }
       ],
-      "art": "assets/events/ev-mtr-crowd.jpg",
+      "art": "assets/bg/bg-estate-corridor-long.jpg",
       "battle": null,
       "story_pack_id": "office_ballad",
       "pack": "office_ballad",
@@ -7989,7 +7998,11 @@ window.HK_SLICE_DATA = {
             "biz": 3,
             "street": 2
           },
-          "outcome": "你照做。做完之後你冇問價錢，但你知道自己已經入咗嗰條線。隔籬位嗰個人望你都唔望，只係打多咗幾行字。"
+          "outcome": "你照做。做完之後你冇問價錢，但你知道自己已經入咗嗰條線。隔籬位嗰個人望你都唔望，只係打多咗幾行字。",
+          "flags": [
+            "of_reputation_high",
+            "of_fatigue_low"
+          ]
         },
         {
           "text": "拒絕，守返自己崗位",
@@ -7997,7 +8010,11 @@ window.HK_SLICE_DATA = {
             "flat": 5,
             "rich": 1
           },
-          "outcome": "你拒絕。對方笑住走，之後三日冇再叫你做嘢。你發現自己多咗時間，但少咗人同你講嘢。"
+          "outcome": "你拒絕。對方笑住走，之後三日冇再叫你做嘢。你發現自己多咗時間，但少咗人同你講嘢。",
+          "flags": [
+            "of_reputation_mid",
+            "of_favour_high"
+          ]
         },
         {
           "text": "打，但要佢寫推薦信",
@@ -8006,7 +8023,11 @@ window.HK_SLICE_DATA = {
             "street": 1,
             "biz": 1
           },
-          "outcome": "你開條件，佢居然應承。你手上多咗一張紙，上面有個簽名——你唔知呢張紙將來值幾多，但收好咗。"
+          "outcome": "你開條件，佢居然應承。你手上多咗一張紙，上面有個簽名——你唔知呢張紙將來值幾多，但收好咗。",
+          "flags": [
+            "of_risk_high",
+            "of_fatigue_high"
+          ]
         }
       ],
       "office_final": false,
@@ -8086,7 +8107,11 @@ window.HK_SLICE_DATA = {
                 "biz": 3,
                 "street": 2
               },
-              "outcome": "你照做。做完之後你冇問價錢，但你知道自己已經入咗嗰條線。隔籬位嗰個人望你都唔望，只係打多咗幾行字。"
+              "outcome": "你照打，順手把那份報銷單也對了一次。影印機吐紙的聲音響了整個下午，隔籬位那個人的鍵盤停了一下，又繼續。你沒有問價錢。",
+              "flags": [
+                "of_reputation_high",
+                "of_fatigue_low"
+              ]
             },
             {
               "text": "拒絕，守返自己崗位",
@@ -8094,7 +8119,11 @@ window.HK_SLICE_DATA = {
                 "flat": 5,
                 "rich": 1
               },
-              "outcome": "你拒絕。對方笑住走，之後三日冇再叫你做嘢。你發現自己多咗時間，但少咗人同你講嘢。"
+              "outcome": "你拒絕了。對方笑著把文件收走，之後三日沒再叫你做事。你多了時間，但窗邊那個位置，隔籬位的人不再跟你點頭。",
+              "flags": [
+                "of_reputation_mid",
+                "of_favour_high"
+              ]
             },
             {
               "text": "打，但要佢寫推薦信",
@@ -8103,7 +8132,11 @@ window.HK_SLICE_DATA = {
                 "street": 1,
                 "biz": 1
               },
-              "outcome": "你開條件，佢居然應承。你手上多咗一張紙，上面有個簽名——你唔知呢張紙將來值幾多，但收好咗。"
+              "outcome": "你打了，但要他寫一張推薦信。他把信放在影印機上，簽名壓得很實。你收進抽屜的時候，想起加班燈下那個還未走的同事。",
+              "flags": [
+                "of_risk_high",
+                "of_fatigue_high"
+              ]
             }
           ],
           "name": "影印機旁的那個人"
@@ -8159,7 +8192,11 @@ window.HK_SLICE_DATA = {
                 "biz": 3,
                 "street": 2
               },
-              "outcome": "你照做。做完之後你冇問價錢，但你知道自己已經入咗嗰條線。隔籬位嗰個人望你都唔望，只係打多咗幾行字。"
+              "outcome": "你照做。收工前把那份單據塞進圍裙口袋，洗碗槽的水還在流。伙記望了你一眼，沒有出聲，只是把蒸籠蓋得更用力。",
+              "flags": [
+                "of_reputation_high",
+                "of_fatigue_low"
+              ]
             },
             {
               "text": "唔寫，話呢啲唔關我事",
@@ -8167,7 +8204,11 @@ window.HK_SLICE_DATA = {
                 "flat": 5,
                 "rich": 1
               },
-              "outcome": "你拒絕。對方笑住走，之後三日冇再叫你做嘢。你發現自己多咗時間，但少咗人同你講嘢。"
+              "outcome": "你拒絕了。對方笑一笑，自己捧起那疊杯走開。之後三日，茶記檯上沒有你的位置，伙記遞茶時也繞過你。",
+              "flags": [
+                "of_reputation_mid",
+                "of_favour_high"
+              ]
             },
             {
               "text": "寫，但要求加人工",
@@ -8176,7 +8217,11 @@ window.HK_SLICE_DATA = {
                 "street": 1,
                 "biz": 1
               },
-              "outcome": "你開條件，佢居然應承。你手上多咗一張紙，上面有個簽名——你唔知呢張紙將來值幾多，但收好咗。"
+              "outcome": "你做了，但要他寫張紙。他把紙壓在茶記檯的玻璃下面，簽名時手很穩。你收好那張紙，圍裙上還沾著洗碗槽的水。",
+              "flags": [
+                "of_risk_high",
+                "of_fatigue_high"
+              ]
             }
           ],
           "name": "水吧阿姐"
@@ -8232,7 +8277,11 @@ window.HK_SLICE_DATA = {
                 "biz": 3,
                 "street": 2
               },
-              "outcome": "你照做。做完之後你冇問價錢，但你知道自己已經入咗嗰條線。隔籬位嗰個人望你都唔望，只係打多咗幾行字。"
+              "outcome": "你照做。那疊單據你親手搬進貨倉最深處，紙袋磨破了邊。你沒有問價錢，只知道下次點貨時，這一格要跳過。",
+              "flags": [
+                "of_reputation_high",
+                "of_fatigue_low"
+              ]
             },
             {
               "text": "唔走，話呢啲唔關我事",
@@ -8240,7 +8289,11 @@ window.HK_SLICE_DATA = {
                 "flat": 5,
                 "rich": 1
               },
-              "outcome": "你拒絕。對方笑住走，之後三日冇再叫你做嘢。你發現自己多咗時間，但少咗人同你講嘢。"
+              "outcome": "你拒絕了。對方笑著把紙袋收回去，之後三日沒有再叫你出車。你多了時間，但貨倉門口那幾個人，見到你不再點頭。",
+              "flags": [
+                "of_reputation_mid",
+                "of_favour_high"
+              ]
             },
             {
               "text": "走，但要佢分你一份",
@@ -8249,7 +8302,11 @@ window.HK_SLICE_DATA = {
                 "street": 1,
                 "biz": 1
               },
-              "outcome": "你開條件，佢居然應承。你手上多咗一張紙，上面有個簽名——你唔知呢張紙將來值幾多，但收好咗。"
+              "outcome": "你做了，但要他簽一張紙。他把紙放在棧板上寫，筆壓得很重。你收好那張紙，回頭看見貨倉的燈還亮著。",
+              "flags": [
+                "of_risk_high",
+                "of_fatigue_high"
+              ]
             }
           ],
           "name": "貨倉門口那個送貨"
@@ -8262,7 +8319,7 @@ window.HK_SLICE_DATA = {
       "type": "主線",
       "category": "main",
       "category_label": "主線",
-      "desc": "第三年，你調去會計部幫手。收工嗰陣你見到一疊報銷單——有一條數對唔上，差嘅唔多，但每次都係同一個位。",
+      "desc": "第三幕，你調去會計部幫手。收工那陣，你見到一疊報銷單——有一條數對不上，差的不多，但每次都是同一個位置。",
       "dialogue": [
         {
           "speaker": "你",
@@ -8303,6 +8360,30 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "同事",
           "text": "你講啦。你要講就講。"
+        },
+        {
+          "speaker": "嗰個人",
+          "text": "（她坐在對面那張空枱，面前只有一杯沒動過的檸檬茶）"
+        },
+        {
+          "speaker": "嗰個人",
+          "text": "你最近幾點收工？"
+        },
+        {
+          "speaker": "你",
+          "text": "唔定。"
+        },
+        {
+          "speaker": "嗰個人",
+          "text": "唔定即是幾點？"
+        },
+        {
+          "speaker": "你",
+          "text": "（你答不上，因為你自己都沒計過）"
+        },
+        {
+          "speaker": "嗰個人",
+          "text": "（她沒有追問，只是把茶推到你面前）"
         }
       ],
       "art": "assets/events/ev-yum-cha.jpg",
@@ -8322,7 +8403,11 @@ window.HK_SLICE_DATA = {
             "rich": 5,
             "flat": 1
           },
-          "outcome": "你照實講。第二日，嗰條數補返咗，但由嗰日起冇人再喺你面前開數簿。"
+          "outcome": "你照實講。第二日，嗰條數補返咗，但由嗰日起冇人再喺你面前開數簿。",
+          "flags": [
+            "of_reputation_high",
+            "of_favour_low"
+          ]
         },
         {
           "text": "唔出聲，自己暗中補返",
@@ -8330,7 +8415,11 @@ window.HK_SLICE_DATA = {
             "flat": 6,
             "scam": 1
           },
-          "outcome": "你自己補返。錢係你出，冇人知。之後你再見到本簿，會自動翻去同一頁。"
+          "outcome": "你自己補返。錢係你出，冇人知。之後你再見到本簿，會自動翻去同一頁。",
+          "flags": [
+            "of_favour_high",
+            "of_risk_mid"
+          ]
         },
         {
           "text": "唔講，但自己開始接出面嘅單",
@@ -8339,7 +8428,11 @@ window.HK_SLICE_DATA = {
             "scam": 1,
             "street": 2
           },
-          "outcome": "你唔再理本簿，開始自己接外面嘅單。第一單賺得唔多，但係你自己嘅。"
+          "outcome": "你唔再理本簿，開始自己接外面嘅單。第一單賺得唔多，但係你自己嘅。",
+          "flags": [
+            "of_risk_high",
+            "of_reputation_low"
+          ]
         }
       ],
       "office_final": false,
@@ -8354,11 +8447,22 @@ window.HK_SLICE_DATA = {
             "neutral": "幫你頂過一次",
             "cold": "幫你頂過一次（佢已經唔想講）"
           }
+        },
+        {
+          "id": "partner",
+          "name": "嗰個人",
+          "role": "你以為會陪你行落去",
+          "line": "你以為會陪你行落去",
+          "arc_lines": {
+            "warm": "你以為會陪你行落去（她還在等）",
+            "neutral": "你以為會陪你行落去",
+            "cold": "你以為會陪你行落去（她不再問）"
+          }
         }
       ],
       "track_variants": {
         "office": {
-          "desc": "第三年，你調去會計部幫手。收工嗰陣你見到一疊報銷單——有一條數對唔上，差嘅唔多，但每次都係同一個位。",
+          "desc": "第三幕，你調去會計部幫手。收工那陣，你見到一疊報銷單——有一條數對不上，差的不多，但每次都是同一個位置。",
           "dialogue": [
             {
               "speaker": "你",
@@ -8399,6 +8503,30 @@ window.HK_SLICE_DATA = {
             {
               "speaker": "同事",
               "text": "你講啦。你要講就講。"
+            },
+            {
+              "speaker": "嗰個人",
+              "text": "（她坐在對面那張空枱，面前只有一杯沒動過的檸檬茶）"
+            },
+            {
+              "speaker": "嗰個人",
+              "text": "你最近幾點收工？"
+            },
+            {
+              "speaker": "你",
+              "text": "唔定。"
+            },
+            {
+              "speaker": "嗰個人",
+              "text": "唔定即是幾點？"
+            },
+            {
+              "speaker": "你",
+              "text": "（你答不上，因為你自己都沒計過）"
+            },
+            {
+              "speaker": "嗰個人",
+              "text": "（她沒有追問，只是把茶推到你面前）"
             }
           ],
           "office_choices": [
@@ -8408,7 +8536,11 @@ window.HK_SLICE_DATA = {
                 "rich": 5,
                 "flat": 1
               },
-              "outcome": "你照實講。第二日，嗰條數補返咗，但由嗰日起冇人再喺你面前開數簿。"
+              "outcome": "你照實講，指著報銷單那條數。第二日，數補回來了，但由那天起，沒有人再在你面前打開賬簿——連影印機旁的隔籬位也安靜了。",
+              "flags": [
+                "of_reputation_high",
+                "of_favour_low"
+              ]
             },
             {
               "text": "唔出聲，自己暗中補返",
@@ -8416,7 +8548,11 @@ window.HK_SLICE_DATA = {
                 "flat": 6,
                 "scam": 1
               },
-              "outcome": "你自己補返。錢係你出，冇人知。之後你再見到本簿，會自動翻去同一頁。"
+              "outcome": "你自己補了。沒有人知道，但你每次經過影印機，都會想起那一頁。窗邊的位置從此坐得不太安穩。",
+              "flags": [
+                "of_favour_high",
+                "of_risk_mid"
+              ]
             },
             {
               "text": "唔講，但自己開始接出面嘅單",
@@ -8425,13 +8561,17 @@ window.HK_SLICE_DATA = {
                 "scam": 1,
                 "street": 2
               },
-              "outcome": "你唔再理本簿，開始自己接外面嘅單。第一單賺得唔多，但係你自己嘅。"
+              "outcome": "你沒說，但開始接外面的單。第一張單據你藏在鍵盤下面，加班燈亮著的時候，你覺得自己終於有點東西是屬於自己的。",
+              "flags": [
+                "of_risk_high",
+                "of_reputation_low"
+              ]
             }
           ],
           "name": "對唔上的報銷單"
         },
         "tea": {
-          "desc": "第三年，你喺茶記幫手。收工嗰陣你見到數簿——有一條數對唔上，差嘅唔多，但每次都係同一個位。",
+          "desc": "第三幕，你在茶記幫手。收工那陣，你見到數簿——有一條數對不上，差的不多，但每次都是同一個位置。",
           "dialogue": [
             {
               "speaker": "你",
@@ -8472,6 +8612,30 @@ window.HK_SLICE_DATA = {
             {
               "speaker": "伙記",
               "text": "你講啦。你要講就講。"
+            },
+            {
+              "speaker": "嗰個人",
+              "text": "（她坐在對面那張空枱，面前只有一杯沒動過的檸檬茶）"
+            },
+            {
+              "speaker": "嗰個人",
+              "text": "你最近幾點收工？"
+            },
+            {
+              "speaker": "你",
+              "text": "唔定。"
+            },
+            {
+              "speaker": "嗰個人",
+              "text": "唔定即是幾點？"
+            },
+            {
+              "speaker": "你",
+              "text": "（你答不上，因為你自己都沒計過）"
+            },
+            {
+              "speaker": "嗰個人",
+              "text": "（她沒有追問，只是把茶推到你面前）"
             }
           ],
           "office_choices": [
@@ -8481,7 +8645,11 @@ window.HK_SLICE_DATA = {
                 "rich": 5,
                 "flat": 1
               },
-              "outcome": "你照實講。第二日，嗰條數補返咗，但由嗰日起冇人再喺你面前開數簿。"
+              "outcome": "你照實講，指著數簿那條數。第二日，數補回來了，但由那天起，伙記不再在你面前翻數簿，蒸籠前的對話也短了。",
+              "flags": [
+                "of_reputation_high",
+                "of_favour_low"
+              ]
             },
             {
               "text": "唔出聲，自己暗中補返",
@@ -8489,7 +8657,11 @@ window.HK_SLICE_DATA = {
                 "flat": 6,
                 "scam": 1
               },
-              "outcome": "你自己補返。錢係你出，冇人知。之後你再見到本簿，會自動翻去同一頁。"
+              "outcome": "你自己補了。錢是從洗碗槽下面的鐵罐拿的，沒有人知道。但你每次捧起那疊杯，都想起那個晚上。",
+              "flags": [
+                "of_favour_high",
+                "of_risk_mid"
+              ]
             },
             {
               "text": "趁機自己開間舖",
@@ -8498,13 +8670,17 @@ window.HK_SLICE_DATA = {
                 "scam": 1,
                 "street": 2
               },
-              "outcome": "你唔再理本簿，開始自己接外面嘅單。第一單賺得唔多，但係你自己嘅。"
+              "outcome": "你沒說，但開始自己找貨源。第一張單據你塞在圍裙口袋裡，茶記檯的燈光下，你覺得自己終於有點東西是自己的。",
+              "flags": [
+                "of_risk_high",
+                "of_reputation_low"
+              ]
             }
           ],
           "name": "茶記的數簿"
         },
         "deal": {
-          "desc": "第三年，你開始睇親戚舖頭嘅數簿。有一條數對唔上——差嘅唔多，但每次都係同一個位。",
+          "desc": "第三幕，你開始看親戚舖頭的數簿。有一條數對不上——差的不多，但每次都是同一個位置。",
           "dialogue": [
             {
               "speaker": "你",
@@ -8545,6 +8721,30 @@ window.HK_SLICE_DATA = {
             {
               "speaker": "親戚",
               "text": "不過間舖就要關。"
+            },
+            {
+              "speaker": "嗰個人",
+              "text": "（她坐在對面那張空枱，面前只有一杯沒動過的檸檬茶）"
+            },
+            {
+              "speaker": "嗰個人",
+              "text": "你最近幾點收工？"
+            },
+            {
+              "speaker": "你",
+              "text": "唔定。"
+            },
+            {
+              "speaker": "嗰個人",
+              "text": "唔定即是幾點？"
+            },
+            {
+              "speaker": "你",
+              "text": "（你答不上，因為你自己都沒計過）"
+            },
+            {
+              "speaker": "嗰個人",
+              "text": "（她沒有追問，只是把茶推到你面前）"
             }
           ],
           "office_choices": [
@@ -8554,7 +8754,11 @@ window.HK_SLICE_DATA = {
                 "rich": 5,
                 "flat": 1
               },
-              "outcome": "你照實講。第二日，嗰條數補返咗，但由嗰日起冇人再喺你面前開數簿。"
+              "outcome": "你照實講，指著單據那條數。第二日，數補回來了，但由那天起，貨倉的人不再在你面前點貨。",
+              "flags": [
+                "of_reputation_high",
+                "of_favour_low"
+              ]
             },
             {
               "text": "唔出聲，當冇睇到",
@@ -8562,7 +8766,11 @@ window.HK_SLICE_DATA = {
                 "flat": 6,
                 "scam": 1
               },
-              "outcome": "你自己補返。錢係你出，冇人知。之後你再見到本簿，會自動翻去同一頁。"
+              "outcome": "你自己補了。錢是從紙袋裡挪的，沒有人知道。但你每次走進貨倉，都會先看一眼最深處那一格。",
+              "flags": [
+                "of_favour_high",
+                "of_risk_mid"
+              ]
             },
             {
               "text": "唔講，但自己開始搵自己嘅貨源",
@@ -8571,7 +8779,11 @@ window.HK_SLICE_DATA = {
                 "scam": 1,
                 "street": 2
               },
-              "outcome": "你唔再理本簿，開始自己接外面嘅單。第一單賺得唔多，但係你自己嘅。"
+              "outcome": "你沒說，但開始自己找出貨的路。第一張單據你夾在棧板的縫裡，出車的時候，你覺得自己終於有點東西是自己的。",
+              "flags": [
+                "of_risk_high",
+                "of_reputation_low"
+              ]
             }
           ],
           "name": "數簿"
@@ -8584,7 +8796,7 @@ window.HK_SLICE_DATA = {
       "type": "主線",
       "category": "main",
       "category_label": "主線",
-      "desc": "第四年，有個客人私下搵你。佢話唔想經公司，直接同你落單，價錢低三成，中間嗰筆你袋。單上面印住公司個名。",
+      "desc": "第四幕，有個客人私下找你。他說不想經公司，直接跟你下單，價錢低三成，中間那筆你袋。單上面印著公司名字。",
       "dialogue": [
         {
           "speaker": "客人",
@@ -8625,6 +8837,26 @@ window.HK_SLICE_DATA = {
         {
           "speaker": "你",
           "text": "（星期五，你放假）"
+        },
+        {
+          "speaker": "嗰個人",
+          "text": "（她在門口等你，手上拿著一把傘）"
+        },
+        {
+          "speaker": "嗰個人",
+          "text": "你話今晚會早返。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你看一看鐘，已經是十一點）"
+        },
+        {
+          "speaker": "嗰個人",
+          "text": "我不是怪你。我只是想知道，你還會不會講一句真的時間。"
+        },
+        {
+          "speaker": "你",
+          "text": "（她的眼神沒有責備，比責備更難接）"
         }
       ],
       "art": "assets/events/ev-alley-wake.jpg",
@@ -8644,7 +8876,11 @@ window.HK_SLICE_DATA = {
             "biz": 3,
             "scam": 1
           },
-          "outcome": "你老實報價，客人走咗。你冇賺到，但夜晚瞓得好。之後半年，佢介紹咗兩個客俾你。"
+          "outcome": "你老實報價，客人走咗。你冇賺到，但夜晚瞓得好。之後半年，佢介紹咗兩個客俾你。",
+          "flags": [
+            "of_reputation_high",
+            "of_favour_high"
+          ]
         },
         {
           "text": "搏一鋪，自己接，借錢入貨",
@@ -8652,7 +8888,11 @@ window.HK_SLICE_DATA = {
             "street": 6,
             "rich": 1
           },
-          "outcome": "你借錢入貨。交貨嗰日成功，你賺咗一筆，同時欠落一筆。你開始識計利息。"
+          "outcome": "你借錢入貨。交貨嗰日成功，你賺咗一筆，同時欠落一筆。你開始識計利息。",
+          "flags": [
+            "of_risk_high",
+            "of_fatigue_high"
+          ]
         },
         {
           "text": "唔接單，但收佢錢做中間人",
@@ -8661,7 +8901,11 @@ window.HK_SLICE_DATA = {
             "rich": 2,
             "street": 1
           },
-          "outcome": "你跟人炒一轉。錢嚟得快，走得更快。你賺到嘅，唔夠補返遲到嗰兩日嘅數。"
+          "outcome": "你跟人炒一轉。錢嚟得快，走得更快。你賺到嘅，唔夠補返遲到嗰兩日嘅數。",
+          "flags": [
+            "of_favour_low",
+            "of_fatigue_low"
+          ]
         }
       ],
       "office_final": false,
@@ -8680,7 +8924,7 @@ window.HK_SLICE_DATA = {
       ],
       "track_variants": {
         "office": {
-          "desc": "第四年，有個客人私下搵你。佢話唔想經公司，直接同你落單，價錢低三成，中間嗰筆你袋。單上面印住公司個名。",
+          "desc": "第四幕，有個客人私下找你。他說不想經公司，直接跟你下單，價錢低三成，中間那筆你袋。單上面印著公司名字。",
           "dialogue": [
             {
               "speaker": "客人",
@@ -8721,6 +8965,26 @@ window.HK_SLICE_DATA = {
             {
               "speaker": "你",
               "text": "（星期五，你放假）"
+            },
+            {
+              "speaker": "嗰個人",
+              "text": "（她在門口等你，手上拿著一把傘）"
+            },
+            {
+              "speaker": "嗰個人",
+              "text": "你話今晚會早返。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你看一看鐘，已經是十一點）"
+            },
+            {
+              "speaker": "嗰個人",
+              "text": "我不是怪你。我只是想知道，你還會不會講一句真的時間。"
+            },
+            {
+              "speaker": "你",
+              "text": "（她的眼神沒有責備，比責備更難接）"
             }
           ],
           "office_choices": [
@@ -8730,7 +8994,11 @@ window.HK_SLICE_DATA = {
                 "biz": 3,
                 "scam": 1
               },
-              "outcome": "你老實報價，客人走咗。你冇賺到，但夜晚瞓得好。之後半年，佢介紹咗兩個客俾你。"
+              "outcome": "你老實跟公司報了。客人走了，你沒有賺到，但那天晚上睡得著。之後半年，他介紹了兩個客給公司——經理把這件事寫進了你的評核。",
+              "flags": [
+                "of_reputation_high",
+                "of_favour_high"
+              ]
             },
             {
               "text": "搏一鋪，自己接，借錢入貨",
@@ -8738,7 +9006,11 @@ window.HK_SLICE_DATA = {
                 "street": 6,
                 "rich": 1
               },
-              "outcome": "你借錢入貨。交貨嗰日成功，你賺咗一筆，同時欠落一筆。你開始識計利息。"
+              "outcome": "你借錢入貨，自己接了。貨送到那天，你在影印機旁算利息，隔籬位的人問你為什麼還不走。加班燈亮到很晚。",
+              "flags": [
+                "of_risk_high",
+                "of_fatigue_high"
+              ]
             },
             {
               "text": "唔接單，但收佢錢做中間人",
@@ -8747,13 +9019,17 @@ window.HK_SLICE_DATA = {
                 "rich": 2,
                 "street": 1
               },
-              "outcome": "你跟人炒一轉。錢嚟得快，走得更快。你賺到嘅，唔夠補返遲到嗰兩日嘅數。"
+              "outcome": "你沒接單，只收了他一筆介紹費。錢放在鍵盤抽屜裡，你沒有跟任何人講。之後他再找你，你開始懂得先問價。",
+              "flags": [
+                "of_favour_low",
+                "of_fatigue_low"
+              ]
             }
           ],
           "name": "私下接單"
         },
         "tea": {
-          "desc": "第四年，有個熟客搵你。佢要一個四十人到會，唔想經茶記落單——想你自己接、自己收錢。你手上現金只夠入三分一貨。",
+          "desc": "第四幕，有個熟客找你。他要一個四十人到會，不想經茶記下單——想你自己接、自己收錢。你手上現金只夠入三分一貨。",
           "dialogue": [
             {
               "speaker": "熟客",
@@ -8794,6 +9070,26 @@ window.HK_SLICE_DATA = {
             {
               "speaker": "你",
               "text": "（你望住舖頭個招牌，招牌唔係你嘅）"
+            },
+            {
+              "speaker": "嗰個人",
+              "text": "（她在門口等你，手上拿著一把傘）"
+            },
+            {
+              "speaker": "嗰個人",
+              "text": "你話今晚會早返。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你看一看鐘，已經是十一點）"
+            },
+            {
+              "speaker": "嗰個人",
+              "text": "我不是怪你。我只是想知道，你還會不會講一句真的時間。"
+            },
+            {
+              "speaker": "你",
+              "text": "（她的眼神沒有責備，比責備更難接）"
             }
           ],
           "office_choices": [
@@ -8803,7 +9099,11 @@ window.HK_SLICE_DATA = {
                 "biz": 3,
                 "scam": 1
               },
-              "outcome": "你老實報價，客人走咗。你冇賺到，但夜晚瞓得好。之後半年，佢介紹咗兩個客俾你。"
+              "outcome": "你跟老細講，當舖頭生意接。老細抽兩成，還把蒸籠讓給你用。你沒賺到最多，但那晚洗碗槽的水，洗得比較順手。",
+              "flags": [
+                "of_reputation_high",
+                "of_favour_high"
+              ]
             },
             {
               "text": "搏一鋪，自己接，借錢入貨",
@@ -8811,7 +9111,11 @@ window.HK_SLICE_DATA = {
                 "street": 6,
                 "rich": 1
               },
-              "outcome": "你借錢入貨。交貨嗰日成功，你賺咗一筆，同時欠落一筆。你開始識計利息。"
+              "outcome": "你借錢入貨，自己接了那個到會。四十人的杯要洗到半夜，伙記幫你手。圍裙濕透，但你第一次覺得這間舖有你一份。",
+              "flags": [
+                "of_risk_high",
+                "of_fatigue_high"
+              ]
             },
             {
               "text": "唔接單，但收錢介紹第二檔",
@@ -8820,13 +9124,17 @@ window.HK_SLICE_DATA = {
                 "rich": 2,
                 "street": 1
               },
-              "outcome": "你跟人炒一轉。錢嚟得快，走得更快。你賺到嘅，唔夠補返遲到嗰兩日嘅數。"
+              "outcome": "你沒接，只收了他一筆介紹費，轉給第二檔。錢塞在圍裙口袋裡，你沒有跟老細講。之後他再來，你開始懂得先問價。",
+              "flags": [
+                "of_favour_low",
+                "of_fatigue_low"
+              ]
             }
           ],
           "name": "四十人到會"
         },
         "deal": {
-          "desc": "第四年，你第一次自己接單。客人要一批貨，交貨期十日，但你手上現金只夠入三分一。",
+          "desc": "第四幕，你第一次自己接單。客人要一批貨，交貨期十日，但你手上現金只夠入三分一。",
           "dialogue": [
             {
               "speaker": "客人",
@@ -8867,6 +9175,26 @@ window.HK_SLICE_DATA = {
             {
               "speaker": "你",
               "text": "（你發現自己手心出汗）"
+            },
+            {
+              "speaker": "嗰個人",
+              "text": "（她在門口等你，手上拿著一把傘）"
+            },
+            {
+              "speaker": "嗰個人",
+              "text": "你話今晚會早返。"
+            },
+            {
+              "speaker": "你",
+              "text": "（你看一看鐘，已經是十一點）"
+            },
+            {
+              "speaker": "嗰個人",
+              "text": "我不是怪你。我只是想知道，你還會不會講一句真的時間。"
+            },
+            {
+              "speaker": "你",
+              "text": "（她的眼神沒有責備，比責備更難接）"
             }
           ],
           "office_choices": [
@@ -8876,7 +9204,11 @@ window.HK_SLICE_DATA = {
                 "biz": 3,
                 "scam": 1
               },
-              "outcome": "你老實報價，客人走咗。你冇賺到，但夜晚瞓得好。之後半年，佢介紹咗兩個客俾你。"
+              "outcome": "你老實報價，逐個客去談，最後放棄了這單。你沒賺到，但那晚睡得著。之後半年，那個客人介紹了兩批貨給你。",
+              "flags": [
+                "of_reputation_high",
+                "of_favour_high"
+              ]
             },
             {
               "text": "搏一鋪，借錢入多批貨",
@@ -8884,7 +9216,11 @@ window.HK_SLICE_DATA = {
                 "street": 6,
                 "rich": 1
               },
-              "outcome": "你借錢入貨。交貨嗰日成功，你賺咗一筆，同時欠落一筆。你開始識計利息。"
+              "outcome": "你借錢入了一批。貨進貨倉那天，你在棧板旁邊算利息，紙袋堆到天花板。出車的時候，你開始懂得看稅單。",
+              "flags": [
+                "of_risk_high",
+                "of_fatigue_high"
+              ]
             },
             {
               "text": "聽朋友講，跟人炒一轉快錢",
@@ -8893,7 +9229,11 @@ window.HK_SLICE_DATA = {
                 "rich": 2,
                 "street": 1
               },
-              "outcome": "你跟人炒一轉。錢嚟得快，走得更快。你賺到嘅，唔夠補返遲到嗰兩日嘅數。"
+              "outcome": "你沒接單，跟朋友炒了一轉快錢。錢來得快，單據也亂。你在貨倉門口數完錢，發現自己已經不太記得貨是從哪裡來的。",
+              "flags": [
+                "of_favour_low",
+                "of_fatigue_low"
+              ]
             }
           ],
           "name": "第一單生意"
@@ -8906,7 +9246,7 @@ window.HK_SLICE_DATA = {
       "type": "主線",
       "category": "main",
       "category_label": "主線",
-      "desc": "第五年，公司裁員。你冇被裁，但隔籬位嘅阿姐走咗。佢張枱放咗三個月冇人坐。老闆叫你入房。",
+      "desc": "第五幕，公司裁員。你沒被裁，但隔籬位的阿姐走了。她那張枱放了三個月沒有人坐。老闆叫你入房。",
       "dialogue": [
         {
           "speaker": "老闆",
@@ -8961,7 +9301,7 @@ window.HK_SLICE_DATA = {
           "text": "我都係。不過我唔係加班，我係等屋企熄燈。"
         }
       ],
-      "art": "assets/events/ev-mtr-crowd.jpg",
+      "art": "assets/bg/bg-estate-corridor.jpg",
       "battle": null,
       "story_pack_id": "office_ballad",
       "pack": "office_ballad",
@@ -8978,7 +9318,11 @@ window.HK_SLICE_DATA = {
             "rich": 6,
             "biz": 1
           },
-          "outcome": "你留低。座位換去窗邊，人工加五百。隔籬嗰張枱一直空住，冇人再坐。"
+          "outcome": "你留低。座位換去窗邊，人工加五百。隔籬嗰張枱一直空住，冇人再坐。",
+          "flags": [
+            "of_reputation_high",
+            "of_fatigue_high"
+          ]
         },
         {
           "text": "跳槽，博更高人工",
@@ -8987,7 +9331,11 @@ window.HK_SLICE_DATA = {
             "flat": 2,
             "rich": 2
           },
-          "outcome": "你跳槽。新公司人工高一截，但冇人記得你叫咩名。第一日報到，你嘅名牌串錯字。"
+          "outcome": "你跳槽。新公司人工高一截，但冇人記得你叫咩名。第一日報到，你嘅名牌串錯字。",
+          "flags": [
+            "of_risk_mid",
+            "of_reputation_mid"
+          ]
         },
         {
           "text": "辭職，自己做老闆",
@@ -8996,7 +9344,11 @@ window.HK_SLICE_DATA = {
             "scam": 2,
             "rich": 1
           },
-          "outcome": "你辭職。走出大門嗰刻先發現，自己冇客、冇貨源、冇人幫你接電話。"
+          "outcome": "你辭職。走出大門嗰刻先發現，自己冇客、冇貨源、冇人幫你接電話。",
+          "flags": [
+            "of_risk_high",
+            "of_reputation_low"
+          ]
         }
       ],
       "office_final": false,
@@ -9026,7 +9378,7 @@ window.HK_SLICE_DATA = {
       ],
       "track_variants": {
         "office": {
-          "desc": "第五年，公司裁員。你冇被裁，但隔籬位嘅阿姐走咗。佢張枱放咗三個月冇人坐。老闆叫你入房。",
+          "desc": "第五幕，公司裁員。你沒被裁，但隔籬位的阿姐走了。她那張枱放了三個月沒有人坐。老闆叫你入房。",
           "dialogue": [
             {
               "speaker": "老闆",
@@ -9088,7 +9440,11 @@ window.HK_SLICE_DATA = {
                 "rich": 6,
                 "biz": 1
               },
-              "outcome": "你留低。座位換去窗邊，人工加五百。隔籬嗰張枱一直空住，冇人再坐。"
+              "outcome": "你留低。座位換去窗邊，人工加五百。隔籬那張枱一直空著，沒有人再坐。加班燈換了新的，但亮著的時間更長了。",
+              "flags": [
+                "of_reputation_high",
+                "of_fatigue_high"
+              ]
             },
             {
               "text": "跳槽，博更高人工",
@@ -9097,7 +9453,11 @@ window.HK_SLICE_DATA = {
                 "flat": 2,
                 "rich": 2
               },
-              "outcome": "你跳槽。新公司人工高一截，但冇人記得你叫咩名。第一日報到，你嘅名牌串錯字。"
+              "outcome": "你跳槽。新公司人工高了一截，但沒有人記得你叫什麼名。第一日報到，你桌上的鍵盤是舊的，影印機要拍兩下才肯動。",
+              "flags": [
+                "of_risk_mid",
+                "of_reputation_mid"
+              ]
             },
             {
               "text": "辭職，自己做老闆",
@@ -9106,7 +9466,11 @@ window.HK_SLICE_DATA = {
                 "scam": 2,
                 "rich": 1
               },
-              "outcome": "你辭職。走出大門嗰刻先發現，自己冇客、冇貨源、冇人幫你接電話。"
+              "outcome": "你辭職。走出大門那刻才發現，自己沒有客、沒有貨源、沒有人幫你接電話——只有一個裝滿報銷單的紙箱。",
+              "flags": [
+                "of_risk_high",
+                "of_reputation_low"
+              ]
             }
           ],
           "name": "升職還是跳槽",
@@ -9125,7 +9489,7 @@ window.HK_SLICE_DATA = {
           ]
         },
         "tea": {
-          "desc": "第五年，老細話想退休。佢話間茶記可以頂讓俾你——頂手費唔貴，但你要接晒兩個伙記同所有舊債。水吧阿姐企喺後面，冇講嘢。",
+          "desc": "第五幕，老細說想退休。他說間茶記可以頂讓給你——頂手費不貴，但你要接齊兩個伙記和所有舊債。水吧阿姐站在後面，沒有講話。",
           "dialogue": [
             {
               "speaker": "老細",
@@ -9187,7 +9551,11 @@ window.HK_SLICE_DATA = {
                 "rich": 6,
                 "biz": 1
               },
-              "outcome": "你留低。座位換去窗邊，人工加五百。隔籬嗰張枱一直空住，冇人再坐。"
+              "outcome": "你留低。老細讓你管廚房，人工加五百。那張茶記檯一直空著，伙記沒有再提。蒸籠的蒸氣比以前更早升起。",
+              "flags": [
+                "of_reputation_high",
+                "of_fatigue_high"
+              ]
             },
             {
               "text": "跳槽，去大酒店做樓面",
@@ -9196,7 +9564,11 @@ window.HK_SLICE_DATA = {
                 "flat": 2,
                 "rich": 2
               },
-              "outcome": "你跳槽。新公司人工高一截，但冇人記得你叫咩名。第一日報到，你嘅名牌串錯字。"
+              "outcome": "你跳槽去第二間。人工高了一截，但沒有人記得你叫什麼名。第一日報到，你圍裙上的名牌串錯了字，洗碗槽比舊店更深。",
+              "flags": [
+                "of_risk_mid",
+                "of_reputation_mid"
+              ]
             },
             {
               "text": "唔接呢間，自己去開一間",
@@ -9205,7 +9577,11 @@ window.HK_SLICE_DATA = {
                 "scam": 2,
                 "rich": 1
               },
-              "outcome": "你辭職。走出大門嗰刻先發現，自己冇客、冇貨源、冇人幫你接電話。"
+              "outcome": "你辭職。走出門口那刻才發現，自己沒有客、沒有貨源、沒有人幫你接電話——只有一條洗到發白的圍裙。",
+              "flags": [
+                "of_risk_high",
+                "of_reputation_low"
+              ]
             }
           ],
           "name": "頂唔頂間舖",
@@ -9224,7 +9600,7 @@ window.HK_SLICE_DATA = {
           ]
         },
         "deal": {
-          "desc": "第五年，親戚話想收你入股。佢出錢，你出力，股份三成。但你要簽一份文件——放棄追究之前數簿嗰條數。",
+          "desc": "第五幕，親戚說想收你入股。他出錢，你出力，股份三成。但你要簽一份文件——放棄追究之前數簿那條數。",
           "dialogue": [
             {
               "speaker": "親戚",
@@ -9286,7 +9662,11 @@ window.HK_SLICE_DATA = {
                 "rich": 6,
                 "biz": 1
               },
-              "outcome": "你留低。座位換去窗邊，人工加五百。隔籬嗰張枱一直空住，冇人再坐。"
+              "outcome": "你留低。座位換去貨倉門口，人工加五百。棧板旁邊那張枱一直空著，沒有人再坐。出車的次數卻比以前更多。",
+              "flags": [
+                "of_reputation_high",
+                "of_fatigue_high"
+              ]
             },
             {
               "text": "唔簽，自己出去搵貨源",
@@ -9295,7 +9675,11 @@ window.HK_SLICE_DATA = {
                 "flat": 2,
                 "rich": 2
               },
-              "outcome": "你跳槽。新公司人工高一截，但冇人記得你叫咩名。第一日報到，你嘅名牌串錯字。"
+              "outcome": "你跳槽。新公司人工高了一截，但沒有人記得你叫什麼名。第一日報到，你的名牌串錯了字，紙袋要自己搬。",
+              "flags": [
+                "of_risk_mid",
+                "of_reputation_mid"
+              ]
             },
             {
               "text": "辭職，自己開一間同佢爭",
@@ -9304,7 +9688,11 @@ window.HK_SLICE_DATA = {
                 "scam": 2,
                 "rich": 1
               },
-              "outcome": "你辭職。走出大門嗰刻先發現，自己冇客、冇貨源、冇人幫你接電話。"
+              "outcome": "你辭職。走出貨倉那刻才發現，自己沒有客、沒有貨源、沒有人幫你接電話——只有一疊未開的單據。",
+              "flags": [
+                "of_risk_high",
+                "of_reputation_low"
+              ]
             }
           ],
           "name": "三成股份",
@@ -9330,7 +9718,7 @@ window.HK_SLICE_DATA = {
       "type": "主線",
       "category": "main",
       "category_label": "主線",
-      "desc": "第六年，公司搬寫字樓。新址租金貴一倍，老闆話要每個部門自己「控制成本」——即係交一個人出嚟。",
+      "desc": "第六幕，公司搬寫字樓。新址租金貴一倍，老闆說要每個部門自己「控制成本」——即是交一個人出來。",
       "dialogue": [
         {
           "speaker": "老闆",
@@ -9385,7 +9773,7 @@ window.HK_SLICE_DATA = {
           "text": "（佢冇即刻答，只係指住地產版一角）"
         }
       ],
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/bg/bg-estate-courtyard-up.jpg",
       "battle": null,
       "story_pack_id": "office_ballad",
       "pack": "office_ballad",
@@ -9402,7 +9790,11 @@ window.HK_SLICE_DATA = {
             "flat": 5,
             "scam": 1
           },
-          "outcome": "你簽約，縮細規模。交咗一個伙記走，佢走嗰日冇講嘢，只係擺低條圍裙。"
+          "outcome": "你簽約，縮細規模。交咗一個伙記走，佢走嗰日冇講嘢，只係擺低條圍裙。",
+          "flags": [
+            "of_favour_low",
+            "of_risk_mid"
+          ]
         },
         {
           "text": "搬去分公司，人工低啲但唔使交人",
@@ -9410,7 +9802,11 @@ window.HK_SLICE_DATA = {
             "biz": 4,
             "street": 2
           },
-          "outcome": "你搬遠咗。租金平咗三成，但客人少咗一半。你每晚收工要坐四十分鐘車返屋企。"
+          "outcome": "你搬遠咗。租金平咗三成，但客人少咗一半。你每晚收工要坐四十分鐘車返屋企。",
+          "flags": [
+            "of_fatigue_high",
+            "of_favour_mid"
+          ]
         },
         {
           "text": "辭職，自己出去開一間",
@@ -9419,7 +9815,11 @@ window.HK_SLICE_DATA = {
             "scam": 2,
             "flat": 1
           },
-          "outcome": "你借錢擴充。新舖大咗一倍，債也大一倍。你開始識得同銀行職員打招呼。"
+          "outcome": "你借錢擴充。新舖大咗一倍，債也大一倍。你開始識得同銀行職員打招呼。",
+          "flags": [
+            "of_risk_high",
+            "of_reputation_high"
+          ]
         }
       ],
       "office_final": false,
@@ -9449,7 +9849,7 @@ window.HK_SLICE_DATA = {
       ],
       "track_variants": {
         "office": {
-          "desc": "第六年，公司搬寫字樓。新址租金貴一倍，老闆話要每個部門自己「控制成本」——即係交一個人出嚟。",
+          "desc": "第六幕，公司搬寫字樓。新址租金貴一倍，老闆說要每個部門自己「控制成本」——即是交一個人出來。",
           "dialogue": [
             {
               "speaker": "老闆",
@@ -9511,7 +9911,11 @@ window.HK_SLICE_DATA = {
                 "flat": 5,
                 "scam": 1
               },
-              "outcome": "你簽約，縮細規模。交咗一個伙記走，佢走嗰日冇講嘢，只係擺低條圍裙。"
+              "outcome": "你簽約，縮細規模。遣散了一個做了七年的同事，他走那天沒有講話，只把工卡放在你桌上，影印機旁的位置從此空著。",
+              "flags": [
+                "of_favour_low",
+                "of_risk_mid"
+              ]
             },
             {
               "text": "搬去分公司，人工低啲但唔使交人",
@@ -9519,7 +9923,11 @@ window.HK_SLICE_DATA = {
                 "biz": 4,
                 "street": 2
               },
-              "outcome": "你搬遠咗。租金平咗三成，但客人少咗一半。你每晚收工要坐四十分鐘車返屋企。"
+              "outcome": "你搬遠了。租金平了三成，但客人少了一半。每晚收工，你要坐四十分鐘車，加班燈換成車廂的日光燈。",
+              "flags": [
+                "of_fatigue_high",
+                "of_favour_mid"
+              ]
             },
             {
               "text": "辭職，自己出去開一間",
@@ -9528,7 +9936,11 @@ window.HK_SLICE_DATA = {
                 "scam": 2,
                 "flat": 1
               },
-              "outcome": "你借錢擴充。新舖大咗一倍，債也大一倍。你開始識得同銀行職員打招呼。"
+              "outcome": "你借錢擴充。新辦公室大了一倍，債也大一倍。你開始懂得跟銀行職員打招呼，也懂得在報銷單上留白。",
+              "flags": [
+                "of_risk_high",
+                "of_reputation_high"
+              ]
             }
           ],
           "name": "控制成本",
@@ -9548,7 +9960,7 @@ window.HK_SLICE_DATA = {
         },
         "tea": {
           "name": "租約到期",
-          "desc": "第六年，茶記租約到期。業主加租四成。你計過，加咗租就要減一個伙記。",
+          "desc": "第六幕，茶記租約到期。業主加租四成。你計過，加了租就要減一個伙記。",
           "dialogue": [
             {
               "speaker": "業主",
@@ -9610,7 +10022,11 @@ window.HK_SLICE_DATA = {
                 "flat": 5,
                 "scam": 1
               },
-              "outcome": "你簽約，縮細規模。交咗一個伙記走，佢走嗰日冇講嘢，只係擺低條圍裙。"
+              "outcome": "你簽約，縮細規模。交了一個伙記走，他走那天沒有講話，只把圍裙掛在洗碗槽旁邊，蒸籠照樣冒煙。",
+              "flags": [
+                "of_favour_low",
+                "of_risk_mid"
+              ]
             },
             {
               "text": "搬去更遠更平嘅舖",
@@ -9618,7 +10034,11 @@ window.HK_SLICE_DATA = {
                 "biz": 4,
                 "street": 2
               },
-              "outcome": "你搬遠咗。租金平咗三成，但客人少咗一半。你每晚收工要坐四十分鐘車返屋企。"
+              "outcome": "你搬遠了。租金平了三成，但客人少了一半。每晚收工，你要坐四十分鐘車，圍裙上的油煙味一直散不去。",
+              "flags": [
+                "of_fatigue_high",
+                "of_favour_mid"
+              ]
             },
             {
               "text": "借錢擴充，一次過做大",
@@ -9627,7 +10047,11 @@ window.HK_SLICE_DATA = {
                 "scam": 2,
                 "flat": 1
               },
-              "outcome": "你借錢擴充。新舖大咗一倍，債也大一倍。你開始識得同銀行職員打招呼。"
+              "outcome": "你借錢擴充。新舖大了一倍，債也大一倍。你開始懂得跟銀行職員打招呼，也懂得在茶記檯的單據上留一分餘地。",
+              "flags": [
+                "of_risk_high",
+                "of_reputation_high"
+              ]
             }
           ],
           "tale_cast": [
@@ -9646,7 +10070,7 @@ window.HK_SLICE_DATA = {
         },
         "deal": {
           "name": "搬倉",
-          "desc": "第六年，你嘅舖租約到期。業主加租四成，而貨倉業主話要收返個位自用。你計過，兩邊一齊加就冇錢賺。",
+          "desc": "第六幕，你的舖租約到期。業主加租四成，而貨倉業主說要收回那個位自用。你計過，兩邊一起加就沒有錢賺。",
           "dialogue": [
             {
               "speaker": "業主",
@@ -9708,7 +10132,11 @@ window.HK_SLICE_DATA = {
                 "flat": 5,
                 "scam": 1
               },
-              "outcome": "你簽約，縮細規模。交咗一個伙記走，佢走嗰日冇講嘢，只係擺低條圍裙。"
+              "outcome": "你簽約，縮細規模。交了一個伙記走，他走那天沒有講話，只把貨倉鎖匙放在棧板上，紙袋堆到半空。",
+              "flags": [
+                "of_favour_low",
+                "of_risk_mid"
+              ]
             },
             {
               "text": "搬去更遠更平嘅舖",
@@ -9716,7 +10144,11 @@ window.HK_SLICE_DATA = {
                 "biz": 4,
                 "street": 2
               },
-              "outcome": "你搬遠咗。租金平咗三成，但客人少咗一半。你每晚收工要坐四十分鐘車返屋企。"
+              "outcome": "你搬遠了。租金平了三成，但客人少了一半。每晚收工，你要坐四十分鐘車，出車的單據越積越厚。",
+              "flags": [
+                "of_fatigue_high",
+                "of_favour_mid"
+              ]
             },
             {
               "text": "借錢擴充，一次過做大",
@@ -9725,7 +10157,11 @@ window.HK_SLICE_DATA = {
                 "scam": 2,
                 "flat": 1
               },
-              "outcome": "你借錢擴充。新舖大咗一倍，債也大一倍。你開始識得同銀行職員打招呼。"
+              "outcome": "你借錢擴充。新貨倉大了一倍，債也大一倍。你開始懂得跟銀行職員打招呼，也懂得在稅單上留一分餘地。",
+              "flags": [
+                "of_risk_high",
+                "of_reputation_high"
+              ]
             }
           ],
           "tale_cast": [
@@ -9750,7 +10186,7 @@ window.HK_SLICE_DATA = {
       "type": "主線",
       "category": "main",
       "category_label": "主線",
-      "desc": "第七年，你同嗰個人抽到居屋。號碼好前。簽紙嗰日，佢問你：你確定？",
+      "desc": "第七幕，你同嗰個人抽到居屋。號碼好前。簽紙那日，他問你：你確定？",
       "dialogue": [
         {
           "speaker": "嗰個人",
@@ -9793,7 +10229,7 @@ window.HK_SLICE_DATA = {
           "text": "（兩個空格都未簽）"
         }
       ],
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/bg/bg-estate-happiness.jpg",
       "battle": null,
       "story_pack_id": "office_ballad",
       "pack": "office_ballad",
@@ -9810,7 +10246,11 @@ window.HK_SLICE_DATA = {
             "flat": 4,
             "scam": 1
           },
-          "outcome": "你抽。簽紙嗰日，佢喺你隔籬，手都喺震。你簽完之後，兩個人喺樓下坐咗好耐，冇講嘢。"
+          "outcome": "你抽。簽紙嗰日，佢喺你隔籬，手都喺震。你簽完之後，兩個人喺樓下坐咗好耐，冇講嘢。",
+          "flags": [
+            "of_favour_high",
+            "of_fatigue_high"
+          ]
         },
         {
           "text": "唔抽，租樓住先",
@@ -9818,7 +10258,11 @@ window.HK_SLICE_DATA = {
             "biz": 4,
             "rich": 2
           },
-          "outcome": "你唔抽。租樓住，搬咗三次。每次搬，佢都會問：「下次可以唔搬嗎？」"
+          "outcome": "你唔抽。租樓住，搬咗三次。每次搬，佢都會問：「下次可以唔搬嗎？」",
+          "flags": [
+            "of_favour_mid",
+            "of_fatigue_low"
+          ]
         },
         {
           "text": "跟朋友夾份炒一層",
@@ -9826,7 +10270,11 @@ window.HK_SLICE_DATA = {
             "scam": 5,
             "flat": 2
           },
-          "outcome": "你跟朋友夾份炒一層。賺咗一筆，分錢嗰晚有人冇出現。之後呢個朋友唔再聽電話。"
+          "outcome": "你跟朋友夾份炒一層。賺咗一筆，分錢嗰晚有人冇出現。之後呢個朋友唔再聽電話。",
+          "flags": [
+            "of_risk_high",
+            "of_favour_low"
+          ]
         }
       ],
       "office_final": false,
@@ -9850,7 +10298,7 @@ window.HK_SLICE_DATA = {
       "type": "主線",
       "category": "main",
       "category_label": "主線",
-      "desc": "第八年，有個舊同學搵你。佢話有內幕消息，一隻股票下星期會升三倍。佢自己已經落重注。",
+      "desc": "第八幕，有個舊同學找你。他說有內幕消息，一隻股票下星期會升三倍。他自己已經落重注。",
       "dialogue": [
         {
           "speaker": "舊同學",
@@ -9893,7 +10341,7 @@ window.HK_SLICE_DATA = {
           "text": "（你望住個電話，冇按落去）"
         }
       ],
-      "art": "assets/events/ev-alley-wake.jpg",
+      "art": "assets/bg/bg-skyline-sunset.jpg",
       "battle": null,
       "story_pack_id": "office_ballad",
       "pack": "office_ballad",
@@ -9911,7 +10359,11 @@ window.HK_SLICE_DATA = {
             "flat": 1,
             "scam": 1
           },
-          "outcome": "你唔落。第二個禮拜隻股票真係升，你冇賺到。但同一日，舊同學打嚟借錢。"
+          "outcome": "你唔落。第二個禮拜隻股票真係升，你冇賺到。但同一日，舊同學打嚟借錢。",
+          "flags": [
+            "of_reputation_high",
+            "of_favour_mid"
+          ]
         },
         {
           "text": "落少少，試下水溫",
@@ -9919,7 +10371,11 @@ window.HK_SLICE_DATA = {
             "scam": 4,
             "flat": 1
           },
-          "outcome": "你落少少。賺到一筆，夠換部新電話。你冇同人講，但你知道自己開始留意財經版。"
+          "outcome": "你落少少。賺到一筆，夠換部新電話。你冇同人講，但你知道自己開始留意財經版。",
+          "flags": [
+            "of_risk_mid",
+            "of_favour_high"
+          ]
         },
         {
           "text": "All in，借埋錢",
@@ -9927,7 +10383,11 @@ window.HK_SLICE_DATA = {
             "street": 4,
             "scam": 1
           },
-          "outcome": "你 All in。頭三日升，第四日停牌。你打電話，冇人接。"
+          "outcome": "你 All in。頭三日升，第四日停牌。你打電話，冇人接。",
+          "flags": [
+            "of_risk_high",
+            "of_reputation_low"
+          ]
         }
       ],
       "office_final": false,
@@ -9951,7 +10411,7 @@ window.HK_SLICE_DATA = {
       "type": "主線",
       "category": "main",
       "category_label": "主線",
-      "desc": "第九年，有個人搵你合夥。佢出錢，你出力。合約擺喺枱面，條款好厚，你睇唔明最後三頁。",
+      "desc": "第九幕，有個人找你合夥。他出錢，你出力。合約擺在枱面，條款很厚，你看不明白最後三頁。",
       "dialogue": [
         {
           "speaker": "合夥人",
@@ -10011,7 +10471,11 @@ window.HK_SLICE_DATA = {
             "biz": 5,
             "flat": 2
           },
-          "outcome": "你簽，逐條問清楚。合約改咗四版，對方開始唔耐煩。但最後你簽嗰份，係你睇得明嘅。"
+          "outcome": "你簽，逐條問清楚。合約改咗四版，對方開始唔耐煩。但最後你簽嗰份，係你睇得明嘅。",
+          "flags": [
+            "of_reputation_high",
+            "of_risk_low"
+          ]
         },
         {
           "text": "口頭應承，先睇一段時間",
@@ -10020,7 +10484,11 @@ window.HK_SLICE_DATA = {
             "street": 2,
             "flat": 1
           },
-          "outcome": "你口頭應承，先做住。做咗半年，你發現最後三頁寫嘅係「你唔可以自己開同類生意」。"
+          "outcome": "你口頭應承，先做住。做咗半年，你發現最後三頁寫嘅係「你唔可以自己開同類生意」。",
+          "flags": [
+            "of_risk_high",
+            "of_favour_mid"
+          ]
         },
         {
           "text": "唔合作，自己做",
@@ -10028,7 +10496,11 @@ window.HK_SLICE_DATA = {
             "flat": 4,
             "scam": 1
           },
-          "outcome": "你唔合作，自己開。開頭好難，但每一蚊都係你自己嘅。"
+          "outcome": "你唔合作，自己開。開頭好難，但每一蚊都係你自己嘅。",
+          "flags": [
+            "of_fatigue_high",
+            "of_reputation_mid"
+          ]
         }
       ],
       "office_final": false,
@@ -10052,7 +10524,7 @@ window.HK_SLICE_DATA = {
       "type": "主線",
       "category": "main",
       "category_label": "主線",
-      "desc": "第十年。你企喺天橋上面，望住下面啲車。有一架停咗喺路邊，車入面有人喺度食飯盒。你電話響起，係一個陌生號碼。",
+      "desc": "第十幕。你站在天橋上面，望著下面的車。有一架停在路邊，車裡面有人正在食飯盒。你電話響起，是一個陌生號碼。",
       "dialogue": [
         {
           "speaker": "你",
@@ -10112,7 +10584,11 @@ window.HK_SLICE_DATA = {
             "flat": 5,
             "rich": 1
           },
-          "outcome": "你守住份工。電話響到停，你冇接。第二日返工，一切照舊。"
+          "outcome": "你守住份工。電話響到停，你冇接。第二日返工，一切照舊。",
+          "flags": [
+            "of_reputation_high",
+            "of_fatigue_low"
+          ]
         },
         {
           "text": "再搏最後一次",
@@ -10121,7 +10597,11 @@ window.HK_SLICE_DATA = {
             "rich": 2,
             "biz": 2
           },
-          "outcome": "你再搏一次。搏到最後，你企喺天橋上面，望住下面啲車，唔知自己贏咗定輸咗。"
+          "outcome": "你再搏一次。搏到最後，你企喺天橋上面，望住下面啲車，唔知自己贏咗定輸咗。",
+          "flags": [
+            "of_risk_high",
+            "of_fatigue_high"
+          ]
         },
         {
           "text": "接聽嗰個陌生電話",
@@ -10129,7 +10609,11 @@ window.HK_SLICE_DATA = {
             "scam": 5,
             "street": 2
           },
-          "outcome": "你接咗。對方講嘢好快，你只聽到「保證」「名額」「今日之內」。你應承咗。"
+          "outcome": "你接咗。對方講嘢好快，你只聽到「保證」「名額」「今日之內」。你應承咗。",
+          "flags": [
+            "of_risk_high",
+            "of_reputation_low"
+          ]
         }
       ],
       "office_final": false,
@@ -10149,11 +10633,11 @@ window.HK_SLICE_DATA = {
           "id": "partner",
           "name": "嗰個人",
           "role": "各走各路",
-          "line": "各走各路",
+          "line": "等你講一句真的",
           "arc_lines": {
-            "warm": "各走各路（佢仲喺度）",
-            "neutral": "各走各路",
-            "cold": "各走各路（佢已經唔想講）"
+            "warm": "等你講一句真的",
+            "neutral": "等你講一句真的",
+            "cold": "等你講一句真的"
           }
         }
       ]
@@ -15311,6 +15795,2288 @@ window.HK_SLICE_DATA = {
         "shard_max": 2,
         "shard_need": 10
       }
+    },
+    {
+      "id": "EV_GB_01",
+      "name": "面試夜",
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "desc": "海嵐峰人手不足。李步岸把保安工作變成闖關：記車牌、記樓層、記誰會凌晨拎外賣。三個理由把你留在這張摺椅上。",
+      "dialogue": [
+        {
+          "speaker": "李步岸",
+          "text": "保安唔係坐櫃檯。你要記得邊戶會偷放單車。"
+        },
+        {
+          "speaker": "邱得根",
+          "text": "後生，古語有云——呃，總之聽隊長話。"
+        },
+        {
+          "speaker": "畢好彩",
+          "text": "我今日轉過運，你坐我左邊會旺啲。"
+        },
+        {
+          "speaker": "麥峰",
+          "text": "唔好望住我，我只係過嚟湊人數。"
+        },
+        {
+          "speaker": "李步岸",
+          "text": "三樣：唔可以睡、唔可以漏、唔可以同住客熟到收禮。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你望住牆上的更表，空格比名字多）"
+        }
+      ],
+      "art": "assets/events/ev-gb-corridor-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 3,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [
+        "+3 膠幣"
+      ],
+      "reward_blurb": "你的保安，李步岸 · 第 1 幕",
+      "office_node": "hire",
+      "office_choices": [
+        {
+          "text": "跟隊長學規矩，記齊所有名單",
+          "track": "strict",
+          "delta": {
+            "pro": 6,
+            "warm": 0,
+            "chaos": 0,
+            "out": 1
+          },
+          "outcome": "步岸點頭，塞你一本住客備忘。頁邊全是他自己加的鉛筆字，寫到紙都薄了；最後一頁有幾戶名字被重重劃掉。收更時他只講一句：「記得晒，就冇人鬧你。」"
+        },
+        {
+          "text": "先幫人，再講規則",
+          "track": "human",
+          "delta": {
+            "pro": 1,
+            "warm": 6,
+            "chaos": 0,
+            "out": 0
+          },
+          "outcome": "好彩塞你一包糖果，說是擋小人。你順手幫一位婆婆把菜提到升降機口，她記住了你的姓。步岸望你一眼，好似已經開始計你遲到。"
+        },
+        {
+          "text": "能做就做，能避就避",
+          "track": "slack",
+          "delta": {
+            "pro": 0,
+            "warm": 1,
+            "chaos": 6,
+            "out": 1
+          },
+          "outcome": "麥峰教你邊個鐘最靜、哪一部閉路影不到後樓梯。你學識第一課：電風扇遮得住呵欠。收更那刻，你發現自己整晚只寫了三行紀錄。"
+        }
+      ],
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "role": "隊長",
+          "line": "隊長",
+          "arc_lines": {
+            "warm": "隊長（他點了頭）",
+            "neutral": "隊長",
+            "cold": "隊長（他不再看你）"
+          }
+        },
+        {
+          "id": "lucky",
+          "name": "畢好彩",
+          "role": "同事",
+          "line": "同事",
+          "arc_lines": {
+            "warm": "同事（他信你今天轉運）",
+            "neutral": "同事",
+            "cold": "同事（他不敢多講）"
+          }
+        },
+        {
+          "id": "bee",
+          "name": "麥峰",
+          "role": "同事",
+          "line": "同事",
+          "arc_lines": {
+            "warm": "同事（他今日冇走開）",
+            "neutral": "同事",
+            "cold": "同事（他望住別處）"
+          }
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_02",
+      "name": "第一更",
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "desc": "雨夜，有人無通行證明要入內。對講機嘈住，步岸站你後面。",
+      "dialogue": [
+        {
+          "speaker": "訪客",
+          "text": "我住十五樓，門卡壞咗，你通融下。"
+        },
+        {
+          "speaker": "李步岸",
+          "text": "通融係例外。例外一開，就會開第二次。"
+        },
+        {
+          "speaker": "畢好彩",
+          "text": "佢面相唔似壞人……定係我眼鏡花？"
+        },
+        {
+          "speaker": "你",
+          "text": "（雨打在大堂玻璃上，訪客的鞋一直在滴水）"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 2,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [
+        "+2 膠幣"
+      ],
+      "reward_blurb": "你的保安，李步岸 · 第 2 幕",
+      "office_node": "desk",
+      "office_choices": [
+        {
+          "text": "照章拒絕，請聯絡住戶下來",
+          "delta": {
+            "pro": 5,
+            "warm": 0,
+            "chaos": 1,
+            "out": 1
+          },
+          "outcome": "訪客罵了幾句走了，傘骨撞在閘上。步岸只講兩個字：「合格。」你手心全是汗，握筆時筆尖在表格上戳出一個洞。"
+        },
+        {
+          "text": "請住戶視像確認後放行",
+          "delta": {
+            "pro": 2,
+            "warm": 4,
+            "chaos": 0,
+            "out": 0
+          },
+          "outcome": "多花八分鐘，對講機前前後後響了五次。住戶在鏡頭裡道謝，還說下次會帶生果。步岸沒稱讚，也沒罵，只在紀錄上寫了一句「已核實」。"
+        },
+        {
+          "text": "先放行，再補登記",
+          "delta": {
+            "pro": 0,
+            "warm": 2,
+            "chaos": 5,
+            "out": 1
+          },
+          "outcome": "後來證明訪客講真，他是十五樓單位的女婿。麥峰豎起拇指；步岸把補登表格拍在你面前，紙角壓住你的手背，一分鐘沒拿開。"
+        }
+      ],
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "role": "隊長",
+          "line": "隊長",
+          "arc_lines": {
+            "warm": "隊長（他點了頭）",
+            "neutral": "隊長",
+            "cold": "隊長（他不再看你）"
+          }
+        },
+        {
+          "id": "lucky",
+          "name": "畢好彩",
+          "role": "同事",
+          "line": "同事",
+          "arc_lines": {
+            "warm": "同事（他信你今天轉運）",
+            "neutral": "同事",
+            "cold": "同事（他不敢多講）"
+          }
+        },
+        {
+          "id": "bee",
+          "name": "麥峰",
+          "role": "同事",
+          "line": "同事",
+          "arc_lines": {
+            "warm": "同事（他今日冇走開）",
+            "neutral": "同事",
+            "cold": "同事（他望住別處）"
+          }
+        }
+      ],
+      "track_variants": {
+        "strict": {
+          "desc": "雨夜，有人無通行證明要入內。對講機嘈住，步岸站你後面。你把住客備忘翻到十五樓那一頁，頁邊有步岸的鉛筆字。",
+          "dialogue": [
+            {
+              "speaker": "訪客",
+              "text": "我住十五樓，門卡壞咗，你通融下。"
+            },
+            {
+              "speaker": "李步岸",
+              "text": "通融係例外。例外一開，就會開第二次。"
+            },
+            {
+              "speaker": "畢好彩",
+              "text": "佢面相唔似壞人……定係我眼鏡花？"
+            },
+            {
+              "speaker": "你",
+              "text": "（雨打在大堂玻璃上，訪客的鞋一直在滴水）"
+            },
+            {
+              "speaker": "你",
+              "text": "（你摸一摸口袋裡那本備忘）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "照章拒絕，請聯絡住戶下來",
+              "delta": {
+                "pro": 5,
+                "warm": 0,
+                "chaos": 1,
+                "out": 1
+              },
+              "outcome": "你按本子做事。訪客罵了幾句走了，傘骨撞在閘上。步岸只講兩個字：「合格。」你手心全是汗，握筆時筆尖在表格上戳出一個洞。"
+            },
+            {
+              "text": "請住戶視像確認後放行",
+              "delta": {
+                "pro": 2,
+                "warm": 4,
+                "chaos": 0,
+                "out": 0
+              },
+              "outcome": "你按本子做事。多花八分鐘，對講機前前後後響了五次。住戶在鏡頭裡道謝，還說下次會帶生果。步岸沒稱讚，也沒罵，只在紀錄上寫了一句「已核實」。"
+            },
+            {
+              "text": "先放行，再補登記",
+              "delta": {
+                "pro": 0,
+                "warm": 2,
+                "chaos": 5,
+                "out": 1
+              },
+              "outcome": "你按本子做事。後來證明訪客講真，他是十五樓單位的女婿。麥峰豎起拇指；步岸把補登表格拍在你面前，紙角壓住你的手背，一分鐘沒拿開。"
+            }
+          ]
+        },
+        "human": {
+          "desc": "雨夜，有人無通行證明要入內。對講機嘈住，步岸站你後面。你想起白天那位提菜的婆婆，她說她住十五樓。",
+          "dialogue": [
+            {
+              "speaker": "訪客",
+              "text": "我住十五樓，門卡壞咗，你通融下。"
+            },
+            {
+              "speaker": "李步岸",
+              "text": "通融係例外。例外一開，就會開第二次。"
+            },
+            {
+              "speaker": "畢好彩",
+              "text": "佢面相唔似壞人……定係我眼鏡花？"
+            },
+            {
+              "speaker": "你",
+              "text": "（雨打在大堂玻璃上，訪客的鞋一直在滴水）"
+            },
+            {
+              "speaker": "你",
+              "text": "（你想起婆婆說，她個仔好少返嚟）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "照章拒絕，請聯絡住戶下來",
+              "delta": {
+                "pro": 5,
+                "warm": 0,
+                "chaos": 1,
+                "out": 1
+              },
+              "outcome": "你先看人，再看規矩。訪客罵了幾句走了，傘骨撞在閘上。步岸只講兩個字：「合格。」你手心全是汗，握筆時筆尖在表格上戳出一個洞。"
+            },
+            {
+              "text": "請住戶視像確認後放行",
+              "delta": {
+                "pro": 2,
+                "warm": 4,
+                "chaos": 0,
+                "out": 0
+              },
+              "outcome": "你先看人，再看規矩。多花八分鐘，對講機前前後後響了五次。住戶在鏡頭裡道謝，還說下次會帶生果。步岸沒稱讚，也沒罵，只在紀錄上寫了一句「已核實」。"
+            },
+            {
+              "text": "先放行，再補登記",
+              "delta": {
+                "pro": 0,
+                "warm": 2,
+                "chaos": 5,
+                "out": 1
+              },
+              "outcome": "你先看人，再看規矩。後來證明訪客講真，他是十五樓單位的女婿。麥峰豎起拇指；步岸把補登表格拍在你面前，紙角壓住你的手背，一分鐘沒拿開。"
+            }
+          ]
+        },
+        "slack": {
+          "desc": "雨夜，有人無通行證明要入內。對講機嘈住，步岸站你後面。麥峰在你耳邊講了一句，然後退到閉路影不到的位置。",
+          "dialogue": [
+            {
+              "speaker": "訪客",
+              "text": "我住十五樓，門卡壞咗，你通融下。"
+            },
+            {
+              "speaker": "李步岸",
+              "text": "通融係例外。例外一開，就會開第二次。"
+            },
+            {
+              "speaker": "畢好彩",
+              "text": "佢面相唔似壞人……定係我眼鏡花？"
+            },
+            {
+              "speaker": "你",
+              "text": "（雨打在大堂玻璃上，訪客的鞋一直在滴水）"
+            },
+            {
+              "speaker": "麥峰",
+              "text": "（細聲）呢個位，唔好企太前。"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "照章拒絕，請聯絡住戶下來",
+              "delta": {
+                "pro": 5,
+                "warm": 0,
+                "chaos": 1,
+                "out": 1
+              },
+              "outcome": "你挑了最省事那條。訪客罵了幾句走了，傘骨撞在閘上。步岸只講兩個字：「合格。」你手心全是汗，握筆時筆尖在表格上戳出一個洞。"
+            },
+            {
+              "text": "請住戶視像確認後放行",
+              "delta": {
+                "pro": 2,
+                "warm": 4,
+                "chaos": 0,
+                "out": 0
+              },
+              "outcome": "你挑了最省事那條。多花八分鐘，對講機前前後後響了五次。住戶在鏡頭裡道謝，還說下次會帶生果。步岸沒稱讚，也沒罵，只在紀錄上寫了一句「已核實」。"
+            },
+            {
+              "text": "先放行，再補登記",
+              "delta": {
+                "pro": 0,
+                "warm": 2,
+                "chaos": 5,
+                "out": 1
+              },
+              "outcome": "你挑了最省事那條。後來證明訪客講真，他是十五樓單位的女婿。麥峰豎起拇指；步岸把補登表格拍在你面前，紙角壓住你的手背，一分鐘沒拿開。"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "EV_GB_03",
+      "name": "排更風波",
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "desc": "有人請病假。你撞破對方其實在茶餐廳看波。名額只剩一個。",
+      "dialogue": [
+        {
+          "speaker": "麥峰",
+          "text": "呢個位我申請咗好耐。"
+        },
+        {
+          "speaker": "邱得根",
+          "text": "以我資歷，應優先。"
+        },
+        {
+          "speaker": "李步岸",
+          "text": "你見到什麼，就決定站哪邊。"
+        },
+        {
+          "speaker": "你",
+          "text": "（茶餐廳電視的光，隔著玻璃照過來）"
+        }
+      ],
+      "art": "assets/events/ev-gb-corridor-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 2,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [
+        "+2 膠幣"
+      ],
+      "reward_blurb": "你的保安，李步岸 · 第 3 幕",
+      "office_node": "shift",
+      "office_choices": [
+        {
+          "text": "向隊長報告實情",
+          "delta": {
+            "pro": 6,
+            "warm": 0,
+            "chaos": 1,
+            "out": 1
+          },
+          "outcome": "病假取消。隊裡安靜了一整天，有人在茶水間見到你就轉身。步岸把你的名字寫進下個月的好更，卻沒解釋原因——你發現自己寧願他解釋。"
+        },
+        {
+          "text": "私下勸對方取消，不公開",
+          "delta": {
+            "pro": 2,
+            "warm": 4,
+            "chaos": 1,
+            "out": 0
+          },
+          "outcome": "對方第二天撤回病假，儲物櫃多了兩罐啤酒。你多了一個人情，也多了一個把柄——他臨走時說「你知我知」，你點頭，心裡不太舒服。"
+        },
+        {
+          "text": "當沒看見，繼續巡邏",
+          "delta": {
+            "pro": 0,
+            "warm": 1,
+            "chaos": 5,
+            "out": 1
+          },
+          "outcome": "排更不公的事後來傳開，連住客都聽過版本。步岸自己查到，收更時問你為何沉默。你答不上，他也不再問，只在紀錄簿上寫了很久。"
+        }
+      ],
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "role": "隊長",
+          "line": "隊長",
+          "arc_lines": {
+            "warm": "隊長（他點了頭）",
+            "neutral": "隊長",
+            "cold": "隊長（他不再看你）"
+          }
+        },
+        {
+          "id": "lucky",
+          "name": "畢好彩",
+          "role": "同事",
+          "line": "同事",
+          "arc_lines": {
+            "warm": "同事（他信你今天轉運）",
+            "neutral": "同事",
+            "cold": "同事（他不敢多講）"
+          }
+        },
+        {
+          "id": "bee",
+          "name": "麥峰",
+          "role": "同事",
+          "line": "同事",
+          "arc_lines": {
+            "warm": "同事（他今日冇走開）",
+            "neutral": "同事",
+            "cold": "同事（他望住別處）"
+          }
+        }
+      ],
+      "track_variants": {
+        "strict": {
+          "desc": "有人請病假。你撞破對方其實在茶餐廳看波。名額只剩一個。你先翻更表，再翻紀錄簿，兩份對不上。",
+          "dialogue": [
+            {
+              "speaker": "麥峰",
+              "text": "呢個位我申請咗好耐。"
+            },
+            {
+              "speaker": "邱得根",
+              "text": "以我資歷，應優先。"
+            },
+            {
+              "speaker": "李步岸",
+              "text": "你見到什麼，就決定站哪邊。"
+            },
+            {
+              "speaker": "你",
+              "text": "（茶餐廳電視的光，隔著玻璃照過來）"
+            },
+            {
+              "speaker": "你",
+              "text": "（更表上的空格，比名字多）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "向隊長報告實情",
+              "delta": {
+                "pro": 6,
+                "warm": 0,
+                "chaos": 1,
+                "out": 1
+              },
+              "outcome": "你照紀錄講。病假取消。隊裡安靜了一整天，有人在茶水間見到你就轉身。步岸把你的名字寫進下個月的好更，卻沒解釋原因——你發現自己寧願他解釋。"
+            },
+            {
+              "text": "私下勸對方取消，不公開",
+              "delta": {
+                "pro": 2,
+                "warm": 4,
+                "chaos": 1,
+                "out": 0
+              },
+              "outcome": "你照紀錄講。對方第二天撤回病假，儲物櫃多了兩罐啤酒。你多了一個人情，也多了一個把柄——他臨走時說「你知我知」，你點頭，心裡不太舒服。"
+            },
+            {
+              "text": "當沒看見，繼續巡邏",
+              "delta": {
+                "pro": 0,
+                "warm": 1,
+                "chaos": 5,
+                "out": 1
+              },
+              "outcome": "你照紀錄講。排更不公的事後來傳開，連住客都聽過版本。步岸自己查到，收更時問你為何沉默。你答不上，他也不再問，只在紀錄簿上寫了很久。"
+            }
+          ]
+        },
+        "human": {
+          "desc": "有人請病假。你撞破對方其實在茶餐廳看波。名額只剩一個。你想起茶餐廳裡那個人，平日幫過你兩次。",
+          "dialogue": [
+            {
+              "speaker": "麥峰",
+              "text": "呢個位我申請咗好耐。"
+            },
+            {
+              "speaker": "邱得根",
+              "text": "以我資歷，應優先。"
+            },
+            {
+              "speaker": "李步岸",
+              "text": "你見到什麼，就決定站哪邊。"
+            },
+            {
+              "speaker": "你",
+              "text": "（茶餐廳電視的光，隔著玻璃照過來）"
+            },
+            {
+              "speaker": "你",
+              "text": "（你想起他上次幫你頂了半更）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "向隊長報告實情",
+              "delta": {
+                "pro": 6,
+                "warm": 0,
+                "chaos": 1,
+                "out": 1
+              },
+              "outcome": "你留了一條路給人。病假取消。隊裡安靜了一整天，有人在茶水間見到你就轉身。步岸把你的名字寫進下個月的好更，卻沒解釋原因——你發現自己寧願他解釋。"
+            },
+            {
+              "text": "私下勸對方取消，不公開",
+              "delta": {
+                "pro": 2,
+                "warm": 4,
+                "chaos": 1,
+                "out": 0
+              },
+              "outcome": "你留了一條路給人。對方第二天撤回病假，儲物櫃多了兩罐啤酒。你多了一個人情，也多了一個把柄——他臨走時說「你知我知」，你點頭，心裡不太舒服。"
+            },
+            {
+              "text": "當沒看見，繼續巡邏",
+              "delta": {
+                "pro": 0,
+                "warm": 1,
+                "chaos": 5,
+                "out": 1
+              },
+              "outcome": "你留了一條路給人。排更不公的事後來傳開，連住客都聽過版本。步岸自己查到，收更時問你為何沉默。你答不上，他也不再問，只在紀錄簿上寫了很久。"
+            }
+          ]
+        },
+        "slack": {
+          "desc": "有人請病假。你撞破對方其實在茶餐廳看波。名額只剩一個。麥峰把更表推遠一點，像是在示範什麼叫不關我事。",
+          "dialogue": [
+            {
+              "speaker": "麥峰",
+              "text": "呢個位我申請咗好耐。"
+            },
+            {
+              "speaker": "邱得根",
+              "text": "以我資歷，應優先。"
+            },
+            {
+              "speaker": "李步岸",
+              "text": "你見到什麼，就決定站哪邊。"
+            },
+            {
+              "speaker": "你",
+              "text": "（茶餐廳電視的光，隔著玻璃照過來）"
+            },
+            {
+              "speaker": "麥峰",
+              "text": "（他把椅子轉向另一邊）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "向隊長報告實情",
+              "delta": {
+                "pro": 6,
+                "warm": 0,
+                "chaos": 1,
+                "out": 1
+              },
+              "outcome": "你選擇不進場。病假取消。隊裡安靜了一整天，有人在茶水間見到你就轉身。步岸把你的名字寫進下個月的好更，卻沒解釋原因——你發現自己寧願他解釋。"
+            },
+            {
+              "text": "私下勸對方取消，不公開",
+              "delta": {
+                "pro": 2,
+                "warm": 4,
+                "chaos": 1,
+                "out": 0
+              },
+              "outcome": "你選擇不進場。對方第二天撤回病假，儲物櫃多了兩罐啤酒。你多了一個人情，也多了一個把柄——他臨走時說「你知我知」，你點頭，心裡不太舒服。"
+            },
+            {
+              "text": "當沒看見，繼續巡邏",
+              "delta": {
+                "pro": 0,
+                "warm": 1,
+                "chaos": 5,
+                "out": 1
+              },
+              "outcome": "你選擇不進場。排更不公的事後來傳開，連住客都聽過版本。步岸自己查到，收更時問你為何沉默。你答不上，他也不再問，只在紀錄簿上寫了很久。"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "EV_GB_04",
+      "name": "雪櫃無間",
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "desc": "好彩為新人準備的飯盒消失。嫌疑名單包括半個保安室。",
+      "dialogue": [
+        {
+          "speaker": "畢好彩",
+          "text": "我擺咗名字貼紙！仲寫咗個「勿動」！"
+        },
+        {
+          "speaker": "邱得根",
+          "text": "誤食無罪，古已有之。"
+        },
+        {
+          "speaker": "麥峰",
+          "text": "唔好望我，我今日叫外賣。"
+        },
+        {
+          "speaker": "李步岸",
+          "text": "雪櫃係公共地方，但唔代表冇規矩。"
+        }
+      ],
+      "art": "assets/events/ev-gb-room-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 2,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [
+        "+2 膠幣"
+      ],
+      "reward_blurb": "你的保安，李步岸 · 第 4 幕",
+      "office_node": "fridge",
+      "office_choices": [
+        {
+          "text": "查閉路，公開結果",
+          "delta": {
+            "pro": 6,
+            "warm": 1,
+            "chaos": 1,
+            "out": 1
+          },
+          "outcome": "真相尷尬但清楚：是夜更那位做的，他以為是沒人認領的。好彩消了氣，雪櫃第二天多了鎖。隊裡有兩三天沒人敢在休息室吃飯。"
+        },
+        {
+          "text": "買多一盒和解，不追究",
+          "delta": {
+            "pro": 1,
+            "warm": 5,
+            "chaos": 1,
+            "out": 0
+          },
+          "outcome": "你自己掏錢買了兩盒飯，一盒放回雪櫃，一盒給好彩。氣氛緩和了。步岸說你「用錢買安靜」，語氣聽不出褒貶，但他把這件事寫進了月度簡報。"
+        },
+        {
+          "text": "設局等對方再犯",
+          "delta": {
+            "pro": 1,
+            "warm": 0,
+            "chaos": 6,
+            "out": 1
+          },
+          "outcome": "你在飯盒上做了記號，卻認錯了人，差點牽連一位清潔姐姐。烏龍擴大到要寫報告。你連夜寫了三頁，最後一頁反覆改了四次。"
+        }
+      ],
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "role": "隊長",
+          "line": "隊長",
+          "arc_lines": {
+            "warm": "隊長（他點了頭）",
+            "neutral": "隊長",
+            "cold": "隊長（他不再看你）"
+          }
+        },
+        {
+          "id": "lucky",
+          "name": "畢好彩",
+          "role": "同事",
+          "line": "同事",
+          "arc_lines": {
+            "warm": "同事（他信你今天轉運）",
+            "neutral": "同事",
+            "cold": "同事（他不敢多講）"
+          }
+        },
+        {
+          "id": "bee",
+          "name": "麥峰",
+          "role": "同事",
+          "line": "同事",
+          "arc_lines": {
+            "warm": "同事（他今日冇走開）",
+            "neutral": "同事",
+            "cold": "同事（他望住別處）"
+          }
+        }
+      ],
+      "track_variants": {
+        "strict": {
+          "desc": "好彩為新人準備的飯盒消失。嫌疑名單包括半個保安室。備忘第一頁寫明：雪櫃屬公用地方，遺失自負。",
+          "dialogue": [
+            {
+              "speaker": "畢好彩",
+              "text": "我擺咗名字貼紙！仲寫咗個「勿動」！"
+            },
+            {
+              "speaker": "邱得根",
+              "text": "誤食無罪，古已有之。"
+            },
+            {
+              "speaker": "麥峰",
+              "text": "唔好望我，我今日叫外賣。"
+            },
+            {
+              "speaker": "李步岸",
+              "text": "雪櫃係公共地方，但唔代表冇規矩。"
+            },
+            {
+              "speaker": "你",
+              "text": "（那一行被人用紅筆畫過）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "查閉路，公開結果",
+              "delta": {
+                "pro": 6,
+                "warm": 1,
+                "chaos": 1,
+                "out": 1
+              },
+              "outcome": "你照規矩查。真相尷尬但清楚：是夜更那位做的，他以為是沒人認領的。好彩消了氣，雪櫃第二天多了鎖。隊裡有兩三天沒人敢在休息室吃飯。"
+            },
+            {
+              "text": "買多一盒和解，不追究",
+              "delta": {
+                "pro": 1,
+                "warm": 5,
+                "chaos": 1,
+                "out": 0
+              },
+              "outcome": "你照規矩查。你自己掏錢買了兩盒飯，一盒放回雪櫃，一盒給好彩。氣氛緩和了。步岸說你「用錢買安靜」，語氣聽不出褒貶，但他把這件事寫進了月度簡報。"
+            },
+            {
+              "text": "設局等對方再犯",
+              "delta": {
+                "pro": 1,
+                "warm": 0,
+                "chaos": 6,
+                "out": 1
+              },
+              "outcome": "你照規矩查。你在飯盒上做了記號，卻認錯了人，差點牽連一位清潔姐姐。烏龍擴大到要寫報告。你連夜寫了三頁，最後一頁反覆改了四次。"
+            }
+          ]
+        },
+        "human": {
+          "desc": "好彩為新人準備的飯盒消失。嫌疑名單包括半個保安室。好彩的飯盒上，貼紙寫著一個新人的名字。",
+          "dialogue": [
+            {
+              "speaker": "畢好彩",
+              "text": "我擺咗名字貼紙！仲寫咗個「勿動」！"
+            },
+            {
+              "speaker": "邱得根",
+              "text": "誤食無罪，古已有之。"
+            },
+            {
+              "speaker": "麥峰",
+              "text": "唔好望我，我今日叫外賣。"
+            },
+            {
+              "speaker": "李步岸",
+              "text": "雪櫃係公共地方，但唔代表冇規矩。"
+            },
+            {
+              "speaker": "畢好彩",
+              "text": "（他盯住雪櫃，像在等一個答案）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "查閉路，公開結果",
+              "delta": {
+                "pro": 6,
+                "warm": 1,
+                "chaos": 1,
+                "out": 1
+              },
+              "outcome": "你先顧人的感受。真相尷尬但清楚：是夜更那位做的，他以為是沒人認領的。好彩消了氣，雪櫃第二天多了鎖。隊裡有兩三天沒人敢在休息室吃飯。"
+            },
+            {
+              "text": "買多一盒和解，不追究",
+              "delta": {
+                "pro": 1,
+                "warm": 5,
+                "chaos": 1,
+                "out": 0
+              },
+              "outcome": "你先顧人的感受。你自己掏錢買了兩盒飯，一盒放回雪櫃，一盒給好彩。氣氛緩和了。步岸說你「用錢買安靜」，語氣聽不出褒貶，但他把這件事寫進了月度簡報。"
+            },
+            {
+              "text": "設局等對方再犯",
+              "delta": {
+                "pro": 1,
+                "warm": 0,
+                "chaos": 6,
+                "out": 1
+              },
+              "outcome": "你先顧人的感受。你在飯盒上做了記號，卻認錯了人，差點牽連一位清潔姐姐。烏龍擴大到要寫報告。你連夜寫了三頁，最後一頁反覆改了四次。"
+            }
+          ]
+        },
+        "slack": {
+          "desc": "好彩為新人準備的飯盒消失。嫌疑名單包括半個保安室。麥峰已經把椅子轉向另一邊，外賣袋還在手上。",
+          "dialogue": [
+            {
+              "speaker": "畢好彩",
+              "text": "我擺咗名字貼紙！仲寫咗個「勿動」！"
+            },
+            {
+              "speaker": "邱得根",
+              "text": "誤食無罪，古已有之。"
+            },
+            {
+              "speaker": "麥峰",
+              "text": "唔好望我，我今日叫外賣。"
+            },
+            {
+              "speaker": "李步岸",
+              "text": "雪櫃係公共地方，但唔代表冇規矩。"
+            },
+            {
+              "speaker": "麥峰",
+              "text": "（他把外賣袋收到桌下）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "查閉路，公開結果",
+              "delta": {
+                "pro": 6,
+                "warm": 1,
+                "chaos": 1,
+                "out": 1
+              },
+              "outcome": "你不想把事情搞大。真相尷尬但清楚：是夜更那位做的，他以為是沒人認領的。好彩消了氣，雪櫃第二天多了鎖。隊裡有兩三天沒人敢在休息室吃飯。"
+            },
+            {
+              "text": "買多一盒和解，不追究",
+              "delta": {
+                "pro": 1,
+                "warm": 5,
+                "chaos": 1,
+                "out": 0
+              },
+              "outcome": "你不想把事情搞大。你自己掏錢買了兩盒飯，一盒放回雪櫃，一盒給好彩。氣氛緩和了。步岸說你「用錢買安靜」，語氣聽不出褒貶，但他把這件事寫進了月度簡報。"
+            },
+            {
+              "text": "設局等對方再犯",
+              "delta": {
+                "pro": 1,
+                "warm": 0,
+                "chaos": 6,
+                "out": 1
+              },
+              "outcome": "你不想把事情搞大。你在飯盒上做了記號，卻認錯了人，差點牽連一位清潔姐姐。烏龍擴大到要寫報告。你連夜寫了三頁，最後一頁反覆改了四次。"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "EV_GB_05",
+      "name": "尋物夜",
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "desc": "孫婆婆說孫仔不見了。你以為是人，結果是一隻龜。規程寫「非緊急勿離崗」。",
+      "dialogue": [
+        {
+          "speaker": "孫婆婆",
+          "text": "佢識應「婆婆」。我叫一聲，佢會伸個頭出嚟。"
+        },
+        {
+          "speaker": "李步岸",
+          "text": "崗位唔能空。"
+        },
+        {
+          "speaker": "畢好彩",
+          "text": "龜都有緣分㗎。"
+        },
+        {
+          "speaker": "你",
+          "text": "（婆婆的手一直在抖，抓著一張龜的相）"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 2,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [
+        "+2 膠幣"
+      ],
+      "reward_blurb": "你的保安，李步岸 · 第 5 幕",
+      "office_node": "lost",
+      "office_choices": [
+        {
+          "text": "堅守崗位，報失物登記",
+          "delta": {
+            "pro": 5,
+            "warm": 0,
+            "chaos": 1,
+            "out": 1
+          },
+          "outcome": "龜在天亮後於花槽自己走出來，慢得像是故意的。婆婆道謝很淡，只說了句「麻煩你」。步岸說你沒犯錯，語氣像在讀紀錄。"
+        },
+        {
+          "text": "請假兩小時協助尋找",
+          "delta": {
+            "pro": 1,
+            "warm": 5,
+            "chaos": 1,
+            "out": 1
+          },
+          "outcome": "你在花槽的排水口找到牠，殼上黏著一片枯葉。婆婆硬塞你兩個橙，皮都還是涼的。日誌上多了一筆「離崗」，你簽名的時候看了那兩個字很久。"
+        },
+        {
+          "text": "發動全隊當任務",
+          "delta": {
+            "pro": 2,
+            "warm": 3,
+            "chaos": 4,
+            "out": 0
+          },
+          "outcome": "大堂一時變成搜救現場，對講機沒停過。有住客投訴嘈音，管理處的評分單當晚就送來了。龜救回了，好彩說牠是「好彩頭」，抱著不肯放。"
+        }
+      ],
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "role": "隊長",
+          "line": "隊長",
+          "arc_lines": {
+            "warm": "隊長（他點了頭）",
+            "neutral": "隊長",
+            "cold": "隊長（他不再看你）"
+          }
+        },
+        {
+          "id": "lucky",
+          "name": "畢好彩",
+          "role": "同事",
+          "line": "同事",
+          "arc_lines": {
+            "warm": "同事（他信你今天轉運）",
+            "neutral": "同事",
+            "cold": "同事（他不敢多講）"
+          }
+        },
+        {
+          "id": "bee",
+          "name": "麥峰",
+          "role": "同事",
+          "line": "同事",
+          "arc_lines": {
+            "warm": "同事（他今日冇走開）",
+            "neutral": "同事",
+            "cold": "同事（他望住別處）"
+          }
+        }
+      ],
+      "track_variants": {
+        "strict": {
+          "desc": "孫婆婆說孫仔不見了。你以為是人，結果是一隻龜。規程寫「非緊急勿離崗」。規程第三條：非緊急勿離崗。你記得編號。",
+          "dialogue": [
+            {
+              "speaker": "孫婆婆",
+              "text": "佢識應「婆婆」。我叫一聲，佢會伸個頭出嚟。"
+            },
+            {
+              "speaker": "李步岸",
+              "text": "崗位唔能空。"
+            },
+            {
+              "speaker": "畢好彩",
+              "text": "龜都有緣分㗎。"
+            },
+            {
+              "speaker": "你",
+              "text": "（婆婆的手一直在抖，抓著一張龜的相）"
+            },
+            {
+              "speaker": "你",
+              "text": "（你望一望牆上的規程，再望一望婆婆）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "堅守崗位，報失物登記",
+              "delta": {
+                "pro": 5,
+                "warm": 0,
+                "chaos": 1,
+                "out": 1
+              },
+              "outcome": "你守住那個位。龜在天亮後於花槽自己走出來，慢得像是故意的。婆婆道謝很淡，只說了句「麻煩你」。步岸說你沒犯錯，語氣像在讀紀錄。"
+            },
+            {
+              "text": "請假兩小時協助尋找",
+              "delta": {
+                "pro": 1,
+                "warm": 5,
+                "chaos": 1,
+                "out": 1
+              },
+              "outcome": "你守住那個位。你在花槽的排水口找到牠，殼上黏著一片枯葉。婆婆硬塞你兩個橙，皮都還是涼的。日誌上多了一筆「離崗」，你簽名的時候看了那兩個字很久。"
+            },
+            {
+              "text": "發動全隊當任務",
+              "delta": {
+                "pro": 2,
+                "warm": 3,
+                "chaos": 4,
+                "out": 0
+              },
+              "outcome": "你守住那個位。大堂一時變成搜救現場，對講機沒停過。有住客投訴嘈音，管理處的評分單當晚就送來了。龜救回了，好彩說牠是「好彩頭」，抱著不肯放。"
+            }
+          ]
+        },
+        "human": {
+          "desc": "孫婆婆說孫仔不見了。你以為是人，結果是一隻龜。規程寫「非緊急勿離崗」。婆婆又喚了一聲，聲音很輕，大堂沒有人應。",
+          "dialogue": [
+            {
+              "speaker": "孫婆婆",
+              "text": "佢識應「婆婆」。我叫一聲，佢會伸個頭出嚟。"
+            },
+            {
+              "speaker": "李步岸",
+              "text": "崗位唔能空。"
+            },
+            {
+              "speaker": "畢好彩",
+              "text": "龜都有緣分㗎。"
+            },
+            {
+              "speaker": "你",
+              "text": "（婆婆的手一直在抖，抓著一張龜的相）"
+            },
+            {
+              "speaker": "孫婆婆",
+              "text": "（她再喚一次）阿寶……"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "堅守崗位，報失物登記",
+              "delta": {
+                "pro": 5,
+                "warm": 0,
+                "chaos": 1,
+                "out": 1
+              },
+              "outcome": "你先應了那聲呼唤。龜在天亮後於花槽自己走出來，慢得像是故意的。婆婆道謝很淡，只說了句「麻煩你」。步岸說你沒犯錯，語氣像在讀紀錄。"
+            },
+            {
+              "text": "請假兩小時協助尋找",
+              "delta": {
+                "pro": 1,
+                "warm": 5,
+                "chaos": 1,
+                "out": 1
+              },
+              "outcome": "你先應了那聲呼唤。你在花槽的排水口找到牠，殼上黏著一片枯葉。婆婆硬塞你兩個橙，皮都還是涼的。日誌上多了一筆「離崗」，你簽名的時候看了那兩個字很久。"
+            },
+            {
+              "text": "發動全隊當任務",
+              "delta": {
+                "pro": 2,
+                "warm": 3,
+                "chaos": 4,
+                "out": 0
+              },
+              "outcome": "你先應了那聲呼唤。大堂一時變成搜救現場，對講機沒停過。有住客投訴嘈音，管理處的評分單當晚就送來了。龜救回了，好彩說牠是「好彩頭」，抱著不肯放。"
+            }
+          ]
+        },
+        "slack": {
+          "desc": "孫婆婆說孫仔不見了。你以為是人，結果是一隻龜。規程寫「非緊急勿離崗」。電風扇轉到第三格，大堂靜得只剩下它的聲音。",
+          "dialogue": [
+            {
+              "speaker": "孫婆婆",
+              "text": "佢識應「婆婆」。我叫一聲，佢會伸個頭出嚟。"
+            },
+            {
+              "speaker": "李步岸",
+              "text": "崗位唔能空。"
+            },
+            {
+              "speaker": "畢好彩",
+              "text": "龜都有緣分㗎。"
+            },
+            {
+              "speaker": "你",
+              "text": "（婆婆的手一直在抖，抓著一張龜的相）"
+            },
+            {
+              "speaker": "你",
+              "text": "（你望一望鐘，再望一望門口）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "堅守崗位，報失物登記",
+              "delta": {
+                "pro": 5,
+                "warm": 0,
+                "chaos": 1,
+                "out": 1
+              },
+              "outcome": "你把事情推給程序。龜在天亮後於花槽自己走出來，慢得像是故意的。婆婆道謝很淡，只說了句「麻煩你」。步岸說你沒犯錯，語氣像在讀紀錄。"
+            },
+            {
+              "text": "請假兩小時協助尋找",
+              "delta": {
+                "pro": 1,
+                "warm": 5,
+                "chaos": 1,
+                "out": 1
+              },
+              "outcome": "你把事情推給程序。你在花槽的排水口找到牠，殼上黏著一片枯葉。婆婆硬塞你兩個橙，皮都還是涼的。日誌上多了一筆「離崗」，你簽名的時候看了那兩個字很久。"
+            },
+            {
+              "text": "發動全隊當任務",
+              "delta": {
+                "pro": 2,
+                "warm": 3,
+                "chaos": 4,
+                "out": 0
+              },
+              "outcome": "你把事情推給程序。大堂一時變成搜救現場，對講機沒停過。有住客投訴嘈音，管理處的評分單當晚就送來了。龜救回了，好彩說牠是「好彩頭」，抱著不肯放。"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "EV_GB_06",
+      "name": "鄰居開戰",
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "desc": "5 樓氣味問題對上愛發通告的校長戶。兩邊要你表態。",
+      "dialogue": [
+        {
+          "speaker": "住客A",
+          "text": "再唔處理我就停管理費。"
+        },
+        {
+          "speaker": "住戶B",
+          "text": "請發告示，寫清楚。"
+        },
+        {
+          "speaker": "李步岸",
+          "text": "告示係工具，唔係武器。"
+        },
+        {
+          "speaker": "邱得根",
+          "text": "古人云：和為貴。（他說的「古人」查不到）"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 2,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [
+        "+2 膠幣"
+      ],
+      "reward_blurb": "你的保安，李步岸 · 第 6 幕",
+      "office_node": "neighbor",
+      "office_choices": [
+        {
+          "text": "發中立告示，雙方各退一步",
+          "delta": {
+            "pro": 4,
+            "warm": 2,
+            "chaos": 3,
+            "out": 0
+          },
+          "outcome": "告示貼出去不到兩小時，就被人截圖上載，還加了幾句你沒寫過的話。戰線更長了。你學會改第二版，措辭冷得像公文。"
+        },
+        {
+          "text": "上門斡旋，請雙方見面",
+          "delta": {
+            "pro": 2,
+            "warm": 6,
+            "chaos": 1,
+            "out": 0
+          },
+          "outcome": "兩戶在你面前吵了四十分鐘，最後簽了一份臨時約定，紙還是你跑去影印的。步岸看完只說一句：「可以。」這是他第一次這樣講。"
+        },
+        {
+          "text": "向上呈報，洗手不幹",
+          "delta": {
+            "pro": 1,
+            "warm": 0,
+            "chaos": 4,
+            "out": 2
+          },
+          "outcome": "上層拖了兩星期。兩邊都怪保安，走廊上有人當面叫你「廢柴」。邱副說早知如此，還補了一句「程序上你冇錯」。"
+        }
+      ],
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "role": "隊長",
+          "line": "隊長",
+          "arc_lines": {
+            "warm": "隊長（他點了頭）",
+            "neutral": "隊長",
+            "cold": "隊長（他不再看你）"
+          }
+        },
+        {
+          "id": "lucky",
+          "name": "畢好彩",
+          "role": "同事",
+          "line": "同事",
+          "arc_lines": {
+            "warm": "同事（他信你今天轉運）",
+            "neutral": "同事",
+            "cold": "同事（他不敢多講）"
+          }
+        },
+        {
+          "id": "bee",
+          "name": "麥峰",
+          "role": "同事",
+          "line": "同事",
+          "arc_lines": {
+            "warm": "同事（他今日冇走開）",
+            "neutral": "同事",
+            "cold": "同事（他望住別處）"
+          }
+        }
+      ],
+      "track_variants": {
+        "strict": {
+          "desc": "5 樓氣味問題對上愛發通告的校長戶。兩邊要你表態。你翻出管理處的告示範本，措辭冷得像公文。",
+          "dialogue": [
+            {
+              "speaker": "住客A",
+              "text": "再唔處理我就停管理費。"
+            },
+            {
+              "speaker": "住戶B",
+              "text": "請發告示，寫清楚。"
+            },
+            {
+              "speaker": "李步岸",
+              "text": "告示係工具，唔係武器。"
+            },
+            {
+              "speaker": "邱得根",
+              "text": "古人云：和為貴。（他說的「古人」查不到）"
+            },
+            {
+              "speaker": "你",
+              "text": "（範本第三段，有一句永遠用不上）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "發中立告示，雙方各退一步",
+              "delta": {
+                "pro": 4,
+                "warm": 2,
+                "chaos": 3,
+                "out": 0
+              },
+              "outcome": "你用文件處理。告示貼出去不到兩小時，就被人截圖上載，還加了幾句你沒寫過的話。戰線更長了。你學會改第二版，措辭冷得像公文。"
+            },
+            {
+              "text": "上門斡旋，請雙方見面",
+              "delta": {
+                "pro": 2,
+                "warm": 6,
+                "chaos": 1,
+                "out": 0
+              },
+              "outcome": "你用文件處理。兩戶在你面前吵了四十分鐘，最後簽了一份臨時約定，紙還是你跑去影印的。步岸看完只說一句：「可以。」這是他第一次這樣講。"
+            },
+            {
+              "text": "向上呈報，洗手不幹",
+              "delta": {
+                "pro": 1,
+                "warm": 0,
+                "chaos": 4,
+                "out": 2
+              },
+              "outcome": "你用文件處理。上層拖了兩星期。兩邊都怪保安，走廊上有人當面叫你「廢柴」。邱副說早知如此，還補了一句「程序上你冇錯」。"
+            }
+          ]
+        },
+        "human": {
+          "desc": "5 樓氣味問題對上愛發通告的校長戶。兩邊要你表態。兩戶的門都開了一條縫，都在等你先開口。",
+          "dialogue": [
+            {
+              "speaker": "住客A",
+              "text": "再唔處理我就停管理費。"
+            },
+            {
+              "speaker": "住戶B",
+              "text": "請發告示，寫清楚。"
+            },
+            {
+              "speaker": "李步岸",
+              "text": "告示係工具，唔係武器。"
+            },
+            {
+              "speaker": "邱得根",
+              "text": "古人云：和為貴。（他說的「古人」查不到）"
+            },
+            {
+              "speaker": "你",
+              "text": "（兩條門縫，兩對眼睛）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "發中立告示，雙方各退一步",
+              "delta": {
+                "pro": 4,
+                "warm": 2,
+                "chaos": 3,
+                "out": 0
+              },
+              "outcome": "你走過去敲門。告示貼出去不到兩小時，就被人截圖上載，還加了幾句你沒寫過的話。戰線更長了。你學會改第二版，措辭冷得像公文。"
+            },
+            {
+              "text": "上門斡旋，請雙方見面",
+              "delta": {
+                "pro": 2,
+                "warm": 6,
+                "chaos": 1,
+                "out": 0
+              },
+              "outcome": "你走過去敲門。兩戶在你面前吵了四十分鐘，最後簽了一份臨時約定，紙還是你跑去影印的。步岸看完只說一句：「可以。」這是他第一次這樣講。"
+            },
+            {
+              "text": "向上呈報，洗手不幹",
+              "delta": {
+                "pro": 1,
+                "warm": 0,
+                "chaos": 4,
+                "out": 2
+              },
+              "outcome": "你走過去敲門。上層拖了兩星期。兩邊都怪保安，走廊上有人當面叫你「廢柴」。邱副說早知如此，還補了一句「程序上你冇錯」。"
+            }
+          ]
+        },
+        "slack": {
+          "desc": "5 樓氣味問題對上愛發通告的校長戶。兩邊要你表態。邱副已經站在樓梯口，等你表態，手裡拿著一張表格。",
+          "dialogue": [
+            {
+              "speaker": "住客A",
+              "text": "再唔處理我就停管理費。"
+            },
+            {
+              "speaker": "住戶B",
+              "text": "請發告示，寫清楚。"
+            },
+            {
+              "speaker": "李步岸",
+              "text": "告示係工具，唔係武器。"
+            },
+            {
+              "speaker": "邱得根",
+              "text": "古人云：和為貴。（他說的「古人」查不到）"
+            },
+            {
+              "speaker": "邱得根",
+              "text": "（他把表格遞過來）程序上，你簽個名就得。"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "發中立告示，雙方各退一步",
+              "delta": {
+                "pro": 4,
+                "warm": 2,
+                "chaos": 3,
+                "out": 0
+              },
+              "outcome": "你把球踢上去。告示貼出去不到兩小時，就被人截圖上載，還加了幾句你沒寫過的話。戰線更長了。你學會改第二版，措辭冷得像公文。"
+            },
+            {
+              "text": "上門斡旋，請雙方見面",
+              "delta": {
+                "pro": 2,
+                "warm": 6,
+                "chaos": 1,
+                "out": 0
+              },
+              "outcome": "你把球踢上去。兩戶在你面前吵了四十分鐘，最後簽了一份臨時約定，紙還是你跑去影印的。步岸看完只說一句：「可以。」這是他第一次這樣講。"
+            },
+            {
+              "text": "向上呈報，洗手不幹",
+              "delta": {
+                "pro": 1,
+                "warm": 0,
+                "chaos": 4,
+                "out": 2
+              },
+              "outcome": "你把球踢上去。上層拖了兩星期。兩邊都怪保安，走廊上有人當面叫你「廢柴」。邱副說早知如此，還補了一句「程序上你冇錯」。"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "EV_GB_07",
+      "name": "身份裂縫",
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "desc": "你發現同事阿律的背包裡有管理公司內部名冊——他可能不是「普通新人」。他求你保密一週。",
+      "dialogue": [
+        {
+          "speaker": "阿律",
+          "text": "我唔想害人，我只係想證明自己做得起。"
+        },
+        {
+          "speaker": "李步岸",
+          "text": "團隊最怕不是懶，是瞞。"
+        },
+        {
+          "speaker": "畢好彩",
+          "text": "秘密好重㗎，你攞得起嗎？"
+        },
+        {
+          "speaker": "你",
+          "text": "（名冊第一頁，有你的名字，被圈了起來）"
+        }
+      ],
+      "art": "assets/events/ev-gb-room-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 2,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [
+        "+2 膠幣"
+      ],
+      "reward_blurb": "你的保安，李步岸 · 第 7 幕",
+      "office_node": "secret",
+      "office_choices": [
+        {
+          "text": "立即告知隊長",
+          "delta": {
+            "pro": 6,
+            "warm": 0,
+            "chaos": 2,
+            "out": 1
+          },
+          "outcome": "調查第二天就展開。阿律被調去另一座，走時沒跟任何人道別。步岸說你護了隊，也撕了一層信任，說完自己沉默了整個鐘。"
+        },
+        {
+          "text": "給他七天，暗中盯住",
+          "delta": {
+            "pro": 2,
+            "warm": 5,
+            "chaos": 1,
+            "out": 0
+          },
+          "outcome": "第五天他自己走來坦白：名冊是他從舊公司帶來的，只想核對名單有沒有漏。你多了一個盟友，也多了一個秘密。他把名冊交給你那次，手是抖的。"
+        },
+        {
+          "text": "幫忙藏住，當沒發生",
+          "delta": {
+            "pro": 0,
+            "warm": 3,
+            "chaos": 6,
+            "out": 2
+          },
+          "outcome": "紙包不住火。兩星期後事發，你被視為知情不報；調查人員問你話時，你記得自己答得很慢。阿律最後沒有怪你，這令你更難受。"
+        }
+      ],
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "role": "隊長",
+          "line": "隊長",
+          "arc_lines": {
+            "warm": "隊長（他點了頭）",
+            "neutral": "隊長",
+            "cold": "隊長（他不再看你）"
+          }
+        },
+        {
+          "id": "lucky",
+          "name": "畢好彩",
+          "role": "同事",
+          "line": "同事",
+          "arc_lines": {
+            "warm": "同事（他信你今天轉運）",
+            "neutral": "同事",
+            "cold": "同事（他不敢多講）"
+          }
+        },
+        {
+          "id": "bee",
+          "name": "麥峰",
+          "role": "同事",
+          "line": "同事",
+          "arc_lines": {
+            "warm": "同事（他今日冇走開）",
+            "neutral": "同事",
+            "cold": "同事（他望住別處）"
+          }
+        }
+      ],
+      "track_variants": {
+        "strict": {
+          "desc": "你發現同事阿律的背包裡有管理公司內部名冊——他可能不是「普通新人」。他求你保密一週。你想起步岸那句：團隊最怕不是懶，是瞞。",
+          "dialogue": [
+            {
+              "speaker": "阿律",
+              "text": "我唔想害人，我只係想證明自己做得起。"
+            },
+            {
+              "speaker": "李步岸",
+              "text": "團隊最怕不是懶，是瞞。"
+            },
+            {
+              "speaker": "畢好彩",
+              "text": "秘密好重㗎，你攞得起嗎？"
+            },
+            {
+              "speaker": "你",
+              "text": "（名冊第一頁，有你的名字，被圈了起來）"
+            },
+            {
+              "speaker": "你",
+              "text": "（那句話，他講的時候在看紀錄簿）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "立即告知隊長",
+              "delta": {
+                "pro": 6,
+                "warm": 0,
+                "chaos": 2,
+                "out": 1
+              },
+              "outcome": "你選擇不隱瞞。調查第二天就展開。阿律被調去另一座，走時沒跟任何人道別。步岸說你護了隊，也撕了一層信任，說完自己沉默了整個鐘。"
+            },
+            {
+              "text": "給他七天，暗中盯住",
+              "delta": {
+                "pro": 2,
+                "warm": 5,
+                "chaos": 1,
+                "out": 0
+              },
+              "outcome": "你選擇不隱瞞。第五天他自己走來坦白：名冊是他從舊公司帶來的，只想核對名單有沒有漏。你多了一個盟友，也多了一個秘密。他把名冊交給你那次，手是抖的。"
+            },
+            {
+              "text": "幫忙藏住，當沒發生",
+              "delta": {
+                "pro": 0,
+                "warm": 3,
+                "chaos": 6,
+                "out": 2
+              },
+              "outcome": "你選擇不隱瞞。紙包不住火。兩星期後事發，你被視為知情不報；調查人員問你話時，你記得自己答得很慢。阿律最後沒有怪你，這令你更難受。"
+            }
+          ]
+        },
+        "human": {
+          "desc": "你發現同事阿律的背包裡有管理公司內部名冊——他可能不是「普通新人」。他求你保密一週。阿律說那句話時，眼睛沒有閃。",
+          "dialogue": [
+            {
+              "speaker": "阿律",
+              "text": "我唔想害人，我只係想證明自己做得起。"
+            },
+            {
+              "speaker": "李步岸",
+              "text": "團隊最怕不是懶，是瞞。"
+            },
+            {
+              "speaker": "畢好彩",
+              "text": "秘密好重㗎，你攞得起嗎？"
+            },
+            {
+              "speaker": "你",
+              "text": "（名冊第一頁，有你的名字，被圈了起來）"
+            },
+            {
+              "speaker": "阿律",
+              "text": "（他把背包抱得更緊）我唔會害人。"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "立即告知隊長",
+              "delta": {
+                "pro": 6,
+                "warm": 0,
+                "chaos": 2,
+                "out": 1
+              },
+              "outcome": "你給了他一點時間。調查第二天就展開。阿律被調去另一座，走時沒跟任何人道別。步岸說你護了隊，也撕了一層信任，說完自己沉默了整個鐘。"
+            },
+            {
+              "text": "給他七天，暗中盯住",
+              "delta": {
+                "pro": 2,
+                "warm": 5,
+                "chaos": 1,
+                "out": 0
+              },
+              "outcome": "你給了他一點時間。第五天他自己走來坦白：名冊是他從舊公司帶來的，只想核對名單有沒有漏。你多了一個盟友，也多了一個秘密。他把名冊交給你那次，手是抖的。"
+            },
+            {
+              "text": "幫忙藏住，當沒發生",
+              "delta": {
+                "pro": 0,
+                "warm": 3,
+                "chaos": 6,
+                "out": 2
+              },
+              "outcome": "你給了他一點時間。紙包不住火。兩星期後事發，你被視為知情不報；調查人員問你話時，你記得自己答得很慢。阿律最後沒有怪你，這令你更難受。"
+            }
+          ]
+        },
+        "slack": {
+          "desc": "你發現同事阿律的背包裡有管理公司內部名冊——他可能不是「普通新人」。他求你保密一週。你把背包放回原位，手停了一秒。",
+          "dialogue": [
+            {
+              "speaker": "阿律",
+              "text": "我唔想害人，我只係想證明自己做得起。"
+            },
+            {
+              "speaker": "李步岸",
+              "text": "團隊最怕不是懶，是瞞。"
+            },
+            {
+              "speaker": "畢好彩",
+              "text": "秘密好重㗎，你攞得起嗎？"
+            },
+            {
+              "speaker": "你",
+              "text": "（名冊第一頁，有你的名字，被圈了起來）"
+            },
+            {
+              "speaker": "你",
+              "text": "（拉鍊聲在大堂迴響了很久）"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "立即告知隊長",
+              "delta": {
+                "pro": 6,
+                "warm": 0,
+                "chaos": 2,
+                "out": 1
+              },
+              "outcome": "你當作沒看見。調查第二天就展開。阿律被調去另一座，走時沒跟任何人道別。步岸說你護了隊，也撕了一層信任，說完自己沉默了整個鐘。"
+            },
+            {
+              "text": "給他七天，暗中盯住",
+              "delta": {
+                "pro": 2,
+                "warm": 5,
+                "chaos": 1,
+                "out": 0
+              },
+              "outcome": "你當作沒看見。第五天他自己走來坦白：名冊是他從舊公司帶來的，只想核對名單有沒有漏。你多了一個盟友，也多了一個秘密。他把名冊交給你那次，手是抖的。"
+            },
+            {
+              "text": "幫忙藏住，當沒發生",
+              "delta": {
+                "pro": 0,
+                "warm": 3,
+                "chaos": 6,
+                "out": 2
+              },
+              "outcome": "你當作沒看見。紙包不住火。兩星期後事發，你被視為知情不報；調查人員問你話時，你記得自己答得很慢。阿律最後沒有怪你，這令你更難受。"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "EV_GB_08",
+      "name": "換場危機",
+      "type": "主線",
+      "category": "main",
+      "category_label": "主線",
+      "desc": "珍誠管理要空降新團隊。簽名信在傳，有人勸你「識做」。最後一更，步岸問你站哪邊。",
+      "dialogue": [
+        {
+          "speaker": "邱得根",
+          "text": "識時務者為俊傑。"
+        },
+        {
+          "speaker": "麥峰",
+          "text": "我聽你。"
+        },
+        {
+          "speaker": "畢好彩",
+          "text": "今次唔好靠幸運。"
+        },
+        {
+          "speaker": "李步岸",
+          "text": "你第一夜點樣答我，而家就點樣答自己。"
+        },
+        {
+          "speaker": "你",
+          "text": "（簽名信傳到你手上，紙邊已經軟了）"
+        }
+      ],
+      "art": "assets/events/ev-gb-corridor-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 2,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [
+        "+2 膠幣"
+      ],
+      "reward_blurb": "你的保安，李步岸 · 第 8 幕",
+      "office_node": "crisis",
+      "office_choices": [
+        {
+          "text": "聯署留隊，按專業標準自查",
+          "delta": {
+            "pro": 8,
+            "warm": 0,
+            "chaos": 0,
+            "out": 0
+          },
+          "outcome": "你通宵整理缺失報告，把八個月的紀錄重新排了一次。簽名信有了重量。天亮時你的手在抖，但報告上每一頁都有你的簽名。"
+        },
+        {
+          "text": "聯署留隊，但先答應住客人情訴求",
+          "delta": {
+            "pro": 0,
+            "warm": 8,
+            "chaos": 0,
+            "out": 0
+          },
+          "outcome": "你逐戶走訪，把住客的簽名一併附上。幾位平時不說話的住戶站了出來。規條冊被你翻得起毛，邊角都捲了。"
+        },
+        {
+          "text": "不聯署，準備交接",
+          "delta": {
+            "pro": 0,
+            "warm": 0,
+            "chaos": 4,
+            "out": 30
+          },
+          "outcome": "你開始清儲物櫃，把三年來的更表一張張撕掉。風扇還在轉，但名單換了人抄。麥峰幫你把最後一箱抬到門口，沒問你去哪。"
+        }
+      ],
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "role": "隊長",
+          "line": "隊長",
+          "arc_lines": {
+            "warm": "隊長（他點了頭）",
+            "neutral": "隊長",
+            "cold": "隊長（他不再看你）"
+          }
+        },
+        {
+          "id": "lucky",
+          "name": "畢好彩",
+          "role": "同事",
+          "line": "同事",
+          "arc_lines": {
+            "warm": "同事（他信你今天轉運）",
+            "neutral": "同事",
+            "cold": "同事（他不敢多講）"
+          }
+        },
+        {
+          "id": "bee",
+          "name": "麥峰",
+          "role": "同事",
+          "line": "同事",
+          "arc_lines": {
+            "warm": "同事（他今日冇走開）",
+            "neutral": "同事",
+            "cold": "同事（他望住別處）"
+          }
+        }
+      ],
+      "track_variants": {
+        "strict": {
+          "desc": "珍誠管理要空降新團隊。簽名信在傳，有人勸你「識做」。最後一更，步岸問你站哪邊。你打開那本被翻薄的備忘，最後一頁還是空白。",
+          "dialogue": [
+            {
+              "speaker": "邱得根",
+              "text": "識時務者為俊傑。"
+            },
+            {
+              "speaker": "麥峰",
+              "text": "我聽你。"
+            },
+            {
+              "speaker": "畢好彩",
+              "text": "今次唔好靠幸運。"
+            },
+            {
+              "speaker": "李步岸",
+              "text": "你第一夜點樣答我，而家就點樣答自己。"
+            },
+            {
+              "speaker": "你",
+              "text": "（簽名信傳到你手上，紙邊已經軟了）"
+            },
+            {
+              "speaker": "李步岸",
+              "text": "（他把自己的筆遞給你）寫啦。"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "聯署留隊，按專業標準自查",
+              "delta": {
+                "pro": 8,
+                "warm": 0,
+                "chaos": 0,
+                "out": 0
+              },
+              "outcome": "你用紀錄說話。你通宵整理缺失報告，把八個月的紀錄重新排了一次。簽名信有了重量。天亮時你的手在抖，但報告上每一頁都有你的簽名。"
+            },
+            {
+              "text": "聯署留隊，但先答應住客人情訴求",
+              "delta": {
+                "pro": 0,
+                "warm": 8,
+                "chaos": 0,
+                "out": 0
+              },
+              "outcome": "你用紀錄說話。你逐戶走訪，把住客的簽名一併附上。幾位平時不說話的住戶站了出來。規條冊被你翻得起毛，邊角都捲了。"
+            },
+            {
+              "text": "不聯署，準備交接",
+              "delta": {
+                "pro": 0,
+                "warm": 0,
+                "chaos": 4,
+                "out": 30
+              },
+              "outcome": "你用紀錄說話。你開始清儲物櫃，把三年來的更表一張張撕掉。風扇還在轉，但名單換了人抄。麥峰幫你把最後一箱抬到門口，沒問你去哪。"
+            }
+          ]
+        },
+        "human": {
+          "desc": "珍誠管理要空降新團隊。簽名信在傳，有人勸你「識做」。最後一更，步岸問你站哪邊。大堂有幾位住客站在電梯口，沒有走，也沒有出聲。",
+          "dialogue": [
+            {
+              "speaker": "邱得根",
+              "text": "識時務者為俊傑。"
+            },
+            {
+              "speaker": "麥峰",
+              "text": "我聽你。"
+            },
+            {
+              "speaker": "畢好彩",
+              "text": "今次唔好靠幸運。"
+            },
+            {
+              "speaker": "李步岸",
+              "text": "你第一夜點樣答我，而家就點樣答自己。"
+            },
+            {
+              "speaker": "你",
+              "text": "（簽名信傳到你手上，紙邊已經軟了）"
+            },
+            {
+              "speaker": "住客",
+              "text": "（其中一位）你哋會唔會留低？"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "聯署留隊，按專業標準自查",
+              "delta": {
+                "pro": 8,
+                "warm": 0,
+                "chaos": 0,
+                "out": 0
+              },
+              "outcome": "你把住客擺在前面。你通宵整理缺失報告，把八個月的紀錄重新排了一次。簽名信有了重量。天亮時你的手在抖，但報告上每一頁都有你的簽名。"
+            },
+            {
+              "text": "聯署留隊，但先答應住客人情訴求",
+              "delta": {
+                "pro": 0,
+                "warm": 8,
+                "chaos": 0,
+                "out": 0
+              },
+              "outcome": "你把住客擺在前面。你逐戶走訪，把住客的簽名一併附上。幾位平時不說話的住戶站了出來。規條冊被你翻得起毛，邊角都捲了。"
+            },
+            {
+              "text": "不聯署，準備交接",
+              "delta": {
+                "pro": 0,
+                "warm": 0,
+                "chaos": 4,
+                "out": 30
+              },
+              "outcome": "你把住客擺在前面。你開始清儲物櫃，把三年來的更表一張張撕掉。風扇還在轉，但名單換了人抄。麥峰幫你把最後一箱抬到門口，沒問你去哪。"
+            }
+          ]
+        },
+        "slack": {
+          "desc": "珍誠管理要空降新團隊。簽名信在傳，有人勸你「識做」。最後一更，步岸問你站哪邊。麥峰把儲物櫃鑰匙放在你桌上，什麼都沒說。",
+          "dialogue": [
+            {
+              "speaker": "邱得根",
+              "text": "識時務者為俊傑。"
+            },
+            {
+              "speaker": "麥峰",
+              "text": "我聽你。"
+            },
+            {
+              "speaker": "畢好彩",
+              "text": "今次唔好靠幸運。"
+            },
+            {
+              "speaker": "李步岸",
+              "text": "你第一夜點樣答我，而家就點樣答自己。"
+            },
+            {
+              "speaker": "你",
+              "text": "（簽名信傳到你手上，紙邊已經軟了）"
+            },
+            {
+              "speaker": "麥峰",
+              "text": "（他拍一拍你的櫃門）早啲清，唔好趕。"
+            }
+          ],
+          "office_choices": [
+            {
+              "text": "聯署留隊，按專業標準自查",
+              "delta": {
+                "pro": 8,
+                "warm": 0,
+                "chaos": 0,
+                "out": 0
+              },
+              "outcome": "你開始收拾。你通宵整理缺失報告，把八個月的紀錄重新排了一次。簽名信有了重量。天亮時你的手在抖，但報告上每一頁都有你的簽名。"
+            },
+            {
+              "text": "聯署留隊，但先答應住客人情訴求",
+              "delta": {
+                "pro": 0,
+                "warm": 8,
+                "chaos": 0,
+                "out": 0
+              },
+              "outcome": "你開始收拾。你逐戶走訪，把住客的簽名一併附上。幾位平時不說話的住戶站了出來。規條冊被你翻得起毛，邊角都捲了。"
+            },
+            {
+              "text": "不聯署，準備交接",
+              "delta": {
+                "pro": 0,
+                "warm": 0,
+                "chaos": 4,
+                "out": 30
+              },
+              "outcome": "你開始收拾。你開始清儲物櫃，把三年來的更表一張張撕掉。風扇還在轉，但名單換了人抄。麥峰幫你把最後一箱抬到門口，沒問你去哪。"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "EV_GB_E1",
+      "name": "結局：專業步岸",
+      "type": "主線",
+      "category": "main",
+      "category_label": "結局",
+      "desc": "管理公司撤換令撤銷。步岸拍你膊頭一下，好似表揚，又似警告。你成為第二個「記得住客、忘記假期」的人。",
+      "dialogue": [
+        {
+          "speaker": "你",
+          "text": "（更表上你的名字，第一次寫在最前）"
+        },
+        {
+          "speaker": "李步岸",
+          "text": "有人問我，憑咩留你。"
+        },
+        {
+          "speaker": "李步岸",
+          "text": "我話：因為佢記得晒。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你想起第一夜那本被翻薄的備忘）"
+        },
+        {
+          "speaker": "李步岸",
+          "text": "（他把自己的紀錄簿推過來）以後你寫。"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 60,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [
+        "+60 膠幣",
+        "結局達成"
+      ],
+      "reward_blurb": "結局達成 · 60 膠幣",
+      "office_ending": "pro",
+      "office_ending_label": "專業步岸",
+      "office_ending_blurb": "管理公司撤換令撤銷。步岸拍你膊頭一下，好似表揚，又似警告。你成為第二個「記得住客、忘記假期」的人。",
+      "voice_id": "baoan",
+      "voice_name": "李步岸",
+      "voice_line": "制服熨直，心先企得直。",
+      "flag_on_complete": "office_ending_pro"
+    },
+    {
+      "id": "EV_GB_E2",
+      "name": "結局：人情海嵐",
+      "type": "主線",
+      "category": "main",
+      "category_label": "結局",
+      "desc": "告示少了，投訴單也少了。大堂多了人打招呼。步岸皺眉，但沒有反對。",
+      "dialogue": [
+        {
+          "speaker": "住客",
+          "text": "（經過大堂時）早晨，阿 Sir。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你已經記得住她住幾樓、養什麼狗）"
+        },
+        {
+          "speaker": "畢好彩",
+          "text": "我計過，呢個月投訴少咗一半。"
+        },
+        {
+          "speaker": "畢好彩",
+          "text": "唔係我轉運，係你肯聽人講嘢。"
+        },
+        {
+          "speaker": "李步岸",
+          "text": "（他皺眉，翻了一頁紀錄，沒反對）"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 60,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [
+        "+60 膠幣",
+        "結局達成"
+      ],
+      "reward_blurb": "結局達成 · 60 膠幣",
+      "office_ending": "warm",
+      "office_ending_label": "人情海嵐",
+      "office_ending_blurb": "告示少了，投訴單也少了。大堂多了人打招呼。步岸皺眉，但沒有反對。",
+      "voice_id": "lucky",
+      "voice_name": "畢好彩",
+      "voice_line": "今次唔關風水事——關你肯唔肯睇人。",
+      "flag_on_complete": "office_ending_warm"
+    },
+    {
+      "id": "EV_GB_E3",
+      "name": "結局：保安室永晝",
+      "type": "主線",
+      "category": "main",
+      "category_label": "結局",
+      "desc": "雪櫃繼續失蹤飯盒，後樓梯繼續有怪聲。你揹晒鑊，同事請你飲檸檬茶。",
+      "dialogue": [
+        {
+          "speaker": "你",
+          "text": "（凌晨三點，風扇還開著，紀錄簿還是空白）"
+        },
+        {
+          "speaker": "麥峰",
+          "text": "呢單，我幫你頂。下單你自己頂。"
+        },
+        {
+          "speaker": "你",
+          "text": "（他把一杯檸檬茶放你面前，冰已經溶了一半）"
+        },
+        {
+          "speaker": "麥峰",
+          "text": "頂硬上就算專業。"
+        },
+        {
+          "speaker": "你",
+          "text": "（你飲了一口，甜得很假，但你喝完了）"
+        }
+      ],
+      "art": "assets/events/ev-gb-room-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 60,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [
+        "+60 膠幣",
+        "結局達成"
+      ],
+      "reward_blurb": "結局達成 · 60 膠幣",
+      "office_ending": "chaos",
+      "office_ending_label": "保安室永晝",
+      "office_ending_blurb": "雪櫃繼續失蹤飯盒，後樓梯繼續有怪聲。你揹晒鑊，同事請你飲檸檬茶。",
+      "voice_id": "bee",
+      "voice_name": "麥峰",
+      "voice_line": "頂硬上就算專業。",
+      "flag_on_complete": "office_ending_chaos"
+    },
+    {
+      "id": "EV_GB_E4",
+      "name": "結局：換場之後",
+      "type": "主線",
+      "category": "main",
+      "category_label": "結局",
+      "desc": "大門換了新制服。你在後巷食煙，聽住新隊長背住客名單，背錯兩個。",
+      "dialogue": [
+        {
+          "speaker": "你",
+          "text": "（後巷的燈壞了兩年，沒人修）"
+        },
+        {
+          "speaker": "新隊長",
+          "text": "（隔著門）……十二樓 B 座，陳先生，養貓。"
+        },
+        {
+          "speaker": "你",
+          "text": "（十二樓 B 座不養貓，養的是一隻龜）"
+        },
+        {
+          "speaker": "邱得根",
+          "text": "（走過來，遞你一支煙）"
+        },
+        {
+          "speaker": "邱得根",
+          "text": "長江後浪……嗯，當我唔講。"
+        }
+      ],
+      "art": "assets/events/ev-gb-corridor-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 60,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": [
+        "+60 膠幣",
+        "結局達成"
+      ],
+      "reward_blurb": "結局達成 · 60 膠幣",
+      "office_ending": "out",
+      "office_ending_label": "換場之後",
+      "office_ending_blurb": "大門換了新制服。你在後巷食煙，聽住新隊長背住客名單，背錯兩個。",
+      "voice_id": "root",
+      "voice_name": "邱得根",
+      "voice_line": "長江後浪……嗯，當我冇講。",
+      "flag_on_complete": "office_ending_out"
     }
   ],
   "locale": {
@@ -18600,6 +21366,149 @@ window.HK_SLICE_DATA = {
   "account_avatar": "C241",
   "story_packs": [
     {
+      "id": "guard_baoan",
+      "name": "你的保安，李步岸",
+      "blurb": "海嵐峰大堂燈光好靚，保安室電風扇好嘈。隊長李步岸記齊住客樣貌，記唔齊自己幾時笑過。你第一更開始，規矩同人情就要揀邊邊。",
+      "cover": "assets/story-packs/guard-baoan-t409.jpg",
+      "status": "available",
+      "event_ids": [
+        "EV_GB_01",
+        "EV_GB_02",
+        "EV_GB_03",
+        "EV_GB_04",
+        "EV_GB_05",
+        "EV_GB_06",
+        "EV_GB_07",
+        "EV_GB_08",
+        "EV_GB_E1",
+        "EV_GB_E2",
+        "EV_GB_E3",
+        "EV_GB_E4"
+      ],
+      "office_chain": [
+        "EV_GB_01",
+        "EV_GB_02",
+        "EV_GB_03",
+        "EV_GB_04",
+        "EV_GB_05",
+        "EV_GB_06",
+        "EV_GB_07",
+        "EV_GB_08"
+      ],
+      "office_entry": "EV_GB_01",
+      "office_route_keys": [
+        "pro",
+        "warm",
+        "chaos",
+        "out"
+      ],
+      "office_ending_by_route": {
+        "pro": "pro",
+        "warm": "warm",
+        "chaos": "chaos",
+        "out": "out"
+      },
+      "office_variant_default": "strict",
+      "office_endings": [
+        {
+          "id": "pro",
+          "label": "專業步岸",
+          "blurb": "管理公司撤換令撤銷。步岸拍你膊頭一下，好似表揚，又似警告。你成為第二個「記得住客、忘記假期」的人。"
+        },
+        {
+          "id": "warm",
+          "label": "人情海嵐",
+          "blurb": "告示少了，投訴單也少了。大堂多了人打招呼。步岸皺眉，但沒有反對。"
+        },
+        {
+          "id": "chaos",
+          "label": "保安室永晝",
+          "blurb": "雪櫃繼續失蹤飯盒，後樓梯繼續有怪聲。你揹晒鑊，同事請你飲檸檬茶。"
+        },
+        {
+          "id": "out",
+          "label": "換場之後",
+          "blurb": "大門換了新制服。你在後巷食煙，聽住新隊長背住客名單，背錯兩個。"
+        }
+      ],
+      "office_ending_voice": {
+        "pro": "制服熨直，心先企得直。",
+        "warm": "今次唔關風水事——關你肯唔肯睇人。",
+        "chaos": "頂硬上就算專業。",
+        "out": "長江後浪……嗯，當我冇講。"
+      },
+      "tale_cast_profiles": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "role": "隊長",
+          "blurb": "制服永遠筆直。記得每一戶的車牌、寵物名、垃圾回收日，記不住自己上次放假是幾時。罵人時不看人，看紀錄簿。",
+          "arc_stages": [
+            "面試你的隊長",
+            "開始放心交更",
+            "親自改你的報告",
+            "拍你膊頭一下"
+          ]
+        },
+        {
+          "id": "lucky",
+          "name": "畢好彩",
+          "role": "同事",
+          "blurb": "做每件事之前都要問一次黃曆。轉運貼紙貼滿儲物櫃，失物卻總是在他當更那晚出現。",
+          "arc_stages": [
+            "塞你糖果擋小人",
+            "開始問你意見",
+            "信你多過信風水",
+            "話你「今次唔關風水事」"
+          ]
+        },
+        {
+          "id": "bee",
+          "name": "麥峰",
+          "role": "同事",
+          "blurb": "能把任何工作推遲十分鐘的人。看上去什麼都不做，但每次真的出事，他總在場。",
+          "arc_stages": [
+            "教你避開最吵那更",
+            "推掉一件麻煩事",
+            "意外幫你頂了一次",
+            "話「我聽你」"
+          ]
+        },
+        {
+          "id": "root",
+          "name": "邱得根",
+          "role": "副隊長",
+          "blurb": "講話總有典故，但沒有一句能查到出處。最擅長把責任寫成「按程序」。",
+          "arc_stages": [
+            "引經據典指點你",
+            "把報告推給你",
+            "開始稱呼你「師兄」",
+            "話「當我冇講」"
+          ]
+        },
+        {
+          "id": "plaza",
+          "name": "海嵐峰",
+          "role": "舞台",
+          "blurb": "大堂玻璃亮得反不出保安室的風扇。這裡有三千戶人、兩部升降機，和一條永遠有人想走捷徑的走廊。",
+          "arc_stages": [
+            "光鮮大門",
+            "後巷的垃圾站",
+            "告示欄",
+            "換了制服的大門"
+          ]
+        }
+      ],
+      "beats": [
+        "海嵐峰大堂的玻璃反光，反不出保安室裡那部耗電的風扇。",
+        "李步岸記得每一戶的垃圾回收日，記不住自己生日。",
+        "第一更最難的不是惡客，是想做好人，又想留住份工。",
+        "雪櫃、後樓梯、告示欄——屋苑的三個戰場。",
+        "你以為秘密是同事的，最後發現是整隊的。",
+        "換場不是換制服，是換誰有資格說「我守護過這裡」。"
+      ]
+    },
+    {
       "id": "chu_ru_xiang_jiang",
       "name": "初入香江",
       "blurb": "剛踏入香江街巷，舊紙同城寨聲先碰上。",
@@ -19259,32 +22168,32 @@ window.HK_SLICE_DATA = {
       ],
       "office_entry": "EV_OF_01",
       "beats": [
-        "中五畢業那年，你屋企嘅天花板開始漏水。阿媽用紅膠桶接，一晚倒三次。",
-        "第一份工唔係揀出嚟嘅，係剩落嚟嘅。你去到邊，邊度就話「請人」。",
-        "寫字樓嘅電梯有鐵閘，要用手拉。你第一次拉嗰陣，鐵閘夾到你手指。你冇講，因為怕人覺得你唔識做。",
-        "入職第三日，主管叫你打一份私人文件。影印機旁邊，有個做咗十九年嘅阿姐望住你。",
-        "第三年，你喺茶記見到數簿有一條數對唔上。差嘅錢，剛好夠一個伙記一日人工。",
-        "第四年，你第一次自己接單。客人要十日交貨，但你手上現金只夠入三分一。",
-        "第五年，公司裁員。你冇被裁，但隔籬位嘅阿姐走咗。佢做咗十九年，一個紙箱裝得晒。",
-        "老闆叫你入房，話阿姐嗰份你接，加五百。你想起佢臨走講嘅話：「唔好以為做多有用。」",
-        "第六年，你自己間舖租約到期。業主加租四成。你計過，加咗租就冇錢賺。",
-        "你請咗兩個伙記，兩個都有家。你望住支筆，好耐。",
-        "第七年，你同嗰個人抽到居屋。號碼好前。簽紙嗰日，佢問你：你確定要供三十年？",
-        "你今年二十八。供完你五十八歲。張紙上面有兩個空格，兩個都未簽。",
-        "第八年，有個舊同學搵你。佢話有內幕消息，一隻股票下星期會升三倍。佢自己已經落重注五十萬。",
-        "你查過，間公司冇咩業務。但係你嘅積蓄，剛好夠首期一半。",
-        "第九年。有個人搵你合夥。佢出錢，你出力。合約最後三頁字好細，你睇唔明。",
-        "佢話「唔使睇，我做人做咗三十年」。你想起阿姐，想起業主，想起所有講過類似說話嘅人。",
-        "第十年。你企喺天橋上面，望住下面啲車。有一架停咗喺路邊，車入面有人喺度食飯盒。",
-        "你數咗十個分岔，每一個你都真係揀過。但冇一個係你最初想要嘅。",
-        "你想起阿媽問你開唔開心。你當時冇答。你而家都答唔到。",
-        "電話響起，係一個陌生號碼。天橋下面，車龍開始動。",
-        "香港嘅人生唔係一條路，係一個又一個分岔口，每個都要即刻決定。",
-        "每一個分岔口，你都以為自己仲有時間。",
-        "十個分岔，五個結局。你行到邊個，唔完全係你揀。",
-        "但每一個分岔口，你都真係揀過。而每一次揀，你都放棄咗其他所有可能。",
-        "呢個就係打工仔嘅一生：你冇輸，但你都冇贏。",
-        "你只係一直行，行到有一日，冇人再問你幾時返嚟食飯。"
+        "中五畢業那年，你家裡的天花板開始漏水。阿媽用紅膠桶接，一晚倒三次。",
+        "第一份工不是揀出來的，是剩下來的。你去到哪裡，哪裡就說「請人」。",
+        "寫字樓的電梯有鐵閘，要用手拉。你第一次拉的時候，鐵閘夾到手指。你沒有講，因為怕人覺得你不懂做。",
+        "入職第三日，主管叫你打一份私人文件。影印機旁邊，有個做了十九年的阿姐望著你。",
+        "第三幕，你在茶記見到數簿有一條數對不上。差的錢，剛好夠一個伙記一日人工。",
+        "第四幕，你第一次自己接單。客人要十日交貨，但你手上現金只夠入三分一。",
+        "第五幕，公司裁員。你沒有被裁，但隔籬位的阿姐走了。她做了十九年，一個紙箱裝得完。",
+        "老闆叫你入房，說阿姐那份你接，加五百。你想起她臨走講的話：「不要以為做多有用。」",
+        "第六幕，你自己那間舖租約到期。業主加租四成。你計過，加了租就沒有錢賺。",
+        "你請了兩個伙記，兩個都有家。你望著支筆，很久。",
+        "第七幕，你同嗰個人抽到居屋。號碼很前。簽紙那日，他問你：你確定要供三十年？",
+        "你今年二十八。供完你五十八歲。那張紙上面有兩個空格，兩個都未簽。",
+        "第八幕，有個舊同學找你。他說有內幕消息，一隻股票下星期會升三倍。他自己已經落重注五十萬。",
+        "你查過，那間公司沒有什麼業務。但你的積蓄，剛好夠首期一半。",
+        "第九幕。有個人找你合夥。他出錢，你出力。合約最後三頁字很小，你看不明白。",
+        "他說「不用看，我做人做了三十年」。你想起阿姐，想起業主，想起所有講過類似說話的人。",
+        "第十幕。你站在天橋上面，望著下面的車。有一架停在路邊，車裡面有人正在食飯盒。",
+        "你數了十個分岔，每一個你都真的揀過。但沒有一個是你最初想要的。",
+        "你想起阿媽問你開不開心。你當時沒有答。你現在都答不到。",
+        "電話響起，是一個陌生號碼。天橋下面，車龍開始動。",
+        "香港的人生不是一條路，是一個又一個分岔口，每個都要即刻決定。",
+        "每一個分岔口，你都以為自己還有時間。",
+        "十個分岔，五個結局。你行到哪一個，不完全是你揀。",
+        "但每一個分岔口，你都真的揀過。而每一次揀，你都放棄了其他所有可能。",
+        "這就是打工仔的一生：你沒有輸，但你也沒有贏。",
+        "你只是一直行，行到有一日，沒有人再問你幾時回來食飯。"
       ],
       "tale_cast_profiles": [
         {
@@ -19310,23 +22219,60 @@ window.HK_SLICE_DATA = {
             "幫你頂過一次",
             "覺得你太急",
             "同你講咗真話",
-            "冇再聯絡"
+            "很久沒有聯絡"
           ]
         },
         {
           "id": "partner",
           "name": "嗰個人",
           "role": "你以為會陪你行落去",
-          "blurb": "你哋一齊捱過最難嗰兩年。之後你開始忙，佢開始唔問。分開嗰日冇吵架。",
+          "blurb": "你們一起捱過最難的兩年。她記得你每一個加班的晚上，也記得你每一次說「就快」。你以為時間還有很多。",
           "arc_stages": [
-            "一齊諗將來",
+            "一起想將來",
             "開始等你",
-            "唔再等你",
-            "講清楚",
-            "各走各路"
+            "開始數你缺席的次數",
+            "把話說得很少",
+            "還在等一句真的答案"
           ]
         }
-      ]
+      ],
+      "office_route_keys": [
+        "rich",
+        "biz",
+        "flat",
+        "street",
+        "scam"
+      ],
+      "office_ending_by_route": {
+        "rich": "rich",
+        "biz": "biz_fail",
+        "flat": "flat",
+        "street": "street",
+        "scam": "scam"
+      },
+      "office_variant_default": "office",
+      "office_ending_voice": {
+        "mom": "你返嚟食飯啦。今日煲咗湯。",
+        "colleague": "我走咗之後，你坐我個位？（佢笑）小心啲。",
+        "partner": "（望住你）我哋……仲有下一次嗎？"
+      },
+      "choice_flag_labels": {
+        "of_reputation_high": "口碑：企得住",
+        "of_reputation_mid": "口碑：過得去",
+        "of_reputation_low": "口碑：打了折",
+        "of_favour_high": "人情：有人記住你",
+        "of_favour_mid": "人情：點頭之交",
+        "of_favour_low": "人情：少咗人講嘢",
+        "of_fatigue_high": "疲勞：積住",
+        "of_fatigue_low": "疲勞：仲撐得住",
+        "of_risk_high": "風險：擺在枱面",
+        "of_risk_mid": "風險：留住一手",
+        "of_risk_low": "風險：暫時避過"
+      },
+      "replay_reward": {
+        "shards": 2,
+        "note": "重玩改發殘頁 ×2（不重複發膠幣）"
+      }
     }
   ],
   "factions": [

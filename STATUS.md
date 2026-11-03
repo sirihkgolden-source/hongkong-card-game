@@ -1,3 +1,294 @@
+## t409（2026-11-04 ~07:00 HKT）— 《你的保安，李步岸》正式插畫
+
+**只換圖片，文案／數值零改動。**
+
+### 一、提供的三張插畫
+
+| 原檔 | 內容 | 用途 |
+|---|---|---|
+| `hk_1970s_security_guard_water_pistol_room_card-*.jpg` | 保安室內部：監控牆、同事睇波、有人爭吵、李步岸拿水槍指向前方 | **封面** + 保安室場景 |
+| `hk_1970s_residential_lobby_security_patrol_card-*.jpg` | 高級大堂：雲石地板、接待處、住客排隊、夜景 | 大堂場景 |
+| `hk_1970s_guard_corridor_chat_card-*.jpg` | 唐樓走廊：三個保安閒談、晾衫、鐵閘 | 走廊場景 |
+
+### 二、資產命名（版本化，解決快取）
+
+因為圖片路徑冇版本參數，換圖後瀏覽器會繼續用舊快取（實測遇到）。
+所以改用**版本化檔名**：
+
+```
+assets/story-packs/guard-baoan-t409.jpg   （封面）
+assets/events/ev-gb-room-t409.jpg         （保安室）
+assets/events/ev-gb-lobby-t409.jpg        （大堂）
+assets/events/ev-gb-corridor-t409.jpg     （走廊）
+```
+
+原 `guard-baoan.jpg`（office-ballad 佔位）已刪除。
+
+### 三、場景分配
+
+| 幕 | 場面 | 用圖 |
+|---|---|---|
+| 1 面試夜 | 走廊交談、三個保安 | corridor |
+| 2 第一更 | 大堂值班 | lobby |
+| 3 排更風波 | 同事之間 | corridor |
+| 4 雪櫃無間 | 保安室休息區 | room |
+| 5 尋物夜 | 住客大堂求助 | lobby |
+| 6 鄰居開戰 | 住客大堂投訴 | lobby |
+| 7 身份裂縫 | 閉路、內部 | room |
+| 8 換場危機 | 團隊最後一更 | corridor |
+
+| 結局 | 用圖 |
+|---|---|
+| E1 專業步岸 | lobby（專業形象） |
+| E2 人情海嵐 | lobby（大堂多了人打招呼） |
+| E3 保安室永晝 | room（就是保安室） |
+| E4 換場之後 | corridor（離開） |
+
+**結局圖原本用 `assets/fighters/C69/C244/C241/C248.png`（戰鬥卡圖），已全部換成場景插畫。**
+
+### 四、驗證
+- 三張圖 HTTP 200、768×1024、大小 296–302 KB
+- 封面在詳情頁載入 `naturalWidth=768`（非舊佔位的 682）
+- 故事包列表第一位縮圖正確
+- 第 1 幕顯示走廊圖、第 2 幕顯示大堂圖（截圖確認）
+- 四結局圖片路徑全部對上
+- **`_selftest_t408.js` 加 9 項插畫斷言（105 項全過）**
+  - 封面存在、八幕圖存在、四結局圖存在
+  - 無使用戰鬥卡圖、無舊佔位
+  - 只用三張專屬插畫 + 封面
+- **全套 53 個測試全過**
+
+### 五、備份
+沿用 `app.js.bak-t408`（本輪只改 `data.json`／`data.js`／圖片）
+
+---
+
+## t408（2026-11-04 ~06:00 HKT）— 試玩累積修正批次（P0→P2）
+
+**依據：`HKCG_CURSOR_FIX_BATCH_2026-11-04.md`。戰鬥數值零改動。**
+**範圍：`app.js`／`data.json`／`data.js`／`styles.css`。未碰 `guard_baoan`。**
+
+### 核心硬規則（§0.2）落地
+> 任何事件禁止「確認後直接 `advanceYear()`」而玩家未曾見過「過程＋可見結果」。
+
+實作方式：新增兩條統一管線
+- `state.screen = "fateResult"` — 命運後果場
+- `state.screen = "eventBeat"` — 通用事件經過拍
+
+---
+
+### P0
+
+**1. 命運後果場（§1.3）**
+- `viewFate` 點卡**不再** `advanceYear`，改入 `fateResult`
+- 新畫面：命運故事一句 ＋ 籌碼 chips（膠幣／經驗／金幣／六維／今世出戰）＋「繼續」
+- 撳「繼續」才 `applyFate` 結算 → `advanceYear`
+- **900ms 防誤觸**（同結局卡同一原則）
+- 卡面維持 t386 純故事，**無**綠紅數值劇透、**無**增益／減益標籤
+
+**2. HUD 跳字（§1.3 第 4 點）**
+- 新增 `hudFloat(text)`：固定定位 + `hudFloatUp` 動畫，1.2s 自動移除
+- 命運後果場顯示「金幣 +N　經驗 +N　力量 +N」
+
+**3. 通用事件經過拍（§3.2）**
+- 新增 `viewEventBeat()` / `finishEventBeat()`
+- 覆蓋 **11 個**原本「無戰／無對白／無互動畫面 → 直入 soft」的事件
+  （`EV04` `EV06` `EV09` `EV11` `EV12` `EV13` `EV14` `EV34` `EV35` `EV36` `EV47`）
+- 內容：場景圖 ＋ 名稱 ＋ 故事 ＋ 對白（如有）＋「今次得到」籌碼 ＋「繼續」
+- 撳「繼續」才入 soft 結算 → `advanceYear`
+- `special` 類屬性結算由 `pickEvent` 移到 `finishEventBeat()`（避免重複寫入）
+
+**4. 輓歌 UI 空白／字級（§2.1）**
+| 項 | 前 | 後 |
+|---|---|---|
+| `.of-intro-desc` | 0.82rem | **0.99rem** |
+| `.of-dialogue-paged .dlg-line` | 0.80rem | **0.96rem** |
+| `.of-outcome-body` | 0.82rem | **0.99rem** |
+| `.of-outcome-choice` | 0.86rem | **1.02rem** |
+| `.of-intro-name` | 1.00rem | **1.24rem** |
+| `.of-note`（不設獎賞） | 0.62rem | **0.58rem + opacity 0.72** |
+
+- `.of-intro` 改 `flex: 1 1 auto`、`.of-intro-art` 改 `flex: 1 1 auto; min-height: 120px`
+  → 實測填充率由 41% 升至 **67%**，圖片 92px → 266px
+- `.of-dialogue-paged` 取消固定 `min-height`（唔再為空底撐高）
+
+**5. `track_variants` outcome 錯位（§2.3）**
+- 5 幕 × 3 軌 × 3 選擇 = **45 條全部重寫**
+- 強制落各軌意象詞庫：
+  - `office`：影印、報銷、窗邊、隔籬位、鍵盤、加班燈
+  - `tea`：杯、圍裙、伙記、茶記檯、蒸籠、洗碗槽
+  - `deal`：紙袋、貨倉、稅、出車、棧板、單據
+- 驗證：**45/45 對題、0 錯軌污染、0 跨軌重複**
+- 點名錯例全修：`EV_OF_02` tea/deal、`EV_OF_05` tea、`EV_OF_06` office
+- **delta 完全未動** → 五結局分佈不變
+
+**6. 時間標記「年」→「幕」（§2.2）**
+- 20 處 `desc`（含三軌變體）＋ 8 條 `beats` 全改
+- **保留**角色資歷句（「十九年」「三十年」）
+
+---
+
+### P1
+
+**7. 結局 UI（§2.5）**
+| 問題 | 修法 |
+|---|---|
+| 對白裸叠街景被裁 | 加 `.of-ending-dialogue` 底板（半透明 + blur + 安全區） |
+| 結局名重複兩次 | ribbon 改「分支結局」，全名只在 banner 出現一次 |
+| **首次通關誤顯示「已領過」** | 分開兩個 flag：`office_ending_<id>`＝已達成、`office_claimed_<id>`＝已領獎；`endingRewardAvailable()` 改睇 claimed |
+
+> 第 3 項係真 bug：`officeAdvanceAfterChoice()` 在顯示結局卡前已寫 `flag_on_complete`，
+> 而舊 `endingRewardAvailable()` 正是檢查同一 flag → 首次通關必然顯示「已領過」。
+
+**8. 故事歲月獨立說明（§2.7）**
+- 結局卡加 `.of-ending-note`：「故事包歲月獨立於人生歲數——返回人生後，你仍然係原本歲數。」
+
+**9. 輓歌反無腦（§2.4）**
+- 30 個選擇全部加 `flags`（`of_reputation_*` / `of_favour_*` / `of_fatigue_*` / `of_risk_*`）
+- **10/10 幕**都寫入 `lifeFlags`（超出「至少一半」要求）
+- 後果場顯示旗標 chip（`.of-flag-chip`），例如「人情：有人記住你」
+- 三軌 flags 與基底一致（delta 不動）
+- 故事包加 `choice_flag_labels`（中文標籤）＋ `replay_reward`（重玩改發殘頁）
+
+**10. 文案質素（§2.6）**
+- 「嗰個人」第 3 幕（4 句）＋第 4 幕（3 句）加戲：等她、計你缺席次數、一句「你還會不會講一句真的時間」
+- 角色名片去劇透：`partner.blurb` 由「分開嗰日冇吵架」改為「你以為時間還有很多」；
+  `arc_stages` 的「各走各路」「冇再聯絡」全改中性
+- 第 1 幕圖片由街景換 `bg-estate-happiness.jpg`（對題「返工／屋邨」）；
+  第 2、5、6、7、8 幕換對題圖
+
+---
+
+### P2
+
+**11. 死碼清理**
+- 刪 `officeChoiceHint()`（粉紅「行近咗某某路線」提示，已無引用）
+- 刪 `OFFICE_ROUTE_LABEL`（連帶死碼）
+
+**12. 殘頁副來源（§4.2）**
+- 街機（`EV39`）破關固定 **+1 殘頁**（原本只有黑市賭檔一個來源）
+- 街機結果行顯示殘頁圖示
+- 文案更新：`殘頁來源：黑市賭檔（贏局）或街機破關（每次 +1）`
+- 移除所有「只喺黑市賭檔掉落」字樣
+
+---
+
+### 測試
+- **新增 `_selftest_t408.js`：97 項全過**
+  - 命運後果場（點卡不跳歲／有故事／有籌碼／有繼續／有防誤觸／卡面無劇透）
+  - HUD 跳字
+  - 11 個事件全部走 `eventBeat`；抽查 3 個確認未跳歲、未入 soft
+  - 輓歌字級（5 項）＋空白（3 項）
+  - 時間標記無「第 N 年」、保留資歷句
+  - 45 條三軌 outcome 對題／無污染／無重複
+  - 結局 UI 三項修正
+  - 反無腦 flags（10/10 幕、三軌一致、實跑寫入）
+  - 死碼已清、殘頁副來源
+- **全套 54 個 `_selftest_*.js` 全過**
+
+### 瀏覽器實測
+- 命運四揀一 → 點卡 → `screen=fateResult`、**年齡／年份完全不變** → 有故事＋籌碼（幸運 -1、今世出戰攻擊 -1）→「繼續」
+- 事件 `EV04` → `screen=eventBeat`、未跳歲 → 有故事＋籌碼（膠幣 +16、經驗 +4）→ 撳繼續才入 soft
+- 輓歌 intro：字級明顯加大、圖片由 92px → 266px、填充 67%
+- 茶記軌後果場：後果文＋「人情：有人記住你」chip
+- 十幕走完 → 結局卡：名稱只出現 1 次、對白有底板、首次通關**不顯示**「已領過」、有歲月說明、確認掣初始 disabled
+
+### 未做（明確範圍外）
+- §3.1「主線／支線／試煉／勢力內容對題＋標籤誠實」為 P1 較大範圍，本批只完成「所有事件都走硬規則管線」；
+  逐個 category 改敵人／文案／標籤需要另外一輪（未動，避免夾帶大量內容改寫）。
+- §5 明確不做：`guard_baoan` 保安包（上一輪已完成但未上傳，本批未再改動）、戰鬥數值大平衡、命運卡面數值劇透。
+
+### 備份
+`app.js.bak-t408` / `data.json.bak-t408`（改動前）／`data.json.bak-t408-final`（改動後）／`styles.css.bak-t408`
+
+---
+
+## t407（2026-11-04 ~05:35 HKT）— 新故事包《你的保安，李步岸》guard_baoan
+
+**只加敘事內容與通用化，戰鬥數值零改動。**
+
+### 一、規格
+- id `guard_baoan`、status `available`、排故事包列表**第一位**
+- 8 幕（`EV_GB_01`–`08`）、4 結局（`EV_GB_E1`–`E4`）
+- 三軌 `track`：`strict`｜`human`｜`slack`（第 1 幕決定，第 2–8 幕用 `track_variants`）
+- 時間軸：**第 N 幕**（N=1..8），不 +1 歲
+
+### 二、`app.js` 通用化（多故事包支援）
+
+原本硬編碼 `office_ballad`＋五條路線，新包需要多個分支包並存：
+
+| 原寫法 | 新寫法 |
+|---|---|
+| `officePack()` 寫死 office_ballad | `officePack(run)` 用 `run.packId` → `activeStoryPackId` |
+| `OFFICE_ROUTE_KEYS` 常數 | `officeRouteKeysFor(pack)` 讀 `pack.office_route_keys` |
+| `OFFICE_ENDING_BY_ROUTE` 硬映射 | `officeEndingIdFor(pack, routeKey)` 讀 `pack.office_ending_by_route` |
+| `OFFICE_TOTAL_ACTS = 10` | `officeTotalActs(pack)` = `office_chain.length` |
+| `officeNodeView` 預設 `track="office"` | 讀 `pack.office_variant_default` |
+| 詳情頁解鎖看任何 `office_ending_*` | `officePackCleared(packId)` 逐包判斷 |
+| `viewSoft` 角色一句寫死三個 id | 讀 `pack.office_ending_voice` + 事件 `voice_id`/`voice_line` |
+| 「已領過 50 膠幣」寫死 50 | `${ev.reward_soul} 膠幣`（動態） |
+| 年度池鏈頭判斷用當前包 | 用事件自身 `story_pack_id` |
+
+新增旗標 `office_cleared_<packId>`（通關即寫），兼容舊存檔的 `office_ending_*`。
+
+### 三、資料（`data.json` / `data.js`）
+- 新增 `guard_baoan` 包 + 12 個事件（8 幕 + 4 結局）
+- **24 句專屬後果文**（8 幕 × 3 選擇），每句 2–3 句、≥45 字、同步驟互不相同
+- **零「行近咗 XX 路線」提示**（後果只講角色／金錢／處境）
+- 第 2–8 幕 × 3 軌 = **21 組 `track_variants`**：desc 加一句處境、dialogue 加一句、outcome 加一句前置
+  （三軌 delta 完全一致 → 結局分佈不受影響）
+- 5 個 `tale_cast_profiles`：李步岸／畢好彩／麥峰／邱得根／海嵐峰
+- 6 條 `beats`（僅通關後解鎖）
+- 封面 `assets/story-packs/guard-baoan.jpg`（暫用 office-ballad 佔位）
+- `office_ballad` 補上顯式 `office_route_keys`／`office_ending_by_route`／`office_variant_default`／`office_ending_voice`
+
+### 四、⚠️ 修掉的重要 bug：`out` 結局原設計不可達
+窮舉 3⁷×3 = 6561 條路徑發現：
+第 8 幕「不聯署」只給 `out +8`，但 `chaos` 前 7 幕最多可累積 36 → **out 永遠贏不了**。
+
+修正：第 8 幕選 3 的 delta 改為 `{chaos:4, out:30}`（符合簡報「第 8 幕權重最高」）。
+修正後分佈：`pro` 32.3% / `out` 33.1% / `warm` 24.6% / `chaos` 10.1%，**四個全部可達**。
+
+三軌傾向亦正確：strict 最常→pro、human 最常→warm、slack 最常→out/chaos。
+
+### 五、測試
+- **新增 `_selftest_t407.js`：79 項全過**
+  - 包結構／8 幕／4 結局／事件 id／角色名片／beats
+  - 24 句後果：句數 2–4、≥45 字、互不相同、無路線提示
+  - 21 組三軌變體：desc/dialogue 有變、delta 與骨架一致
+  - **窮舉 6561 條路徑：四結局全部可達、三軌皆無死結局**
+  - 三軌實走 8 幕、幕數 1→8
+  - 詳情頁三態（未通關／已通關／玩完他包不誤解鎖）
+  - 結局獎勵文字動態（60 而非寫死 50）
+- **修正 5 個舊測試的寫死假設**（非產品 bug）：
+  - `t406`：`officeCleared` 內部實作改了 → 改斷言新實作
+  - `t359`：包數 6→7 的滾動／行數斷言 → 改為按實際數量
+  - `t366_story`：結局篩選要限定 `office_ballad`；文案斷言改動態
+  - `t369b`：`結局 ≥ 5` → `≥ 4`（本包規格 4 個）
+  - `t377`：`渲染 6 個格` → 等於包數
+- **全套 52 個 `_selftest_*.js` 全過**
+
+### 六、驗證 `office_ballad` 未受影響
+窮舉 5⁸ = 390625 條路徑：五個結局全部可達
+（rich 11287／flat 14936／street 14486／biz_fail 11618／scam 6722 —— 取樣分佈正常）。
+
+### 七、瀏覽器實測
+- 選包列表：新包排第一、狀態「使用中」
+- 第 1 拍：HUD「第 1 幕 / 8」、進場短敘、只有「繼續」、無選擇
+- 八幕實走：幕數 1→8 與 HUD 完全一致、每幕 3 選擇、選後 `phase=outcome`
+- 四條路線實測：strict→專業步岸、human→人情海嵐、slack 全 hea→保安室永晝、mix→換場之後
+- 結局卡：全屏停住、角色一句、獨立確認掣、無點空白前進
+- 詳情頁未通關：無任何結局名、有 🔒、有角色名片
+
+### 八、未做（簡報可選項）
+A.9「若存在風球未落包則移除或標記不可用」——`fung_kau_mei_lok` 目前仍 `available`，
+為免影響現有玩家進度**保留不動**。如要下架，改 `status: "coming_soon"` 即可。
+
+### 九、備份
+`app.js.bak-t407` / `data.json.bak-t407` / `data.js.bak-t407`
+
+---
+
 ## t406（2026-11-04 ~04:30 HKT）— office_ballad 敘事演出重構
 
 **只改敘事／UI 流程，戰鬥數值零改動。**

@@ -10624,6 +10624,22 @@ html, body {
 
 /* 結局卡：全屏停住 */
 .of-ending-scroll { padding-bottom: 6px; }
+
+/* t408（§2.5）：結局對白要有底板／安全區，唔可以裸叠街景被裁 */
+.of-ending-dialogue {
+  margin: 8px 4px;
+  padding: 11px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(12, 8, 20, 0.78);
+  backdrop-filter: blur(2px);
+}
+.of-ending-dialogue .dlg-line {
+  font-size: 0.93rem;
+  line-height: 1.72;
+  color: #f6f0ff;
+}
+.of-ending-dialogue .dlg-who { color: var(--neon-cyan, #3dfff0); }
 .of-ending-voice {
   margin: 8px 4px;
   padding: 10px 12px;
@@ -10649,9 +10665,281 @@ html, body {
   width: 100%;
   margin: 0 0 4px;
 }
+/* t408（§2.7）：說明故事包歲月獨立，避免玩家以為人生歲數被重置 */
+.of-ending-note {
+  margin: 0 2px 8px;
+  font-size: 0.66rem;
+  line-height: 1.5;
+  text-align: center;
+  color: rgba(233, 220, 255, 0.62);
+}
 
 @media (orientation: landscape) and (max-width: 1024px) {
   .of-intro-art { max-height: 26vh; }
   .of-outcome-body { font-size: 0.76rem; line-height: 1.55; }
   .of-dialogue-paged { min-height: 70px; }
+}
+
+/* ===================================================================
+ * t408（§2.1）輓歌 UI：收緊空白、加大字級
+ *
+ * 病徵：intro／dialogue／choose／outcome 大片空紫底，正文顯得細。
+ * 做法：內容區改 min-height:auto + flex 收斂（唔再撐滿），
+ *       正文／對白字級升一檔以上，padding 削減。
+ * =================================================================== */
+
+/* 內容區：貼內容，唔再為撐滿而留大片空底 */
+.of-hud { flex: 0 0 auto; }
+.office-node {
+  flex: 1 1 auto;
+  min-height: auto;
+  max-height: 100%;
+  gap: 10px;
+  padding: 12px 12px 14px;
+  /* 內容貼頂，多餘空間平均分到上下（唔會全部堆在下面） */
+  justify-content: flex-start;
+}
+
+/* 進場短敘：字級明顯加大、圖片撐滿剩餘空間（唔留大片空底） */
+.of-intro {
+  gap: 9px;
+  padding: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.of-intro-art {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 120px;
+  max-height: 46vh;
+  object-fit: cover;
+}
+.of-intro-name {
+  font-size: 1.24rem;
+  line-height: 1.3;
+}
+.of-intro-desc {
+  font-size: 0.99rem;
+  line-height: 1.78;
+  color: #f6f0ff;
+}
+
+/* 對白：加大、加行距，取消固定 min-height（唔好為空底撐高） */
+.of-dialogue-paged {
+  min-height: 0;
+  padding: 12px 13px;
+  gap: 10px;
+}
+.of-dialogue-paged .dlg-line {
+  font-size: 0.96rem;
+  line-height: 1.72;
+}
+.of-dialogue-paged .dlg-who {
+  font-size: 0.9rem;
+}
+.of-page-no {
+  font-size: 0.66rem;
+  color: rgba(233, 220, 255, 0.62);
+}
+
+/* 選擇卡：加大可讀性 */
+.of-choice { padding: 13px 13px 14px; }
+.of-choice-tag { font-size: 0.62rem; }
+.of-choice-text {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.of-choice-unknown { font-size: 0.68rem; }
+
+/* 後果場：字級加大、減 padding */
+.of-outcome { padding: 13px 14px 15px; }
+.of-outcome-kicker { font-size: 0.68rem; }
+.of-outcome-choice {
+  font-size: 1.02rem;
+  line-height: 1.45;
+  margin-bottom: 9px;
+}
+.of-outcome-body {
+  font-size: 0.99rem;
+  line-height: 1.82;
+  color: #f6f0ff;
+}
+
+/* t408（§2.4）：後果場顯示人生旗標（口碑／人情／疲勞／風險） */
+.of-outcome-flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.of-flag-chip {
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #d8f7ff;
+  background: rgba(61, 255, 240, 0.11);
+  border: 1px solid rgba(61, 255, 240, 0.34);
+}
+
+/* 「不設獎賞」提示：縮細並靠下，唔搶中央位置 */
+.of-note {
+  font-size: 0.58rem;
+  opacity: 0.72;
+  margin-top: auto;
+  padding-top: 2px;
+}
+
+/* ===================================================================
+ * t408（§1.3）命運後果場
+ * =================================================================== */
+.fate-result {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 0 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 10px 11px 12px;
+  border-radius: 12px;
+  border: 2px solid rgba(61, 255, 240, 0.4);
+  background: linear-gradient(180deg, rgba(61, 255, 240, 0.09), rgba(10, 6, 18, 0.62));
+  animation: ofOutcomeIn 0.4s cubic-bezier(0.22, 0.9, 0.3, 1) both;
+}
+.fate-result-art {
+  width: 100%;
+  max-height: 26vh;
+  object-fit: cover;
+  border-radius: 9px;
+  border: 2px solid #0a0610;
+}
+.fate-result-story {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.8;
+  color: #f6f0ff;
+}
+.fate-result-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.fate-result-bar .srb-ico { color: var(--neon-gold, #ffcc6a); }
+.fate-result-bar .srb-text {
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: rgba(233, 220, 255, 0.75);
+}
+
+/* 籌碼：負值用減益色（紅），唔用綠色劇透「好壞」但數字要睇得明 */
+.srb-chip.attr.down {
+  background: rgba(255, 77, 106, 0.16);
+  border-color: rgba(255, 77, 106, 0.45);
+  color: #ffb3c1;
+}
+
+/* ===================================================================
+ * t408（§3.2）通用「事件經過」拍：過程＋可見結果，先撳繼續才過年
+ * =================================================================== */
+.eb-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 0 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 11px 12px 13px;
+  border-radius: 12px;
+  border: 3px solid #0a0610;
+  background: linear-gradient(180deg, #1a1028f2, #100818f7);
+  box-shadow: 0 0 0 2px rgba(45, 226, 255, 0.28), 0 3px 0 #0a0610;
+}
+.eb-art-frame {
+  border-radius: 9px;
+  overflow: hidden;
+  border: 2px solid #0a0610;
+}
+.eb-art {
+  display: block;
+  width: 100%;
+  max-height: 30vh;
+  object-fit: cover;
+}
+.eb-name {
+  font-size: 1.16rem;
+  font-weight: 900;
+  line-height: 1.32;
+  color: var(--neon-gold, #ffcc6a);
+  letter-spacing: 0.03em;
+}
+.eb-desc {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.8;
+  color: #f6f0ff;
+}
+.eb-dialogue {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 11px 12px;
+  border-radius: 10px;
+  background: rgba(26, 16, 40, 0.72);
+  border: 1.5px solid #2a1c36;
+}
+.eb-dialogue .dlg-line {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.7;
+}
+.eb-result {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 11px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.eb-result .srb-ico { color: var(--neon-gold, #ffcc6a); }
+.eb-result .srb-text {
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: rgba(233, 220, 255, 0.75);
+}
+
+/* HUD 短暫 +N 跳字（§1.3 第 4 點） */.hud-float {
+  position: fixed;
+  z-index: 9998;
+  pointer-events: none;
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: var(--neon-gold, #ffcc6a);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+  animation: hudFloatUp 1.1s ease-out both;
+}
+@keyframes hudFloatUp {
+  0%   { opacity: 0; transform: translateY(6px) scale(0.94); }
+  18%  { opacity: 1; transform: translateY(0) scale(1); }
+  70%  { opacity: 1; transform: translateY(-10px) scale(1); }
+  100% { opacity: 0; transform: translateY(-22px) scale(0.98); }
+}
+
+@media (orientation: landscape) and (max-width: 1024px) {
+  .of-intro-art { max-height: 24vh; }
+  .of-intro-desc { font-size: 0.9rem; line-height: 1.62; }
+  .of-dialogue-paged .dlg-line { font-size: 0.88rem; line-height: 1.55; }
+  .of-outcome-body { font-size: 0.9rem; line-height: 1.6; }
+  .fate-result-art { max-height: 20vh; }
+  .fate-result-story { font-size: 0.9rem; line-height: 1.62; }
 }

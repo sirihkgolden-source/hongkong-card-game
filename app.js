@@ -442,17 +442,19 @@
     return { id: best.id, label: best.label, blurb: best.blurb, event: ev };
   }
 
-  /* ---------- t364 故事包分支鏈（打工仔輓歌） ---------- */
-  /** 分支路線 key → 中文（唔向外顯示分數，只內部計） */
-  const OFFICE_ROUTE_KEYS = ["rich", "biz", "flat", "street", "scam"];
-  const OFFICE_ROUTE_LABEL = {
-    rich: "穩打穩紮",
-    biz: "做生意",
-    flat: "上樓成家",
-    street: "搏到盡",
-    scam: "博快錢",
-  };
-  /** 結局 id ↔ 路線 key */
+  /* ---------- t364 故事包分支鏈（打工仔輓歌／你的保安，李步岸） ---------- */
+  /**
+   * t407：分支鏈支援多個故事包。
+   *
+   * 舊版硬編碼 `office_ballad` 一個包、五條路線（rich／biz／flat／street／scam）。
+   * 新增 `guard_baoan`（三條 track：strict／human／slack、四個結局）之後，
+   * 路線 key 同結局對應改為「按當前 run 的故事包」查表：
+   *  - 故事包的 `office_route_keys` 有寫 → 用佢
+   *  - 冇寫 → 由 `office_endings[].id` 直接當路線 key（guard_baoan 正是如此）
+   *  - 兩者都冇 → 退回舊版五條路線（office_ballad 的歷史行為）
+   */
+  const OFFICE_LEGACY_ROUTE_KEYS = ["rich", "biz", "flat", "street", "scam"];
+  /** 結局 id ↔ 路線 key（舊版 office_ballad 專用；新包用結局 id 直接對應） */
   const OFFICE_ENDING_BY_ROUTE = {
     rich: "rich",
     biz: "biz_fail",
@@ -461,8 +463,52 @@
     scam: "scam",
   };
 
-  function officePack() {
-    return storyPackById("office_ballad") || null;
+  /** 現時遊玩中的故事包（優先用 run 記住的 packId） */
+  function officePack(run) {
+    const r = run || state.officeRun;
+    const id = (r && r.packId) || state.activeStoryPackId || "office_ballad";
+    return storyPackById(id) || storyPackById("office_ballad") || null;
+  }
+
+  /** 某個故事包的路線 key 清單 */
+  function officeRouteKeysFor(pack) {
+    if (!pack) return OFFICE_LEGACY_ROUTE_KEYS.slice();
+    if (Array.isArray(pack.office_route_keys) && pack.office_route_keys.length) {
+      return pack.office_route_keys.slice();
+    }
+    if (Array.isArray(pack.office_endings) && pack.office_endings.length) {
+      return pack.office_endings.map((e) => e.id);
+    }
+    return OFFICE_LEGACY_ROUTE_KEYS.slice();
+  }
+
+  /**
+   * 路線 key → 結局 id。
+   * 故事包有寫 `office_ending_by_route` 就用它（office_ballad 的 biz → biz_fail），
+   * 否則視 routeKey 本身就是結局 id（guard_baoan 的 pro／warm／chaos／out）。
+   */
+  function officeEndingIdFor(pack, routeKey) {
+    if (!routeKey) return null;
+    const map = pack && pack.office_ending_by_route;
+    if (map && typeof map === "object") return map[routeKey] || null;
+    if (pack && !pack.office_ending_by_route) return routeKey;
+    return OFFICE_ENDING_BY_ROUTE[routeKey] || null;
+  }
+
+  /**
+   * t407：某個分支包是否已通關（完成過任何一個結局）。
+   *
+   * 優先睇 `office_cleared_<packId>`；舊存檔只有 `office_ending_*`，
+   * 就退回「該包的結局 id 有冇任何一個已完成」。
+   */
+  function officePackCleared(packId) {
+    const flags = state.lifeFlags || {};
+    const id = packId || (officePack() && officePack().id);
+    if (!id) return false;
+    if (flags["office_cleared_" + id]) return true;
+    const pack = storyPackById(id);
+    const endings = (pack && Array.isArray(pack.office_endings)) ? pack.office_endings : [];
+    return endings.some((e) => !!flags["office_ending_" + e.id]);
   }
 
   function isOfficeChainEvent(ev) {
@@ -494,12 +540,17 @@
 
   /**
    * 取出「當前職種」的節點內容。
-   * 冇變體 → 原樣返回；有變體但未揀職種 → 用第一個變體（寫字樓）頂住。
+   * 冇變體 → 原樣返回；有變體但未揀職種 → 用第一個變體頂住。
+   * t407：預設變體唔再寫死 `office`，改為 `office_variant_default` 或變體表的第一個 key，
+   *       令 `guard_baoan`（strict／human／slack）唔會誤找 `office`。
    */
   function officeNodeView(node, run) {
     if (!node || !node.track_variants) return node;
-    const track = officeTrackOf(run) || "office";
-    const v = node.track_variants[track] || node.track_variants.office;
+    const pack = officePack(run);
+    const keys = Object.keys(node.track_variants);
+    const dflt = (pack && pack.office_variant_default) || keys[0];
+    const track = officeTrackOf(run) || dflt;
+    const v = node.track_variants[track] || node.track_variants[dflt] || node.track_variants[keys[0]];
     if (!v) return node;
     return Object.assign({}, node, {
       name: v.name || node.name,
@@ -509,49 +560,58 @@
     });
   }
 
-  function officeEndingEvent(routeKey) {
-    const endingId = OFFICE_ENDING_BY_ROUTE[routeKey];
+  function officeEndingEvent(routeKey, pack) {
+    const p = pack || officePack();
+    if (!p) return null;
+    const endingId = officeEndingIdFor(p, routeKey);
     if (!endingId) return null;
-    return (DATA.events || []).find((e) => e.office_ending === endingId) || null;
+    return (DATA.events || []).find(
+      (e) => e.office_ending === endingId && (!e.story_pack_id || e.story_pack_id === p.id)
+    ) || null;
   }
 
-  function officeEmptyRoute() {
+  function officeEmptyRoute(pack) {
     const r = {};
-    OFFICE_ROUTE_KEYS.forEach((k) => { r[k] = 0; });
+    officeRouteKeysFor(pack || officePack()).forEach((k) => { r[k] = 0; });
     return r;
   }
 
   /** 起始節點：故事包第一個 office_node */
-  function officeStartNode() {
-    const pack = officePack();
-    if (!pack) return null;
-    const chain = Array.isArray(pack.office_chain) ? pack.office_chain : [];
+  function officeStartNode(pack) {
+    const p = pack || officePack();
+    if (!p) return null;
+    const chain = Array.isArray(p.office_chain) ? p.office_chain : [];
     for (const id of chain) {
       const n = officeNodeById(id);
       if (n) return n;
     }
-    return officeNodeById(pack.office_entry) || null;
+    return officeNodeById(p.office_entry) || null;
   }
 
   /** 開一條新分支鏈 */
-  function officeBeginRun() {
-    const first = officeStartNode();
+  function officeBeginRun(packId) {
+    const pack = storyPackById(packId) || officePack();
+    if (!pack) return null;
+    const first = officeStartNode(pack);
     if (!first) return null;
     // 已經在鏈中：唔重設（避免重入時年齡／歷程被洗走）
-    if (state.officeRun && state.officeRun.packId === "office_ballad") {
+    if (state.officeRun && state.officeRun.packId === pack.id) {
       return state.officeRun;
     }
     // t365：分支鏈用自己嘅年齡（18 歲入職 → 27 歲），唔改 state.age。
     // 原因：呢個包係獨立故事模組，唔應該消耗／污染人生 run 的歲數（曾造成累積到 70 歲直接「壽命到限」）。
     state.officeRun = {
-      packId: "office_ballad",
+      packId: pack.id,
       nodeId: first.id,
       step: 1,
       startAge: 18,
-      route: officeEmptyRoute(),
+      route: officeEmptyRoute(pack),
       chosen: [],
       /** 上一步選擇要顯示的隱藏後果（選完才揭示） */
       reveal: null,
+      /** t406：四拍流程階段（intro → dialogue → choose → outcome） */
+      phase: "intro",
+      dlgPage: 0,
     };
     return state.officeRun;
   }
@@ -580,7 +640,7 @@
 
     // 累加分數（隱藏）
     const delta = pick.delta || {};
-    OFFICE_ROUTE_KEYS.forEach((k) => {
+    officeRouteKeysFor(officePack(run)).forEach((k) => {
       run.route[k] = (run.route[k] | 0) + (delta[k] | 0);
     });
     run.chosen.push({
@@ -592,7 +652,21 @@
       track: pick.track || null,
       // t406：記住該選擇的專屬後果，供回顧時顯示
       outcome: String(pick.outcome || "").trim(),
+      // t408（§2.4）：寫入的人生旗標（口碑／疲勞／人情／風險）
+      flags: Array.isArray(pick.flags) ? pick.flags.slice() : [],
     });
+
+    /*
+     * t408（§2.4）：把選擇帶的 flags 寫入 lifeFlags。
+     * 令「揀完有後果」不只係文字，而係真正改變後面的事件／結局判定語境。
+     */
+    if (Array.isArray(pick.flags) && pick.flags.length) {
+      if (!state.lifeFlags || typeof state.lifeFlags !== "object") state.lifeFlags = {};
+      pick.flags.forEach((f) => {
+        const key = String(f || "").trim();
+        if (key) state.lifeFlags[key] = 1;
+      });
+    }
     /*
      * t406：選後揭示改為「專屬後果文」。
      *
@@ -607,6 +681,8 @@
       choiceText: pick.text || "",
       outcome: String(pick.outcome || "").trim(),
       step: run.step | 0,
+      /* t408（§2.4）：連同人生旗標一齊顯示，令「有後果」睇得到 */
+      flags: Array.isArray(pick.flags) ? pick.flags.slice() : [],
     };
     /*
      * t406：四拍流程的階段。
@@ -620,31 +696,15 @@
   }
 
   /**
-   * 由 delta 生成「隱藏後果」提示。
-   * 只講方向（例如「更似做生意嘅路」），永不顯示 +2／-1 之類數字，
-   * 避免玩家當成數值遊戲；也符合「沒有獎賞和升級」的設定。
+   * 由 route 分數決定結局 key；同分則依固定優先次序（避免隨機）。
+   * 次序＝該故事包 `office_endings` 的宣告次序（同分時排前者勝）。
    */
-  function officeChoiceHint(delta) {
-    if (!delta || typeof delta !== "object") return "";
-    let bestKey = "";
-    let bestVal = 0;
-    OFFICE_ROUTE_KEYS.forEach((k) => {
-      const v = delta[k] | 0;
-      if (v > bestVal) {
-        bestVal = v;
-        bestKey = k;
-      }
-    });
-    if (!bestKey || bestVal <= 0) return "呢一步，冇特別改變。";
-    return "你行近咗「" + (OFFICE_ROUTE_LABEL[bestKey] || "") + "」呢條路。";
-  }
-
-  /** 由 route 分數決定結局 key；同分則依固定優先次序（避免隨機） */
-  function officeResolveRoute(route) {
+  function officeResolveRoute(route, pack) {
+    const keys = officeRouteKeysFor(pack || officePack());
     const r = route || {};
-    let bestKey = OFFICE_ROUTE_KEYS[0];
+    let bestKey = keys[0];
     let bestVal = -Infinity;
-    OFFICE_ROUTE_KEYS.forEach((k) => {
+    keys.forEach((k) => {
       const v = r[k] | 0;
       if (v > bestVal) {
         bestVal = v;
@@ -658,8 +718,9 @@
   function officeFinishRun() {
     const run = state.officeRun;
     if (!run) return null;
-    const routeKey = officeResolveRoute(run.route);
-    const endingEv = officeEndingEvent(routeKey);
+    const pack = officePack(run);
+    const routeKey = officeResolveRoute(run.route, pack);
+    const endingEv = officeEndingEvent(routeKey, pack);
     return { routeKey, endingEv };
   }
 
@@ -784,6 +845,10 @@
     fateYearIndex: 0,
     /** 本輪四揀一 offer ids */
     fateOffer: [],
+    /** t408：命運後果場待確認的命運（{ fate, fid }） */
+    fatePending: null,
+    /** t408：通用「事件經過」拍（{ evId, applyAttrs }） */
+    eventBeat: null,
     /** 今世戰鬥暫存加成（命運 temp） */
     fateBattleBonus: { atk: 0, def: 0, hp: 0 },
     /** 本年遭遇四揀一（event ids）；換年重抽 */
@@ -2855,6 +2920,33 @@
   const $ = (sel, el = document) => el.querySelector(sel);
   const screenEl = () => document.getElementById("screen");
 
+  /**
+   * t408：HUD 短暫 +N 跳字。
+   *
+   * 只係視覺回饋（唔改數值）。用於命運後果場／事件結果場，
+   * 令玩家即刻見到「發生咗咩事」而唔係靜靜跳歲。
+   * 環境（例如 Node 測試 shim）冇 createElement 時會靜靜失敗。
+   */
+  function hudFloat(text) {
+    const msg = String(text || "").trim();
+    if (!msg) return;
+    try {
+      const host = document.body || document.documentElement;
+      if (!host || typeof document.createElement !== "function") return;
+      const el = document.createElement("div");
+      el.className = "hud-float";
+      el.textContent = msg;
+      const scr = screenEl();
+      const rect = scr && scr.getBoundingClientRect ? scr.getBoundingClientRect() : null;
+      const baseTop = rect && rect.top ? rect.top : 0;
+      const baseLeft = rect && rect.left ? rect.left : 0;
+      el.style.top = (baseTop + 8) + "px";
+      el.style.left = (baseLeft + 12) + "px";
+      host.appendChild(el);
+      setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 1200);
+    } catch (_) { /* 純視覺，失敗唔影響流程 */ }
+  }
+
   function fighterHp(f) {
     return (f.slots || 4) * 20 + 40;
   }
@@ -4262,6 +4354,8 @@
       equip: viewPrep,
       origin: viewOrigin,
       fate: viewFate,
+      fateResult: viewFateResult,
+      eventBeat: viewEventBeat,
       encounter: viewEncounter,
       battle: viewBattle,
       result: viewResult,
@@ -4560,8 +4654,12 @@
       ? `<ul class="pack-ev-list">${evNames.map((n) => `<li>${esc(n)}</li>`).join("")}</ul>`
       : (isChainPack ? "" : `<p class="sub">此包未掛事件——人生照常進行。</p>`);
 
-    // t369：tale 包的人物與結局
-    const taleCastHtml = (isTaleChain && Array.isArray(pack.tale_cast_profiles) && pack.tale_cast_profiles.length)
+    /*
+     * t369：tale 包的人物名片。
+     * t407：office 分支包（guard_baoan 等）只要有 tale_cast_profiles 亦顯示角色名片
+     *       ——簡報要求詳情頁「只留 blurb＋角色名片」，角色名片是允許的內容。
+     */
+    const taleCastHtml = (Array.isArray(pack.tale_cast_profiles) && pack.tale_cast_profiles.length)
       ? `<div class="pack-ev-title">人物</div>
          <div class="tl-profile-list">${pack.tale_cast_profiles.map((c) => `
            <div class="tl-profile">
@@ -4599,18 +4697,17 @@
      * 玩家未玩就知晒結局。總導演：「只留 blurb + 角色名片；
      * 場面 beats／結局全文收起，通關或步數後先解鎖回想。」
      *
-     * 解鎖條件：完成任意一個結局（lifeFlags 有 office_ending_*）。
+     * 解鎖條件：完成「此包」任意一個結局。
+     * t407：改為逐包判斷（`office_cleared_<packId>`，並兼容舊版 `office_ending_*`），
+     *       否則玩完 office_ballad 會連 guard_baoan 都解鎖。
      */
-    const officeCleared = (() => {
-      if (!isOfficeChain) return false;
-      const flags = state.lifeFlags || {};
-      return Object.keys(flags).some((k) => k.indexOf("office_ending_") === 0 && flags[k]);
-    })();
+    const officeCleared = officePackCleared(pack.id);
 
     // 分支包：結局一覽（未通關只顯示數量與提示，唔顯示 label／blurb）
+    const actCount = Math.max(1, (pack.office_chain || []).length);
     const endingsHtml = isOfficeChain && Array.isArray(pack.office_endings)
       ? (officeCleared
-          ? `<div class="pack-ev-title">五個結局（已完成 ${pack.office_endings.filter((e) => !!(state.lifeFlags && state.lifeFlags["office_ending_" + e.id])).length} / ${pack.office_endings.length}）</div>
+          ? `<div class="pack-ev-title">${pack.office_endings.length} 個結局（已完成 ${pack.office_endings.filter((e) => !!(state.lifeFlags && state.lifeFlags["office_ending_" + e.id])).length} / ${pack.office_endings.length}）</div>
              <div class="of-ending-list">${pack.office_endings.map((e) => {
                const done = !!(state.lifeFlags && state.lifeFlags["office_ending_" + e.id]);
                return `<div class="of-ending-item${done ? " done" : ""}">
@@ -4621,15 +4718,15 @@
                  </div>
                </div>`;
              }).join("")}</div>
-             <div class="pack-ev-title">十步分支</div>
-             <p class="of-chain-note">每一步三個選擇，後果喺選擇之後才揭示。共 10 幕，行到最後才見結局。本包不設中途獎賞、不設升級。</p>`
+             <div class="pack-ev-title">${actCount} 幕分支</div>
+             <p class="of-chain-note">每一幕三個選擇，後果喺選擇之後才揭示。共 ${actCount} 幕，行到最後才見結局。本包不設中途獎賞、不設升級。</p>`
           : `<div class="pack-ev-title">${pack.office_endings.length} 個結局</div>
              <div class="of-locked-note" role="status">
                <span class="of-locked-ico">🔒</span>
                <span>結局一覽同場面回想，行完一次之後才會解鎖。<br/>首次遊玩時完全唔會劇透。</span>
              </div>
-             <div class="pack-ev-title">十步分支</div>
-             <p class="of-chain-note">每一步三個選擇，後果喺選擇之後才揭示。共 10 幕，行到最後才見結局。本包不設中途獎賞、不設升級。</p>`)
+             <div class="pack-ev-title">${actCount} 幕分支</div>
+             <p class="of-chain-note">每一幕三個選擇，後果喺選擇之後才揭示。共 ${actCount} 幕，行到最後才見結局。本包不設中途獎賞、不設升級。</p>`)
       : "";
     /* t406：beats 只喺通關後顯示（原本一次列出全部場面＝劇透） */
     const beatHtml = (Array.isArray(pack.beats) && pack.beats.length && (!isOfficeChain || officeCleared))
@@ -4668,7 +4765,7 @@
       <div class="btn-row pack-detail-actions">
         <button class="btn ghost" id="btn-pack-list" type="button" data-help="btn-back">返列表</button>
         <button class="btn pink" id="btn-pack-use" type="button" data-help="btn-story-pick">${active ? "已用此包氣氛" : "以此包氣氛入故事"}</button>
-        ${isChainPack ? `<button class="btn gold" id="btn-pack-start-chain" type="button">${isTaleChain ? "由第一步開始（故事）" : "由第一日返工開始（分支）"}</button>` : ""}
+        ${isChainPack ? `<button class="btn gold" id="btn-pack-start-chain" type="button">${isTaleChain ? "由第一步開始（故事）" : `開始（${esc(pack.name)}）`}</button>` : ""}
       </div>
       <button class="btn ghost" id="btn-pack-home" type="button" data-help="btn-back">返主頁</button>
       <div id="home-toast" class="home-toast" hidden></div>
@@ -4703,14 +4800,14 @@
           render();
           return;
         }
-        const first = officeStartNode();
+        const first = officeStartNode(pack);
         if (!first) {
           toast("此分支鏈未設定完成");
           return;
         }
         state.activeStoryPackId = pack.id;
         state.storyPackUserPicked = true;
-        officeBeginRun();
+        officeBeginRun(pack.id);
         state.selectedEvent = first;
         state.eventConfirmOpen = false;
         state.screen = "office";
@@ -5166,11 +5263,10 @@
       return;
     }
     if (cat === "special" && !ev.battle) {
-      applyEventAttrsDelta(ev);
-      const bits = formatAttrsDelta(ev.attrs_delta);
-      state.softNote = bits.length ? bits.join("、") : "特殊：無戰結算";
+      /* t408：不在此處結算，先入「經過」拍（見 viewEventBeat） */
       state.eventConfirmOpen = false;
-      state.screen = "soft";
+      state.eventBeat = { evId: ev.id, applyAttrs: true };
+      state.screen = "eventBeat";
       render();
       return;
     }
@@ -5185,10 +5281,108 @@
       state.screen = "events";
       render();
     } else {
+      /*
+       * t408 硬規則：唔可以「確認後直接 advanceYear」。
+       * 無戰、無對白、無互動畫面的事件（例如純氣氛遭遇）→ 先入「經過」拍，
+       * 玩家睇到「發生咗咩事」＋可選籌碼，撳「繼續」才入結算。
+       */
       state.eventConfirmOpen = false;
-      state.screen = "soft";
+      state.eventBeat = { evId: ev.id, applyAttrs: true };
+      state.screen = "eventBeat";
       render();
     }
+  }
+
+  /* ---------- t408：通用「事件經過」拍（硬規則 0.2） ---------- */
+  /**
+   * 任何「無戰／無對白／無互動畫面」的事件，都必須先過這一拍：
+   *
+   *   1. 過程拍：事件描述（玩家讀到發生咩事）
+   *   2. 結果拍：可見籌碼（膠幣／經驗／金幣／六維）
+   *   3. 撳「繼續」才入 soft 結算 → advanceYear
+   *
+   * 呢個係「禁止確認後淨 advanceYear」的統一管線終點。
+   */
+  function viewEventBeat(root) {
+    const beat = state.eventBeat;
+    const ev = beat ? DATA.events.find((e) => e.id === beat.evId) : state.selectedEvent;
+    if (!ev) {
+      state.screen = "events";
+      render();
+      return;
+    }
+    state.selectedEvent = ev;
+    const gain = listedEventSoul(ev);
+    const goldGain = ev.reward_gold | 0;
+    const chips = rewardChipsHtml({
+      soul: gain,
+      xp: ev.reward_xp | 0,
+      gold: goldGain,
+      attrs: ev.attrs_delta || null,
+    });
+    const lines = Array.isArray(ev.dialogue) ? ev.dialogue : [];
+    const dlg = lines.length
+      ? `<div class="eb-dialogue">${lines.slice(0, 4).map((d) => {
+          const who = d.speaker || d.who || "";
+          const txt = d.text || d.line || "";
+          return `<p class="dlg-line">${who ? `<b class="dlg-who">${esc(who)}</b>：` : ""}${esc(txt)}</p>`;
+        }).join("")}</div>`
+      : "";
+
+    root.innerHTML = `
+      ${lifeHudHtml()}
+      <div class="ribbon">${ageRibbon(esc(eventCategoryLabel(ev) || "遭遇"))}</div>
+      <div class="eb-wrap">
+        <div class="eb-art-frame"><img class="eb-art" src="${esc(ev.art || "")}" alt="" /></div>
+        <div class="eb-name">${esc(ev.name || "事件")}</div>
+        <p class="eb-desc">${esc(ev.desc || "")}</p>
+        ${dlg}
+        <div class="eb-result" role="status">
+          <span class="srb-ico">✦</span>
+          <span class="srb-text">今次得到</span>
+          <span class="srb-chips">${chips || `<span class="srb-chip">無增減</span>`}</span>
+        </div>
+      </div>
+      <button class="btn gold of-cta-main" id="eb-next" type="button">繼續</button>
+      <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
+      ${storyDockHtml()}
+    `;
+
+    const next = $("#eb-next", root);
+    if (next) {
+      next.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        finishEventBeat();
+      };
+    }
+    const ab = $("#btn-abandon", root);
+    if (ab) ab.onclick = () => requestAbandonLife();
+    wireStoryDock(root);
+  }
+
+  /** 「經過」拍 → 入 soft 結算（數值在此一次寫入，避免重複） */
+  function finishEventBeat() {
+    const beat = state.eventBeat;
+    const ev = beat ? DATA.events.find((e) => e.id === beat.evId) : state.selectedEvent;
+    state.eventBeat = null;
+    if (!ev) {
+      state.screen = "events";
+      render();
+      return;
+    }
+    state.selectedEvent = ev;
+    /* special 類：屬性在此寫入（原本在 pickEvent 內做） */
+    const cat = ev.category || "";
+    if (cat === "special" && !ev.battle) {
+      applyEventAttrsDelta(ev);
+      const bits = formatAttrsDelta(ev.attrs_delta);
+      state.softNote = bits.length ? bits.join("、") : "特殊：無戰結算";
+    } else {
+      state.softNote = "";
+    }
+    state.eventConfirmOpen = false;
+    state.screen = "soft";
+    render();
   }
 
   /* ---------- t364／t406：故事包分支畫面「打工仔輓歌」 ---------- */
@@ -5202,13 +5396,21 @@
    * 玩家睇唔到場面後果。現在每步都分階段顯示，`run.phase` 控制。
    *
    * 時間軸：改用「第 N 幕」，唔再每步 +1 歲（原本 18→27 歲同正文對唔上）。
+   * t407：幕數改為按故事包的 `office_chain` 長度，唔再寫死 10。
    */
   const OFFICE_TOTAL_ACTS = 10;
+
+  /** 該故事包有幾幕 */
+  function officeTotalActs(pack) {
+    const p = pack || officePack();
+    const n = (p && Array.isArray(p.office_chain)) ? p.office_chain.length : 0;
+    return Math.max(1, n || OFFICE_TOTAL_ACTS);
+  }
 
   function officeActOf(run) {
     const r = run || state.officeRun;
     if (!r) return 1;
-    return Math.max(1, Math.min(OFFICE_TOTAL_ACTS, r.step | 0));
+    return Math.max(1, Math.min(officeTotalActs(officePack(r)), r.step | 0));
   }
 
   /** 分頁顯示對白：每頁 2 句（避免一次倒出成牆字） */
@@ -5252,8 +5454,8 @@
       return;
     }
 
-    const pack = officePack();
-    const totalSteps = Math.max(1, ((pack && pack.office_chain) || []).length);
+    const pack = officePack(run);
+    const totalSteps = officeTotalActs(pack);
     const stepNo = Math.min(totalSteps, Math.max(1, run.step | 0));
     const actNo = officeActOf(run);
     const choices = Array.isArray(node.office_choices) ? node.office_choices : [];
@@ -5270,7 +5472,6 @@
 
     /* HUD：主線用「第 N 幕」，唔再顯示歲數（避免同正文對唔上） */
     const hudLeft = `${esc(pack ? pack.name : "故事包")} · 第 ${actNo} 幕 / ${totalSteps}`;
-
     /* 進場短敘（desc）— intro 階段只顯示這一段 */
     const introHtml = phase === "intro"
       ? `<div class="of-intro">
@@ -5294,11 +5495,24 @@
     }).join("") : "";
 
     /* 專屬後果（選後 2–4 句，講角色／金錢／處境） */
+    const outcomeFlagsHtml = (() => {
+      if (!reveal) return "";
+      const list = Array.isArray(reveal.flags) ? reveal.flags : [];
+      if (!list.length) return "";
+      const labels = (pack && pack.choice_flag_labels) || {};
+      const chips = list.map((f) => {
+        const txt = labels[f] || String(f).replace(/^of_/, "");
+        return `<span class="of-flag-chip">${esc(txt)}</span>`;
+      }).join("");
+      return `<div class="of-outcome-flags" role="status">${chips}</div>`;
+    })();
+
     const outcomeHtml = reveal
       ? `<div class="of-outcome" role="status" data-step="${esc(String(reveal.step || stepNo))}">
            <div class="of-outcome-kicker">第 ${esc(String(reveal.step || stepNo))} 幕・你揀了</div>
            <p class="of-outcome-choice">「${esc(reveal.choiceText)}」</p>
            <div class="of-outcome-body">${esc(reveal.outcome)}</div>
+           ${outcomeFlagsHtml}
          </div>`
       : "";
 
@@ -5393,7 +5607,7 @@
   function officeAdvanceAfterChoice() {
     const run = state.officeRun;
     if (!run) return;
-    const pack = officePack();
+    const pack = officePack(run);
     const chain = (pack && Array.isArray(pack.office_chain)) ? pack.office_chain : [];
     const idx = chain.indexOf(run.nodeId);
     const isLast = idx >= 0 ? idx >= chain.length - 1 : true;
@@ -5412,16 +5626,33 @@
     const fin = officeFinishRun();
     if (fin && fin.endingEv) {
       if (!state.lifeFlags || typeof state.lifeFlags !== "object") state.lifeFlags = {};
-      state.lifeFlags["office_route_" + fin.routeKey] = 1;
+      const packId = (run && run.packId) || (pack && pack.id) || "office_ballad";
+      if (!state.lifeFlags["office_route_" + fin.routeKey]) state.lifeFlags["office_route_" + fin.routeKey] = 1;
       /*
        * t375：同時寫入 `office_ending_<id>`（同結局事件自身嘅 flag_on_complete 一致）。
        * 原本只寫 `office_route_*`，而 `eventExcludedFromYearPool()` 檢查 `office_ending_*`
        * → 排除永遠唔生效 → 完成後「第一日返工」仍然會再出現（總導演回報的循環問題）。
+       *
+       * t407：另寫 `office_cleared_<packId>`，令「已通關某包」可以逐包判斷
+       * （詳情頁解鎖、年度池排除都用得著）。
        */
       const endFlag = fin.endingEv.flag_on_complete || ("office_ending_" + fin.routeKey);
+      /*
+       * t408（§2.5）：結局達成與「已領獎」要分開兩個 flag。
+       *
+       * 舊版在此同時寫 `flag_on_complete`（= office_ending_<id>），
+       * 而 `endingRewardAvailable()` 正是檢查同一個 flag →
+       * 首次通關一入結局卡就顯示「此結局已領過」，玩家以為冇獎勵。
+       *
+       * 現在：
+       *   office_ending_<id>  = 已達成此結局（用於詳情頁解鎖、年度池排除）
+       *   office_claimed_<id> = 已領取結局獎勵（只有撳「睇完，返回人生」才寫）
+       */
       state.lifeFlags[endFlag] = 1;
       state.lifeFlags["office_ending_" + fin.routeKey] = 1;
+      state.lifeFlags["office_cleared_" + packId] = 1;
       state.officeEndAge = officeAge(run);
+      state.officeEndPackId = packId;
       state.selectedEvent = fin.endingEv;
       state.officeRun = null;
       state.softNote = "";
@@ -7141,6 +7372,47 @@
    * 現在結算頁頂部加一條結果條：圖示 + 獎勵 chips，帶滑入動畫（約 0.45s）。
    * 純顯示用，唔改任何數值。
    */
+  /**
+   * t408：通用「籌碼 chips」產生器（人類語言，唔顯示內部 key）。
+   *
+   * 用於命運後果場、事件結果場等所有需要「可見結果」的地方。
+   * @param {Object} spec { soul, xp, gold, attrs:{str..}, temp:{atk,def,hp} }
+   * @returns {string} 一串 <span class="srb-chip ...">
+   */
+  const ATTR_SHORT = { str: "力量", agi: "敏捷", intel: "智力", luck: "幸運", lead: "統率", life: "壽命" };
+
+  function rewardChipsHtml(spec) {
+    const s = spec || {};
+    const chips = [];
+    if ((s.soul | 0) !== 0) {
+      const v = s.soul | 0;
+      chips.push(`<span class="srb-chip soul">膠幣 ${v > 0 ? "+" : ""}${v}</span>`);
+    }
+    if ((s.xp | 0) !== 0) {
+      const v = s.xp | 0;
+      chips.push(`<span class="srb-chip xp">經驗 ${v > 0 ? "+" : ""}${v}</span>`);
+    }
+    if ((s.gold | 0) !== 0) {
+      const v = s.gold | 0;
+      chips.push(`<span class="srb-chip gold">金幣 ${v > 0 ? "+" : ""}${v}</span>`);
+    }
+    const attrs = s.attrs || {};
+    Object.keys(attrs).forEach((k) => {
+      const v = attrs[k] | 0;
+      if (!v) return;
+      const cls = v > 0 ? "attr" : "attr down";
+      chips.push(`<span class="srb-chip ${cls}">${esc(ATTR_SHORT[k] || k)} ${v > 0 ? "+" : ""}${v}</span>`);
+    });
+    const temp = s.temp || {};
+    const tempLabel = { atk: "攻擊", def: "防禦", hp: "生命" };
+    Object.keys(temp).forEach((k) => {
+      const v = temp[k] | 0;
+      if (!v) return;
+      chips.push(`<span class="srb-chip ${v > 0 ? "attr" : "attr down"}">今世出戰${esc(tempLabel[k] || k)} ${v > 0 ? "+" : ""}${v}</span>`);
+    });
+    return chips.join("");
+  }
+
   function softResultBarHtml(ev, gain, goldGain, isEnding, endingClaimable) {
     if (isEnding) {
       return `<div class="soft-result-bar ending${endingClaimable ? "" : " muted"}" role="status">
@@ -7163,7 +7435,7 @@
 
   function viewSoft(root) {
     const ev = state.selectedEvent;
-    // t364：結局事件只有 50 膠幣，而且只發一次（已領過就 0）
+    // t364：結局事件只發一次（已領過就 0）；金額由事件自己的 reward_soul 決定
     const isEnding = !!ev.office_ending;
     const endingClaimable = isEnding ? endingRewardAvailable(ev) : true;
     const gain = endingClaimable ? listedEventSoul(ev) : 0;
@@ -7171,7 +7443,7 @@
     const rewardLine = isEnding
       ? (endingClaimable
           ? `結局達成 · 獲得 <b style="color:var(--neon-gold)">+${gain}</b> ${esc(L["ui.resource"] || "膠幣")}（一次性）`
-          : `<span style="color:var(--muted)">此結局已領過 50 膠幣——重玩唔再發</span>`)
+          : `<span style="color:var(--muted)">此結局已領過 ${ev.reward_soul | 0} 膠幣——重玩唔再發</span>`)
       : `今世賺了 <b style="color:var(--neon-gold)">+${gain}</b> ${esc(L["ui.resource"] || "膠幣")}${(ev.reward_xp|0) ? ` · 經驗 +${ev.reward_xp|0}` : ""}${goldGain ? ` · 金幣 +${goldGain}` : ""} · <span style="color:var(--neon-cyan)">下一歲 ${state.age + 1}歲（第 ${state.year + 1} 年）</span>`;
     const endingBanner = isEnding
       ? `<div class="of-ending-banner">
@@ -7181,23 +7453,35 @@
       : "";
     // t365：分支結局用「故事包 · 結局」頂條，唔顯示人生 HUD（避免 10 歲等不相干歲數）
     const endingAge = state.officeEndAge | 0;
-    const packMeta = storyPackById("office_ballad");
+    /*
+     * t407：結局所屬故事包唔再寫死 office_ballad。
+     * 優先用結局事件自己的 story_pack_id，否則退回當前使用中的包。
+     */
+    const packMeta = storyPackById(ev.story_pack_id) || storyPackById(state.activeStoryPackId) || officePack();
     /*
      * t406：結局要「全屏停住」——結語 + 角色一句 + 獎勵 + 明確按鈕。
      * 唔用 autoAdvanceBarHtml（點畫面即跳），改為單一確認掣。
      */
     const endingVoice = isEnding
       ? (() => {
+          /* t407：角色最後一句優先用故事包在結局事件上指定的 `voice_id` / `voice_line`；
+             否則用 `office_ending_voice` 表；再否則退回角色名單第一位。 */
           const cast = (packMeta && Array.isArray(packMeta.tale_cast_profiles)) ? packMeta.tale_cast_profiles : [];
-          /* 揀一個角色講最後一句；優先用「嗰個人」，否則第一個 */
-          const pick = cast.find((c) => c.id === "partner") || cast[0] || null;
-          if (!pick) return "";
-          const q = {
-            mom: "你返嚟食飯啦。今日煲咗湯。",
-            colleague: "我走咗之後，你坐我個位？（佢笑）小心啲。",
-            partner: "（望住你）我哋……仲有下一次嗎？",
-          }[pick.id] || "（佢冇再講嘢，只係望住你）";
-          return `<div class="of-ending-voice"><b class="of-ending-who">${esc(pick.name)}</b><p>${esc(q)}</p></div>`;
+          const voiceMap = (packMeta && packMeta.office_ending_voice) || {};
+          const wantId = ev.voice_id || Object.keys(voiceMap)[0] || null;
+          const pick = (wantId && cast.find((c) => c.id === wantId))
+            || cast.find((c) => c.id === "partner")
+            || cast[0]
+            || null;
+          const q = String(
+            ev.voice_line
+            || (wantId && voiceMap[wantId])
+            || (pick && voiceMap[pick.id])
+            || ""
+          ).trim();
+          if (!q) return "";
+          const who = ev.voice_name || (pick ? pick.name : "");
+          return `<div class="of-ending-voice"><b class="of-ending-who">${esc(who)}</b><p>${esc(q)}</p></div>`;
         })()
       : "";
     root.innerHTML = `
@@ -7205,20 +7489,21 @@
         ? `<div class="of-hud">${esc(packMeta ? packMeta.name : "故事包")} · 結局</div>`
         : lifeHudHtml()}
       <div class="ribbon">${isEnding
-        ? esc(ev.office_ending_label || ev.name || "")
+        ? "分支結局"
         : ageRibbon(esc(ev.name))}</div>
       <div class="soft-scroll soft-reveal${isEnding ? " of-ending-scroll" : ""}">
         ${endingBanner}
         ${softResultBarHtml(ev, gain, goldGain, isEnding, endingClaimable)}
         <img class="result-art soft-art" src="${esc(ev.art)}" alt="" />
         <div class="bubble neon">${esc(ev.desc)}</div>
-        ${eventDialogueHtml(ev, "soft-dialogue")}
+        ${isEnding ? `<div class="of-ending-dialogue">${eventDialogueHtml(ev, "soft-dialogue")}</div>` : eventDialogueHtml(ev, "soft-dialogue")}
         ${endingVoice}
         <div class="soft-panel">${state.softNote ? `<span style="color:var(--neon-pink);font-weight:800">${esc(state.softNote)}</span><br/>` : ""}${isEnding ? "" : esc(eventCategoryLabel(ev) || "日常") + "<br/>"}${rewardLine}</div>
       </div>
       <div class="soft-cta">
         ${isEnding
-          ? `<button class="btn gold of-ending-ok" id="btn-ok-ending" type="button">睇完，返回人生</button>`
+          ? `<p class="of-ending-note">故事包歲月獨立於人生歲數——返回人生後，你仍然係原本歲數。</p>
+             <button class="btn gold of-ending-ok" id="btn-ok-ending" type="button">睇完，返回人生</button>`
           : autoAdvanceBarHtml(lifeDoneFlag() ? "結算今世" : `下一歲 ${state.age + 1}歲`)}
         <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
       </div>
@@ -7228,10 +7513,11 @@
       state.soul += gain;
       if (goldGain) state.gold = (state.gold | 0) + goldGain;
       if ((ev.reward_xp | 0) > 0) gainXp(ev.reward_xp | 0);
-      // 結局旗標：領完即鎖，防止重複領 50 膠幣
-      if (isEnding && endingClaimable && ev.flag_on_complete) {
+      // 結局旗標：領完即鎖，防止重複領取（t408：改寫 claimed，唔碰「已達成」）
+      if (isEnding && endingClaimable && ev.office_ending) {
         if (!state.lifeFlags || typeof state.lifeFlags !== "object") state.lifeFlags = {};
-        state.lifeFlags[ev.flag_on_complete] = 1;
+        state.lifeFlags["office_claimed_" + ev.office_ending] = 1;
+        if (ev.flag_on_complete) state.lifeFlags[ev.flag_on_complete] = 1;
       }
       state.shopLeftEmpty = false;
       trackEventMission(ev, { soft: true });
@@ -7893,7 +8179,7 @@
   }
 
   /* ---------------- 共用：獎勵與殘頁 ---------------- */
-  /** 擲殘頁數量（只喺賭檔掉落） */
+  /** 擲殘頁數量（黑市賭檔主要來源；街機破關另有固定 +1） */
   function rollShards(ev, cfg, result) {
     const c = (cfg && typeof cfg === "object") ? cfg : {};
     const chance = (c.shard_chance != null) ? Number(c.shard_chance) : 0.85;
@@ -7975,7 +8261,7 @@
           <span class="album-badge album-badge-fighters">殘頁</span>
           <div class="album-detail-name">戰鬥卡殘頁</div>
         </div>
-        <p class="shard-note">每 ${need} 張換一張指定戰鬥卡。殘頁只喺黑市賭檔掉落。</p>
+        <p class="shard-note">每 ${need} 張換一張指定戰鬥卡。殘頁來源：黑市賭檔（贏局）或街機破關（每次 +1）。</p>
         <div class="shard-list">${rows}</div>
         <p class="album-detail-foot">點擊彈窗以外的任意位置，可以關閉彈窗</p>
       </div>
@@ -8037,7 +8323,7 @@
     const chipCls = ready.length ? "shard-banner ready" : (total > 0 ? "shard-banner" : "shard-banner empty");
     const summary = total > 0
       ? `殘頁 <b>${total}</b> 張${ready.length ? ` · <span class="shard-go">可換 ${ready.length} 張卡</span>` : `（每 ${need} 張換一張）`}`
-      : `戰鬥卡殘頁：去黑市賭檔贏返嚟（每 ${need} 張換一張）`;
+      : `戰鬥卡殘頁：黑市賭檔贏局，或街機破關 +1（每 ${need} 張換一張）`;
     return `<div class="${chipCls}" id="shard-banner">
       ${shardIconHtml("shard-ico")}
       <span class="shard-text">${summary}</span>
@@ -8234,6 +8520,7 @@
         ? `<div class="soft-panel">${esc(mg.message)}<br/>今世賺了 <b style="color:var(--neon-gold)">+${mg.rewardSoul}</b> 膠幣` +
           `${mg.rewardXp ? ` · 經驗 +${mg.rewardXp}` : ""}` +
           `${mg.rewardGold ? ` · 金幣 +${mg.rewardGold}` : ""}` +
+          `${(mg.shards | 0) > 0 ? ` · ${shardIconHtml()}殘頁 ×${mg.shards}` : ""}` +
           `${mg.won && ev.attrs_delta ? ` · ${esc(formatAttrsDelta(ev.attrs_delta).join("、") || "")}` : ""}` +
           ` · <span style="color:var(--neon-cyan)">下一歲 ${state.age + 1}歲（第 ${state.year + 1} 年）</span></div>`
         : "";
@@ -8480,6 +8767,13 @@
         if (!state.lifeFlags || typeof state.lifeFlags !== "object") state.lifeFlags = {};
         const flag = ev.flag_on_win || "arcade_clear";
         state.lifeFlags[flag] = 1;
+        /*
+         * t408（§4.2）：街機破關作為殘頁「副來源」。
+         * 原本殘頁只有黑市賭檔（EV71）一個來源，玩家玩不到賭檔就永遠儲不到。
+         * 現在街機破關固定 +1 殘頁，令殘頁有第二條路。
+         */
+        addCardShards(1);
+        mg.shards = 1;
         state.softNote = "破關成功・滿獎";
       } else {
         state.softNote = "破關失敗・半獎";
@@ -8894,26 +9188,36 @@
     if (!ev) return true;
     if (ev.office_ending) return true;
     if (ev.office_node) {
-      const pack = officePack();
+      /*
+       * t407：分支鏈節點只可以由「它自己所屬的故事包」鏈頭入池。
+       * 舊版用 `officePack()`（永遠係使用中的包）比對 entry，
+       * 多包之後會誤判——改成用事件自身的 story_pack_id。
+       */
+      const pack = storyPackById(ev.story_pack_id) || officePack();
       const entry = pack && pack.office_entry;
       // 非鏈頭 → 一律排除
       if (!entry || ev.id !== entry) return true;
-      // 鏈頭：若已經行完任何結局，就唔再出（一個故事包只玩一次）
-      const flags = state.lifeFlags || {};
-      const alreadyFinished = Object.keys(flags).some((k) => k.indexOf("office_ending_") === 0);
-      return alreadyFinished;
+      // 鏈頭：該包已完成任何結局 → 唔再出（一個故事包只玩一次）
+      return officePackCleared(pack && pack.id);
     }
     // t369：tale 鏈節點亦唔入年度池（同 office 一樣只由分支鏈觸發）
     if (ev.tale_node) return true;
     return false;
   }
 
-  /** 結局 50 膠幣只可領一次：以 flag_on_complete 判斷 */
+  /**
+   * 結局獎勵只可領一次。
+   *
+   * t408（§2.5）：改為睇「領取」flag（`office_claimed_<id>`），
+   * 唔再睇 `flag_on_complete`（那是「已達成」）。
+   * 舊存檔只有 flag_on_complete 而沒有 claimed 的，會在 `settleTo` 一次過補寫。
+   */
   function endingRewardAvailable(ev) {
     if (!ev || !ev.office_ending) return true;
-    const flag = ev.flag_on_complete;
-    if (!flag) return true;
-    return !(state.lifeFlags && state.lifeFlags[flag]);
+    const id = ev.office_ending;
+    const flags = state.lifeFlags || {};
+    if (flags["office_claimed_" + id]) return false;
+    return true;
   }
 
   function fighterPocketCap() {
@@ -11378,6 +11682,124 @@
   }
 
 
+  /**
+   * t408：命運「後果故事」一句。
+   *
+   * t386 已把卡面 blurb 改成純故事（無結果），但後果場需要一句「發生咗咩事之後」。
+   * 優先用資料的 `fate.outcome`；冇就用 blurb 再補一句中性收束。
+   */
+  function fateOutcomeText(f) {
+    if (!f) return "";
+    const raw = String(f.outcome || "").trim();
+    if (raw) return raw;
+    const flavor = fateOutcomeFlavor[f.id];
+    if (flavor) return flavor;
+    const base = String(fateFlavorText(f) || "").trim();
+    return base;
+  }
+
+  /** 命運後果的補寫句（只補「之後」，唔講數值） */
+  const fateOutcomeFlavor = {};
+
+  /**
+   * t408：命運後果場。
+   *
+   * 玩家點完卡之後**唔再即 advanceYear**，先入此場：
+   *   一句後果故事 + 籌碼（人話） + 「繼續」
+   * 撳「繼續」才 rollFateOffer / advanceYear。
+   */
+  function viewFateResult(root) {
+    const pend = state.fatePending;
+    if (!pend || !pend.fate) {
+      // 狀態遺失（例如中途重載）→ 安全返回命運選卡，唔會白白食咗一歲
+      state.screen = "fate";
+      state.fatePending = null;
+      render();
+      return;
+    }
+    const f = pend.fate;
+    const fx = f.effects || {};
+    const chips = rewardChipsHtml({
+      soul: fx.soul,
+      xp: fx.xp,
+      gold: fx.gold,
+      attrs: fx.attrs,
+      temp: fx.temp,
+    });
+    const story = fateOutcomeText(f);
+    const n = Math.min(3, (state.fateYearIndex | 0) + 1);
+
+    /* t408：HUD 短暫跳字（金幣／XP／維度），令「有嘢發生」即刻睇得到 */
+    (function floatFateGains() {
+      const bits = [];
+      if ((fx.gold | 0) !== 0) bits.push(`金幣 ${fx.gold > 0 ? "+" : ""}${fx.gold}`);
+      if ((fx.soul | 0) !== 0) bits.push(`膠幣 ${fx.soul > 0 ? "+" : ""}${fx.soul}`);
+      if ((fx.xp | 0) !== 0) bits.push(`經驗 ${fx.xp > 0 ? "+" : ""}${fx.xp}`);
+      const a = fx.attrs || {};
+      Object.keys(a).forEach((k) => {
+        const v = a[k] | 0;
+        if (v) bits.push(`${ATTR_SHORT[k] || k} ${v > 0 ? "+" : ""}${v}`);
+      });
+      if (bits.length) hudFloat(bits.join("　"));
+    })();
+
+    root.innerHTML = `
+      ${lifeHudHtml()}
+      <div class="ribbon">${ageRibbon("人生命運")}</div>
+      <div class="speed-strip"></div>
+      <p class="sub">第${n}／3年 · ${esc(f.name || "命運")}</p>
+      <div class="fate-result">
+        <img class="fate-result-art" src="${esc(f.art || fateArt(f))}" alt="" />
+        <p class="fate-result-story">${esc(story)}</p>
+        <div class="fate-result-bar" role="status">
+          <span class="srb-ico">✦</span>
+          <span class="srb-text">今世際遇</span>
+          <span class="srb-chips">${chips || `<span class="srb-chip">無增減</span>`}</span>
+        </div>
+      </div>
+      <button class="btn gold of-cta-main" id="fate-result-next" type="button">繼續</button>
+      <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
+      ${storyDockHtml()}
+    `;
+
+    const btn = $("#fate-result-next", root);
+    if (btn) {
+      /*
+       * 900ms 防誤觸：玩家點命運卡那一下的手勢，唔應該連帶觸發「繼續」，
+       * 否則後果場一閃即逝（同 t406 結局卡同一類問題）。
+       */
+      let armed = false;
+      btn.disabled = true;
+      setTimeout(() => { armed = true; btn.disabled = false; }, 900);
+      btn.onclick = (e) => {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        if (!armed) return;
+        closeFateResultAndAdvance();
+      };
+    }
+    const ab = $("#btn-abandon", root);
+    if (ab) ab.onclick = () => requestAbandonLife();
+    wireStoryDock(root);
+  }
+
+  /** 命運後果場「繼續」：推進到下一命運或遭遇 */
+  function closeFateResultAndAdvance() {
+    const pend = state.fatePending;
+    state.fatePending = null;
+    if (pend) {
+      state.fateYearIndex = (state.fateYearIndex | 0) + 1;
+      advanceYear();
+    }
+    if ((state.fateYearIndex | 0) < 3) {
+      rollFateOffer();
+      state.screen = "fate";
+    } else {
+      state.fateOffer = [];
+      state.screen = "events";
+    }
+    render();
+  }
+
   function viewFate(root) {
     if (!(state.fateOffer && state.fateOffer.length === FATE_OFFER_SIZE)) {
       state.fateOffer = normalizeFateOffer(state.fateOffer);
@@ -11414,17 +11836,15 @@
         const fid = btn.dataset.fid;
         const f = fateById[fid];
         if (!f) return;
+        /*
+         * t408：唔再「點卡 → applyFate → advanceYear」一步到底。
+         * 先套用數值（令後果場顯示的籌碼同 state 一致），
+         * 再入「後果場」；過年留到玩家撳「繼續」。
+         */
         applyFate(f);
         if (!state.fatePicks.includes(fid)) state.fatePicks.push(fid);
-        state.fateYearIndex = (state.fateYearIndex | 0) + 1;
-        advanceYear();
-        if ((state.fateYearIndex | 0) < 3) {
-          rollFateOffer();
-          state.screen = "fate";
-        } else {
-          state.fateOffer = [];
-          state.screen = "events";
-        }
+        state.fatePending = { fate: f, fid };
+        state.screen = "fateResult";
         render();
       };
     });
