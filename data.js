@@ -6354,7 +6354,7 @@ window.HK_SLICE_DATA = {
       "id": "EV04",
       "name": "飲茶加底",
       "type": "人情",
-      "desc": "茶樓侍應笑著加底：做人最緊要開心。今世賺回少許膠幣，不必戰鬥。",
+      "desc": "茶樓二樓，一個侍應托住點心盤經過，順手幫你加底。佢笑住講：做人最緊要開心。",
       "reward_blurb": "免戰・膠幣偏多",
       "art": "assets/events/ev-yum-cha.jpg",
       "battle": null,
@@ -6557,7 +6557,7 @@ window.HK_SLICE_DATA = {
       "id": "EV15",
       "name": "五年一劫・後巷",
       "type": "特殊戰鬥",
-      "desc": "每五年必到的關口——後巷影企滿，石屎味同鐵棍味一齊湧。",
+      "desc": "後巷影企滿，石屎味同鐵棍味一齊湧。今晚條街唔會有人早返屋企。",
       "reward_blurb": "五年一劫・強敵",
       "category": "special_battle",
       "rewards_preview": [
@@ -6570,13 +6570,15 @@ window.HK_SLICE_DATA = {
       "reward_xp": 8,
       "stage": "五年一劫",
       "art": "assets/events/ev-alley-wake.jpg",
-      "category_label": "宿敵"
+      "category_label": "宿敵",
+      "card_name": "後巷",
+      "card_label": "街尾"
     },
     {
       "id": "EV16",
       "name": "五年一劫・罐頭",
       "type": "特殊戰鬥",
-      "desc": "雪櫃門一開，過期味撲面。五年一次，帳不可以拖。",
+      "desc": "雪櫃門一開，過期味撲面。有人喺後面等你轉頭。",
       "reward_blurb": "五年一劫・強敵",
       "category": "special_battle",
       "rewards_preview": [
@@ -6589,13 +6591,15 @@ window.HK_SLICE_DATA = {
       "reward_xp": 8,
       "stage": "五年一劫",
       "art": "assets/events/ev-expired-can.jpg",
-      "category_label": "宿敵"
+      "category_label": "宿敵",
+      "card_name": "罐頭",
+      "card_label": "雜貨"
     },
     {
       "id": "EV17",
       "name": "五年一劫・逼爆",
       "type": "特殊戰鬥",
-      "desc": "月台廣播重複「請勿靠近車門」。潮水同帳一齊逼——五年一劫。",
+      "desc": "月台廣播重複「請勿靠近車門」。但今晚唔止係廣播咁簡單。",
       "reward_blurb": "五年一劫・強敵",
       "category": "special_battle",
       "rewards_preview": [
@@ -6608,13 +6612,15 @@ window.HK_SLICE_DATA = {
       "reward_xp": 8,
       "stage": "五年一劫",
       "art": "assets/events/ev-mtr-crowd.jpg",
-      "category_label": "宿敵"
+      "category_label": "宿敵",
+      "card_name": "逼爆",
+      "card_label": "月台"
     },
     {
       "id": "EV18",
       "name": "五年一劫・睇門口",
       "type": "特殊戰鬥",
-      "desc": "鐵閘後有人問：「五年到未？」舊帳・睇門口站在暗處，等你應。",
+      "desc": "鐵閘後有人問：「到未？」你未答，佢已經拉開半道閘。",
       "reward_blurb": "五年一劫・精英",
       "category": "special_battle",
       "rewards_preview": [
@@ -6627,7 +6633,9 @@ window.HK_SLICE_DATA = {
       "reward_xp": 10,
       "stage": "五年一劫",
       "art": "assets/events/ev-mtr-crowd.jpg",
-      "category_label": "宿敵"
+      "category_label": "宿敵",
+      "card_name": "睇門口",
+      "card_label": "鐵閘"
     },
     {
       "id": "EV19",
@@ -6917,7 +6925,7 @@ window.HK_SLICE_DATA = {
       "id": "EV34",
       "name": "天星尾班渡輪",
       "type": "奇遇",
-      "desc": "尾班渡輪燈黃，海風夾住報紙。甲板上有人留下一個紙袋——打開有膠幣味。",
+      "desc": "尾班渡輪，燈黃，海風夾住報紙吹過甲板。椅上有一個紙袋，袋口摺住兩摺，冇人認領。",
       "reward_blurb": "奇遇・免戰",
       "category": "adventure",
       "rewards_preview": [
@@ -6971,7 +6979,7 @@ window.HK_SLICE_DATA = {
       "id": "EV37",
       "name": "茶記檯面換招",
       "type": "換技",
-      "desc": "茶記圓檯有人推兩張技卡：「換或不換？換完不退。」隨機重抽已裝隨機技能。",
+      "desc": "茶記圓檯，有人推兩張技卡出嚟：「換唔換？換完就冇得返轉頭。」",
       "reward_blurb": "換技・重抽已裝",
       "category": "skill_swap",
       "rewards_preview": [
@@ -7224,7 +7232,7 @@ window.HK_SLICE_DATA = {
       "id": "EV45",
       "name": "夜市升星攤",
       "type": "升星",
-      "desc": "夜市燈下有人專做戰鬥卡升星：「付錢就加一星，不用燒同名卡。」",
+      "desc": "夜市燈下擺咗張細檯，檯後面坐住個人，專門幫人處理戰鬥卡。佢唔多講嘢，只係叫你揀一張放低。",
       "reward_blurb": "金幣升星・選一張＋1星",
       "category": "star_up",
       "category_label": "升星",

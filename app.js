@@ -97,11 +97,23 @@
   }
 
   /** 極簡港式身世 stub（prep 後揀一次；四揀一 2增益＋2減益；微調六維） */
+  /*
+   * t386：身世卡只講「你係邊個、喺邊度大」，唔講任何數值。
+   * `blurb` 保留舊文案作內部記錄（help／debug 用），`flavor` 係卡面唯一顯示的文字。
+   */
   const ORIGINS = [
-    { id: "tea_apprentice", name: "茶記學徒", kind: "buff", blurb: "幸運＋2 · 軟事件膠幣＋10%", bonus_soul: 0.1, attrs: { luck: 2 }, art: "assets/events/ev-yum-cha.jpg" },
-    { id: "walled_kid", name: "城寨細路", kind: "buff", blurb: "力量＋2 · 開戰物攻再＋1", bonus_atk: 1, attrs: { str: 2 }, art: "assets/events/ev-alley-wake.jpg" },
-    { id: "rooftop_youth", name: "天台夜青", kind: "debuff", blurb: "敏捷－2 · 壽命－5 · 夜夜熬夜傷身", attrs: { agi: -2, life: -5 }, art: "assets/events/ev-rooftop-night.jpg" },
-    { id: "paper_stall_kid", name: "報紙檔細路", kind: "debuff", blurb: "幸運－1 · 統率－1 · 街邊叫賣沒有人聽", attrs: { luck: -1, lead: -1 }, art: "assets/events/ev-mtr-crowd.jpg" },
+    { id: "tea_apprentice", name: "茶記學徒", kind: "buff", blurb: "幸運＋2 · 軟事件膠幣＋10%",
+      flavor: "由洗碗開始，聽盡半條街嘅是非。伙記教你：有啲嘢聽咗，要當冇聽過。",
+      bonus_soul: 0.1, attrs: { luck: 2 }, art: "assets/events/ev-yum-cha.jpg" },
+    { id: "walled_kid", name: "城寨細路", kind: "buff", blurb: "力量＋2 · 開戰物攻再＋1",
+      flavor: "天台、樓梯、後巷都係你屋企。打交唔使理由，但要有個講法。",
+      bonus_atk: 1, attrs: { str: 2 }, art: "assets/events/ev-alley-wake.jpg" },
+    { id: "rooftop_youth", name: "天台夜青", kind: "debuff", blurb: "敏捷－2 · 壽命－5 · 夜夜熬夜傷身",
+      flavor: "夜晚先係你嘅日頭。日頭嘅事，你一路都跟唔上。",
+      attrs: { agi: -2, life: -5 }, art: "assets/events/ev-rooftop-night.jpg" },
+    { id: "paper_stall_kid", name: "報紙檔細路", kind: "debuff", blurb: "幸運－1 · 統率－1 · 街邊叫賣沒有人聽",
+      flavor: "由細叫到大，練到聲都沙。但冇人記得你賣過咩。",
+      attrs: { luck: -1, lead: -1 }, art: "assets/events/ev-mtr-crowd.jpg" },
   ];
   const originById = Object.fromEntries(ORIGINS.map((o) => [o.id, o]));
 
@@ -2294,6 +2306,57 @@
     return "混合";
   }
 
+  /*
+   * t386：命運卡面文案（純故事，不含結果）。
+   *
+   * 原本 30 張 blurb 幾乎全部寫死結果，例如
+   *   「一腳鏟空，腳腕腫起——敏捷同血都打折。」
+   *   「終於不必扶——敏捷直接＋2。」
+   * 玩家當成數學題揀，唔再係「人生際遇」。現在一律改為只講發生咩事。
+   * 若有 `flavor` 欄位就用它；否則用下面的對照表；再冇就用原名兜底。
+   */
+  const FATE_FLAVOR = {
+    F01: "街坊見你經過，遞你一杯凍檸茶，唔收錢。",
+    F02: "天台踢波，一腳鏟空，腳腕即刻腫起。",
+    F03: "天井有人拍你肩膀，講咗句「有種」，然後走咗。",
+    F04: "街市地上有個紅包，未開封，冇人認領。",
+    F05: "功課簿跌落水渠，沖走咗。聽日要抄返。",
+    F06: "夜校燈下，黑板上面嗰條數，忽然明晒。",
+    F07: "掛波，屋企人唔准出街。全日留喺屋企，聽住窗外面啲鐵皮响。",
+    F08: "遊樂場打機，打到最後一關，有人喺後面睇住你。",
+    F09: "屋邨走廊，你踎低，等樓下嗰班人走。",
+    F10: "廟街師傅睇你隻手，講咗幾句，你聽唔明，但佢笑得好開心。",
+    F11: "小巴急剎，你撞到前面張椅背。",
+    F12: "暑假去地盤搬磚，晒到成個人黑咗。",
+    F13: "長輩迫你去飲聯婚酒，逐個逐個敬。",
+    F14: "圖書館冷氣好凍，你溫咗成個下午。",
+    F15: "球場上，你笠住隊友件波衫上陣。",
+    F16: "被班主任點名，罰企喺課室外面。",
+    F17: "屋企人買咗燒味飯，叫你食多啲。",
+    F18: "旺角執到一張八達通，你交咗去客務中心。",
+    F19: "幫街坊貼膠紙，由地下貼到三樓。",
+    F20: "暑假感冒，發燒留家，邊都唔去得。",
+    F21: "夜空有流星，你許咗個願，冇講俾人聽。",
+    F22: "友儕放開手，你自己踩咗出去。",
+    F23: "公園老人教你推手，講咗半個鐘。",
+    F24: "漫畫咖啡廳，你打書釘打足一日。",
+    F25: "屋邨停電，你點咗兩支蠟燭。",
+    F26: "義工隊去老人院，你陪一個阿伯傾咗一個下午。",
+    F27: "街口有隻惡犬，一路吠到你行過。",
+    F28: "中秋，街坊派月餅，你分到兩個。",
+    F29: "暑假去離島，晒到成個人黑實。",
+    F30: "測驗肥佬，要補考。",
+  };
+
+  /** 命運卡面文字：純故事，永不提數值／好壞 */
+  function fateFlavorText(f) {
+    if (!f) return "";
+    if (f.flavor) return String(f.flavor);
+    if (FATE_FLAVOR[f.id]) return FATE_FLAVOR[f.id];
+    // 兜底：用原名講一句，唔提效果
+    return String(f.name || "");
+  }
+
   function afterFateOrEventScreen() {
     if ((state.fateYearIndex | 0) < 3) {
       state.fateOffer = normalizeFateOffer(state.fateOffer);
@@ -3411,7 +3474,7 @@
     "btn-story": "瀏覽可選故事包——注入／加權主線氣氛事件；人生四揀一／命運／支線／商店／奇遇永遠是骨架，不會變成單一條直線劇。",
     "btn-story-pick": "以此包氣氛入故事——只記 active 故事包、提高該包主線出現機會；四揀一仍混其他類型。",
     "btn-back": "返回上一頁（故事內＝遇敵／準備出發等）；未確認的選擇不會保存。",
-    "btn-ok": "確認收取獎勵，繼續今次故事遭遇（留在故事流）。",
+    "btn-ok": "結果會浮現顯示，幾秒後自動繼續——唔需要撳掣。想快啲可以點畫面任何位置。",
     "btn-abandon": "放棄今世——確認後重置今世進度並返回外層主頁 hub。進入故事後不可以只返回主頁而保留進度。",
     "btn-reset": "清空今世戰鬥卡隊與帶入技能（lifeSkills 清空）；主人裝備不清空。要重新選取後再「準備好了」。",
     "btn-confirm": "確認口袋帶入（最少 1 張）；準備出發後再揀身世同人生命運。",
@@ -3423,25 +3486,29 @@
     "btn-fight": "開始戰鬥——全自動戰，可加速／放棄。",
     "btn-speed": "切換 ×1／×2／×3 播放速度。",
     "btn-forfeit": "放棄本場＝敗北結算後仍留故事流；只鎖定已經陣亡的出戰卡與其技能，仍存活的不鎖定。",
-    "btn-ding": "確認結算，繼續今次故事遭遇（不返回主頁）。",
+    "btn-ding": "戰鬥結果會浮現顯示，幾秒後自動返回故事流——唔需要撳掣。想快啲可以點畫面任何位置。",
     "btn-again": "繼續故事——留在故事流，再進入今次遭遇。",
     "tab-life": "今世：人生 hub、開始／繼續人生。",
     "tab-book": "卡冊（收藏／升星）——戰鬥卡／技能卡／裝備卡。",
     "tab-teahouse": "茶記：用聲望換特殊戰鬥卡；聲望由每日差事賺取。",
     "tab-jobs": "差事：每日任務板——宿敵／戰鬥／奇遇／升星等，每日重置。",
     "tab-more": "更多：設定等。",
-    "event-battle": "遇敵類事件——已有上次打贏的上場就直接沿用再開打；未打贏過先編一次。",
-    "event-gift": "送卡——免費三選一（戰鬥卡／技能／裝備）；不用金幣、不用交出自己的卡；選一張即入袋。",
-    "event-soft": "人情／搵食／節慶向——不必戰鬥，收取膠幣即可。",
-    "event-minigame": "小遊戲關——點選後進入短場破關（約數十秒）。通過領滿獎；失敗半獎或輕懲，人生繼續、不會卡死。",
-    "event-faction": "勢力支線——點選後短暫選邊（幫忙／中立／婉拒）。改今世好感（0–5），可換人情回報；人生不停、不會卡死。",
+    /*
+     * t386：獎勵與增減益一律不在「選擇前」顯示（總導演：顯示出來就失去選擇的樂趣）。
+     * 說明只講「玩法與內容」，唔講獎勵數字、唔講增減益方向、唔講會唔會打。
+     */
+    "event-battle": "街上有人、有事。點下去先知道要唔要出手——打完先知賺到咩。",
+    "event-gift": "有人塞嘢俾你。點下去睇下係咩。",
+    "event-soft": "人情、搵食、節慶。點下去睇下呢一年發生咩事。",
+    "event-minigame": "街邊一部機。點下去玩一局——玩成點，之後先知。",
+    "event-faction": "兩邊都望住你。聽完先揀邊邊。",
     "btn-equip": "技能卡：今世最多帶入 10 張。點選面板／＋ →「選擇初始技能卡」由已獲得技能選入 lifeSkills；裝備／預設裝技只可用這 10 張。長按查看技能內容。",
     "btn-equip-next": "配技完成——有戰鬥就入遇敵，否則返今次遭遇（故事流）。",
     "btn-unequip": "卸下此格技能。",
     "skill-pick": "今世技能口袋（最多 10）：點選更換在彈窗選取帶入人生的技能；之後出戰裝技只可以由這批選取。",
     "deploy-slot": "出戰位——第一次（或上場已不能打）先選卡。打贏之後沿用該次配置，唔使日日再揀。短按可改這一格；長按查看卡內容。",
-    "origin-pick": "選擇身世——四揀一（2×2 有圖）：兩張增益、兩張減益；揀一張套用六維加減，再進入人生命運。",
-    "fate-pick": "人生命運——四揀一（增益／減益／混合）；揀一張結算後＋1歲。",
+    "origin-pick": "選擇身世——四揀一（2×2 有圖）。四張都係真嘅人生，唔會寫明邊張好、邊張差。揀完先見後果。",
+    "fate-pick": "人生命運——四揀一。街頭巷尾會發生咩事，冇人預先話你知。揀完先見後果。",
     "enemy-card": "敵方卡——長按查看攻／速／血、普攻／自帶與 flavor。",
     "ally-face": "出戰卡——短按開啟詳情；長按查看名稱、數值、效果與 flavor。",
     "fd-skill": "技能格——點選或長按查看普攻／自帶／已裝技能內容。",
@@ -3887,9 +3954,104 @@
     } catch (_) {}
   }
 
+  /*
+   * t387：結果浮現 + 自動前進
+   *
+   * 總導演：「戰鬥後、事件後才以浮現方式顯示，免按『繼續』或『確定』之類。」
+   *
+   * 做法：
+   *   1. 結果畫面（事件結算 / 戰鬥結算 / 小遊戲 / 勢力 / 送卡）唔再擺「繼續」大掣
+   *   2. 結果內容用浮現動畫（fade + 上浮）進場
+   *   3. 浮現完 + 停留一小段，畫面底部顯示進度條，時間到自動前進
+   *   4. 玩家想快啲 → 點畫面任何位置即可立即前進（唔需要撳特定掣）
+   *
+   * 計時器只會有一個（`autoAdvanceTimer`），每次 render 先清掉，避免重複觸發。
+   */
+  let autoAdvanceTimer = null;
+  let autoAdvanceRaf = null;
+
+  /** 清掉自動前進計時器（切畫面／重繪時一定要叫） */
+  function clearAutoAdvance() {
+    if (autoAdvanceTimer) { clearTimeout(autoAdvanceTimer); autoAdvanceTimer = null; }
+    if (autoAdvanceRaf) {
+      if (typeof cancelAnimationFrame === "function") cancelAnimationFrame(autoAdvanceRaf);
+      else clearTimeout(autoAdvanceRaf);
+      autoAdvanceRaf = null;
+    }
+  }
+
+  /**
+   * 排定自動前進。
+   * @param {Function} fn      時間到要做的事（通常係 settle／goStory）
+   * @param {number}   delayMs 幾多毫秒之後前進（預設 2600）
+   * @param {Object}   opt     { hold: 是否等玩家點擊才前進；barSel: 進度條選擇器 }
+   */
+  function scheduleAutoAdvance(fn, delayMs, opt) {
+    clearAutoAdvance();
+    const o = opt || {};
+    if (o.hold) return null;
+    const ms = Math.max(600, delayMs | 0 || AUTO_ADVANCE_MS);
+    autoAdvanceTimer = setTimeout(() => {
+      autoAdvanceTimer = null;
+      try { fn(); } catch (e) { /* 唔好因為自動前進失敗而卡死 */ }
+    }, ms);
+    // 進度條動畫（純視覺；失敗唔影響自動前進）
+    const bar = typeof document !== "undefined" && document.querySelector
+      ? document.querySelector(o.barSel || "#auto-bar-fill")
+      : null;
+    if (bar && typeof bar.style === "object") {
+      const start = Date.now();
+      const tick = () => {
+        const p = Math.min(1, (Date.now() - start) / ms);
+        bar.style.width = (p * 100).toFixed(1) + "%";
+        if (p < 1 && autoAdvanceTimer) {
+          autoAdvanceRaf = (typeof requestAnimationFrame === "function")
+            ? requestAnimationFrame(tick)
+            : setTimeout(tick, 60);
+        }
+      };
+      tick();
+    }
+    return autoAdvanceTimer;
+  }
+
+  /** 預設自動前進時間（毫秒）— 夠睇完成果，又唔會等得太久 */
+  const AUTO_ADVANCE_MS = 2600;
+
+  /** 結果畫面底部的「自動前進」條（玩家可以點畫面任何位置跳過等待） */
+  function autoAdvanceBarHtml(label) {
+    return `<div class="auto-bar" id="auto-bar" aria-hidden="true">
+      <span class="auto-bar-track"><i id="auto-bar-fill"></i></span>
+      <span class="auto-bar-label">${esc(label || "自動繼續")} · 點畫面即跳過</span>
+    </div>`;
+  }
+
+  /**
+   * 綁定「點畫面即前進」。
+   * 只喺結果畫面用；點任何位置都算，唔需要搵掣。
+   * 會排除故事底欄（盟友／裝備等）同「放棄今世」，避免誤觸。
+   */
+  function wireTapToAdvance(root, fn) {
+    if (!root || typeof root.addEventListener !== "function") return;
+    let fired = false;
+    const handler = (e) => {
+      if (fired) return;
+      const t = e && e.target;
+      if (t && t.closest) {
+        if (t.closest(".story-dock") || t.closest(".soft-cta") || t.closest("[data-no-skip]")) return;
+        if (t.closest("#btn-abandon") || t.closest(".btn-abandon-compact")) return;
+      }
+      fired = true;
+      clearAutoAdvance();
+      try { fn(); } catch (err) {}
+    };
+    root.addEventListener("click", handler, { once: false });
+  }
+
   function render() {
     hideHelpTip();
     dismissForfeitConfirm();
+    clearAutoAdvance();
     const root = screenEl();
     root.innerHTML = "";
     const bgMap = {
@@ -4305,7 +4467,7 @@
 
     // 分支包：結局一覽（已達成會打勾）
     const endingsHtml = isOfficeChain && Array.isArray(pack.office_endings)
-      ? `<div class="pack-ev-title">五個結局（各 50 膠幣 · 一次性）</div>
+      ? `<div class="pack-ev-title">五個結局（行到最後才會知道）</div>
          <div class="of-ending-list">${pack.office_endings.map((e) => {
            const done = !!(state.lifeFlags && state.lifeFlags["office_ending_" + e.id]);
            return `<div class="of-ending-item${done ? " done" : ""}">
@@ -4339,7 +4501,7 @@
         </div>
         <div class="bubble">${esc(pack.blurb || "")}</div>
         <div class="soft-panel pack-detail-note">${isChainPack
-          ? "多分支故事：每步 2–3 個選擇，人物關係會影響對白與結局；不設中途獎賞，行到結局先有 50 膠幣。"
+          ? "多分支故事：每步 2–3 個選擇，人物關係會影響對白與結局。中途不設獎賞，行到最後才知道結果。"
           : "故事包只是氣氛模組；進入故事後仍是命運／四揀一混其他類型，不會變成單一條直線劇。"}</div>
         ${beatHtml}
         ${taleCastHtml}
@@ -4549,6 +4711,22 @@
     }
   }
 
+  /**
+   * t386：事件卡面的「一句故事」。
+   *
+   * 用事件本身的 desc 首句（唔用 reward_blurb，因為 reward_blurb 係機制摘要，
+   * 例如「免費戰鬥卡・三選一」「五年一劫・強敵」，一睇就知結果）。
+   * 太長就截到第一個句號，最多 30 字，避免卡片被文字撐爆。
+   */
+  function eventStoryTeaser(ev) {
+    const desc = String((ev && ev.desc) || "").trim();
+    if (!desc) return "";
+    const first = desc.split(/(?<=[。！？])/)[0] || desc;
+    const t = first.trim();
+    if (t.length <= 30) return t;
+    return t.slice(0, 29) + "…";
+  }
+
   function viewEvents(root) {
     if ((state.fateYearIndex | 0) < 3) {
       state.fateOffer = normalizeFateOffer(state.fateOffer);
@@ -4559,70 +4737,51 @@
     const yearEvs = rollYearEvents(state.year);
     const cards = yearEvs
       .map((ev) => {
-        const catLabel = eventCategoryLabel(ev);
-        const catCls = CATEGORY_PILL_CLASS[ev.category] || "cat-default";
+        /*
+         * t386：卡面分類唔可以劇透。
+         * special_battle 的 category_label 係「宿敵」——一睇就知係 boss 年。
+         * 卡面一律用中性標籤（card_label 優先），真分類留到確認彈窗才顯示。
+         */
+        const catLabel = ev.card_label || eventCategoryLabel(ev);
+        const catCls = "cat-default";
+        const cardName = ev.card_name || ev.name;
         const isMinigame = ev.category === "minigame";
         const isFaction = ev.category === "faction";
-        const cat = ev.category || "";
-        const isShop = cat === "shop_equip" || cat === "shop_fighter" || cat === "shop_skill";
-        const isTrade = cat === "card_trade";
-        const isStarUp = cat === "star_up";
-        const isGift = cat === "card_gift";
-        const isOffice = isOfficeChainEvent(ev);
-        const outcome = isOffice ? "後果未知"
-          : isMinigame ? "須破關"
-          : (isFaction ? "選邊站"
-          : (isShop ? "金幣選購"
-          : (isTrade ? "以物易物"
-          : (isStarUp ? "金幣升星"
-          : (isGift ? "免費三選一"
-          : (ev.battle ? "可能開打" : "直接收工"))))));
-        const tagCls = ev.battle ? "fight" : (isMinigame ? "minigame" : (isFaction ? "faction" : (isGift ? "gift" : "")));
+        const isGift = ev.category === "card_gift";
+        /*
+         * t386：卡面唔再講「可能開打／直接收工／免費三選一」呢類後果預告，
+         * 只保留「呢一年係咩事」——即事件本身的分類（主線／支線／節慶…）。
+         * 總導演：顯示獎勵同結果，就失去選擇的樂趣。
+         */
+        const outcome = "";
+        const tagCls = "";
         const helpKey = isMinigame ? "event-minigame" : (isFaction ? "event-faction" : (isGift ? "event-gift" : (ev.battle ? "event-battle" : "event-soft")));
-        // Reward chips: +經驗/+魂焰/etc. Dedupe「可能開打」— tag already says it.
-        // t364：分支節點不設獎賞，卡面唔顯示任何 reward（避免誤導）
-        const rawRewards = (isOffice ? [] : ((ev.rewards_preview && ev.rewards_preview.length)
-          ? ev.rewards_preview
-          : []));
-        const rewards = rawRewards.filter((r) => {
-          const t = String(r || "").trim();
-          if (!t) return false;
-          if (t === "可能開打" || t === "直接收工" || t === "須破關" || t === "選邊站") return false;
-          if (t.includes("可能開打")) return false;
-          return true;
-        });
-        let chips = rewards.slice(0, 3).map((t) => {
-          const s = String(t);
-          if (s.includes("膠幣") && /[＋+]/.test(s)) {
-            const n = listedEventSoul(ev);
-            if (n) return `+${n} 膠幣`;
-          }
-          if (s.includes("經驗") && (ev.reward_xp | 0)) return `+${ev.reward_xp | 0} 經驗`;
-          if (s.includes("金幣") && (ev.reward_gold | 0) && !s.includes("四選一") && !s.includes("升星")) {
-            return `+${ev.reward_gold | 0} 金幣`;
-          }
-          return s;
-        });
-        if (!chips.length && !isOffice) {
-          if (ev.reward_xp) chips.push(`+${ev.reward_xp | 0} 經驗`);
-          const soulShown = listedEventSoul(ev);
-          if (soulShown) chips.push(`+${soulShown} 膠幣`);
-          if (ev.reward_gold) chips.push(`+${ev.reward_gold | 0} 金幣`);
-        }
-        const rewardRow = chips
-          .map((r) => `<span class="ev-reward">${esc(r)}</span>`)
-          .join("");
-        const blurbText = String(ev.reward_blurb || "").trim();
+        /*
+         * t386：獎勵 chip 全部移除（+膠幣／+經驗／+金幣／+屬性）。
+         * 玩家揀完、結算時才見賺到咩。
+         */
+        const rewardRow = "";
+        /*
+         * t386：卡面「劇透」一律唔顯示。
+         *
+         * 原本卡面有一行 `reward_blurb`（「教學戰・膠幣少許」「力＋2・無戰」
+         * 「免費戰鬥卡・三選一」「破關滿獎・失敗半獎」…），等於喺選擇前講晒結果。
+         * 總導演：顯示出來就失去選擇的樂趣。
+         *
+         * 現在卡面只講「呢一年街上發生咩事」——用事件本身的故事描述（desc）首句。
+         * 唔顯示獎勵、唔顯示會唔會打、唔顯示玩法機制。
+         */
+        const blurbText = eventStoryTeaser(ev);
         const blurbHtml = blurbText
           ? `<div class="ev-card-blurb">${esc(blurbText)}</div>`
           : "";
         return `
-        <button class="event-card" type="button" data-id="${esc(ev.id)}" data-help="${helpKey}" aria-label="${esc(ev.name)}">
+        <button class="event-card" type="button" data-id="${esc(ev.id)}" data-help="${helpKey}" aria-label="${esc(cardName)}">
           <span class="ev-cat-pill ${catCls}"><i class="ev-cat-dot" aria-hidden="true"></i>${esc(catLabel)}</span>
-          <img src="${esc(ev.art)}" alt="${esc(ev.name)}" />
+          <img src="${esc(ev.art)}" alt="${esc(cardName)}" />
           <div class="label">
-            <div class="ev-name">${esc(ev.name)}</div>
-            <span class="tag ${tagCls}">${esc(catLabel)} · ${outcome}</span>
+            <div class="ev-name">${esc(cardName)}</div>
+            ${outcome ? `<span class="tag ${tagCls}">${esc(catLabel)} · ${esc(outcome)}</span>` : ""}
             <div class="ev-rewards">${rewardRow}</div>
             ${blurbHtml}
           </div>
@@ -4667,7 +4826,7 @@
       ${lifeHudHtml()}
       <div class="ribbon">${ageRibbon("今次遭遇")}</div>
       <div class="speed-strip"></div>
-      <p class="sub">本年 ${yearEvs.length} 張揀一 · ${isSpecialBattleYear(state.year) ? "五年一劫・宿敵" : "多類型遭遇"}</p>
+      <p class="sub">本年 ${yearEvs.length} 張揀一 · 揀完先知結果</p>
       <div class="event-grid pick-4-grid">${cards}</div>
       <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
       ${confirmModal}
@@ -4933,7 +5092,7 @@
         ${eventDialogueHtml(node, "of-dialogue")}
         <div class="of-choices">${choiceHtml}</div>
         ${trail ? `<details class="of-trail"><summary>已行過嘅路（${run.chosen.length}）</summary><ol>${trail}</ol></details>` : ""}
-        <p class="of-note">此故事包不設獎賞與升級；行到結局先有 50 膠幣。</p>
+        <p class="of-note">此故事包不設獎賞與升級；行到最後才知道結果。</p>
       </div>
       <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
       ${storyDockHtml()}
@@ -5203,7 +5362,7 @@
       root.innerHTML = `
       ${lifeHudHtml()}
       <div class="ribbon">${ageRibbon(esc(ev.name))}</div>
-      <div class="soft-scroll">
+      <div class="soft-scroll soft-reveal">
         <img class="result-art soft-art" src="${esc(ev.art)}" alt="" />
         <div class="bubble neon">${esc(result.choiceLabel || "已選擇")}</div>
         <div class="soft-panel">${favorBits}${extraBits}${esc(noteText)}
@@ -5213,12 +5372,12 @@
         </div>
       </div>
       <div class="soft-cta">
-        <button class="btn gold" id="btn-fac-ok" data-help="btn-ok">繼續</button>
+        ${autoAdvanceBarHtml(`下一歲 ${state.age + 1}歲`)}
         <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
       </div>
       ${storyDockHtml()}
     `;
-      $("#btn-fac-ok", root).onclick = () => {
+    const settleFaction = () => {
         const r = state.factionChoiceResult;
         // 貨幣／經驗／attrs／flag 已喺結果畫面入帳；此處只兜底（舊存檔中途再開）
         if (r && !r.rewardApplied) {
@@ -5256,10 +5415,22 @@
           state.screen = afterFateOrEventScreen();
         }
         render();
-      };
-      $("#btn-abandon", root).onclick = () => requestAbandonLife();
-      wireStoryDock(root);
-      return;
+    };
+    /*
+     * t387：勢力結果浮現之後自動前進，唔需要撳「繼續」。
+     */
+    let facAdvanced = false;
+    const facAdvance = () => {
+      if (facAdvanced) return;
+      facAdvanced = true;
+      clearAutoAdvance();
+      settleFaction();
+    };
+    scheduleAutoAdvance(facAdvance, AUTO_ADVANCE_MS);
+    wireTapToAdvance(root, facAdvance);
+    $("#btn-abandon", root).onclick = () => requestAbandonLife();
+    wireStoryDock(root);
+    return;
     }
 
     const choices = Array.isArray(ev.faction_choices) && ev.faction_choices.length
@@ -5269,13 +5440,14 @@
           { id: "neutral", label: "觀望片刻", favor_delta: 0, soul: 6, xp: 1, note: "中立・好感不變" },
           { id: "refuse", label: "婉拒離開", favor_delta: -1, soul: 4, xp: 1, note: `${fname}−1` },
         ];
+    /*
+     * t386：勢力選項唔再顯示「好感＋1 · 膠幣 +12」。
+     * 玩家只睇立場描述，揀完先見後果（同故事分支一致）。
+     */
     const btns = choices
       .map((c) => {
-        const fd = c.favor_delta | 0;
-        const hint = fd > 0 ? `好感＋${fd}` : (fd < 0 ? `好感${fd}` : "好感不變");
         return `<button type="button" class="btn fac-choice" data-choice="${esc(c.id)}" data-help="event-faction">
           <span class="fac-choice-label">${esc(c.label)}</span>
-          <span class="fac-choice-hint">${esc(hint)} · 膠幣 +${soulFromBase(c.soul)}</span>
         </button>`;
       })
       .join("");
@@ -5287,7 +5459,6 @@
         <img class="result-art soft-art" src="${esc(ev.art)}" alt="" />
         <div class="bubble neon">${esc(ev.desc)}</div>
         <div class="soft-panel fac-meta">勢力：<b style="color:var(--neon-pink)">${esc(fname)}</b>
-          · 現時好感 <b>${curFavor}/${FACTION_FAVOR_MAX}</b>
           <br/><span class="muted">請選擇立場——不會卡死人生。</span>
         </div>
         <div class="fac-choices">${btns}</div>
@@ -5467,7 +5638,7 @@
         ${taken ? `<div class="soft-panel">${esc(gift.note || "已加入收藏")}<br/>${rewardLine}</div>` : ""}
       </div>
       <div class="soft-cta">
-        ${taken ? `<button class="btn gold" id="btn-gift-ok" data-help="btn-ok">繼續</button>` : ""}
+        ${taken ? autoAdvanceBarHtml(`下一歲 ${state.age + 1}歲`) : ""}
         <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
       </div>
       ${storyDockHtml()}
@@ -5486,9 +5657,7 @@
       };
     });
 
-    const okBtn = $("#btn-gift-ok", root);
-    if (okBtn) {
-      okBtn.onclick = () => {
+    const settleGift = () => {
         if (!gift.rewardApplied) {
           state.soul += listedEventSoul(ev);
           if ((ev.reward_xp | 0) > 0) gainXp(ev.reward_xp | 0);
@@ -5512,7 +5681,20 @@
           state.screen = afterFateOrEventScreen();
         }
         render();
+    };
+    /*
+     * t387：收卡之後浮現結果並自動前進，唔需要撳「繼續」。
+     */
+    if (taken) {
+      let giftDone = false;
+      const giftAdvance = () => {
+        if (giftDone) return;
+        giftDone = true;
+        clearAutoAdvance();
+        settleGift();
       };
+      scheduleAutoAdvance(giftAdvance, AUTO_ADVANCE_MS + 600);
+      wireTapToAdvance(root, giftAdvance);
     }
     $("#btn-abandon", root).onclick = () => requestAbandonLife();
     wireStoryDock(root);
@@ -6647,16 +6829,16 @@
       <div class="ribbon">${isEnding
         ? esc(ev.office_ending_label || ev.name || "")
         : ageRibbon(esc(ev.name))}</div>
-      <div class="soft-scroll">
+      <div class="soft-scroll soft-reveal">
         ${endingBanner}
         ${softResultBarHtml(ev, gain, goldGain, isEnding, endingClaimable)}
         <img class="result-art soft-art" src="${esc(ev.art)}" alt="" />
         <div class="bubble neon">${esc(ev.desc)}</div>
         ${eventDialogueHtml(ev, "soft-dialogue")}
-        <div class="soft-panel">${state.softNote ? `<span style="color:var(--neon-pink);font-weight:800">${esc(state.softNote)}</span><br/>` : ""}${isEnding ? "" : esc(ev.reward_blurb || eventCategoryLabel(ev) || "日常") + "<br/>"}${rewardLine}</div>
+        <div class="soft-panel">${state.softNote ? `<span style="color:var(--neon-pink);font-weight:800">${esc(state.softNote)}</span><br/>` : ""}${isEnding ? "" : esc(eventCategoryLabel(ev) || "日常") + "<br/>"}${rewardLine}</div>
       </div>
       <div class="soft-cta">
-        <button class="btn gold" id="btn-ok" data-help="btn-ok">${esc(L["ui.next_year"] || "繼續")}</button>
+        ${autoAdvanceBarHtml(lifeDoneFlag() ? "結算今世" : `下一歲 ${state.age + 1}歲`)}
         <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
       </div>
       ${storyDockHtml()}
@@ -6689,7 +6871,19 @@
       }
       render();
     };
-    $("#btn-ok", root).onclick = () => settleTo(afterFateOrEventScreen());
+    /*
+     * t387：唔再需要撳「繼續」——結果浮現之後自動前進。
+     * 玩家想快啲，點畫面任何位置即可（wireTapToAdvance）。
+     */
+    let advanced = false;
+    const advance = () => {
+      if (advanced) return;
+      advanced = true;
+      clearAutoAdvance();
+      settleTo(afterFateOrEventScreen());
+    };
+    scheduleAutoAdvance(advance, AUTO_ADVANCE_MS);
+    wireTapToAdvance(root, advance);
     $("#btn-abandon", root).onclick = () => requestAbandonLife();
     wireStoryDock(root);
   }
@@ -6799,7 +6993,8 @@
         cta = `<button class="btn gold" id="btn-mg-start" type="button">開始破關</button>
           <button class="btn ghost" id="btn-mg-skip" type="button">放棄（半獎）</button>`;
       } else if (isResult) {
-        cta = `<button class="btn gold" id="btn-mg-ok" type="button" data-help="btn-ok">繼續</button>
+        /* t387：結果浮現之後自動前進，唔需要撳「繼續」 */
+        cta = `${autoAdvanceBarHtml("自動繼續")}
           <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>`;
       } else {
         cta = `<button class="btn ghost" id="btn-mg-skip" type="button">放棄（半獎）</button>`;
@@ -6858,10 +7053,23 @@
       if (startBtn) startBtn.onclick = () => beginRun();
       const skipBtn = $("#btn-mg-skip", root);
       if (skipBtn) skipBtn.onclick = () => endRun(false, "已放棄破關——半獎，人生繼續。");
-      const okBtn = $("#btn-mg-ok", root);
-      if (okBtn) okBtn.onclick = () => settleMinigameToLife();
-      const ab = $("#btn-abandon", root);
-      if (ab) ab.onclick = () => requestAbandonLife();
+      const abBtn = $("#btn-abandon", root);
+      if (abBtn) abBtn.onclick = () => requestAbandonLife();
+      /*
+       * t387：結果階段浮現之後自動前進（唔需要撳「繼續」）。
+       * 玩家想快啲，點畫面任何位置即可。
+       */
+      if (isResult) {
+        let settled = false;
+        const go = () => {
+          if (settled) return;
+          settled = true;
+          clearAutoAdvance();
+          settleMinigameToLife();
+        };
+        scheduleAutoAdvance(go, AUTO_ADVANCE_MS);
+        wireTapToAdvance(root, go);
+      }
       root.querySelectorAll(".mg-pad").forEach((btn) => {
         btn.onclick = () => onPad(btn.dataset.pad | 0);
       });
@@ -9803,16 +10011,18 @@
 
   function viewOrigin(root) {
     const cards = ORIGINS.map((o) => {
-      const kind = o.kind || "buff";
       const art = o.art || "assets/events/ev-alley-wake.jpg";
+      /*
+       * t386：身世卡唔再顯示「增益／減益」標籤、唔再顯示數值 blurb、
+       * 亦唔再用綠／紅邊暗示好壞。四張一律同色，玩家睇故事自己判斷。
+       */
       return `
-      <button type="button" class="event-card fate-card origin-card kind-${esc(kind)}" data-oid="${esc(o.id)}" data-help="origin-pick" aria-label="${esc(o.name)}">
-        <span class="ev-cat-pill cat-default"><i class="ev-cat-dot" aria-hidden="true"></i>${esc(fateKindLabel(kind))}</span>
+      <button type="button" class="event-card fate-card origin-card" data-oid="${esc(o.id)}" data-help="origin-pick" aria-label="${esc(o.name)}">
+        <span class="ev-cat-pill cat-default"><i class="ev-cat-dot" aria-hidden="true"></i>身世</span>
         <img src="${esc(art)}" alt="${esc(o.name)}" />
         <div class="label">
           <div class="ev-name">${esc(o.name)}</div>
-          <span class="tag fate-tag ${esc(kind)}">${esc(fateKindLabel(kind))}</span>
-          <div class="ev-rewards"><span class="ev-reward fate-blurb-line">${esc(o.blurb || "")}</span></div>
+          <div class="ev-rewards"><span class="ev-reward fate-blurb-line">${esc(o.flavor || o.blurb || "")}</span></div>
         </div>
       </button>`;
     }).join("");
@@ -9820,7 +10030,7 @@
       ${lifeHudHtml()}
       <div class="ribbon">${ageRibbon("選擇身世")}</div>
       <div class="speed-strip"></div>
-      <p class="sub">進人生第一年 · 預設 ${state.age | 0} 歲 · 四揀一 · 兩增益兩減益</p>
+      <p class="sub">進人生第一年 · 預設 ${state.age | 0} 歲 · 四揀一 · 揀完先見後果</p>
       <div class="event-grid origin-grid pick-4-grid">${cards}</div>
       <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
       ${storyDockHtml()}
@@ -9864,16 +10074,18 @@
     const n = Math.min(3, (state.fateYearIndex | 0) + 1);
     const cards = (state.fateOffer || []).map((fid) => {
       const f = fateById[fid] || { id: fid, name: fid, blurb: "", kind: "mixed" };
-      const kind = f.kind || "mixed";
       const art = (f.art) || fateArt(f);
+      /*
+       * t386：命運卡唔再標「增益／減益／混合」，唔再用綠／紅／金邊暗示好壞，
+       * blurb 亦唔再寫「敏捷直接＋2」呢類結果。四張一律同色，睇故事自己判斷。
+       */
       return `
-      <button type="button" class="event-card fate-card kind-${esc(kind)}" data-fid="${esc(f.id)}" data-help="fate-pick" aria-label="${esc(f.name)}">
-        <span class="ev-cat-pill cat-default"><i class="ev-cat-dot" aria-hidden="true"></i>${esc(fateKindLabel(kind))}</span>
+      <button type="button" class="event-card fate-card" data-fid="${esc(f.id)}" data-help="fate-pick" aria-label="${esc(f.name)}">
+        <span class="ev-cat-pill cat-default"><i class="ev-cat-dot" aria-hidden="true"></i>命運</span>
         <img src="${esc(art)}" alt="${esc(f.name)}" />
         <div class="label">
           <div class="ev-name">${esc(f.name)}</div>
-          <span class="tag fate-tag ${esc(kind)}">${esc(fateKindLabel(kind))}</span>
-          <div class="ev-rewards"><span class="ev-reward fate-blurb-line">${esc(f.blurb || "")}</span></div>
+          <div class="ev-rewards"><span class="ev-reward fate-blurb-line">${esc(fateFlavorText(f))}</span></div>
         </div>
       </button>`;
     }).join("");
@@ -9881,7 +10093,7 @@
       ${lifeHudHtml()}
       <div class="ribbon">${ageRibbon("人生命運")}</div>
       <div class="speed-strip"></div>
-      <p class="sub">第${n}／3年 · 四揀一 · 結算後＋1歲</p>
+      <p class="sub">第${n}／3年 · 四揀一 · 揀完先見後果</p>
       <div class="event-grid fate-grid pick-4-grid">${cards}</div>
       <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
       ${storyDockHtml()}
@@ -11532,18 +11744,16 @@
       state.screen = afterFateOrEventScreen();
       render();
     };
-    const primaryLabel = lifeDone
-      ? "結算今世／返主頁"
-      : esc(L["ui.next_year"] || "繼續");
-    const primaryHelp = lifeDone ? "btn-abandon" : "btn-ding";
-    const bubbleText = lifeDone
-      ? (lifeOver()
-          ? "壽命已到。結算返主頁？"
-          : (r.win ? "今世跑完。結算返回主頁？" : "今世完結。結算返回主頁？"))
-      : (r.win ? "茶記再加底！繼續故事遭遇？" : "謀生艱難。繼續故事再查看？");
+    /*
+     * t387：結果頁唔再有「繼續」掣，所以 primaryLabel／primaryHelp／bubbleText 唔再需要。
+     * 保留 `lifeDoneNote` 用嚟喺自動前進條上面講清楚下一步。
+     */
+    const lifeDoneNote = lifeDone
+      ? (lifeOver() ? "壽命已到 · 結算今世" : "今世完結 · 結算今世")
+      : "";
     root.innerHTML = `
       ${lifeHudHtml()}
-      <div class="result-body">
+      <div class="result-body soft-reveal">
         <div class="result-banner ${r.win ? "win" : "lose"}">${banner}</div>
         ${r.enemyArt ? `<img class="result-art" src="${esc(r.enemyArt)}" alt="" />` : ""}
         <div class="soft-panel result-panel">
@@ -11578,17 +11788,25 @@
         </div>
       </div>
       <div class="result-cta">
-        <button type="button" class="bubble result-bubble" id="btn-bubble" data-help="${primaryHelp}">${bubbleText}</button>
-        <div class="result-btns">
-          <button class="btn gold" id="btn-ding" data-help="${primaryHelp}">${primaryLabel}</button>
-        </div>
+        ${autoAdvanceBarHtml(lifeDone ? lifeDoneNote : "下一歲")}
         <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
       </div>
       ${storyDockHtml()}
     `;
     const primaryAction = lifeDone ? endLife : goStory;
-    $("#btn-ding", root).onclick = primaryAction;
-    $("#btn-bubble", root).onclick = primaryAction;
+    /*
+     * t387：唔再需要撳「繼續」——戰鬥結果浮現之後自動前進。
+     * 玩家想快啲，點畫面任何位置即可。今世完結時自動結算返主頁。
+     */
+    let done = false;
+    const advance = () => {
+      if (done) return;
+      done = true;
+      clearAutoAdvance();
+      primaryAction();
+    };
+    scheduleAutoAdvance(advance, lifeDone ? 3400 : AUTO_ADVANCE_MS);
+    wireTapToAdvance(root, advance);
     $("#btn-abandon", root).onclick = () => requestAbandonLife();
     wireStoryDock(root);
   }

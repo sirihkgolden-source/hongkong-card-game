@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>香江 Card Game · 直向切片</title>
-  <link rel="stylesheet" href="styles.css?v=t385-1" id="app-css" />
+  <link rel="stylesheet" href="styles.css?v=t387-1" id="app-css" />
 </head>
 <body>
   <div class="page">
@@ -15,8 +15,8 @@
       <div id="screen" class="screen"></div>
     </div>
   </div>
-  <script src="data.js?v=t385-1"></script>
-  <script src="app.js?v=t385-1"></script>
+  <script src="data.js?v=t387-1"></script>
+  <script src="app.js?v=t387-1"></script>
   <script>
     /* t362：舊快取自癒守衛
        問題：瀏覽器留著舊 styles.css（指向已搬到 assets/ui/_legacy-svg/ 的 bg-*.svg），
@@ -81,7 +81,7 @@
           mark(K_CSS);
           var link = document.getElementById("app-css");
           if (link) {
-            link.setAttribute("href", "styles.css?v=t385-1-r" + Date.now());
+            link.setAttribute("href", "styles.css?v=t387-1-r" + Date.now());
             setTimeout(function () { heal(); }, 500);
             return;
           }
