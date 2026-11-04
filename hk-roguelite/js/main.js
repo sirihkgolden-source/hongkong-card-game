@@ -19,6 +19,8 @@ import {
   actDisplayName,
   pickNodeEnemyId,
   enemyTag,
+  pickEventId,
+  eventById,
 } from "./data.js";
 import {
   createBattle,
@@ -94,6 +96,7 @@ function createRun(characterId) {
     completed: /** @type {string[]} */ ([]),
     encounters: /** @type {object[]} */ ([]),
     nodeEnemies: /** @type {Record<string,string>} */ ({}),
+    nodeEvents: /** @type {Record<string,string>} */ ({}),
     nextBattleEnergyPenalty: 0,
     nextBattleEnergyBonus: 0,
     nextBattleBlock: 0,
@@ -117,6 +120,7 @@ function enterAct(nextAct) {
   run.mapIndex = 0;
   run.completed = [];
   run.nodeEnemies = {};
+  run.nodeEvents = {};
   state.battle = null;
   state.eventResult = null;
   state.rewardChoices = [];
@@ -269,13 +273,23 @@ function renderMap() {
     // 未行到嘅格唔預先揭對手（行到先抽定）
     const revealPool = node.enemyPool && i <= run.mapIndex;
     const pooledName = revealPool ? enemyById(nodeEnemyId(node))?.name : null;
-    const subText = pooledName ? `${node.subtitle}・${pooledName}` : node.subtitle;
+    // 事件格：行到／已過先顯示抽中嘅事件名（未知就顯示節點副標）
+    const isEvent = node.type === "event";
+    const knownEventId = isEvent && run.nodeEvents?.[node.id];
+    const knownEventName = knownEventId ? eventById(knownEventId).title : null;
+    const baseSub = node.subtitle;
+    const subParts = [baseSub];
+    if (pooledName) subParts.push(pooledName);
+    if (knownEventName) subParts.push(knownEventName);
+    const subText = subParts.join("・");
+    const titleText = knownEventName || node.title;
+    if (isEvent) cls += " is-event";
     return `
       <li class="${cls}"${action} ${current ? 'aria-current="step"' : ""}>
         <span class="map-idx">${i + 1}</span>
         <span class="map-body">
           <span class="map-sub">${escapeHtml(subText)}</span>
-          <span class="map-title">${escapeHtml(node.title)}</span>
+          <span class="map-title">${escapeHtml(titleText)}</span>
         </span>
         ${current ? '<span class="map-cta">進入</span>' : ""}
         ${done ? '<span class="map-done">✓</span>' : ""}
@@ -422,8 +436,7 @@ function renderReward() {
 }
 
 function renderEvent() {
-  const node = currentNode();
-  const ev = EVENTS[node.eventId];
+  const ev = currentNodeEvent();
   if (state.eventResult) {
     return `
       <main class="screen" aria-label="事件結果">
@@ -838,6 +851,24 @@ function nodeEnemyId(node) {
   return run.nodeEnemies[node.id];
 }
 
+/** 節點事件：行到先由該 Act 事件池抽，抽定就記住 */
+function nodeEventId(node) {
+  if (!node) return null;
+  const run = state.run;
+  run.nodeEvents = run.nodeEvents || {};
+  if (!run.nodeEvents[node.id]) {
+    run.nodeEvents[node.id] = node.eventId || pickEventId(run.act || 1);
+  }
+  return run.nodeEvents[node.id];
+}
+
+/** 目前事件節點對應嘅事件定義 */
+function currentNodeEvent() {
+  const node = currentNode();
+  if (!node) return null;
+  return eventById(nodeEventId(node));
+}
+
 function advanceMap(opts = {}) {
   const { autoScreen = true } = opts;
   const node = currentNode();
@@ -882,6 +913,7 @@ function enterNode() {
   } else if (node.type === "reward") {
     openReward();
   } else if (node.type === "event") {
+    nodeEventId(node); // 入場先抽定，之後重繪／結果頁都用同一個
     state.eventResult = null;
     state.screen = "event";
   } else if (node.type === "rest") {
@@ -921,9 +953,8 @@ function onClick(event) {
 
   const evChoice = t.getAttribute("data-event-choice");
   if (evChoice) {
-    const node = currentNode();
-    const ev = EVENTS[node.eventId];
-    const choice = ev.choices.find((c) => c.id === evChoice);
+    const ev = currentNodeEvent();
+    const choice = ev?.choices.find((c) => c.id === evChoice);
     if (choice) {
       state.eventResult = choice.apply(state.run);
     }
