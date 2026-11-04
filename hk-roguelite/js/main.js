@@ -6,13 +6,16 @@
 
 import {
   META,
-  CHARACTER,
+  CHARACTERS,
   ACT1_MAP,
   EVENTS,
+  SHOP,
   CARDS,
   enemyById,
   cardById,
+  characterById,
   pickRewardChoices,
+  battleGoldReward,
 } from "./data.js";
 import {
   createBattle,
@@ -31,13 +34,14 @@ import {
   impactTarget,
   playerHurtFlash,
   telegraphIntent,
-  showKuaisouBanner,
+  showPassiveBanner,
   syncHpBars,
   clearFx,
 } from "./feel.js";
 
 /** @type {{
  *  screen: string,
+ *  selectedCharId: string,
  *  run: object|null,
  *  battle: object|null,
  *  rewardChoices: string[],
@@ -45,9 +49,11 @@ import {
  *  statusMsg: string,
  *  busy: boolean,
  *  pendingBossId: string|null,
+ *  shopMsg: string,
  * }} */
 const state = {
   screen: "title",
+  selectedCharId: "oil",
   run: null,
   battle: null,
   rewardChoices: [],
@@ -55,6 +61,7 @@ const state = {
   statusMsg: "",
   busy: false,
   pendingBossId: null,
+  shopMsg: "",
 };
 
 const app = document.getElementById("app");
@@ -67,16 +74,23 @@ function escapeHtml(value) {
     .replaceAll('"', "&quot;");
 }
 
-function createRun() {
+function activeChar() {
+  return characterById(state.run?.characterId || state.selectedCharId);
+}
+
+function createRun(characterId) {
+  const c = characterById(characterId);
   return {
-    characterId: CHARACTER.id,
-    hp: CHARACTER.maxHp,
-    maxHp: CHARACTER.maxHp,
+    characterId: c.id,
+    hp: c.maxHp,
+    maxHp: c.maxHp,
     gold: 0,
-    deck: [...CHARACTER.starterDeck],
+    deck: [...c.starterDeck],
     mapIndex: 0,
     completed: /** @type {string[]} */ ([]),
     nextBattleEnergyPenalty: 0,
+    nextBattleEnergyBonus: 0,
+    nextBattleBlock: 0,
     victories: 0,
   };
 }
@@ -133,13 +147,13 @@ function renderTitle() {
       <header class="brand-block">
         <h1 class="brand">${escapeHtml(META.title)}</h1>
         <p class="tagline">香港霓虹街頭卡牌 Rogue-lite</p>
-        <span class="badge">垂直切片 · 後巷・夜醒</span>
+        <span class="badge">垂直切片 · 後巷・夜醒 · 三角色</span>
       </header>
       <section class="panel panel-hero-copy">
         <h2>一鋪一個傳奇</h2>
         <p class="lede">
           揀角色、組牌闖三區。短、上癮、想再來一局。<br />
-          本切片：阿油・後巷經紀 → Act1 Boss 巷口鐵閘・睇場。
+          本切片：三角色開局 → 同一 Act1 → Boss 巷口鐵閘・睇場。
         </p>
       </section>
       <div class="actions">
@@ -151,51 +165,40 @@ function renderTitle() {
 }
 
 function renderSelect() {
-  const c = CHARACTER;
+  const selected = characterById(state.selectedCharId);
+  const list = Object.values(CHARACTERS)
+    .map((c) => {
+      const on = c.id === state.selectedCharId;
+      return `
+        <li>
+          <button type="button" class="char-card${on ? " is-selected" : ""}" data-action="pick-char" data-char="${escapeHtml(c.id)}" aria-pressed="${on}">
+            <span class="avatar" aria-hidden="true">${escapeHtml(c.initial)}</span>
+            <span class="char-meta">
+              <span class="char-name">${escapeHtml(c.name)}</span>
+              <span class="char-desc">${escapeHtml(c.short)}</span>
+              <span class="char-passive-tag">被動・${escapeHtml(c.passive.name)}</span>
+            </span>
+          </button>
+        </li>`;
+    })
+    .join("");
+
   return `
     <main class="screen" aria-label="選角">
       <header class="brand-block brand-compact">
         <h1 class="brand">${escapeHtml(META.title)}</h1>
-        <p class="tagline">垂直切片只開放一角</p>
+        <p class="tagline">開局三揀一 · 同一條後巷</p>
       </header>
       <section class="panel">
         <h2>選擇角色</h2>
-        <ul class="char-list">
-          <li>
-            <button type="button" class="char-card is-selected" data-action="confirm-char" aria-pressed="true">
-              <span class="avatar" aria-hidden="true">${escapeHtml(c.initial)}</span>
-              <span class="char-meta">
-                <span class="char-name">${escapeHtml(c.name)}</span>
-                <span class="char-desc">${escapeHtml(c.short)}</span>
-              </span>
-            </button>
-          </li>
-          <li class="char-locked" aria-disabled="true">
-            <div class="char-card is-locked">
-              <span class="avatar muted">珊</span>
-              <span class="char-meta">
-                <span class="char-name">阿珊・茶記夜更</span>
-                <span class="char-desc">未開放（三角色另案）</span>
-              </span>
-            </div>
-          </li>
-          <li class="char-locked" aria-disabled="true">
-            <div class="char-card is-locked">
-              <span class="avatar muted">九</span>
-              <span class="char-meta">
-                <span class="char-name">九哥・招牌霓虹</span>
-                <span class="char-desc">未開放（三角色另案）</span>
-              </span>
-            </div>
-          </li>
-        </ul>
+        <ul class="char-list">${list}</ul>
         <p class="passive-box">
-          <strong>被動・${escapeHtml(c.passive.name)}</strong><br />
-          ${escapeHtml(c.passive.desc)}
+          <strong>被動・${escapeHtml(selected.passive.name)}</strong><br />
+          ${escapeHtml(selected.passive.desc)}
         </p>
       </section>
       <div class="actions">
-        <button type="button" class="btn btn-primary btn-pressable" data-action="confirm-char">以阿油開局</button>
+        <button type="button" class="btn btn-primary btn-pressable" data-action="confirm-char">以${escapeHtml(selected.name)}開局</button>
         <button type="button" class="btn btn-ghost" data-action="back-title">返回標題</button>
       </div>
     </main>
@@ -204,6 +207,7 @@ function renderSelect() {
 
 function renderMap() {
   const run = state.run;
+  const char = activeChar();
   const nodes = ACT1_MAP.map((node, i) => {
     const done = run.completed.includes(node.id);
     const current = i === run.mapIndex;
@@ -232,7 +236,7 @@ function renderMap() {
       <header class="run-bar">
         <div>
           <p class="eyebrow">${escapeHtml(META.actName)}</p>
-          <h1 class="run-title">${escapeHtml(CHARACTER.name)}</h1>
+          <h1 class="run-title">${escapeHtml(char.name)}</h1>
         </div>
         <div class="run-stats" role="group" aria-label="狀態">
           <span>HP ${run.hp}/${run.maxHp}</span>
@@ -244,7 +248,7 @@ function renderMap() {
         <h2>節點路線</h2>
         <ol class="map-list">${nodes}</ol>
       </section>
-      <p class="foot-note">被動「快手」全程生效 · ${escapeHtml(META.isolationNote)}</p>
+      <p class="foot-note">被動「${escapeHtml(char.passive.name)}」全程生效 · ${escapeHtml(META.isolationNote)}</p>
     </main>
   `;
 }
@@ -270,6 +274,7 @@ function renderBossGate() {
 
 function renderBattle() {
   const b = state.battle;
+  const char = activeChar();
   const intent = getIntent(b);
   const hand = b.hand
     .map((id, i) => {
@@ -291,6 +296,15 @@ function renderBattle() {
         ? `<div class="battle-banner lose">你倒下了</div>`
         : "";
 
+  const readyHint =
+    b.kuaisouReady
+      ? " · 快手就緒"
+      : b.passiveId === "dangkou" && !b.dangkouUsed
+        ? " · 檔口待命"
+        : b.passiveId === "yanli"
+          ? " · 眼利"
+          : "";
+
   return `
     <main class="screen screen-battle${state.busy ? " is-busy" : ""}" aria-label="戰鬥">
       <header class="battle-top">
@@ -305,10 +319,10 @@ function renderBattle() {
         </div>
         <div class="fighter player" id="fighter-player">
           <div class="fighter-meta">
-            <strong id="player-anchor">${escapeHtml(CHARACTER.name)}</strong>
+            <strong id="player-anchor">${escapeHtml(char.name)}</strong>
             <div class="hp-bar player"><span id="player-hp-fill" style="width:${Math.max(0, (b.playerHp / b.playerMaxHp) * 100)}%"></span></div>
             <span class="hp-text" id="player-hp-text">${b.playerHp}/${b.playerMaxHp}${b.playerBlock ? ` · 盾 ${b.playerBlock}` : ""}</span>
-            <span class="energy">⚡ ${b.energy}/${b.maxEnergy}${b.kuaisouReady ? " · 快手就緒" : ""}</span>
+            <span class="energy">⚡ ${b.energy}/${b.maxEnergy}${readyHint}</span>
           </div>
         </div>
       </header>
@@ -338,7 +352,7 @@ function renderReward() {
     <main class="screen screen-wide" aria-label="選牌">
       <header class="brand-block brand-compact">
         <h1 class="section-title">三選一・壯大牌組</h1>
-        <p class="tagline">揀一張加入本局牌組</p>
+        <p class="tagline">揀一張加入本局牌組 · 金幣 ${state.run.gold}</p>
       </header>
       <div class="reward-grid">${choices}</div>
       <div class="actions">
@@ -396,14 +410,17 @@ function renderEvent() {
 
 function renderRest() {
   const healAmt = Math.floor(state.run.maxHp * 0.3);
+  const canHealBuy = state.run.gold >= SHOP.healCost;
+  const canCardBuy = state.run.gold >= SHOP.cardCost;
+  const shopCard = cardById(SHOP.cardId);
   return `
     <main class="screen" aria-label="休息">
       <header class="brand-block brand-compact">
         <h1 class="section-title">簷篷底歇腳</h1>
-        <p class="tagline">雨聲滴鐵皮，喘一口氣</p>
+        <p class="tagline">雨聲滴鐵皮 · 便利店燈仲亮</p>
       </header>
       <section class="panel">
-        <p class="lede">現時 HP ${state.run.hp}/${state.run.maxHp}。揀一項：</p>
+        <p class="lede">現時 HP ${state.run.hp}/${state.run.maxHp} · 金幣 ${state.run.gold}。揀一項：</p>
         <div class="event-choices">
           <button type="button" class="event-choice" data-action="rest-heal">
             <strong>眯一陣</strong>
@@ -413,13 +430,23 @@ function renderRest() {
             <strong>磨刀（寶箱感）</strong>
             <span>牌組加入「廊燈直拳」；回復 4 HP</span>
           </button>
+          <button type="button" class="event-choice${canHealBuy ? "" : " is-disabled"}" data-action="shop-heal" ${canHealBuy ? "" : "disabled"}>
+            <strong>便利店・回血</strong>
+            <span>花 ${SHOP.healCost} 金幣回復 ${SHOP.healAmt} HP${canHealBuy ? "" : "（金幣不足）"}</span>
+          </button>
+          <button type="button" class="event-choice${canCardBuy ? "" : " is-disabled"}" data-action="shop-card" ${canCardBuy ? "" : "disabled"}>
+            <strong>便利店・執牌</strong>
+            <span>花 ${SHOP.cardCost} 金幣入手「${escapeHtml(shopCard?.name ?? SHOP.cardId)}」${canCardBuy ? "" : "（金幣不足）"}</span>
+          </button>
         </div>
+        ${state.shopMsg ? `<p class="status" role="status">${escapeHtml(state.shopMsg)}</p>` : ""}
       </section>
     </main>
   `;
 }
 
 function renderVictory() {
+  const char = activeChar();
   return `
     <main class="screen screen-result is-win" aria-label="通關">
       <header class="brand-block">
@@ -429,8 +456,8 @@ function renderVictory() {
       <section class="panel">
         <h2>過咗鐵閘</h2>
         <p class="lede">
-          阿油闖過「巷口鐵閘・睇場」。牌組 ${state.run.deck.length} 張・剩餘 HP ${state.run.hp}。<br />
-          Act2／三角色尚未實作——本切片到此。
+          ${escapeHtml(char.name)}闖過「巷口鐵閘・睇場」。牌組 ${state.run.deck.length} 張・剩餘 HP ${state.run.hp}。<br />
+          Act2 尚未實作——換個角色再開一鋪？
         </p>
       </section>
       <div class="actions">
@@ -442,6 +469,7 @@ function renderVictory() {
 }
 
 function renderDefeat() {
+  const char = activeChar();
   return `
     <main class="screen screen-result is-lose" aria-label="敗北">
       <header class="brand-block">
@@ -451,7 +479,7 @@ function renderDefeat() {
       <section class="panel">
         <h2>後巷吞沒你</h2>
         <p class="lede">
-          死亡＝本局結束。下一局可再試「快手」節奏，或搏事件硬頂。<br />
+          死亡＝本局結束。下一局可再試「${escapeHtml(char.passive.name)}」，或換角色換嘴感。<br />
           走到節點 ${Math.min(state.run?.mapIndex + 1 || 1, ACT1_MAP.length)}／${ACT1_MAP.length}。
         </p>
       </section>
@@ -555,7 +583,7 @@ async function playCardWithFeel(handIndex, cardEl) {
     if (result.usedKuaisou) {
       floatText(document.getElementById("player-anchor"), "費用−1", "kuaisou");
       floatText(portrait, "+3 傷", "kuaisou");
-      showKuaisouBanner();
+      showPassiveBanner("快手！", "kuaisou");
       sfx.kuaisou();
     }
     await impactTarget(portrait, {
@@ -576,9 +604,16 @@ async function playCardWithFeel(handIndex, cardEl) {
   }
 
   if (result.kuaisouArmed) {
-    showKuaisouBanner();
+    showPassiveBanner("快手！", "kuaisou");
     sfx.kuaisou();
     floatText(document.getElementById("player-anchor"), "快手！−1／+3", "kuaisou");
+    await wait(120);
+  }
+
+  if (result.yanliDrew) {
+    showPassiveBanner("眼利！", "yanli");
+    sfx.kuaisou();
+    floatText(document.getElementById("player-anchor"), "眼利・抽1", "yanli");
     await wait(120);
   }
 
@@ -618,6 +653,14 @@ async function endTurnWithFeel() {
     } else if (result.blocked) {
       await impactTarget(player, { kind: "skill", kick: false });
     }
+
+    if (result.dangkou?.triggered) {
+      syncHpBars(state.battle);
+      showPassiveBanner("檔口！", "dangkou");
+      sfx.block();
+      floatText(player, `+${result.dangkou.block} 盾`, "dangkou");
+      await wait(140);
+    }
   } else {
     await wait(60);
   }
@@ -654,6 +697,7 @@ function advanceMap() {
   state.eventResult = null;
   state.rewardChoices = [];
   state.statusMsg = "";
+  state.shopMsg = "";
   state.pendingBossId = null;
   if (state.run.mapIndex >= ACT1_MAP.length) {
     state.screen = "victory";
@@ -664,7 +708,7 @@ function advanceMap() {
 }
 
 function openReward() {
-  state.rewardChoices = pickRewardChoices(3);
+  state.rewardChoices = pickRewardChoices(3, [], state.run.characterId);
   state.screen = "reward";
   state.statusMsg = "揀一張加入牌組";
 }
@@ -680,6 +724,7 @@ function enterNode() {
     state.eventResult = null;
     state.screen = "event";
   } else if (node.type === "rest") {
+    state.shopMsg = "";
     state.screen = "rest";
   }
 }
@@ -736,8 +781,13 @@ function onClick(event) {
       state.battle = null;
       state.pendingBossId = null;
       break;
+    case "pick-char": {
+      const id = t.getAttribute("data-char");
+      if (id && CHARACTERS[id]) state.selectedCharId = id;
+      break;
+    }
     case "confirm-char":
-      state.run = createRun();
+      state.run = createRun(state.selectedCharId);
       state.screen = "map";
       break;
     case "enter-node":
@@ -749,15 +799,19 @@ function onClick(event) {
     case "end-turn":
       endTurnWithFeel();
       return;
-    case "battle-win":
+    case "battle-win": {
       syncRunHpFromBattle();
       state.run.victories += 1;
+      const gold = battleGoldReward(currentNode()?.type === "boss");
+      if (gold > 0) state.run.gold += gold;
       if (currentNode()?.type === "boss") {
         advanceMap();
       } else {
         openReward();
+        if (gold > 0) state.statusMsg = `揀一張加入牌組 · 獲 ${gold} 金幣`;
       }
       break;
+    }
     case "to-defeat":
       syncRunHpFromBattle();
       state.screen = "defeat";
@@ -780,11 +834,29 @@ function onClick(event) {
       state.run.hp = Math.min(state.run.maxHp, state.run.hp + 4);
       advanceMap();
       break;
+    case "shop-heal":
+      if (state.run.gold >= SHOP.healCost) {
+        state.run.gold -= SHOP.healCost;
+        state.run.hp = Math.min(state.run.maxHp, state.run.hp + SHOP.healAmt);
+        advanceMap();
+      } else {
+        state.shopMsg = "金幣不足";
+      }
+      break;
+    case "shop-card":
+      if (state.run.gold >= SHOP.cardCost) {
+        state.run.gold -= SHOP.cardCost;
+        state.run.deck.push(SHOP.cardId);
+        advanceMap();
+      } else {
+        state.shopMsg = "金幣不足";
+      }
+      break;
     case "again":
-      state.run = createRun();
+      state.run = null;
       state.battle = null;
       state.pendingBossId = null;
-      state.screen = "map";
+      state.screen = "select";
       break;
     default:
       return;

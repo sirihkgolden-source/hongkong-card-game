@@ -1,9 +1,9 @@
 /**
  * 《香江小風波》戰鬥邏輯（垂直切片・簡化可輸可贏）
- * 回傳明細供手感層動畫（打擊數字／快手／擋）
+ * 回傳明細供手感層動畫（打擊數字／快手／檔口／眼利／擋）
  */
 
-import { CARDS, CHARACTER } from "./data.js";
+import { CARDS, characterById } from "./data.js";
 
 function shuffle(arr) {
   const a = [...arr];
@@ -19,11 +19,23 @@ function shuffle(arr) {
  * @param {object} enemyDef
  */
 export function createBattle(run, enemyDef) {
+  const char = characterById(run.characterId);
   const drawPile = shuffle([...run.deck]);
   const energyPenalty = run.nextBattleEnergyPenalty || 0;
+  const energyBonus = run.nextBattleEnergyBonus || 0;
+  const startBlock = run.nextBattleBlock || 0;
   run.nextBattleEnergyPenalty = 0;
+  run.nextBattleEnergyBonus = 0;
+  run.nextBattleBlock = 0;
+
+  const maxEnergy = char.energy;
+  const startEnergy = Math.max(0, maxEnergy - energyPenalty + energyBonus);
 
   return {
+    characterId: char.id,
+    passiveId: char.passive.id,
+    passiveName: char.passive.name,
+
     enemyId: enemyDef.id,
     enemyName: enemyDef.name,
     enemyArt: enemyDef.art,
@@ -38,10 +50,11 @@ export function createBattle(run, enemyDef) {
 
     playerHp: run.hp,
     playerMaxHp: run.maxHp,
-    playerBlock: 0,
-    energy: Math.max(0, CHARACTER.energy - energyPenalty),
-    maxEnergy: CHARACTER.energy,
+    playerBlock: startBlock,
+    energy: startEnergy,
+    maxEnergy,
     energyPenalty,
+    energyBonus,
 
     drawPile,
     hand: [],
@@ -49,6 +62,8 @@ export function createBattle(run, enemyDef) {
 
     attacksPlayed: 0,
     kuaisouReady: false,
+    dangkouUsed: false,
+    yanliFirstSkillDone: false,
     playerWeaken: 0,
     enemyMark: 0,
 
@@ -85,8 +100,12 @@ function drawCards(b, n) {
 }
 
 export function startPlayerTurn(b) {
-  b.playerBlock = 0;
-  b.energy = Math.max(0, b.maxEnergy - (b.turn === 1 ? b.energyPenalty : 0));
+  // 首回合保留事件暫存擋；之後回合開場清擋
+  if (b.turn > 1) b.playerBlock = 0;
+  b.energy = Math.max(
+    0,
+    b.maxEnergy - (b.turn === 1 ? b.energyPenalty : 0) + (b.turn === 1 ? b.energyBonus : 0)
+  );
   b.discard.push(...b.hand);
   b.hand = [];
   drawCards(b, 5);
@@ -125,6 +144,8 @@ export function effectiveCost(b, cardId) {
  *   healed?: number,
  *   usedKuaisou?: boolean,
  *   kuaisouArmed?: boolean,
+ *   yanliDrew?: boolean,
+ *   drawnExtra?: number,
  *   target?: "enemy"|"self"
  * }}
  */
@@ -197,12 +218,28 @@ export function playCard(b, handIndex) {
   }
 
   let kuaisouArmed = false;
-  if (card.type === "attack") {
+  if (b.passiveId === "kuaisou" && card.type === "attack") {
     b.attacksPlayed += 1;
     if (b.attacksPlayed % 3 === 0) {
       b.kuaisouReady = true;
       kuaisouArmed = true;
       pushLog(b, "【快手】下一張攻擊費用 −1 並 +3 傷害！");
+    }
+  }
+
+  let yanliDrew = false;
+  let drawnExtra = 0;
+  if (b.passiveId === "yanli" && card.type === "skill") {
+    const first = !b.yanliFirstSkillDone;
+    const proc = first || Math.random() < 0.45;
+    if (proc) {
+      drawCards(b, 1);
+      yanliDrew = true;
+      drawnExtra = 1;
+      b.yanliFirstSkillDone = true;
+      pushLog(b, first ? "【眼利】首次技能・抽 1！" : "【眼利】抽 1！");
+    } else {
+      b.yanliFirstSkillDone = true;
     }
   }
 
@@ -221,8 +258,25 @@ export function playCard(b, handIndex) {
     healed,
     usedKuaisou,
     kuaisouArmed,
+    yanliDrew,
+    drawnExtra,
     target,
   };
+}
+
+/**
+ * 檔口：首次受到實際傷害後立刻獲得護盾
+ * @returns {{ triggered: boolean, block: number }}
+ */
+export function tryDangkou(b, damageTaken) {
+  if (b.passiveId !== "dangkou" || b.dangkouUsed || damageTaken <= 0) {
+    return { triggered: false, block: 0 };
+  }
+  b.dangkouUsed = true;
+  const block = 8;
+  b.playerBlock += block;
+  pushLog(b, `【檔口】首次受擊・獲得 ${block} 護盾！`);
+  return { triggered: true, block };
 }
 
 /**
@@ -230,7 +284,8 @@ export function playCard(b, handIndex) {
  *   intent: object,
  *   dealt?: number,
  *   blocked?: number,
- *   kind: string
+ *   kind: string,
+ *   dangkou?: { triggered: boolean, block: number }
  * } | null}
  */
 export function endTurn(b) {
@@ -240,7 +295,7 @@ export function endTurn(b) {
   const intent = currentIntent(b);
   b.enemyBlock = 0;
 
-  /** @type {{ intent: object, dealt?: number, blocked?: number, kind: string }} */
+  /** @type {{ intent: object, dealt?: number, blocked?: number, kind: string, dangkou?: { triggered: boolean, block: number } }} */
   const result = { intent, kind: intent.kind, dealt: 0, blocked: 0 };
 
   if (intent.kind === "attack") {
@@ -252,6 +307,7 @@ export function endTurn(b) {
     result.dealt = dealt;
     result.blocked = blocked;
     pushLog(b, `${b.enemyName}：${intent.label} → 你受到 ${dealt} 傷害`);
+    result.dangkou = tryDangkou(b, dealt);
   } else if (intent.kind === "block") {
     b.enemyBlock += intent.value;
     pushLog(b, `${b.enemyName}：${intent.label}`);

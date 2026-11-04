@@ -164,9 +164,73 @@ export const CARDS = {
     art: "assets/skills/S16.png",
     rarity: "普通",
   },
+  S21: {
+    id: "S21",
+    name: "雨衣包紮",
+    type: "skill",
+    cost: 1,
+    heal: 8,
+    blurb: "雨衣一包，傷口先收埋。",
+    art: "assets/skills/S21.png",
+    rarity: "普通",
+  },
+  S22: {
+    id: "S22",
+    name: "掛波小心",
+    type: "skill",
+    cost: 0,
+    block: 4,
+    draw: 1,
+    blurb: "小心掛波——擋一下再摸牌。",
+    art: "assets/skills/S22.png",
+    rarity: "普通",
+  },
+  S25: {
+    id: "S25",
+    name: "加底唔該",
+    type: "skill",
+    cost: 1,
+    heal: 4,
+    draw: 1,
+    blurb: "加底唔該——回血兼抽一張。",
+    art: "assets/skills/S25.png",
+    rarity: "普通",
+  },
+  S31: {
+    id: "S31",
+    name: "舖面馬賽克",
+    type: "skill",
+    cost: 1,
+    block: 9,
+    blurb: "舖面砌實，擋得住撞。",
+    art: "assets/skills/S31.png",
+    rarity: "普通",
+  },
+  S47: {
+    id: "S47",
+    name: "芝麻糊暖",
+    type: "skill",
+    cost: 1,
+    heal: 6,
+    block: 3,
+    blurb: "暖胃兼擋三點，茶記味道。",
+    art: "assets/skills/S47.png",
+    rarity: "普通",
+  },
+  S72: {
+    id: "S72",
+    name: "舊帳對數",
+    type: "attack",
+    cost: 2,
+    dmg: 10,
+    mark: 3,
+    blurb: "舊帳對數——打完再烙三點跳電。",
+    art: "assets/skills/S72.png",
+    rarity: "稀有",
+  },
 };
 
-/** 阿油獎勵池（三選一抽樣來源） */
+/** 共用獎勵池（三選一抽樣來源） */
 export const REWARD_POOL = [
   "S07",
   "S12",
@@ -180,33 +244,110 @@ export const REWARD_POOL = [
   "S09",
   "S16",
   "S15",
+  "S21",
+  "S22",
+  "S25",
+  "S31",
+  "S47",
+  "S72",
 ];
 
-export const CHARACTER = {
-  id: "oil",
-  name: "阿油・後巷經紀",
-  short: "出手快、愛搏；一路削血一路加速",
-  initial: "油",
-  maxHp: 68,
-  energy: 3,
-  passive: {
-    id: "kuaisou",
-    name: "快手",
-    desc: "每打出第 3 張攻擊牌，下一張攻擊費用 −1（最低 0）並額外 +3 傷害。",
+/**
+ * 開局三角色（名取自 PREP_PACK／brief；被動依 Round 2 可見回饋）
+ * @type {Record<string, {
+ *   id: string, name: string, short: string, initial: string,
+ *   maxHp: number, energy: number,
+ *   passive: { id: string, name: string, desc: string },
+ *   starterDeck: string[],
+ *   rewardBias?: string[]
+ * }>}
+ */
+export const CHARACTERS = {
+  oil: {
+    id: "oil",
+    name: "阿油・後巷經紀",
+    short: "出手快、愛搏；一路削血一路加速",
+    initial: "油",
+    maxHp: 68,
+    energy: 3,
+    passive: {
+      id: "kuaisou",
+      name: "快手",
+      desc: "每打出第 3 張攻擊牌，下一張攻擊費用 −1（最低 0）並額外 +3 傷害。",
+    },
+    starterDeck: [
+      "S01",
+      "S01",
+      "S01",
+      "S15",
+      "S15",
+      "S02",
+      "S02",
+      "S11",
+      "S14",
+    ],
+    rewardBias: ["S07", "S12", "S14", "S40", "S64", "S02"],
   },
-  /** 開局薄牌組：多廉價攻擊、少盾 */
-  starterDeck: [
-    "S01",
-    "S01",
-    "S01",
-    "S15",
-    "S15",
-    "S02",
-    "S02",
-    "S11",
-    "S14",
-  ],
+  shan: {
+    id: "shan",
+    name: "阿珊・茶記夜更",
+    short: "捱得、護得場；盾厚再反打",
+    initial: "珊",
+    maxHp: 80,
+    energy: 3,
+    passive: {
+      id: "dangkou",
+      name: "檔口",
+      desc: "每場戰鬥首次受擊後，立刻獲得 8 點護盾。",
+    },
+    starterDeck: [
+      "S15",
+      "S15",
+      "S01",
+      "S11",
+      "S11",
+      "S46",
+      "S56",
+      "S31",
+      "S47",
+      "S21",
+    ],
+    rewardBias: ["S46", "S56", "S31", "S47", "S21", "S11"],
+  },
+  gau: {
+    id: "gau",
+    name: "九哥・招牌霓虹",
+    short: "識睇牌、識抽牌；技能多、節奏活",
+    initial: "九",
+    maxHp: 65,
+    energy: 3,
+    passive: {
+      id: "yanli",
+      name: "眼利",
+      desc: "每打出技能牌有 45% 機率再抽 1 張（每戰首次技能必定抽 1）。",
+    },
+    starterDeck: [
+      "S01",
+      "S16",
+      "S16",
+      "S14",
+      "S72",
+      "S02",
+      "S22",
+      "S11",
+      "S25",
+      "S40",
+    ],
+    rewardBias: ["S06", "S16", "S72", "S22", "S25", "S12"],
+  },
 };
+
+/** @deprecated 用 CHARACTERS.oil；保留別名方便舊引用 */
+export const CHARACTER = CHARACTERS.oil;
+
+export function characterById(id) {
+  return CHARACTERS[id] || CHARACTERS.oil;
+}
 
 /**
  * 敵人（新專案重表；圖從舊作複製）
@@ -298,7 +439,7 @@ export const ACT1_MAP = [
     id: "n4",
     type: "rest",
     title: "簷篷底歇腳",
-    subtitle: "休息／磨刀",
+    subtitle: "休息／便利店",
     bg: "assets/bg/bg-alley-mahjong-night.jpg",
   },
   {
@@ -339,11 +480,11 @@ export const EVENTS = {
       {
         id: "bluff",
         label: "吹水話自己熟路",
-        effectText: "獲得 6 金幣；下戰開場 −1 能量",
+        effectText: "下戰開場 +1 能量；本戰前暫存 6 擋",
         apply: (run) => {
-          run.gold += 6;
-          run.nextBattleEnergyPenalty = 1;
-          return "銀紙入袋，但下一場要慢半拍。";
+          run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
+          run.nextBattleBlock = (run.nextBattleBlock || 0) + 6;
+          return "吹得掂——下一場開局多 1 能量，兼帶 6 擋入場。";
         },
       },
       {
@@ -361,6 +502,14 @@ export const EVENTS = {
   },
 };
 
+/** 便利店：花金買貨（有金先有得花） */
+export const SHOP = {
+  healCost: 6,
+  healAmt: 12,
+  cardCost: 8,
+  cardId: "S12",
+};
+
 export function cardById(id) {
   return CARDS[id];
 }
@@ -369,8 +518,25 @@ export function enemyById(id) {
   return ENEMIES[id];
 }
 
-export function pickRewardChoices(count = 3, exclude = []) {
+export function pickRewardChoices(count = 3, exclude = [], characterId = null) {
+  const char = characterId ? characterById(characterId) : null;
+  const bias = char?.rewardBias || [];
   const pool = REWARD_POOL.filter((id) => !exclude.includes(id));
-  const shuffled = [...pool].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, count);
+  const weighted = [
+    ...bias.filter((id) => pool.includes(id)),
+    ...bias.filter((id) => pool.includes(id)),
+    ...pool,
+  ];
+  const shuffled = [...weighted].sort(() => Math.random() - 0.5);
+  const picked = [];
+  for (const id of shuffled) {
+    if (!picked.includes(id)) picked.push(id);
+    if (picked.length >= count) break;
+  }
+  return picked;
+}
+
+/** 小怪勝場金幣（有便利店可花） */
+export function battleGoldReward(isBoss) {
+  return isBoss ? 0 : 5 + Math.floor(Math.random() * 4);
 }
