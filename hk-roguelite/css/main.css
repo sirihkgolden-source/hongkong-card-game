@@ -784,7 +784,7 @@ body {
 
 .card-face.is-pressing {
   transform: scale(0.92) !important;
-  transition: transform 0.07s ease-out;
+  transition: transform 0.06s ease-out;
 }
 
 .fx-proj {
@@ -887,7 +887,7 @@ body {
 }
 
 #enemy-portrait.is-kickback {
-  animation: kickback 0.12s ease;
+  animation: kickback 0.1s ease;
 }
 
 #enemy-portrait.is-flash-red,
@@ -910,7 +910,7 @@ body {
 }
 
 .screen-battle.is-screen-shake {
-  animation: screen-shake 0.12s linear;
+  animation: screen-shake 0.1s linear;
 }
 
 @keyframes screen-shake {

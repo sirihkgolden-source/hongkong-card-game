@@ -24,9 +24,9 @@ function fxRoot() {
 export async function pressCard(el) {
   if (!el) return;
   el.classList.add("is-pressing");
-  await wait(70);
+  await wait(60);
   el.classList.remove("is-pressing");
-  await wait(30);
+  await wait(20);
 }
 
 /**
@@ -108,8 +108,8 @@ export async function impactTarget(el, { kind = "attack", kick = true, shake = f
   el.classList.add("is-impact", flash);
   if (kick && kind === "attack") el.classList.add("is-kickback");
   if (shake) screen?.classList.add("is-screen-shake");
-  // 落點 scale／色閃／kickback；命中段 ≤120ms，配合飛軌使單次攻擊可視 FX ≤350ms
-  await wait(shake || kick ? 120 : 80);
+  // 落點 scale／色閃／kickback；命中段 ≤100ms，配合飛軌使單次攻擊可視 FX ≤350ms
+  await wait(shake || kick ? 100 : 70);
   el.classList.remove("is-impact", flash, "is-kickback");
   screen?.classList.remove("is-screen-shake");
 }

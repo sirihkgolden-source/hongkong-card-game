@@ -528,8 +528,8 @@ async function playCardWithFeel(handIndex, cardEl) {
       : toPlayer?.getBoundingClientRect();
 
   sfx.whoosh();
-  // 飛軌 140ms（規格 120–180）＋命中 ≤120ms → 單次攻擊可視 FX ≤350ms（含按卡約 320ms）
-  await flyProjectile(from, flyTo, card.type === "attack" ? "attack" : "skill", 140);
+  // 按卡 ~80ms ＋飛軌 120ms（規格 120–180）＋命中 ≤100ms → 單次攻擊可視 FX ≤300ms（≤350ms）
+  await flyProjectile(from, flyTo, card.type === "attack" ? "attack" : "skill", 120);
 
   const result = playCard(b, handIndex);
   syncRunHpFromBattle();
