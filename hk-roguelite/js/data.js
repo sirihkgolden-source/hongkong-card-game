@@ -1208,7 +1208,134 @@ export const SHOP = {
   healAmt: 12,
   cardCost: 8,
   cardId: "S12",
+  /** 買遺物（隨機未擁有） */
+  relicCost: 14,
+  /** 賣遺物換金 */
+  sellRelicGain: 6,
+  /** 賣牌換金 */
+  sellCardGain: 4,
 };
+
+/**
+ * 遺物（每件都真係改局；effect 會累加）
+ * effect 欄位：
+ *   startEnergy  每場戰鬥開場 +能量上限
+ *   startBlock   每場戰鬥開場自帶擋
+ *   startDraw    每場戰鬥首回合多抽
+ *   attackBonus  所有攻擊 +傷害
+ *   healOnWin    每場戰鬥勝利回血
+ *   goldBonus    小怪勝場額外金幣
+ *   instantMaxHp 入手即刻 +最大生命
+ *   instantGold  入手即刻 +金幣
+ * @type {Record<string, {
+ *   id: string, name: string, desc: string, flavor: string,
+ *   effect: Record<string, number>, rarity: string
+ * }>}
+ */
+export const RELICS = {
+  rl_gate_key: {
+    id: "rl_gate_key",
+    name: "鐵閘鎖匙",
+    desc: "每場戰鬥開場 +1 能量。",
+    flavor: "執到條匙，閘就唔再係牆。",
+    effect: { startEnergy: 1 },
+    rarity: "普通",
+  },
+  rl_helmet: {
+    id: "rl_helmet",
+    name: "地盤安全帽",
+    desc: "每場戰鬥開場自帶 8 擋。",
+    flavor: "上面印住「安全」，你戴住去打人。",
+    effect: { startBlock: 8 },
+    rarity: "普通",
+  },
+  rl_mahjong_lamp: {
+    id: "rl_mahjong_lamp",
+    name: "麻雀檯燈",
+    desc: "每場戰鬥首回合多抽 1 張。",
+    flavor: "四個人打牌，燈膽最亮嗰個贏。",
+    effect: { startDraw: 1 },
+    rarity: "稀有",
+  },
+  rl_rwb_bag: {
+    id: "rl_rwb_bag",
+    name: "紅白藍袋",
+    desc: "每場戰鬥勝利回 5 HP。",
+    flavor: "袋唔重，但你孭住佢行咗三條街。",
+    effect: { healOnWin: 5 },
+    rarity: "普通",
+  },
+  rl_cha_ledger: {
+    id: "rl_cha_ledger",
+    name: "茶記賬簿",
+    desc: "小怪勝場額外 +3 金幣。",
+    flavor: "邊枱未埋單，賬簿記得比你清楚。",
+    effect: { goldBonus: 3 },
+    rarity: "普通",
+  },
+  rl_neon_tube: {
+    id: "rl_neon_tube",
+    name: "霓虹燈膽",
+    desc: "所有攻擊 +2 傷害。",
+    flavor: "拆落嚟嘅燈膽仲暖手——照住你就夠。",
+    effect: { attackBonus: 2 },
+    rarity: "稀有",
+  },
+  rl_med_wine: {
+    id: "rl_med_wine",
+    name: "跌打酒",
+    desc: "入手即刻最大生命 +10（並回 10）。",
+    flavor: "味道沖，但係真係得。",
+    effect: { instantMaxHp: 10 },
+    rarity: "普通",
+  },
+  rl_kwun_yam: {
+    id: "rl_kwun_yam",
+    name: "觀音借庫",
+    desc: "入手即刻 +20 金幣。",
+    flavor: "借咗就係借咗，還唔還係另一件事。",
+    effect: { instantGold: 20 },
+    rarity: "稀有",
+  },
+};
+
+export function relicById(id) {
+  return RELICS[id];
+}
+
+/** 加總已擁有遺物效果 */
+export function relicBonuses(run) {
+  const out = {
+    startEnergy: 0,
+    startBlock: 0,
+    startDraw: 0,
+    attackBonus: 0,
+    healOnWin: 0,
+    goldBonus: 0,
+  };
+  for (const id of run?.relics || []) {
+    const relic = RELICS[id];
+    if (!relic) continue;
+    for (const [k, v] of Object.entries(relic.effect || {})) {
+      if (k in out) out[k] += v;
+    }
+  }
+  return out;
+}
+
+/** 未擁有嘅遺物（便利店抽貨用） */
+export function unownedRelics(run) {
+  const owned = new Set(run?.relics || []);
+  return Object.keys(RELICS).filter((id) => !owned.has(id));
+}
+
+/** 抽 n 件未擁有遺物做便利店貨 */
+export function pickShopRelics(run, n = 2, rng = Math.random) {
+  const pool = unownedRelics(run);
+  const shuffled = [...pool].sort(() => rng() - 0.5);
+  return shuffled.slice(0, Math.min(n, shuffled.length));
+}
+
 
 export function cardById(id) {
   return CARDS[id];
