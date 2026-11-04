@@ -7,7 +7,6 @@
 import {
   META,
   CHARACTERS,
-  ACT1_MAP,
   EVENTS,
   SHOP,
   CARDS,
@@ -16,6 +15,8 @@ import {
   characterById,
   pickRewardChoices,
   battleGoldReward,
+  mapForAct,
+  actDisplayName,
 } from "./data.js";
 import {
   createBattle,
@@ -82,6 +83,7 @@ function createRun(characterId) {
   const c = characterById(characterId);
   return {
     characterId: c.id,
+    act: 1,
     hp: c.maxHp,
     maxHp: c.maxHp,
     gold: 0,
@@ -95,9 +97,29 @@ function createRun(characterId) {
   };
 }
 
+function currentMap() {
+  return mapForAct(state.run?.act || 1);
+}
+
 function currentNode() {
   if (!state.run) return null;
-  return ACT1_MAP[state.run.mapIndex] ?? null;
+  return currentMap()[state.run.mapIndex] ?? null;
+}
+
+/** Act1 Boss 勝：同一局自動進 Act2，保留牌組／HP／金幣 */
+function enterAct2() {
+  const run = state.run;
+  run.act = 2;
+  run.mapIndex = 0;
+  run.completed = [];
+  state.battle = null;
+  state.eventResult = null;
+  state.rewardChoices = [];
+  state.statusMsg = "";
+  state.shopMsg = "";
+  state.pendingBossId = null;
+  state.screen = "map";
+  sfx.win();
 }
 
 function syncRunHpFromBattle() {
@@ -208,7 +230,9 @@ function renderSelect() {
 function renderMap() {
   const run = state.run;
   const char = activeChar();
-  const nodes = ACT1_MAP.map((node, i) => {
+  const map = currentMap();
+  const actName = actDisplayName(run.act);
+  const nodes = map.map((node, i) => {
     const done = run.completed.includes(node.id);
     const current = i === run.mapIndex;
     const locked = i > run.mapIndex;
@@ -235,7 +259,7 @@ function renderMap() {
     <main class="screen screen-wide" aria-label="地圖">
       <header class="run-bar">
         <div>
-          <p class="eyebrow">${escapeHtml(META.actName)}</p>
+          <p class="eyebrow">Act${run.act}・${escapeHtml(actName)}</p>
           <h1 class="run-title">${escapeHtml(char.name)}</h1>
         </div>
         <div class="run-stats" role="group" aria-label="狀態">
@@ -244,7 +268,7 @@ function renderMap() {
           <span>牌組 ${run.deck.length}</span>
         </div>
       </header>
-      <section class="panel map-panel" style="--map-bg:url('${escapeHtml(currentNode()?.bg ?? ACT1_MAP[0].bg)}')">
+      <section class="panel map-panel" style="--map-bg:url('${escapeHtml(currentNode()?.bg ?? map[0].bg)}')">
         <h2>節點路線</h2>
         <ol class="map-list">${nodes}</ol>
       </section>
@@ -449,17 +473,20 @@ function renderRest() {
 
 function renderVictory() {
   const char = activeChar();
+  const act = state.run?.act || 2;
+  const actName = actDisplayName(act);
+  const bossName = act === 2 ? "西裝收數隊" : "巷口鐵閘・睇場";
   return `
     <main class="screen screen-result is-win" aria-label="通關">
       <header class="brand-block">
         <h1 class="brand result-title">${escapeHtml(META.title)}</h1>
-        <p class="tagline result-sub">勝利 · Act1「${escapeHtml(META.actName)}」打通</p>
+        <p class="tagline result-sub">勝利 · Act${act}「${escapeHtml(actName)}」打通</p>
       </header>
       <section class="panel">
-        <h2>過咗鐵閘</h2>
+        <h2>${act === 2 ? "霓虹暫歇" : "過咗鐵閘"}</h2>
         <p class="lede">
-          ${escapeHtml(char.name)}闖過「巷口鐵閘・睇場」。牌組 ${state.run.deck.length} 張・剩餘 HP ${state.run.hp}。<br />
-          Act2 尚未實作——換個角色再開一鋪？
+          ${escapeHtml(char.name)}闖過「${escapeHtml(bossName)}」。牌組 ${state.run.deck.length} 張・剩餘 HP ${state.run.hp}・金幣 ${state.run.gold}。<br />
+          ${act >= 2 ? "Act3 未做——想再闖一鋪？" : ""}
         </p>
       </section>
       <div class="actions">
@@ -472,6 +499,8 @@ function renderVictory() {
 
 function renderDefeat() {
   const char = activeChar();
+  const map = currentMap();
+  const act = state.run?.act || 1;
   return `
     <main class="screen screen-result is-lose" aria-label="敗北">
       <header class="brand-block">
@@ -479,10 +508,10 @@ function renderDefeat() {
         <p class="tagline result-sub">敗北 · 這一鋪完結了</p>
       </header>
       <section class="panel">
-        <h2>後巷吞沒你</h2>
+        <h2>${act === 2 ? "霓虹吞沒你" : "後巷吞沒你"}</h2>
         <p class="lede">
           死亡＝本局結束。下一局可再試「${escapeHtml(char.passive.name)}」，或換角色換嘴感。<br />
-          走到節點 ${Math.min(state.run?.mapIndex + 1 || 1, ACT1_MAP.length)}／${ACT1_MAP.length}。
+          Act${act}「${escapeHtml(actDisplayName(act))}」走到節點 ${Math.min(state.run?.mapIndex + 1 || 1, map.length)}／${map.length}。
         </p>
       </section>
       <div class="actions">
@@ -691,9 +720,12 @@ function beginBattle(enemyId) {
   startBattleNow(enemyId);
 }
 
-function advanceMap() {
+function advanceMap(opts = {}) {
+  const { autoScreen = true } = opts;
   const node = currentNode();
-  if (node) state.run.completed.push(node.id);
+  if (node && !state.run.completed.includes(node.id)) {
+    state.run.completed.push(node.id);
+  }
   state.run.mapIndex += 1;
   state.battle = null;
   state.eventResult = null;
@@ -701,10 +733,15 @@ function advanceMap() {
   state.statusMsg = "";
   state.shopMsg = "";
   state.pendingBossId = null;
-  if (state.run.mapIndex >= ACT1_MAP.length) {
-    state.screen = "victory";
-    sfx.win();
-  } else {
+  if (state.run.mapIndex >= currentMap().length) {
+    // Act Boss 打完：Act1→自動 Act2；Act2→結算（Act3 未做）
+    if (state.run.act === 1) {
+      enterAct2();
+    } else {
+      state.screen = "victory";
+      sfx.win();
+    }
+  } else if (autoScreen) {
     state.screen = "map";
   }
 }
@@ -804,12 +841,23 @@ function onClick(event) {
     case "battle-win": {
       syncRunHpFromBattle();
       state.run.victories += 1;
-      const gold = battleGoldReward(currentNode()?.type === "boss");
+      const node = currentNode();
+      const gold = battleGoldReward(node?.type === "boss");
       if (gold > 0) state.run.gold += gold;
-      if (currentNode()?.type === "boss") {
+      if (node?.type === "boss") {
+        // Act1 Boss → enterAct2；Act2 Boss → victory「Act3 未做」
         advanceMap();
       } else {
-        openReward();
+        const map = currentMap();
+        const next = map[state.run.mapIndex + 1];
+        if (next?.type === "reward") {
+          // Act2：戰後下一格係選牌節點 → 先推進再開選牌
+          advanceMap({ autoScreen: false });
+          openReward();
+        } else {
+          // Act1／Act2 第二戰：選牌疊喺戰鬥節點上，揀完先推進
+          openReward();
+        }
         if (gold > 0) state.statusMsg = `揀一張加入牌組 · 獲 ${gold} 金幣`;
       }
       break;
@@ -868,3 +916,33 @@ function onClick(event) {
 
 app?.addEventListener("click", onClick);
 render();
+
+/** 自測／截圖用：不改玩法，只暴露只讀狀態與跳關 */
+if (typeof window !== "undefined") {
+  window.__HK = {
+    getState: () => state,
+    render,
+    /** 強制當前戰鬥勝利（保留 feel 以外嘅流程） */
+    forceBattleWin() {
+      if (!state.battle) return false;
+      state.battle.enemyHp = 0;
+      state.battle.over = "win";
+      state.battle.log.push("（自測）強制勝利");
+      render();
+      return true;
+    },
+    /** 跳到當前 Act 指定節點（0-based） */
+    jumpToNode(index) {
+      if (!state.run) return false;
+      const map = currentMap();
+      if (index < 0 || index >= map.length) return false;
+      state.run.mapIndex = index;
+      state.run.completed = map.slice(0, index).map((n) => n.id);
+      state.battle = null;
+      state.screen = "map";
+      render();
+      return true;
+    },
+    enterAct2,
+  };
+}

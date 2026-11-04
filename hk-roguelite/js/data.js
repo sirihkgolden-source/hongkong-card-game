@@ -5,6 +5,9 @@
 
 export const META = {
   title: "香江小風波",
+  act1Name: "後巷・夜醒",
+  act2Name: "旺角霓虹",
+  /** @deprecated 用 act1Name */
   actName: "後巷・夜醒",
   isolationNote: "目錄暫名 hk-roguelite；產品名《香江小風波》／與根目錄舊香江 demo 隔離",
 };
@@ -410,6 +413,44 @@ export const ENEMIES = {
       { kind: "attack", value: 8, label: "喝止 8" },
     ],
   },
+  E06: {
+    id: "E06",
+    name: "旺角圍標",
+    hp: 48,
+    art: "assets/enemies/E06.jpg",
+    flavor: "燈箱一閃，圍標隊已經企滿你前後左右。",
+    intents: [
+      { kind: "attack", value: 9, label: "夾擊 9" },
+      { kind: "attack", value: 12, label: "圍標 12" },
+      { kind: "block", value: 6, label: "人牆 6" },
+    ],
+  },
+  E07: {
+    id: "E07",
+    name: "招牌拆遷隊",
+    hp: 52,
+    art: "assets/enemies/E07.png",
+    flavor: "電鋸聲響——呢條街嘅字，今晚拆完。",
+    intents: [
+      { kind: "attack", value: 10, label: "鋸字 10" },
+      { kind: "weaken", value: 2, label: "火花：你下擊−2" },
+      { kind: "attack", value: 13, label: "拆招牌 13" },
+    ],
+  },
+  E05: {
+    id: "E05",
+    name: "西裝收數隊",
+    hp: 95,
+    art: "assets/enemies/E05.jpg",
+    flavor: "月光底落數。散水定散骨，你揀。",
+    isBoss: true,
+    intents: [
+      { kind: "attack", value: 12, label: "問數 12" },
+      { kind: "block", value: 10, label: "西裝擋 10" },
+      { kind: "attack", value: 9, label: "連環收 9" },
+      { kind: "attack", value: 16, label: "散骨一記 16" },
+    ],
+  },
 };
 
 /**
@@ -466,6 +507,58 @@ export const ACT1_MAP = [
   },
 ];
 
+/**
+ * Act2「旺角霓虹」：戰→選牌→事件→戰→休息／便利店→Boss（共 6）
+ */
+export const ACT2_MAP = [
+  {
+    id: "a2n1",
+    type: "battle",
+    title: "旺角圍標",
+    subtitle: "戰鬥",
+    enemyId: "E06",
+    bg: "assets/bg/bg-neon-street-day.jpg",
+  },
+  {
+    id: "a2n2",
+    type: "reward",
+    title: "夜檔執牌",
+    subtitle: "選牌",
+    bg: "assets/bg/bg-neon-street-day.jpg",
+  },
+  {
+    id: "a2n3",
+    type: "event",
+    title: "彌敦道擦肩",
+    subtitle: "短事件",
+    eventId: "ev_neon_hustle",
+    bg: "assets/bg/bg-neon-street-day.jpg",
+  },
+  {
+    id: "a2n4",
+    type: "battle",
+    title: "招牌拆遷隊",
+    subtitle: "戰鬥 → 選牌",
+    enemyId: "E07",
+    bg: "assets/bg/bg-neon-street-day.jpg",
+  },
+  {
+    id: "a2n5",
+    type: "rest",
+    title: "通宵便利店",
+    subtitle: "休息／便利店",
+    bg: "assets/bg/bg-neon-street-day.jpg",
+  },
+  {
+    id: "a2n6",
+    type: "boss",
+    title: "西裝收數隊",
+    subtitle: "區 Boss",
+    enemyId: "E05",
+    bg: "assets/bg/bg-neon-street-day.jpg",
+  },
+];
+
 export const EVENTS = {
   ev_gate_whisper: {
     id: "ev_gate_whisper",
@@ -486,7 +579,7 @@ export const EVENTS = {
       {
         id: "bluff",
         label: "吹水話自己熟路",
-        effectText: "下戰開場 +1 能量；本戰前暫存 6 擋",
+        effectText: "下戰開場 +1 能量；入場帶 6 擋",
         apply: (run) => {
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
           run.nextBattleBlock = (run.nextBattleBlock || 0) + 6;
@@ -506,7 +599,56 @@ export const EVENTS = {
       },
     ],
   },
+  /** Act2：必改局，唔發死金 */
+  ev_neon_hustle: {
+    id: "ev_neon_hustle",
+    title: "彌敦道擦肩",
+    art: "assets/events/ev-mtr-crowd.jpg",
+    body: "霓虹一閃，有人拍你膊頭：「兄弟，順手幫個忙？」你知——揀咗就改呢一鋪牌路。",
+    choices: [
+      {
+        id: "help",
+        label: "幫手擋一陣人潮",
+        effectText: "失去 10 HP；牌組加入「鐵皮硬遮」",
+        apply: (run) => {
+          run.hp = Math.max(1, run.hp - 10);
+          run.deck.push("S46");
+          return "膊頭痛，但多咗一面硬遮。";
+        },
+      },
+      {
+        id: "slip",
+        label: "跣足溜走",
+        effectText: "下戰開場 −1 能量；入場帶 8 擋",
+        apply: (run) => {
+          run.nextBattleEnergyPenalty = (run.nextBattleEnergyPenalty || 0) + 1;
+          run.nextBattleBlock = (run.nextBattleBlock || 0) + 8;
+          return "走得快，下一場慢半拍，不過有擋傍身。";
+        },
+      },
+      {
+        id: "deal",
+        label: "同佢交換情報",
+        effectText: "最大生命 +3 並回 6；牌組加入「埋單」",
+        apply: (run) => {
+          run.maxHp += 3;
+          run.hp = Math.min(run.maxHp, run.hp + 6);
+          run.deck.push("S12");
+          return "聽完內幕，腰間多咗一張「埋單」。";
+        },
+      },
+    ],
+  },
 };
+
+/** 依 run.act 取當前地圖 */
+export function mapForAct(act) {
+  return act === 2 ? ACT2_MAP : ACT1_MAP;
+}
+
+export function actDisplayName(act) {
+  return act === 2 ? META.act2Name : META.act1Name;
+}
 
 /** 便利店：花金買貨（有金先有得花） */
 export const SHOP = {
