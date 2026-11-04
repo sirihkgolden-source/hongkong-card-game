@@ -1,3 +1,40 @@
+## t410（2026-11-04 ~19:50 HKT）— 預設故事包改為《你的保安，李步岸》
+
+**只改預設指向，內容／數值零改動。**
+
+### 改動
+| 位置 | 前 | 後 |
+|---|---|---|
+| `DEFAULT_STORY_PACK_ID` | `office_ballad` | **`guard_baoan`** |
+| `officePack()` fallback | 寫死 `"office_ballad"` | 改用 `DEFAULT_STORY_PACK_ID` |
+| `officeAdvanceAfterChoice()` packId fallback | 寫死 `"office_ballad"` | 改用 `DEFAULT_STORY_PACK_ID` |
+
+### 行為
+1. **全新玩家**：`ensureActiveStoryPack()` 直接選 `guard_baoan`；主頁封面、故事包列表「預設」標籤都在此包。
+2. **舊存檔停在 `office_ballad` 而玩家未主動揀過**（`storyPackUserPicked !== true`）→ 讀檔時自動歸位到 `guard_baoan`。
+3. **玩家主動揀過其他包** → **不會**被覆蓋（尊重玩家選擇）。
+
+### 測試
+- **新增 `_selftest_t410.js`：13 項全過**
+  - 常數已改、無寫死 fallback
+  - 全新存檔選 `guard_baoan`
+  - 舊存檔未主動揀 → 歸位
+  - 玩家主動揀過 → 保留
+  - `officePack()` / `officeStartNode()` 回正確包與節點
+  - 列表「預設」標籤在 `guard_baoan`、`office_ballad` 不再是預設
+  - 主頁封面顯示新包
+- **修正 4 個舊測試的隱含假設**（非產品 bug，因預設包變了）：
+  - `t373`：`officeBeginRun()` 未指定包 → 改為明確 `office_ballad`
+  - `t375`：抽池測試依賴 `ensureActiveStoryPack()` → 明確設 `activeStoryPackId`
+  - `t384`：三軌測試未指定包 → 明確 `office_ballad`
+  - `t406`：`officeActOf` 10 幕斷言 → 明確指定包，並補上 `guard_baoan` 8 幕的斷言
+- **全套 54 個 `_selftest_*.js` 全過**
+
+### 備份
+`app.js.bak-t410`（改動前）
+
+---
+
 ## t409（2026-11-04 ~07:00 HKT）— 《你的保安，李步岸》正式插畫
 
 **只換圖片，文案／數值零改動。**
