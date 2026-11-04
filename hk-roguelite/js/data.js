@@ -232,6 +232,128 @@ export const CARDS = {
     art: "assets/skills/S72.png",
     rarity: "稀有",
   },
+
+  /* —— 角色專屬牌（每角 3 張，共 9；只入該角色選牌池＋開局牌組）—— */
+
+  /** 阿油・後巷經紀：快攻／搏命 */
+  S80: {
+    id: "S80",
+    name: "追落街",
+    type: "attack",
+    cost: 0,
+    dmg: 4,
+    draw: 1,
+    blurb: "追落街再補一拳——快手嘅節奏唔可以斷。",
+    art: "assets/skills/S02.png",
+    rarity: "專屬",
+    owner: "oil",
+  },
+  S81: {
+    id: "S81",
+    name: "拆招牌",
+    type: "attack",
+    cost: 1,
+    dmg: 8,
+    mark: 2,
+    blurb: "招牌一拆，火花照落對面塊面——烙住跳電。",
+    art: "assets/skills/S16.png",
+    rarity: "專屬",
+    owner: "oil",
+  },
+  S82: {
+    id: "S82",
+    name: "一鋪清袋",
+    type: "attack",
+    cost: 2,
+    dmg: 14,
+    dmgBonusOnLowHp: 6,
+    blurb: "袋口一清，命都押埋——血少更狠。",
+    art: "assets/skills/S07.png",
+    rarity: "專屬",
+    owner: "oil",
+  },
+
+  /** 阿珊・茶記夜更：檔口／盾奶 */
+  S83: {
+    id: "S83",
+    name: "落半閘",
+    type: "skill",
+    cost: 1,
+    block: 9,
+    heal: 2,
+    blurb: "鐵閘落一半，擋住先，順手回一口氣。",
+    art: "assets/skills/S46.png",
+    rarity: "專屬",
+    owner: "asan",
+  },
+  S84: {
+    id: "S84",
+    name: "絲襪奶茶",
+    type: "skill",
+    cost: 1,
+    heal: 7,
+    draw: 1,
+    blurb: "茶走濃啲，手就定啲——回血兼摸牌。",
+    art: "assets/skills/S25.png",
+    rarity: "專屬",
+    owner: "asan",
+  },
+  S85: {
+    id: "S85",
+    name: "收爐",
+    type: "skill",
+    cost: 2,
+    block: 16,
+    blurb: "茶記收爐，爐門一關，今晚唔做你生意。",
+    art: "assets/skills/S56.png",
+    rarity: "專屬",
+    owner: "asan",
+  },
+
+  /** 九哥・招牌霓虹：抽牌／標記 */
+  S86: {
+    id: "S86",
+    name: "招牌著燈",
+    type: "skill",
+    cost: 0,
+    block: 3,
+    draw: 1,
+    blurb: "燈一著，全條街都知你喺度——擋一下再摸一張。",
+    art: "assets/skills/S22.png",
+    rarity: "專屬",
+    owner: "kauko",
+  },
+  S87: {
+    id: "S87",
+    name: "跳掣",
+    type: "attack",
+    cost: 1,
+    dmg: 4,
+    mark: 4,
+    blurb: "掣一跳，半條街停電——烙住四點跳電。",
+    art: "assets/skills/S16.png",
+    rarity: "專屬",
+    owner: "kauko",
+  },
+  S88: {
+    id: "S88",
+    name: "掛滿霓虹",
+    type: "attack",
+    cost: 2,
+    dmg: 9,
+    draw: 2,
+    blurb: "招牌掛到滿，字都數唔切——打完連抽兩張。",
+    art: "assets/skills/S72.png",
+    rarity: "專屬",
+    owner: "kauko",
+  },
+};
+
+/** 角色專屬牌 id（每角 3 張） */
+export const SIGNATURE_CARDS = {
+  oil: ["S80", "S81", "S82"],
+  asan: ["S83", "S84", "S85"],
+  kauko: ["S86", "S87", "S88"],
 };
 
 /** 共用獎勵池（三選一抽樣來源） */
@@ -289,8 +411,9 @@ export const CHARACTERS = {
       "S02",
       "S11",
       "S14",
+      "S80",
     ],
-    rewardBias: ["S07", "S12", "S14", "S40", "S64", "S02"],
+    rewardBias: ["S07", "S12", "S14", "S40", "S64", "S81", "S82", "S80"],
   },
   asan: {
     id: "asan",
@@ -315,8 +438,9 @@ export const CHARACTERS = {
       "S31",
       "S47",
       "S21",
+      "S83",
     ],
-    rewardBias: ["S46", "S56", "S31", "S40", "S47", "S21", "S11", "S07"],
+    rewardBias: ["S46", "S56", "S31", "S40", "S47", "S21", "S11", "S07", "S84", "S85"],
   },
   kauko: {
     id: "kauko",
@@ -341,8 +465,9 @@ export const CHARACTERS = {
       "S11",
       "S25",
       "S40",
+      "S86",
     ],
-    rewardBias: ["S06", "S16", "S72", "S22", "S25", "S12"],
+    rewardBias: ["S06", "S16", "S72", "S22", "S25", "S12", "S87", "S88"],
   },
 };
 
@@ -834,20 +959,50 @@ export function enemyById(id) {
   return ENEMIES[id];
 }
 
+/** 全體專屬牌 id（用嚟確保唔會跨角色漏出） */
+const ALL_SIGNATURE_IDS = Object.values(SIGNATURE_CARDS).flat();
+
+/**
+ * 按角色加權抽三選一。
+ * 規則：
+ * - 共用池 = REWARD_POOL 減去所有專屬牌（專屬牌只經自己條線入）
+ * - 自己 3 張專屬牌入池，權重最高（signatureWeight）
+ * - rewardBias 次之
+ * - 其他角色專屬牌永遠唔會出現
+ */
 export function pickRewardChoices(count = 3, exclude = [], characterId = null) {
   const char = characterId ? characterById(characterId) : null;
-  const bias = char?.rewardBias || [];
-  const pool = REWARD_POOL.filter((id) => !exclude.includes(id));
-  const weighted = [
-    ...bias.filter((id) => pool.includes(id)),
-    ...bias.filter((id) => pool.includes(id)),
-    ...pool,
-  ];
-  const shuffled = [...weighted].sort(() => Math.random() - 0.5);
+  const ownSignatures = SIGNATURE_CARDS[char?.id] || [];
+  const bias = (char?.rewardBias || []).filter((id) => !ownSignatures.includes(id));
+
+  const shared = REWARD_POOL.filter(
+    (id) => !ALL_SIGNATURE_IDS.includes(id) && !exclude.includes(id)
+  );
+  const signatures = ownSignatures.filter((id) => !exclude.includes(id) && CARDS[id]);
+  const biased = bias.filter((id) => shared.includes(id));
+
+  /** @type {Map<string, number>} */
+  const weight = new Map();
+  const add = (id, w) => weight.set(id, Math.max(weight.get(id) || 0, w));
+  shared.forEach((id) => add(id, 1));
+  biased.forEach((id) => add(id, 2));
+  signatures.forEach((id) => add(id, 5));
+
   const picked = [];
-  for (const id of shuffled) {
-    if (!picked.includes(id)) picked.push(id);
-    if (picked.length >= count) break;
+  while (picked.length < count && weight.size > 0) {
+    const entries = [...weight.entries()];
+    const total = entries.reduce((s, [, w]) => s + w, 0);
+    let roll = Math.random() * total;
+    let chosen = entries[entries.length - 1][0];
+    for (const [id, w] of entries) {
+      roll -= w;
+      if (roll <= 0) {
+        chosen = id;
+        break;
+      }
+    }
+    picked.push(chosen);
+    weight.delete(chosen);
   }
   return picked;
 }
