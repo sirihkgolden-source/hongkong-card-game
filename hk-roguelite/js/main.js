@@ -526,7 +526,8 @@ async function playCardWithFeel(handIndex, cardEl) {
       : toPlayer?.getBoundingClientRect();
 
   sfx.whoosh();
-  await flyProjectile(from, flyTo, card.type === "attack" ? "attack" : "skill", 140);
+  // 飛軌 150ms（規格 120–180）；其後命中段 ≤180ms → 單次攻擊可視 FX 仍 ≤350ms
+  await flyProjectile(from, flyTo, card.type === "attack" ? "attack" : "skill", 150);
 
   const result = playCard(b, handIndex);
   syncRunHpFromBattle();
@@ -537,18 +538,14 @@ async function playCardWithFeel(handIndex, cardEl) {
     return;
   }
 
-  // 先就地扣血／上盾，再播命中 FX（HP bar 可平滑過渡；總命中段 ≤350ms）
+  // 先就地扣血／上盾，再播命中 FX（避免整頁重繪令 HP／kickback 瞬跳消失）
   syncHpBars(b);
 
   if (result.cardType === "attack") {
     const portrait = document.getElementById("enemy-portrait");
     sfx.hit();
     if (result.dealt > 0) {
-      floatText(
-        portrait,
-        result.usedKuaisou ? `-${result.dealt}` : `-${result.dealt}`,
-        result.usedKuaisou ? "kuaisou" : "dmg"
-      );
+      floatText(portrait, `-${result.dealt}`, result.usedKuaisou ? "kuaisou" : "dmg");
     }
     if (result.enemyBlocked) {
       floatText(portrait, `擋 ${result.enemyBlocked}`, "block");
@@ -580,8 +577,11 @@ async function playCardWithFeel(handIndex, cardEl) {
     showKuaisouBanner();
     sfx.kuaisou();
     floatText(document.getElementById("player-anchor"), "快手！−1／+3", "kuaisou");
+    await wait(120);
   }
 
+  // 稍留一幀讓飄字／kickback 收束，再重繪手牌
+  await wait(40);
   state.busy = false;
   render();
 }

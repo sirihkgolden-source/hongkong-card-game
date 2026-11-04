@@ -39,26 +39,36 @@ export function flyProjectile(fromRect, toRect, kind = "attack", duration = 150)
       return;
     }
     const root = fxRoot();
-    const dot = document.createElement("div");
-    dot.className = `fx-proj fx-proj--${kind}`;
     const x0 = fromRect.left + fromRect.width / 2;
     const y0 = fromRect.top + fromRect.height / 2;
     const x1 = toRect.left + toRect.width / 2;
     const y1 = toRect.top + toRect.height / 2;
-    dot.style.left = `${x0}px`;
-    dot.style.top = `${y0}px`;
-    root.appendChild(dot);
-    // force layout
-    void dot.offsetWidth;
-    dot.style.transition = `transform ${duration}ms cubic-bezier(.2,.8,.2,1), opacity ${duration}ms ease`;
-    dot.style.transform = `translate(${x1 - x0}px, ${y1 - y0}px) scale(0.6)`;
-    dot.style.opacity = "0.35";
+    const dx = x1 - x0;
+    const dy = y1 - y0;
+
+    // 主彈＋兩點殘影，飛軌更易睇到
+    const dots = [0, 1, 2].map((i) => {
+      const dot = document.createElement("div");
+      dot.className = `fx-proj fx-proj--${kind}${i ? " fx-proj--ghost" : ""}`;
+      dot.style.left = `${x0}px`;
+      dot.style.top = `${y0}px`;
+      if (i) dot.style.opacity = String(0.55 - i * 0.15);
+      root.appendChild(dot);
+      return dot;
+    });
+    void dots[0].offsetWidth;
+    dots.forEach((dot, i) => {
+      const delay = i * 28;
+      dot.style.transition = `transform ${duration}ms cubic-bezier(.2,.8,.2,1) ${delay}ms, opacity ${duration}ms ease ${delay}ms`;
+      dot.style.transform = `translate(${dx}px, ${dy}px) scale(${i ? 0.45 : 0.7})`;
+      dot.style.opacity = "0.2";
+    });
     const done = () => {
-      dot.remove();
+      dots.forEach((d) => d.remove());
       resolve();
     };
-    dot.addEventListener("transitionend", done, { once: true });
-    setTimeout(done, duration + 40);
+    dots[0].addEventListener("transitionend", done, { once: true });
+    setTimeout(done, duration + 90);
   });
 }
 
@@ -76,11 +86,14 @@ export function floatText(anchorEl, text, variant = "dmg") {
   const node = document.createElement("div");
   node.className = `fx-float fx-float--${variant}`;
   node.textContent = text;
-  node.style.left = `${rect.left + rect.width / 2}px`;
-  node.style.top = `${rect.top + rect.height * 0.25}px`;
+  node.style.left = `${rect.left + rect.width / 2 + (Math.random() * 18 - 9)}px`;
+  node.style.top = `${rect.top + rect.height * 0.22}px`;
   root.appendChild(node);
-  requestAnimationFrame(() => node.classList.add("is-on"));
-  setTimeout(() => node.remove(), 900);
+  // 雙 rAF 確保 transition 由靜止態播起
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => node.classList.add("is-on"));
+  });
+  setTimeout(() => node.remove(), 950);
 }
 
 /**
@@ -94,7 +107,8 @@ export async function impactTarget(el, { kind = "attack", kick = true, shake = f
   el.classList.add("is-impact", flash);
   if (kick && kind === "attack") el.classList.add("is-kickback");
   if (shake) screen?.classList.add("is-screen-shake");
-  await wait(shake ? 100 : 80);
+  // kickback 0.14s；命中段控制在 ≤180ms，整段攻擊 FX 仍遠低於 350ms
+  await wait(shake || kick ? 140 : 90);
   el.classList.remove("is-impact", flash, "is-kickback");
   screen?.classList.remove("is-screen-shake");
 }
