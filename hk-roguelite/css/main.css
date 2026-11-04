@@ -1035,6 +1035,83 @@ body {
   animation: rise-in 0.55s ease-out 0.08s both;
 }
 
+.boss-gate-hint {
+  margin: 0;
+  text-align: center;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-dim);
+}
+
+/* 最終 Boss：加一層紅黑壓迫感 */
+.screen-boss-gate.is-final .boss-gate-art {
+  border-color: rgba(255, 92, 108, 0.55);
+  box-shadow: 0 0 28px rgba(255, 45, 149, 0.22);
+}
+
+.screen-boss-gate.is-final .boss-gate-quote {
+  background: linear-gradient(160deg, rgba(255, 45, 149, 0.14), rgba(255, 193, 74, 0.08));
+  border-color: rgba(255, 92, 108, 0.45);
+  color: #ffd9a0;
+}
+
+/* —— 三區進度條（地圖頂） —— */
+.act-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.act-pip {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.45rem 0.5rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.3);
+  min-width: 0;
+}
+
+.act-pip span {
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  color: var(--ink-dim);
+}
+
+.act-pip strong {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.act-pip.is-cleared {
+  border-color: rgba(93, 255, 176, 0.35);
+}
+
+.act-pip.is-cleared strong {
+  color: var(--ok);
+}
+
+.act-pip.is-active {
+  border-color: rgba(255, 45, 149, 0.55);
+  background: rgba(255, 45, 149, 0.1);
+}
+
+.act-pip.is-active strong {
+  color: var(--ink);
+}
+
+.map-node.is-choice .map-sub {
+  color: var(--neon-amber);
+}
+
 /* —— 窄屏（≈375px）：節點／卡牌／按鈕可點、唔遮、唔橫向捲 —— */
 @media (max-width: 400px) {
   html,
@@ -1150,6 +1227,31 @@ body {
     padding: 1rem 0.75rem;
   }
 
+  .boss-gate-hint {
+    font-size: 0.76rem;
+  }
+
+  .act-strip {
+    gap: 0.3rem;
+  }
+
+  .act-pip {
+    padding: 0.4rem 0.35rem;
+  }
+
+  .act-pip strong {
+    font-size: 0.7rem;
+  }
+
+  .clear-stats {
+    gap: 0.4rem;
+  }
+
+  .enc-list,
+  .deck-list {
+    max-height: none;
+  }
+
   .screen-boss-gate .boss-gate-art img {
     max-height: 160px;
   }
@@ -1199,6 +1301,125 @@ body {
 
 .screen-result.is-lose .result-sub {
   color: var(--danger);
+}
+
+/* —— 通關結算（Act3 打完） —— */
+.clear-hero h2 {
+  font-size: 1.15rem;
+  color: var(--ok);
+}
+
+.clear-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 0.9rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.clear-stats li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(61, 224, 255, 0.2);
+}
+
+.clear-stats span {
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-dim);
+}
+
+.clear-stats strong {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+
+.enc-list,
+.deck-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-height: 13rem;
+  overflow: auto;
+}
+
+.enc-list li {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.5rem;
+  align-items: baseline;
+  padding: 0.42rem 0.55rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 0.82rem;
+}
+
+.enc-tag {
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  color: var(--neon-amber);
+}
+
+.enc-name {
+  font-weight: 700;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.enc-act {
+  font-size: 0.68rem;
+  color: var(--ink-dim);
+}
+
+.enc-empty {
+  display: block;
+  color: var(--ink-dim);
+  font-size: 0.8rem;
+}
+
+.deck-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.35rem 0.1rem;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.07);
+  font-size: 0.82rem;
+}
+
+.deck-list li:last-child {
+  border-bottom: none;
+}
+
+.deck-n {
+  color: var(--neon-cyan);
+  font-weight: 700;
+}
+
+.stub-card {
+  border-style: dashed;
+  border-color: rgba(255, 193, 74, 0.35);
+}
+
+.stub-note {
+  display: inline-block;
+  margin-top: 0.4rem;
+  font-size: 0.74rem;
+  color: rgba(154, 173, 200, 0.8);
+}
+
+.screen-result.is-clear .result-sub {
+  color: var(--neon-amber);
 }
 
 @keyframes win-neon {

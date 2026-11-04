@@ -7,6 +7,7 @@ export const META = {
   title: "香江小風波",
   act1Name: "後巷・夜醒",
   act2Name: "旺角霓虹",
+  act3Name: "城寨・天台",
   /** @deprecated 用 act1Name */
   actName: "後巷・夜醒",
   isolationNote: "目錄暫名 hk-roguelite；產品名《香江小風波》／與根目錄舊香江 demo 隔離",
@@ -315,7 +316,7 @@ export const CHARACTERS = {
       "S47",
       "S21",
     ],
-    rewardBias: ["S46", "S56", "S31", "S47", "S21", "S11"],
+    rewardBias: ["S46", "S56", "S31", "S40", "S47", "S21", "S11", "S07"],
   },
   kauko: {
     id: "kauko",
@@ -451,6 +452,76 @@ export const ENEMIES = {
       { kind: "attack", value: 16, label: "散骨一記 16" },
     ],
   },
+  /** Act3 小怪：紮鐵 */
+  E09: {
+    id: "E09",
+    name: "紮鐵佬",
+    hp: 56,
+    art: "assets/enemies/E09.png",
+    flavor: "鐵枝一紥，天台都震。你行入嚟，就當你係工地雜物。",
+    intents: [
+      { kind: "attack", value: 11, label: "紥鐵 11" },
+      { kind: "attack", value: 8, label: "鐵枝橫掃 8" },
+      { kind: "buff_attack", value: 2, label: "上螺絲＋2攻" },
+    ],
+  },
+  /** Act3 小怪：清場 */
+  E10: {
+    id: "E10",
+    name: "清場沙包手",
+    hp: 52,
+    art: "assets/enemies/E10.png",
+    flavor: "水浸都清得走，何況你一個人。沙包一放，路就冇咗。",
+    intents: [
+      { kind: "attack", value: 10, label: "沙包砸 10" },
+      { kind: "block", value: 7, label: "疊沙包擋 7" },
+      { kind: "attack", value: 13, label: "清場一推 13" },
+    ],
+  },
+  /** Act3 小怪：籠鬥 */
+  E11: {
+    id: "E11",
+    name: "籠邊睇客",
+    hp: 46,
+    art: "assets/enemies/E11.png",
+    flavor: "籠邊個個都落過注。佢唔落注——佢落手。",
+    intents: [
+      { kind: "attack", value: 9, label: "偷位 9" },
+      { kind: "weaken", value: 2, label: "撩腳：你下擊−2" },
+      { kind: "attack", value: 12, label: "補拳 12" },
+    ],
+  },
+  /** Act3 精英：地盤清場隊 */
+  E08: {
+    id: "E08",
+    name: "地盤清場隊",
+    hp: 72,
+    art: "assets/enemies/E08.png",
+    flavor: "「呢度收工，你唔係工人。」安全帽一低頭，鐵枝就起。",
+    isElite: true,
+    intents: [
+      { kind: "attack", value: 12, label: "清場 12" },
+      { kind: "attack", value: 9, label: "撬棍 9" },
+      { kind: "block", value: 9, label: "人牆擋 9" },
+      { kind: "attack", value: 15, label: "收工埋數 15" },
+    ],
+  },
+  /** Act3 最終 Boss：籠鬥之王 */
+  E12: {
+    id: "E12",
+    name: "籠鬥之王",
+    hp: 136,
+    art: "assets/enemies/E12.jpg",
+    flavor: "天台無燈。今夜邊個落場，邊個落地。",
+    isBoss: true,
+    isFinalBoss: true,
+    intents: [
+      { kind: "attack", value: 13, label: "籠邊開場 13" },
+      { kind: "block", value: 10, label: "靠籠擋 10" },
+      { kind: "attack", value: 10, label: "膝撞 10" },
+      { kind: "attack", value: 19, label: "落地一記 19" },
+    ],
+  },
 };
 
 /**
@@ -559,6 +630,59 @@ export const ACT2_MAP = [
   },
 ];
 
+/**
+ * Act3「城寨・天台」：戰→選牌→事件→戰／精英→休息或便利店→最終 Boss（共 6）
+ * n4 用 enemyPool 抽：地盤清場隊（精英 E08）／清場沙包手／籠邊睇客
+ */
+export const ACT3_MAP = [
+  {
+    id: "a3n1",
+    type: "battle",
+    title: "紮鐵佬",
+    subtitle: "戰鬥",
+    enemyId: "E09",
+    bg: "assets/bg/bg-rooftop-playground.jpg",
+  },
+  {
+    id: "a3n2",
+    type: "reward",
+    title: "天台執牌",
+    subtitle: "選牌",
+    bg: "assets/bg/bg-rooftop-playground.jpg",
+  },
+  {
+    id: "a3n3",
+    type: "event",
+    title: "籠邊夜話",
+    subtitle: "短事件",
+    eventId: "ev_rooftop_cage",
+    bg: "assets/bg/bg-rooftop-wooden-dummy.jpg",
+  },
+  {
+    id: "a3n4",
+    type: "battle",
+    title: "清場／精英",
+    subtitle: "戰鬥 → 選牌",
+    enemyPool: ["E10", "E11", "E08"],
+    bg: "assets/bg/bg-rooftop-wooden-dummy.jpg",
+  },
+  {
+    id: "a3n5",
+    type: "rest",
+    title: "天台搭棚歇腳",
+    subtitle: "休息／便利店",
+    bg: "assets/bg/bg-rooftop-playground.jpg",
+  },
+  {
+    id: "a3n6",
+    type: "boss",
+    title: "籠鬥之王",
+    subtitle: "最終 Boss",
+    enemyId: "E12",
+    bg: "assets/bg/bg-rooftop-playground.jpg",
+  },
+];
+
 export const EVENTS = {
   ev_gate_whisper: {
     id: "ev_gate_whisper",
@@ -639,14 +763,58 @@ export const EVENTS = {
       },
     ],
   },
+  /** Act3：三選一全部改局（血／牌／下戰能量） */
+  ev_rooftop_cage: {
+    id: "ev_rooftop_cage",
+    title: "籠邊夜話",
+    art: "assets/events/ev-rooftop-night.jpg",
+    body: "鐵籠邊有人遞煙：「上面個王，冇人打得低。你想入場，就要先押一樣嘢。」你望望自己隻手——押咩，今夜就變咩。",
+    choices: [
+      {
+        id: "bet_blood",
+        label: "押自己一身血",
+        effectText: "失去 12 HP；最大生命 +6；牌組加入「打邊爐氣」",
+        apply: (run) => {
+          run.hp = Math.max(1, run.hp - 12);
+          run.maxHp += 6;
+          run.deck.push("S64");
+          return "血濺籠邊，但身子骨硬淨咗，多咗一張「打邊爐氣」。";
+        },
+      },
+      {
+        id: "bet_gear",
+        label: "押舖頭面子",
+        effectText: "下戰開場 +1 能量；入場帶 10 擋；牌組加入「舊帳對數」",
+        apply: (run) => {
+          run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
+          run.nextBattleBlock = (run.nextBattleBlock || 0) + 10;
+          run.deck.push("S72");
+          return "面子抵錢——下場多 1 能量、10 擋入場，仲多一張「舊帳對數」。";
+        },
+      },
+      {
+        id: "bet_hand",
+        label: "押自己隻右手",
+        effectText: "最大生命 +2 並回 10；牌組加入「大力出奇蹟」",
+        apply: (run) => {
+          run.maxHp += 2;
+          run.hp = Math.min(run.maxHp, run.hp + 10);
+          run.deck.push("S07");
+          return "拳頭包好，氣順咗，腰間多咗一張「大力出奇蹟」。";
+        },
+      },
+    ],
+  },
 };
 
 /** 依 run.act 取當前地圖 */
 export function mapForAct(act) {
+  if (act === 3) return ACT3_MAP;
   return act === 2 ? ACT2_MAP : ACT1_MAP;
 }
 
 export function actDisplayName(act) {
+  if (act === 3) return META.act3Name;
   return act === 2 ? META.act2Name : META.act1Name;
 }
 
@@ -687,4 +855,22 @@ export function pickRewardChoices(count = 3, exclude = [], characterId = null) {
 /** 小怪勝場金幣（有便利店可花） */
 export function battleGoldReward(isBoss) {
   return isBoss ? 0 : 5 + Math.floor(Math.random() * 4);
+}
+
+/** 節點敵人：有 enemyId 用固定；有 enemyPool 就抽一個（精英可抽中） */
+export function pickNodeEnemyId(node, rng = Math.random) {
+  if (!node) return null;
+  if (node.enemyId) return node.enemyId;
+  const pool = node.enemyPool || [];
+  if (!pool.length) return null;
+  return pool[Math.floor(rng() * pool.length)] || pool[0];
+}
+
+/** 遭遇紀錄一句（結算畫面用） */
+export function enemyTag(enemy) {
+  if (!enemy) return "";
+  if (enemy.isFinalBoss) return "最終 Boss";
+  if (enemy.isBoss) return "區 Boss";
+  if (enemy.isElite) return "精英";
+  return "小怪";
 }

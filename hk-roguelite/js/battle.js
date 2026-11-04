@@ -47,6 +47,8 @@ export function createBattle(run, enemyDef) {
     intentIndex: 0,
     intents: enemyDef.intents,
     isBoss: !!enemyDef.isBoss,
+    isFinalBoss: !!enemyDef.isFinalBoss,
+    isElite: !!enemyDef.isElite,
 
     playerHp: run.hp,
     playerMaxHp: run.maxHp,

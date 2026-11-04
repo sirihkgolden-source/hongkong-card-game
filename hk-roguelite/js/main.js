@@ -17,6 +17,8 @@ import {
   battleGoldReward,
   mapForAct,
   actDisplayName,
+  pickNodeEnemyId,
+  enemyTag,
 } from "./data.js";
 import {
   createBattle,
@@ -90,6 +92,8 @@ function createRun(characterId) {
     deck: [...c.starterDeck],
     mapIndex: 0,
     completed: /** @type {string[]} */ ([]),
+    encounters: /** @type {object[]} */ ([]),
+    nodeEnemies: /** @type {Record<string,string>} */ ({}),
     nextBattleEnergyPenalty: 0,
     nextBattleEnergyBonus: 0,
     nextBattleBlock: 0,
@@ -106,12 +110,13 @@ function currentNode() {
   return currentMap()[state.run.mapIndex] ?? null;
 }
 
-/** Act1 Boss 勝：同一局自動進 Act2，保留牌組／HP／金幣 */
-function enterAct2() {
+/** 打完區 Boss：同一局自動進下一 Act，保留牌組／HP／金幣 */
+function enterAct(nextAct) {
   const run = state.run;
-  run.act = 2;
+  run.act = nextAct;
   run.mapIndex = 0;
   run.completed = [];
+  run.nodeEnemies = {};
   state.battle = null;
   state.eventResult = null;
   state.rewardChoices = [];
@@ -120,6 +125,16 @@ function enterAct2() {
   state.pendingBossId = null;
   state.screen = "map";
   sfx.win();
+}
+
+/** Act1 Boss 勝 → Act2（保留舊名給自測用） */
+function enterAct2() {
+  enterAct(2);
+}
+
+/** Act2 Boss 勝 → Act3（城寨・天台） */
+function enterAct3() {
+  enterAct(3);
 }
 
 function syncRunHpFromBattle() {
@@ -169,13 +184,13 @@ function renderTitle() {
       <header class="brand-block">
         <h1 class="brand">${escapeHtml(META.title)}</h1>
         <p class="tagline">香港霓虹街頭卡牌 Rogue-lite</p>
-        <span class="badge">垂直切片 · 後巷・夜醒 · 三角色</span>
+        <span class="badge">完整三區 · 後巷 → 旺角 → 城寨天台 · 三角色</span>
       </header>
       <section class="panel panel-hero-copy">
         <h2>一鋪一個傳奇</h2>
         <p class="lede">
           揀角色、組牌闖三區。短、上癮、想再來一局。<br />
-          本切片：三角色開局 → 同一 Act1 → Boss 巷口鐵閘・睇場。
+          三角色開局 → 後巷・夜醒 → 旺角霓虹 → 城寨・天台 → 籠鬥之王 → 通關結算。
         </p>
       </section>
       <div class="actions">
@@ -232,6 +247,14 @@ function renderMap() {
   const char = activeChar();
   const map = currentMap();
   const actName = actDisplayName(run.act);
+  const actStrip = [1, 2, 3]
+    .map((n) => {
+      let cls = "act-pip";
+      if (n < run.act) cls += " is-cleared";
+      if (n === run.act) cls += " is-active";
+      return `<li class="${cls}"><span>Act${n}</span><strong>${escapeHtml(actDisplayName(n))}</strong></li>`;
+    })
+    .join("");
   const nodes = map.map((node, i) => {
     const done = run.completed.includes(node.id);
     const current = i === run.mapIndex;
@@ -241,12 +264,17 @@ function renderMap() {
     if (current) cls += " is-current";
     if (locked) cls += " is-locked";
     if (node.type === "boss") cls += " is-boss";
+    if (node.enemyPool) cls += " is-choice";
     const action = current && !done ? ` data-action="enter-node"` : "";
+    // 未行到嘅格唔預先揭對手（行到先抽定）
+    const revealPool = node.enemyPool && i <= run.mapIndex;
+    const pooledName = revealPool ? enemyById(nodeEnemyId(node))?.name : null;
+    const subText = pooledName ? `${node.subtitle}・${pooledName}` : node.subtitle;
     return `
       <li class="${cls}"${action} ${current ? 'aria-current="step"' : ""}>
         <span class="map-idx">${i + 1}</span>
         <span class="map-body">
-          <span class="map-sub">${escapeHtml(node.subtitle)}</span>
+          <span class="map-sub">${escapeHtml(subText)}</span>
           <span class="map-title">${escapeHtml(node.title)}</span>
         </span>
         ${current ? '<span class="map-cta">進入</span>' : ""}
@@ -268,6 +296,7 @@ function renderMap() {
           <span>牌組 ${run.deck.length}</span>
         </div>
       </header>
+      <ol class="act-strip" aria-label="三區進度">${actStrip}</ol>
       <section class="panel map-panel" style="--map-bg:url('${escapeHtml(currentNode()?.bg ?? map[0].bg)}')">
         <h2>節點路線</h2>
         <ol class="map-list">${nodes}</ol>
@@ -279,18 +308,21 @@ function renderMap() {
 
 function renderBossGate() {
   const enemy = enemyById(state.pendingBossId || "E04");
+  const isFinal = !!enemy.isFinalBoss;
+  const actName = actDisplayName(state.run?.act || 1);
   return `
-    <main class="screen screen-boss-gate" aria-label="Boss 戰前">
+    <main class="screen screen-boss-gate${isFinal ? " is-final" : ""}" aria-label="Boss 戰前">
       <header class="brand-block brand-compact">
-        <p class="eyebrow">區 Boss</p>
+        <p class="eyebrow">${isFinal ? `最終 Boss・Act${state.run?.act || 3} ${escapeHtml(actName)}` : "區 Boss"}</p>
         <h1 class="section-title">${escapeHtml(enemy.name)}</h1>
       </header>
       <figure class="boss-gate-art">
         <img src="${escapeHtml(enemy.art)}" alt="${escapeHtml(enemy.name)}" />
       </figure>
       <blockquote class="boss-gate-quote">「${escapeHtml(enemy.flavor)}」</blockquote>
+      <p class="boss-gate-hint">${isFinal ? "打完呢場，就係呢一鋪嘅結算。" : "停一停，睇清楚對手先入場。"}</p>
       <div class="actions">
-        <button type="button" class="btn btn-primary btn-pressable" data-action="boss-continue">繼續</button>
+        <button type="button" class="btn btn-primary btn-pressable" data-action="boss-continue">${isFinal ? "落場" : "繼續"}</button>
       </div>
     </main>
   `;
@@ -337,7 +369,7 @@ function renderBattle() {
         <div class="fighter enemy" id="fighter-enemy">
           <img id="enemy-portrait" src="${escapeHtml(b.enemyArt)}" alt="${escapeHtml(b.enemyName)}" />
           <div class="fighter-meta">
-            <strong>${escapeHtml(b.enemyName)}${b.isBoss ? " · Boss" : ""}</strong>
+            <strong>${escapeHtml(b.enemyName)}${b.isFinalBoss ? " · 最終 Boss" : b.isBoss ? " · Boss" : ""}</strong>
             <div class="hp-bar"><span id="enemy-hp-fill" style="width:${Math.max(0, (b.enemyHp / b.enemyMaxHp) * 100)}%"></span></div>
             <span class="hp-text" id="enemy-hp-text">${b.enemyHp}/${b.enemyMaxHp}${b.enemyBlock ? ` · 盾 ${b.enemyBlock}` : ""}</span>
             <span class="intent" id="enemy-intent">意圖：${escapeHtml(intent.label)}</span>
@@ -439,11 +471,15 @@ function renderRest() {
   const canHealBuy = state.run.gold >= SHOP.healCost;
   const canCardBuy = state.run.gold >= SHOP.cardCost;
   const shopCard = cardById(SHOP.cardId);
+  const node = currentNode();
+  const isAct3 = (state.run.act || 1) === 3;
+  const restTitle = node?.title || (isAct3 ? "天台搭棚歇腳" : "簷篷底歇腳");
+  const restSub = isAct3 ? "鐵皮滴水 · 樓下士多仲未關門" : "雨聲滴鐵皮 · 便利店燈仲亮";
   return `
     <main class="screen" aria-label="休息">
       <header class="brand-block brand-compact">
-        <h1 class="section-title">簷篷底歇腳</h1>
-        <p class="tagline">雨聲滴鐵皮 · 便利店燈仲亮</p>
+        <h1 class="section-title">${escapeHtml(restTitle)}</h1>
+        <p class="tagline">${escapeHtml(restSub)}</p>
       </header>
       <section class="panel">
         <p class="lede">現時 HP ${state.run.hp}/${state.run.maxHp} · 金幣 ${state.run.gold}。揀一項：</p>
@@ -471,22 +507,69 @@ function renderRest() {
   `;
 }
 
+/** 遭遇紀錄一排（結算用） */
+function encounterList(run) {
+  const list = run.encounters || [];
+  if (!list.length) return '<li class="enc-empty">（未記錄遭遇）</li>';
+  return list
+    .map(
+      (e) => `
+      <li>
+        <span class="enc-tag">${escapeHtml(e.tag)}</span>
+        <span class="enc-name">${escapeHtml(e.name)}</span>
+        <span class="enc-act">Act${e.act}</span>
+      </li>`
+    )
+    .join("");
+}
+
+/** 通關結算：Act3 最終 Boss 打完 */
 function renderVictory() {
+  const run = state.run || { deck: [], hp: 0, maxHp: 0, gold: 0, encounters: [] };
   const char = activeChar();
-  const act = state.run?.act || 2;
-  const actName = actDisplayName(act);
-  const bossName = act === 2 ? "西裝收數隊" : "巷口鐵閘・睇場";
+  const deckCount = {};
+  for (const id of run.deck) deckCount[id] = (deckCount[id] || 0) + 1;
+  const deckLines = Object.entries(deckCount)
+    .map(
+      ([id, n]) =>
+        `<li><span>${escapeHtml(cardById(id)?.name ?? id)}</span><span class="deck-n">×${n}</span></li>`
+    )
+    .join("");
+
   return `
-    <main class="screen screen-result is-win" aria-label="通關">
+    <main class="screen screen-result is-win is-clear" aria-label="通關結算">
       <header class="brand-block">
         <h1 class="brand result-title">${escapeHtml(META.title)}</h1>
-        <p class="tagline result-sub">勝利 · Act${act}「${escapeHtml(actName)}」打通</p>
+        <p class="tagline result-sub">通關 · 三區打穿</p>
       </header>
-      <section class="panel">
-        <h2>${act === 2 ? "霓虹暫歇" : "過咗鐵閘"}</h2>
+      <section class="panel clear-hero">
+        <p class="eyebrow">Act3・${escapeHtml(META.act3Name)}</p>
+        <h2>天台無燈，你仲企得住</h2>
         <p class="lede">
-          ${escapeHtml(char.name)}闖過「${escapeHtml(bossName)}」。牌組 ${state.run.deck.length} 張・剩餘 HP ${state.run.hp}・金幣 ${state.run.gold}。<br />
-          ${act >= 2 ? "Act3 未做——想再闖一鋪？" : ""}
+          ${escapeHtml(char.name)}喺「籠鬥之王」籠邊站到最後。<br />
+          被動「${escapeHtml(char.passive.name)}」由後巷一路帶到天台。
+        </p>
+        <ul class="clear-stats">
+          <li><span>剩餘 HP</span><strong>${run.hp}/${run.maxHp}</strong></li>
+          <li><span>金幣</span><strong>${run.gold}</strong></li>
+          <li><span>牌組</span><strong>${run.deck.length} 張</strong></li>
+          <li><span>勝場</span><strong>${run.victories || 0}</strong></li>
+        </ul>
+      </section>
+      <section class="panel">
+        <h2>遭遇</h2>
+        <ol class="enc-list">${encounterList(run)}</ol>
+      </section>
+      <section class="panel">
+        <h2>牌組構成</h2>
+        <ul class="deck-list">${deckLines || "<li>（空）</li>"}</ul>
+      </section>
+      <section class="panel stub-card">
+        <h2>名片（stub）</h2>
+        <p class="lede">
+          《香江小風波》・${escapeHtml(char.name)}<br />
+          三區通關 · 被動「${escapeHtml(char.passive.name)}」<br />
+          <span class="stub-note">分享名片功能下一版先開；呢格留位。</span>
         </p>
       </section>
       <div class="actions">
@@ -501,6 +584,11 @@ function renderDefeat() {
   const char = activeChar();
   const map = currentMap();
   const act = state.run?.act || 1;
+  const actTitles = {
+    1: "後巷吞沒你",
+    2: "霓虹吞沒你",
+    3: "天台吞沒你",
+  };
   return `
     <main class="screen screen-result is-lose" aria-label="敗北">
       <header class="brand-block">
@@ -508,7 +596,7 @@ function renderDefeat() {
         <p class="tagline result-sub">敗北 · 這一鋪完結了</p>
       </header>
       <section class="panel">
-        <h2>${act === 2 ? "霓虹吞沒你" : "後巷吞沒你"}</h2>
+        <h2>${escapeHtml(actTitles[act] || actTitles[1])}</h2>
         <p class="lede">
           死亡＝本局結束。下一局可再試「${escapeHtml(char.passive.name)}」，或換角色換嘴感。<br />
           Act${act}「${escapeHtml(actDisplayName(act))}」走到節點 ${Math.min(state.run?.mapIndex + 1 || 1, map.length)}／${map.length}。
@@ -702,6 +790,19 @@ async function endTurnWithFeel() {
 
 /* ---------- flow helpers ---------- */
 
+/** 記錄遭遇（結算畫面用；只記戰鬥節點） */
+function recordEncounter(node) {
+  if (!node || !state.battle) return;
+  const enemy = enemyById(state.battle.enemyId);
+  if (!enemy) return;
+  state.run.encounters = state.run.encounters || [];
+  state.run.encounters.push({
+    name: enemy.name,
+    tag: enemyTag(enemy),
+    act: state.run.act,
+  });
+}
+
 function startBattleNow(enemyId) {
   const enemy = enemyById(enemyId);
   state.battle = createBattle(state.run, enemy);
@@ -712,12 +813,29 @@ function startBattleNow(enemyId) {
 
 function beginBattle(enemyId) {
   const enemy = enemyById(enemyId);
+  if (!enemy) {
+    state.statusMsg = "對手未定";
+    return;
+  }
   if (enemy.isBoss) {
     state.pendingBossId = enemyId;
     state.screen = "boss-gate";
     return;
   }
   startBattleNow(enemyId);
+}
+
+/** 節點敵人：同一節點抽到就記住（重試／預覽一致） */
+function nodeEnemyId(node) {
+  if (!node) return null;
+  if (node.enemyId) return node.enemyId;
+  const run = state.run;
+  if (!run) return null;
+  run.nodeEnemies = run.nodeEnemies || {};
+  if (!run.nodeEnemies[node.id]) {
+    run.nodeEnemies[node.id] = pickNodeEnemyId(node);
+  }
+  return run.nodeEnemies[node.id];
 }
 
 function advanceMap(opts = {}) {
@@ -734,10 +852,14 @@ function advanceMap(opts = {}) {
   state.shopMsg = "";
   state.pendingBossId = null;
   if (state.run.mapIndex >= currentMap().length) {
-    // Act Boss 打完：Act1→自動 Act2；Act2→結算（Act3 未做）
     if (state.run.act === 1) {
-      enterAct2();
+      // Act1 Boss 勝 → 自動進 Act2「旺角霓虹」
+      enterAct(2);
+    } else if (state.run.act === 2) {
+      // Act2 Boss 勝 → 自動進 Act3「城寨・天台」
+      enterAct(3);
     } else {
+      // Act3 最終 Boss 勝 → 通關結算
       state.screen = "victory";
       sfx.win();
     }
@@ -756,7 +878,7 @@ function enterNode() {
   const node = currentNode();
   if (!node) return;
   if (node.type === "battle" || node.type === "boss") {
-    beginBattle(node.enemyId);
+    beginBattle(nodeEnemyId(node));
   } else if (node.type === "reward") {
     openReward();
   } else if (node.type === "event") {
@@ -844,18 +966,19 @@ function onClick(event) {
       const node = currentNode();
       const gold = battleGoldReward(node?.type === "boss");
       if (gold > 0) state.run.gold += gold;
+      recordEncounter(node);
       if (node?.type === "boss") {
-        // Act1 Boss → enterAct2；Act2 Boss → victory「Act3 未做」
+        // Act1 Boss → Act2；Act2 Boss → Act3；Act3 最終 Boss → 通關結算
         advanceMap();
       } else {
         const map = currentMap();
         const next = map[state.run.mapIndex + 1];
         if (next?.type === "reward") {
-          // Act2：戰後下一格係選牌節點 → 先推進再開選牌
+          // 戰後下一格係選牌節點 → 先推進再開選牌
           advanceMap({ autoScreen: false });
           openReward();
         } else {
-          // Act1／Act2 第二戰：選牌疊喺戰鬥節點上，揀完先推進
+          // 其餘：選牌疊喺戰鬥節點上，揀完先推進
           openReward();
         }
         if (gold > 0) state.statusMsg = `揀一張加入牌組 · 獲 ${gold} 金幣`;
@@ -943,6 +1066,24 @@ if (typeof window !== "undefined") {
       render();
       return true;
     },
-    enterAct2,
+    enterAct2: () => {
+      enterAct2();
+      render();
+    },
+    enterAct3: () => {
+      enterAct3();
+      render();
+    },
+    /** 直接跳去當前 Act 第 6 格（Boss 前） */
+    goBossGate() {
+      if (!state.run) return false;
+      const map = currentMap();
+      const bossIdx = map.findIndex((n) => n.type === "boss");
+      if (bossIdx < 0) return false;
+      this.jumpToNode(bossIdx);
+      enterNode();
+      render();
+      return true;
+    },
   };
 }
