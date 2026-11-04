@@ -23,6 +23,9 @@ import {
   EVENT_POOLS,
   pickEventId,
   eventById,
+  RELICS,
+  relicBonuses,
+  pickShopRelics,
 } from "./data.js";
 import { createBattle, playCard, endTurn, startPlayerTurn } from "./battle.js";
 
@@ -83,11 +86,27 @@ function fightOnce(run, enemyId) {
 }
 
 function applyShopSink(run) {
+  // 模擬去士多：買得起就買遺物，否則賣一張牌換金
+  const offers = pickShopRelics(run, 2);
+  if (run.gold >= SHOP.relicCost && offers.length) {
+    const before = run.gold;
+    run.gold -= SHOP.relicCost;
+    run.relics = run.relics || [];
+    run.relics.push(offers[0]);
+    const eff = RELICS[offers[0]].effect || {};
+    if (eff.instantMaxHp) run.maxHp += eff.instantMaxHp;
+    if (eff.instantGold) run.gold += eff.instantGold;
+    return before - run.gold + (eff.instantGold || 0);
+  }
+  if (run.deck.length > 1) {
+    const sold = run.deck.pop();
+    run.gold += SHOP.sellCardGain;
+    return -SHOP.sellCardGain;
+  }
   if (run.gold < SHOP.healCost) run.gold = SHOP.healCost;
-  const before = run.gold;
   run.gold -= SHOP.healCost;
   run.hp = Math.min(run.maxHp, run.hp + SHOP.healAmt);
-  return before - run.gold;
+  return SHOP.healCost;
 }
 
 function walkAct(run, map, actNo, notes) {
@@ -139,8 +158,8 @@ function walkAct(run, map, actNo, notes) {
       notes.push(`A${actNo}-${i + 1} 事件「${ev.title}」→ ${applied.slice(0, 14)}…`);
     } else if (node.type === "rest") {
       const spent = applyShopSink(run);
-      assert(spent > 0, `A${actNo} 便利店必須花到金`);
-      notes.push(`A${actNo}-${i + 1} 休息／便利店花 ${spent} 金`);
+      assert(spent !== 0, `A${actNo} 便利店必須有金流（買或賣）`);
+      notes.push(`A${actNo}-${i + 1} 便利店金流 ${spent > 0 ? "花" : "賺"} ${Math.abs(spent)} 金`);
     } else {
       throw new Error(`未知節點類型：${node.type}`);
     }
@@ -284,6 +303,104 @@ function simulateChar(charId) {
       }
     }
     assert(sigHits > 0, `${owner} 400 抽都冇專屬牌，權重冇生效`);
+  }
+
+  // —— 遺物：至少 6 件，每件都要真係改局；買／賣有金流 ——
+  const relicIds = Object.keys(RELICS);
+  assert(relicIds.length >= 6, `遺物至少 6 件（現有 ${relicIds.length}）`);
+  for (const id of relicIds) {
+    const r = RELICS[id];
+    assert(r.name && r.desc && r.flavor, `${id} 缺名／說明／風味`);
+    assert(r.effect && Object.keys(r.effect).length > 0, `${id} 冇效果`);
+  }
+  // 每件遺物都要對戰鬥或局況產生可見影響
+  for (const id of relicIds) {
+    const r = RELICS[id];
+    const probe = {
+      characterId: "oil",
+      hp: 40,
+      maxHp: 68,
+      gold: 0,
+      deck: ["S01"],
+      relics: [id],
+    };
+    const b = relicBonuses(probe);
+    const eff = r.effect;
+    const visible =
+      (eff.startEnergy && b.startEnergy > 0) ||
+      (eff.startBlock && b.startBlock > 0) ||
+      (eff.startDraw && b.startDraw > 0) ||
+      (eff.attackBonus && b.attackBonus > 0) ||
+      (eff.healOnWin && b.healOnWin > 0) ||
+      (eff.goldBonus && b.goldBonus > 0) ||
+      !!eff.instantMaxHp ||
+      !!eff.instantGold;
+    assert(visible, `${id} 效果冇接到局況`);
+  }
+  // 戰鬥內遺物生效：開場擋／能量／首回合多抽／攻擊加成
+  {
+    const runProbe = {
+      characterId: "oil",
+      hp: 50,
+      maxHp: 68,
+      deck: ["S01", "S01", "S15", "S15", "S02", "S02", "S11", "S14"],
+      relics: ["rl_helmet", "rl_gate_key", "rl_mahjong_lamp", "rl_neon_tube"],
+      nextBattleEnergyPenalty: 0,
+      nextBattleEnergyBonus: 0,
+      nextBattleBlock: 0,
+    };
+    const b = createBattle(runProbe, enemyById("E01"));
+    startPlayerTurn(b);
+    assert(b.playerBlock >= RELICS.rl_helmet.effect.startBlock, "安全帽開場擋冇生效");
+    assert(b.maxEnergy === 3 + RELICS.rl_gate_key.effect.startEnergy, "鐵閘鎖匙能量冇生效");
+    assert(b.hand.length >= 6, "麻雀檯燈首回合多抽冇生效");
+
+    // 霓虹燈膽：打一張攻擊要 +2 傷害
+    const plain = {
+      characterId: "oil",
+      hp: 50,
+      maxHp: 68,
+      deck: ["S15", "S15", "S15", "S15", "S15"],
+      relics: [],
+      nextBattleEnergyPenalty: 0,
+      nextBattleEnergyBonus: 0,
+      nextBattleBlock: 0,
+    };
+    const b0 = createBattle(plain, enemyById("E01"));
+    startPlayerTurn(b0);
+    const d0 = playCard(b0, 0).dealt;
+    const buffed = { ...plain, deck: [...plain.deck], relics: ["rl_neon_tube"] };
+    const b1 = createBattle(buffed, enemyById("E01"));
+    startPlayerTurn(b1);
+    const d1 = playCard(b1, 0).dealt;
+    assert(d1 - d0 === RELICS.rl_neon_tube.effect.attackBonus, "霓虹燈膽攻擊加成唔對");
+  }
+  // 買／賣有金流：買遺物扣金、賣遺物／賣牌加金
+  {
+    const buyRun = { gold: SHOP.relicCost, relics: [], hp: 50, maxHp: 68, deck: ["S01"] };
+    const offers = pickShopRelics(buyRun, 2);
+    assert(offers.length > 0 && offers.length <= 2, "便利店要抽到 1–2 件遺物貨");
+    assert(offers.every((id) => RELICS[id]), "便利店貨要係有效遺物");
+    buyRun.gold -= SHOP.relicCost;
+    buyRun.relics.push(offers[0]);
+    assert(buyRun.gold === 0 && buyRun.relics.length === 1, "買遺物金流唔對");
+    buyRun.gold += SHOP.sellRelicGain;
+    buyRun.relics.length = 0;
+    assert(buyRun.gold === SHOP.sellRelicGain, "賣遺物金流唔對");
+    const beforeDeck = buyRun.deck.length;
+    buyRun.deck.pop();
+    buyRun.gold += SHOP.sellCardGain;
+    assert(
+      buyRun.deck.length === beforeDeck - 1 && buyRun.gold === SHOP.sellRelicGain + SHOP.sellCardGain,
+      "賣牌金流唔對"
+    );
+  }
+  // 已擁有嘅遺物唔會再出現在貨架
+  {
+    const owned = { gold: 0, relics: relicIds.slice(0, relicIds.length - 1), hp: 50, maxHp: 68, deck: [] };
+    const left = pickShopRelics(owned, 5);
+    assert(left.length === 1, "只剩一件未擁有時，貨架只應該有 1 件");
+    assert(left[0] === relicIds[relicIds.length - 1], "貨架件唔對");
   }
 
   walkAct(run, ACT1_MAP, 1, notes);

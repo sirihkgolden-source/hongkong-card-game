@@ -3,7 +3,7 @@
  * 回傳明細供手感層動畫（打擊數字／快手／檔口／招牌眼／擋）
  */
 
-import { CARDS, characterById } from "./data.js";
+import { CARDS, characterById, relicBonuses } from "./data.js";
 
 function shuffle(arr) {
   const a = [...arr];
@@ -21,14 +21,17 @@ function shuffle(arr) {
 export function createBattle(run, enemyDef) {
   const char = characterById(run.characterId);
   const drawPile = shuffle([...run.deck]);
+  const relics = relicBonuses(run);
   const energyPenalty = run.nextBattleEnergyPenalty || 0;
   const energyBonus = run.nextBattleEnergyBonus || 0;
-  const startBlock = run.nextBattleBlock || 0;
+  // 遺物開場擋 + 事件暫存擋
+  const startBlock = (run.nextBattleBlock || 0) + relics.startBlock;
   run.nextBattleEnergyPenalty = 0;
   run.nextBattleEnergyBonus = 0;
   run.nextBattleBlock = 0;
 
-  const maxEnergy = char.energy;
+  // 遺物加能量上限（每場都生效）
+  const maxEnergy = char.energy + relics.startEnergy;
   const startEnergy = Math.max(0, maxEnergy - energyPenalty + energyBonus);
 
   return {
@@ -61,6 +64,10 @@ export function createBattle(run, enemyDef) {
     drawPile,
     hand: [],
     discard: [],
+
+    /** 遺物：開場多抽＋攻擊加成 */
+    relicDraw: relics.startDraw,
+    relicAttackBonus: relics.attackBonus,
 
     attacksPlayed: 0,
     kuaisouReady: false,
@@ -110,7 +117,7 @@ export function startPlayerTurn(b) {
   );
   b.discard.push(...b.hand);
   b.hand = [];
-  drawCards(b, 5);
+  drawCards(b, 5 + (b.turn === 1 ? b.relicDraw || 0 : 0));
 
   if (b.enemyMark > 0) {
     const markDmg = b.enemyMark;
@@ -175,6 +182,8 @@ export function playCard(b, handIndex) {
     dmg += card.dmgBonusOnLowHp;
   }
   if (usedKuaisou) dmg += 3;
+  // 遺物：所有攻擊 +傷害（只計攻擊牌，且本身有傷害）
+  if (card.type === "attack" && dmg > 0) dmg += b.relicAttackBonus || 0;
   if (b.playerWeaken > 0 && card.type === "attack") {
     dmg = Math.max(0, dmg - b.playerWeaken);
   }

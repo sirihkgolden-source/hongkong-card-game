@@ -10,6 +10,7 @@ import {
   EVENTS,
   SHOP,
   CARDS,
+  RELICS,
   enemyById,
   cardById,
   characterById,
@@ -21,6 +22,9 @@ import {
   enemyTag,
   pickEventId,
   eventById,
+  relicBonuses,
+  pickShopRelics,
+  relicById,
 } from "./data.js";
 import {
   createBattle,
@@ -67,6 +71,7 @@ const state = {
   busy: false,
   pendingBossId: null,
   shopMsg: "",
+  shopRelics: /** @type {string[]} */ ([]),
 };
 
 const app = document.getElementById("app");
@@ -97,6 +102,7 @@ function createRun(characterId) {
     encounters: /** @type {object[]} */ ([]),
     nodeEnemies: /** @type {Record<string,string>} */ ({}),
     nodeEvents: /** @type {Record<string,string>} */ ({}),
+    relics: /** @type {string[]} */ ([]),
     nextBattleEnergyPenalty: 0,
     nextBattleEnergyBonus: 0,
     nextBattleBlock: 0,
@@ -308,6 +314,7 @@ function renderMap() {
           <span>HP ${run.hp}/${run.maxHp}</span>
           <span>金幣 ${run.gold}</span>
           <span>牌組 ${run.deck.length}</span>
+          <span>遺物 ${(run.relics || []).length}</span>
         </div>
       </header>
       <ol class="act-strip" aria-label="三區進度">${actStrip}</ol>
@@ -481,13 +488,53 @@ function renderEvent() {
 
 function renderRest() {
   const healAmt = Math.floor(state.run.maxHp * 0.3);
-  const canHealBuy = state.run.gold >= SHOP.healCost;
-  const canCardBuy = state.run.gold >= SHOP.cardCost;
+  const has = (n) => state.run.gold >= n;
+  const canHealBuy = has(SHOP.healCost);
+  const canCardBuy = has(SHOP.cardCost);
+  const canRelicBuy = has(SHOP.relicCost) && state.shopRelics.length > 0;
   const shopCard = cardById(SHOP.cardId);
   const node = currentNode();
   const isAct3 = (state.run.act || 1) === 3;
   const restTitle = node?.title || (isAct3 ? "天台搭棚歇腳" : "簷篷底歇腳");
   const restSub = isAct3 ? "鐵皮滴水 · 樓下士多仲未關門" : "雨聲滴鐵皮 · 便利店燈仲亮";
+  const ownedRelics = (state.run.relics || [])
+    .map((id) => RELICS[id])
+    .filter(Boolean);
+  const relicStock = state.shopRelics
+    .map((id) => RELICS[id])
+    .filter(Boolean)
+    .map(
+      (r) => `
+        <button type="button" class="event-choice${canRelicBuy ? "" : " is-disabled"}" data-action="shop-relic" data-relic="${escapeHtml(r.id)}" ${canRelicBuy ? "" : "disabled"}>
+          <strong>${escapeHtml(r.name)}<span class="relic-rarity">${escapeHtml(r.rarity)}</span></strong>
+          <span>花 ${SHOP.relicCost} 金幣 · ${escapeHtml(r.desc)}${canRelicBuy ? "" : "（金幣不足）"}</span>
+        </button>`
+    )
+    .join("");
+  const relicSell = ownedRelics
+    .map(
+      (r) => `
+        <button type="button" class="event-choice is-sell" data-action="sell-relic" data-relic="${escapeHtml(r.id)}">
+          <strong>賣・${escapeHtml(r.name)}</strong>
+          <span>+${SHOP.sellRelicGain} 金幣（${escapeHtml(r.desc)}）</span>
+        </button>`
+    )
+    .join("");
+  // 賣牌：列出牌組內重複度最高嘅頭幾張（避免一次列 20 張）
+  const deckCount = {};
+  for (const id of state.run.deck) deckCount[id] = (deckCount[id] || 0) + 1;
+  const sellableCards = Object.entries(deckCount)
+    .filter(([, n]) => n >= 1)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 4)
+    .map(
+      ([id, n]) => `
+        <button type="button" class="event-choice is-sell" data-action="sell-card" data-card="${escapeHtml(id)}">
+          <strong>賣・${escapeHtml(cardById(id)?.name ?? id)} ×${n}</strong>
+          <span>+${SHOP.sellCardGain} 金幣（牌組 −1 張）</span>
+        </button>`
+    )
+    .join("");
   return `
     <main class="screen" aria-label="休息">
       <header class="brand-block brand-compact">
@@ -516,6 +563,33 @@ function renderRest() {
         </div>
         ${state.shopMsg ? `<p class="status" role="status">${escapeHtml(state.shopMsg)}</p>` : ""}
       </section>
+
+      ${
+        relicStock || ownedRelics.length
+          ? `<section class="panel panel-shop">
+        <h2>士多・遺物</h2>
+        <div class="event-choices">${relicStock || '<p class="lede">今晚冇新貨。</p>'}</div>
+        ${
+          relicSell
+            ? `<p class="shop-sub">變賣（換金）</p><div class="event-choices">${relicSell}</div>`
+            : ""
+        }
+      </section>`
+          : ""
+      }
+
+      ${
+        sellableCards
+          ? `<section class="panel panel-shop">
+        <h2>變賣牌組</h2>
+        <div class="event-choices">${sellableCards}</div>
+      </section>`
+          : ""
+      }
+
+      <div class="actions">
+        <button type="button" class="btn btn-primary btn-pressable" data-action="leave-shop">離開（繼續地圖）</button>
+      </div>
     </main>
   `;
 }
@@ -566,9 +640,24 @@ function renderVictory() {
           <li><span>剩餘 HP</span><strong>${run.hp}/${run.maxHp}</strong></li>
           <li><span>金幣</span><strong>${run.gold}</strong></li>
           <li><span>牌組</span><strong>${run.deck.length} 張</strong></li>
+          <li><span>遺物</span><strong>${(run.relics || []).length} 件</strong></li>
           <li><span>勝場</span><strong>${run.victories || 0}</strong></li>
         </ul>
       </section>
+      ${
+        (run.relics || []).length
+          ? `<section class="panel">
+        <h2>遺物</h2>
+        <ul class="relic-list">${(run.relics || [])
+          .map((id) => {
+            const r = RELICS[id];
+            if (!r) return "";
+            return `<li><span class="relic-name">${escapeHtml(r.name)}</span><span class="relic-desc">${escapeHtml(r.desc)}</span></li>`;
+          })
+          .join("")}</ul>
+      </section>`
+          : ""
+      }
       <section class="panel">
         <h2>遭遇</h2>
         <ol class="enc-list">${encounterList(run)}</ol>
@@ -881,6 +970,7 @@ function advanceMap(opts = {}) {
   state.rewardChoices = [];
   state.statusMsg = "";
   state.shopMsg = "";
+  state.shopRelics = [];
   state.pendingBossId = null;
   if (state.run.mapIndex >= currentMap().length) {
     if (state.run.act === 1) {
@@ -918,6 +1008,8 @@ function enterNode() {
     state.screen = "event";
   } else if (node.type === "rest") {
     state.shopMsg = "";
+    // 每次入店重新抽貨（未擁有遺物）
+    state.shopRelics = pickShopRelics(state.run, 2);
     state.screen = "rest";
   }
 }
@@ -925,8 +1017,7 @@ function enterNode() {
 function onClick(event) {
   const t = event.target.closest(
     "[data-action], [data-play], [data-pick], [data-event-choice], .map-node.is-current"
-  );
-  if (!t) return;
+  );  if (!t) return;
   if (state.busy && !t.getAttribute("data-action")?.startsWith("boss")) return;
 
   if (t.classList?.contains("map-node") && t.classList.contains("is-current")) {
@@ -995,8 +1086,16 @@ function onClick(event) {
       syncRunHpFromBattle();
       state.run.victories += 1;
       const node = currentNode();
-      const gold = battleGoldReward(node?.type === "boss");
+      const bonuses = relicBonuses(state.run);
+      const isBossFight = node?.type === "boss";
+      const baseGold = battleGoldReward(isBossFight);
+      // 遺物：小怪勝場額外金
+      const gold = baseGold > 0 ? baseGold + (bonuses.goldBonus || 0) : 0;
       if (gold > 0) state.run.gold += gold;
+      // 遺物：勝場回血
+      if (bonuses.healOnWin > 0) {
+        state.run.hp = Math.min(state.run.maxHp, state.run.hp + bonuses.healOnWin);
+      }
       recordEncounter(node);
       if (node?.type === "boss") {
         // Act1 Boss → Act2；Act2 Boss → Act3；Act3 最終 Boss → 通關結算
@@ -1042,7 +1141,7 @@ function onClick(event) {
       if (state.run.gold >= SHOP.healCost) {
         state.run.gold -= SHOP.healCost;
         state.run.hp = Math.min(state.run.maxHp, state.run.hp + SHOP.healAmt);
-        advanceMap();
+        state.shopMsg = `回咗 ${SHOP.healAmt} HP。`;
       } else {
         state.shopMsg = "金幣不足";
       }
@@ -1051,10 +1150,63 @@ function onClick(event) {
       if (state.run.gold >= SHOP.cardCost) {
         state.run.gold -= SHOP.cardCost;
         state.run.deck.push(SHOP.cardId);
-        advanceMap();
+        state.shopMsg = `入手「${cardById(SHOP.cardId)?.name ?? SHOP.cardId}」。`;
       } else {
         state.shopMsg = "金幣不足";
       }
+      break;
+    case "shop-relic": {
+      const relicId = t.getAttribute("data-relic");
+      const relic = relicById(relicId);
+      if (!relic) return;
+      if (state.run.gold < SHOP.relicCost) {
+        state.shopMsg = "金幣不足";
+        break;
+      }
+      if ((state.run.relics || []).includes(relicId)) {
+        state.shopMsg = "已經有你件貨。";
+        break;
+      }
+      state.run.gold -= SHOP.relicCost;
+      state.run.relics = state.run.relics || [];
+      state.run.relics.push(relicId);
+      state.shopRelics = state.shopRelics.filter((id) => id !== relicId);
+      // 即時型遺物即刻生效
+      const eff = relic.effect || {};
+      if (eff.instantMaxHp) {
+        state.run.maxHp += eff.instantMaxHp;
+        state.run.hp = Math.min(state.run.maxHp, state.run.hp + eff.instantMaxHp);
+      }
+      if (eff.instantGold) state.run.gold += eff.instantGold;
+      state.shopMsg = `買咗「${relic.name}」——${relic.desc}`;
+      break;
+    }
+    case "sell-relic": {
+      const relicId = t.getAttribute("data-relic");
+      const relic = relicById(relicId);
+      if (!relic || !(state.run.relics || []).includes(relicId)) return;
+      state.run.relics = state.run.relics.filter((id) => id !== relicId);
+      state.run.gold += SHOP.sellRelicGain;
+      // 賣走即時型遺物要扣返（最低保 1 HP）
+      const eff = relic.effect || {};
+      if (eff.instantMaxHp) {
+        state.run.maxHp = Math.max(1, state.run.maxHp - eff.instantMaxHp);
+        state.run.hp = Math.max(1, Math.min(state.run.hp, state.run.maxHp));
+      }
+      state.shopMsg = `賣咗「${relic.name}」，+${SHOP.sellRelicGain} 金幣。`;
+      break;
+    }
+    case "sell-card": {
+      const cardId = t.getAttribute("data-card");
+      const idx = state.run.deck.indexOf(cardId);
+      if (idx < 0) return;
+      state.run.deck.splice(idx, 1);
+      state.run.gold += SHOP.sellCardGain;
+      state.shopMsg = `賣咗「${cardById(cardId)?.name ?? cardId}」，+${SHOP.sellCardGain} 金幣。`;
+      break;
+    }
+    case "leave-shop":
+      advanceMap();
       break;
     case "again":
       state.run = null;
