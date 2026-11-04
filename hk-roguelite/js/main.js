@@ -1,5 +1,5 @@
 /**
- * 《香江小風波》— 垂直切片入口
+ * 《香江小風波》— 垂直切片入口（含手感／打擊感層）
  * 目錄暫名 hk-roguelite／產品名《香江小風波》
  * 與倉庫根目錄舊《香江 Card Game》demo 隔離；不修改根目錄主循環。
  */
@@ -22,6 +22,17 @@ import {
   getIntent,
   effectiveCost,
 } from "./battle.js";
+import { sfx } from "./sfx.js";
+import {
+  wait,
+  pressCard,
+  flyProjectile,
+  floatText,
+  impactTarget,
+  playerHurtFlash,
+  telegraphIntent,
+  showKuaisouBanner,
+} from "./feel.js";
 
 /** @type {{
  *  screen: string,
@@ -30,6 +41,8 @@ import {
  *  rewardChoices: string[],
  *  eventResult: string|null,
  *  statusMsg: string,
+ *  busy: boolean,
+ *  pendingBossId: string|null,
  * }} */
 const state = {
   screen: "title",
@@ -38,6 +51,8 @@ const state = {
   rewardChoices: [],
   eventResult: null,
   statusMsg: "",
+  busy: false,
+  pendingBossId: null,
 };
 
 const app = document.getElementById("app");
@@ -82,7 +97,7 @@ function renderCardFace(cardId, opts = {}) {
   if (!card) return "";
   const cost =
     opts.costOverride != null ? opts.costOverride : card.cost;
-  const disabled = opts.disabled ? " is-disabled" : "";
+  const disabled = opts.disabled || state.busy ? " is-disabled" : "";
   const kuai = opts.kuaisou ? " is-kuaisou" : "";
   const idxAttr =
     opts.handIndex != null ? ` data-play="${opts.handIndex}"` : "";
@@ -126,7 +141,7 @@ function renderTitle() {
         </p>
       </section>
       <div class="actions">
-        <button type="button" class="btn btn-primary" data-action="to-select">進入選角</button>
+        <button type="button" class="btn btn-primary btn-pressable" data-action="to-select">進入選角</button>
       </div>
       <p class="foot-note">入口：hk-roguelite/index.html · 目錄暫名 hk-roguelite</p>
     </main>
@@ -178,7 +193,7 @@ function renderSelect() {
         </p>
       </section>
       <div class="actions">
-        <button type="button" class="btn btn-primary" data-action="confirm-char">以阿油開局</button>
+        <button type="button" class="btn btn-primary btn-pressable" data-action="confirm-char">以阿油開局</button>
         <button type="button" class="btn btn-ghost" data-action="back-title">返回標題</button>
       </div>
     </main>
@@ -232,13 +247,32 @@ function renderMap() {
   `;
 }
 
+function renderBossGate() {
+  const enemy = enemyById(state.pendingBossId || "E04");
+  return `
+    <main class="screen screen-boss-gate" aria-label="Boss 戰前">
+      <header class="brand-block brand-compact">
+        <p class="eyebrow">區 Boss</p>
+        <h1 class="section-title">${escapeHtml(enemy.name)}</h1>
+      </header>
+      <figure class="boss-gate-art">
+        <img src="${escapeHtml(enemy.art)}" alt="${escapeHtml(enemy.name)}" />
+      </figure>
+      <blockquote class="boss-gate-quote">「${escapeHtml(enemy.flavor)}」</blockquote>
+      <div class="actions">
+        <button type="button" class="btn btn-primary btn-pressable" data-action="boss-continue">繼續</button>
+      </div>
+    </main>
+  `;
+}
+
 function renderBattle() {
   const b = state.battle;
   const intent = getIntent(b);
   const hand = b.hand
     .map((id, i) => {
       const cost = effectiveCost(b, id);
-      const can = !b.over && b.energy >= cost;
+      const can = !b.over && !state.busy && b.energy >= cost;
       return renderCardFace(id, {
         handIndex: i,
         costOverride: cost,
@@ -256,40 +290,35 @@ function renderBattle() {
         : "";
 
   return `
-    <main class="screen screen-battle" aria-label="戰鬥">
+    <main class="screen screen-battle${state.busy ? " is-busy" : ""}" aria-label="戰鬥">
       <header class="battle-top">
-        <div class="fighter enemy">
-          <img src="${escapeHtml(b.enemyArt)}" alt="${escapeHtml(b.enemyName)}" />
+        <div class="fighter enemy" id="fighter-enemy">
+          <img id="enemy-portrait" src="${escapeHtml(b.enemyArt)}" alt="${escapeHtml(b.enemyName)}" />
           <div class="fighter-meta">
             <strong>${escapeHtml(b.enemyName)}${b.isBoss ? " · Boss" : ""}</strong>
-            <div class="hp-bar"><span style="width:${Math.max(0, (b.enemyHp / b.enemyMaxHp) * 100)}%"></span></div>
-            <span class="hp-text">${b.enemyHp}/${b.enemyMaxHp}${b.enemyBlock ? ` · 盾 ${b.enemyBlock}` : ""}</span>
-            <span class="intent">意圖：${escapeHtml(intent.label)}</span>
+            <div class="hp-bar"><span id="enemy-hp-fill" style="width:${Math.max(0, (b.enemyHp / b.enemyMaxHp) * 100)}%"></span></div>
+            <span class="hp-text" id="enemy-hp-text">${b.enemyHp}/${b.enemyMaxHp}${b.enemyBlock ? ` · 盾 ${b.enemyBlock}` : ""}</span>
+            <span class="intent" id="enemy-intent">意圖：${escapeHtml(intent.label)}</span>
           </div>
         </div>
-        <div class="fighter player">
+        <div class="fighter player" id="fighter-player">
           <div class="fighter-meta">
-            <strong>${escapeHtml(CHARACTER.name)}</strong>
-            <div class="hp-bar player"><span style="width:${Math.max(0, (b.playerHp / b.playerMaxHp) * 100)}%"></span></div>
-            <span class="hp-text">${b.playerHp}/${b.playerMaxHp}${b.playerBlock ? ` · 盾 ${b.playerBlock}` : ""}</span>
+            <strong id="player-anchor">${escapeHtml(CHARACTER.name)}</strong>
+            <div class="hp-bar player"><span id="player-hp-fill" style="width:${Math.max(0, (b.playerHp / b.playerMaxHp) * 100)}%"></span></div>
+            <span class="hp-text" id="player-hp-text">${b.playerHp}/${b.playerMaxHp}${b.playerBlock ? ` · 盾 ${b.playerBlock}` : ""}</span>
             <span class="energy">⚡ ${b.energy}/${b.maxEnergy}${b.kuaisouReady ? " · 快手就緒" : ""}</span>
           </div>
         </div>
       </header>
-      ${
-        b.isBoss && b.turn === 1 && !b.over
-          ? `<p class="boss-line" role="status">「${escapeHtml(b.enemyFlavor)}」</p>`
-          : ""
-      }
       ${overBanner}
       <div class="hand" role="list">${hand || '<p class="empty-hand">沒有手牌</p>'}</div>
       <div class="battle-actions">
         ${
           b.over === "win"
-            ? `<button type="button" class="btn btn-primary" data-action="battle-win">收取戰果</button>`
+            ? `<button type="button" class="btn btn-primary btn-pressable" data-action="battle-win">收取戰果</button>`
             : b.over === "lose"
-              ? `<button type="button" class="btn btn-primary" data-action="to-defeat">結算</button>`
-              : `<button type="button" class="btn btn-ghost" data-action="end-turn">結束回合</button>`
+              ? `<button type="button" class="btn btn-primary btn-pressable" data-action="to-defeat">結算</button>`
+              : `<button type="button" class="btn btn-ghost" data-action="end-turn" ${state.busy ? "disabled" : ""}>結束回合</button>`
         }
       </div>
       <ul class="battle-log" aria-live="polite">
@@ -332,7 +361,7 @@ function renderEvent() {
           <p class="run-inline">HP ${state.run.hp}/${state.run.maxHp} · 牌組 ${state.run.deck.length} · 金幣 ${state.run.gold}</p>
         </section>
         <div class="actions">
-          <button type="button" class="btn btn-primary" data-action="finish-event">繼續地圖</button>
+          <button type="button" class="btn btn-primary btn-pressable" data-action="finish-event">繼續地圖</button>
         </div>
       </main>
     `;
@@ -390,10 +419,10 @@ function renderRest() {
 
 function renderVictory() {
   return `
-    <main class="screen" aria-label="通關">
+    <main class="screen screen-result is-win" aria-label="通關">
       <header class="brand-block">
-        <h1 class="brand">${escapeHtml(META.title)}</h1>
-        <p class="tagline">Act1「${escapeHtml(META.actName)}」打通！</p>
+        <h1 class="brand result-title">${escapeHtml(META.title)}</h1>
+        <p class="tagline result-sub">勝利 · Act1「${escapeHtml(META.actName)}」打通</p>
       </header>
       <section class="panel">
         <h2>過咗鐵閘</h2>
@@ -403,7 +432,7 @@ function renderVictory() {
         </p>
       </section>
       <div class="actions">
-        <button type="button" class="btn btn-primary" data-action="again">再來一局</button>
+        <button type="button" class="btn btn-primary btn-pressable" data-action="again">再來一局</button>
         <button type="button" class="btn btn-ghost" data-action="back-title">返回標題</button>
       </div>
     </main>
@@ -412,10 +441,10 @@ function renderVictory() {
 
 function renderDefeat() {
   return `
-    <main class="screen" aria-label="敗北">
+    <main class="screen screen-result is-lose" aria-label="敗北">
       <header class="brand-block">
-        <h1 class="brand">${escapeHtml(META.title)}</h1>
-        <p class="tagline">這一鋪完結了</p>
+        <h1 class="brand result-title dim">${escapeHtml(META.title)}</h1>
+        <p class="tagline result-sub">敗北 · 這一鋪完結了</p>
       </header>
       <section class="panel">
         <h2>後巷吞沒你</h2>
@@ -425,7 +454,7 @@ function renderDefeat() {
         </p>
       </section>
       <div class="actions">
-        <button type="button" class="btn btn-primary" data-action="again">再來一局</button>
+        <button type="button" class="btn btn-primary btn-pressable" data-action="again">再來一局</button>
         <button type="button" class="btn btn-ghost" data-action="back-title">返回標題</button>
       </div>
     </main>
@@ -441,6 +470,9 @@ function render() {
       break;
     case "map":
       html = renderMap();
+      break;
+    case "boss-gate":
+      html = renderBossGate();
       break;
     case "battle":
       html = renderBattle();
@@ -466,13 +498,130 @@ function render() {
   app.innerHTML = html;
 }
 
+/* ---------- feel sequences ---------- */
+
+async function playCardWithFeel(handIndex, cardEl) {
+  if (state.busy || !state.battle || state.battle.over) return;
+  const b = state.battle;
+  const cardId = b.hand[handIndex];
+  const card = CARDS[cardId];
+  if (!card) return;
+  const cost = effectiveCost(b, cardId);
+  if (b.energy < cost) {
+    state.statusMsg = "能量不足";
+    return;
+  }
+
+  state.busy = true;
+  const from = cardEl.getBoundingClientRect();
+  sfx.click();
+  await pressCard(cardEl);
+
+  const toEnemy = document.getElementById("enemy-portrait");
+  const toPlayer = document.getElementById("fighter-player");
+  const flyTo =
+    card.type === "attack"
+      ? toEnemy?.getBoundingClientRect()
+      : toPlayer?.getBoundingClientRect();
+
+  sfx.whoosh();
+  await flyProjectile(from, flyTo, card.type === "attack" ? "attack" : "skill", 140);
+
+  const result = playCard(b, handIndex);
+  syncRunHpFromBattle();
+  render();
+
+  if (!result.ok) {
+    state.busy = false;
+    render();
+    return;
+  }
+
+  if (result.cardType === "attack") {
+    const portrait = document.getElementById("enemy-portrait");
+    const big = !!result.usedKuaisou;
+    sfx.hit();
+    floatText(
+      portrait,
+      result.usedKuaisou ? `-${result.dealt} 快手` : `-${result.dealt}`,
+      result.usedKuaisou ? "kuaisou" : "dmg"
+    );
+    if (result.enemyBlocked) {
+      floatText(portrait, `擋 ${result.enemyBlocked}`, "block");
+    }
+    await impactTarget(portrait, { kind: "attack", kick: true, big });
+  } else {
+    const player = document.getElementById("fighter-player");
+    if (result.blockGained) {
+      sfx.block();
+      floatText(player, `+${result.blockGained} 盾`, "block");
+    }
+    if (result.healed) {
+      floatText(player, `+${result.healed}`, "heal");
+    }
+    await impactTarget(player, { kind: "skill", kick: false });
+  }
+
+  if (result.usedKuaisou) {
+    showKuaisouBanner();
+    sfx.kuaisou();
+  }
+  if (result.kuaisouArmed) {
+    showKuaisouBanner();
+    sfx.kuaisou();
+    floatText(document.getElementById("player-anchor"), "快手就緒 −1／+3", "kuaisou");
+  }
+
+  state.busy = false;
+  render();
+}
+
+async function endTurnWithFeel() {
+  if (state.busy || !state.battle || state.battle.over) return;
+  state.busy = true;
+  const intentEl = document.getElementById("enemy-intent");
+  await telegraphIntent(intentEl, 260);
+
+  const result = endTurn(state.battle);
+  syncRunHpFromBattle();
+
+  if (result?.kind === "attack") {
+    const player = document.getElementById("fighter-player");
+    if (result.blocked) {
+      sfx.block();
+      floatText(player, `擋 ${result.blocked}`, "block");
+    }
+    if (result.dealt > 0) {
+      sfx.hurt();
+      floatText(player, `-${result.dealt}`, "dmg");
+      await playerHurtFlash();
+    } else if (result.blocked) {
+      await impactTarget(player, { kind: "skill", kick: false });
+    }
+  }
+
+  state.busy = false;
+  render();
+}
+
 /* ---------- flow helpers ---------- */
 
-function beginBattle(enemyId) {
+function startBattleNow(enemyId) {
   const enemy = enemyById(enemyId);
   state.battle = createBattle(state.run, enemy);
   startPlayerTurn(state.battle);
+  state.pendingBossId = null;
   state.screen = "battle";
+}
+
+function beginBattle(enemyId) {
+  const enemy = enemyById(enemyId);
+  if (enemy.isBoss) {
+    state.pendingBossId = enemyId;
+    state.screen = "boss-gate";
+    return;
+  }
+  startBattleNow(enemyId);
 }
 
 function advanceMap() {
@@ -483,8 +632,10 @@ function advanceMap() {
   state.eventResult = null;
   state.rewardChoices = [];
   state.statusMsg = "";
+  state.pendingBossId = null;
   if (state.run.mapIndex >= ACT1_MAP.length) {
     state.screen = "victory";
+    sfx.win();
   } else {
     state.screen = "map";
   }
@@ -516,6 +667,7 @@ function onClick(event) {
     "[data-action], [data-play], [data-pick], [data-event-choice], .map-node.is-current"
   );
   if (!t) return;
+  if (state.busy && !t.getAttribute("data-action")?.startsWith("boss")) return;
 
   if (t.classList?.contains("map-node") && t.classList.contains("is-current")) {
     enterNode();
@@ -525,12 +677,8 @@ function onClick(event) {
 
   const playIdx = t.getAttribute("data-play");
   if (playIdx != null && state.battle) {
-    const result = playCard(state.battle, Number(playIdx));
-    if (!result.ok) {
-      state.statusMsg = result.reason || "";
-    }
-    syncRunHpFromBattle();
-    render();
+    const cardEl = t.closest(".card-face") || t;
+    playCardWithFeel(Number(playIdx), cardEl);
     return;
   }
 
@@ -564,6 +712,7 @@ function onClick(event) {
       state.screen = "title";
       state.run = null;
       state.battle = null;
+      state.pendingBossId = null;
       break;
     case "confirm-char":
       state.run = createRun();
@@ -572,16 +721,15 @@ function onClick(event) {
     case "enter-node":
       enterNode();
       break;
-    case "end-turn":
-      if (state.battle) {
-        endTurn(state.battle);
-        syncRunHpFromBattle();
-      }
+    case "boss-continue":
+      if (state.pendingBossId) startBattleNow(state.pendingBossId);
       break;
+    case "end-turn":
+      endTurnWithFeel();
+      return;
     case "battle-win":
       syncRunHpFromBattle();
       state.run.victories += 1;
-      // 戰鬥後自動給三選一（Boss 勝則直接通關）
       if (currentNode()?.type === "boss") {
         advanceMap();
       } else {
@@ -591,6 +739,7 @@ function onClick(event) {
     case "to-defeat":
       syncRunHpFromBattle();
       state.screen = "defeat";
+      sfx.lose();
       break;
     case "skip-reward":
       advanceMap();
@@ -612,6 +761,7 @@ function onClick(event) {
     case "again":
       state.run = createRun();
       state.battle = null;
+      state.pendingBossId = null;
       state.screen = "map";
       break;
     default:

@@ -1,5 +1,6 @@
 /**
  * 《香江小風波》戰鬥邏輯（垂直切片・簡化可輸可贏）
+ * 回傳明細供手感層動畫（打擊數字／快手／擋）
  */
 
 import { CARDS, CHARACTER } from "./data.js";
@@ -86,14 +87,14 @@ function drawCards(b, n) {
 export function startPlayerTurn(b) {
   b.playerBlock = 0;
   b.energy = Math.max(0, b.maxEnergy - (b.turn === 1 ? b.energyPenalty : 0));
-  // discard leftover hand
   b.discard.push(...b.hand);
   b.hand = [];
   drawCards(b, 5);
 
   if (b.enemyMark > 0) {
-    b.enemyHp = Math.max(0, b.enemyHp - b.enemyMark);
-    pushLog(b, `跳電烙住造成 ${b.enemyMark} 傷害`);
+    const markDmg = b.enemyMark;
+    b.enemyHp = Math.max(0, b.enemyHp - markDmg);
+    pushLog(b, `跳電烙住造成 ${markDmg} 傷害`);
     b.enemyMark = 0;
     if (b.enemyHp <= 0) {
       b.over = "win";
@@ -102,9 +103,6 @@ export function startPlayerTurn(b) {
   }
 }
 
-/**
- * Effective cost for a card in hand (快手 −1)
- */
 export function effectiveCost(b, cardId) {
   const card = CARDS[cardId];
   if (!card) return 99;
@@ -115,6 +113,21 @@ export function effectiveCost(b, cardId) {
   return cost;
 }
 
+/**
+ * @returns {{
+ *   ok: boolean,
+ *   reason?: string,
+ *   cardId?: string,
+ *   cardType?: string,
+ *   dealt?: number,
+ *   enemyBlocked?: number,
+ *   blockGained?: number,
+ *   healed?: number,
+ *   usedKuaisou?: boolean,
+ *   kuaisouArmed?: boolean,
+ *   target?: "enemy"|"self"
+ * }}
+ */
 export function playCard(b, handIndex) {
   if (b.over) return { ok: false, reason: "戰鬥已結束" };
   const cardId = b.hand[handIndex];
@@ -143,25 +156,36 @@ export function playCard(b, handIndex) {
     dmg = Math.max(0, dmg - b.playerWeaken);
   }
 
+  let dealt = 0;
+  let enemyBlocked = 0;
+  let blockGained = 0;
+  let healed = 0;
+  /** @type {"enemy"|"self"} */
+  let target = card.type === "attack" ? "enemy" : "self";
+
   if (card.type === "attack" && dmg > 0) {
-    const blocked = Math.min(b.enemyBlock, dmg);
-    b.enemyBlock -= blocked;
-    const dealt = dmg - blocked;
+    enemyBlocked = Math.min(b.enemyBlock, dmg);
+    b.enemyBlock -= enemyBlocked;
+    dealt = dmg - enemyBlocked;
     b.enemyHp = Math.max(0, b.enemyHp - dealt);
     pushLog(
       b,
-      `打出「${card.name}」造成 ${dealt} 傷害${blocked ? `（擋 ${blocked}）` : ""}${usedKuaisou ? "【快手】" : ""}`
+      `打出「${card.name}」造成 ${dealt} 傷害${enemyBlocked ? `（擋 ${enemyBlocked}）` : ""}${usedKuaisou ? "【快手】" : ""}`
     );
   }
 
   if (card.block) {
     b.playerBlock += card.block;
+    blockGained = card.block;
+    target = "self";
     pushLog(b, `打出「${card.name}」獲得 ${card.block} 護盾`);
   }
   if (card.heal) {
     const before = b.playerHp;
     b.playerHp = Math.min(b.playerMaxHp, b.playerHp + card.heal);
-    pushLog(b, `打出「${card.name}」回復 ${b.playerHp - before} HP`);
+    healed = b.playerHp - before;
+    target = "self";
+    pushLog(b, `打出「${card.name}」回復 ${healed} HP`);
   }
   if (card.draw) {
     drawCards(b, card.draw);
@@ -172,10 +196,12 @@ export function playCard(b, handIndex) {
     pushLog(b, `烙住跳電 ${card.mark}`);
   }
 
+  let kuaisouArmed = false;
   if (card.type === "attack") {
     b.attacksPlayed += 1;
     if (b.attacksPlayed % 3 === 0) {
       b.kuaisouReady = true;
+      kuaisouArmed = true;
       pushLog(b, "【快手】下一張攻擊費用 −1 並 +3 傷害！");
     }
   }
@@ -185,15 +211,37 @@ export function playCard(b, handIndex) {
     pushLog(b, "對手倒下！");
   }
 
-  return { ok: true };
+  return {
+    ok: true,
+    cardId,
+    cardType: card.type,
+    dealt,
+    enemyBlocked,
+    blockGained,
+    healed,
+    usedKuaisou,
+    kuaisouArmed,
+    target,
+  };
 }
 
+/**
+ * @returns {{
+ *   intent: object,
+ *   dealt?: number,
+ *   blocked?: number,
+ *   kind: string
+ * } | null}
+ */
 export function endTurn(b) {
-  if (b.over) return;
+  if (b.over) return null;
 
   b.playerWeaken = 0;
   const intent = currentIntent(b);
   b.enemyBlock = 0;
+
+  /** @type {{ intent: object, dealt?: number, blocked?: number, kind: string }} */
+  const result = { intent, kind: intent.kind, dealt: 0, blocked: 0 };
 
   if (intent.kind === "attack") {
     const raw = intent.value + b.enemyAtkBonus;
@@ -201,6 +249,8 @@ export function endTurn(b) {
     b.playerBlock -= blocked;
     const dealt = raw - blocked;
     b.playerHp = Math.max(0, b.playerHp - dealt);
+    result.dealt = dealt;
+    result.blocked = blocked;
     pushLog(b, `${b.enemyName}：${intent.label} → 你受到 ${dealt} 傷害`);
   } else if (intent.kind === "block") {
     b.enemyBlock += intent.value;
@@ -216,10 +266,11 @@ export function endTurn(b) {
   if (b.playerHp <= 0) {
     b.over = "lose";
     pushLog(b, "你倒下了……");
-    return;
+    return result;
   }
 
   b.intentIndex += 1;
   b.turn += 1;
   startPlayerTurn(b);
+  return result;
 }
