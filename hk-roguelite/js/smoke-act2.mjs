@@ -7,6 +7,8 @@ import {
   ACT1_MAP,
   ACT2_MAP,
   EVENTS,
+  pickEventId,
+  eventById,
   SHOP,
   CARDS,
   mapForAct,
@@ -118,7 +120,7 @@ function simulateChar(charId) {
       notes.push(`A1 ${node.title}: +${r.gold}g`);
     } else if (node.type === "event") {
       const goldBefore = run.gold;
-      EVENTS[node.eventId].choices[1].apply(run);
+      eventById(node.eventId || pickEventId(1)).choices[1].apply(run);
       assert(run.gold === goldBefore, "A1 事件唔發死金");
       notes.push("A1 event ok");
     } else if (node.type === "rest") {
@@ -147,7 +149,7 @@ function simulateChar(charId) {
       notes.push("A2 reward");
     } else if (node.type === "event") {
       const goldBefore = run.gold;
-      EVENTS[node.eventId].choices[0].apply(run);
+      eventById(node.eventId || pickEventId(2)).choices[0].apply(run);
       assert(run.gold === goldBefore, "A2 事件唔發死金");
       notes.push("A2 event ok");
     } else if (node.type === "rest") {

@@ -665,9 +665,8 @@ export const ACT1_MAP = [
   {
     id: "n2",
     type: "event",
-    title: "巷口風聲",
+    title: "街頭閒事",
     subtitle: "短事件",
-    eventId: "ev_gate_whisper",
     bg: "assets/bg/bg-stairwell-old.jpg",
   },
   {
@@ -725,9 +724,8 @@ export const ACT2_MAP = [
   {
     id: "a2n3",
     type: "event",
-    title: "彌敦道擦肩",
+    title: "旺角閒事",
     subtitle: "短事件",
-    eventId: "ev_neon_hustle",
     bg: "assets/bg/bg-neon-street-day.jpg",
   },
   {
@@ -778,9 +776,8 @@ export const ACT3_MAP = [
   {
     id: "a3n3",
     type: "event",
-    title: "籠邊夜話",
+    title: "天台閒事",
     subtitle: "短事件",
-    eventId: "ev_rooftop_cage",
     bg: "assets/bg/bg-rooftop-wooden-dummy.jpg",
   },
   {
@@ -930,12 +927,274 @@ export const EVENTS = {
       },
     ],
   },
+
+  /* ===== Act1 加厚 ===== */
+  /** Act1-A：涼茶舖 */
+  ev_herbal_tea: {
+    id: "ev_herbal_tea",
+    title: "涼茶舖",
+    art: "assets/events/ev-cha-chaan.jpg",
+    body: "涼茶舖阿伯遞你一碗廿四味：「飲咗先講嘢。」你望望碗底——苦，但呢條街冇免費嘅甜。",
+    choices: [
+      {
+        id: "drink",
+        label: "成碗灌落去",
+        effectText: "回 14 HP；最大生命 +2",
+        apply: (run) => {
+          run.maxHp += 2;
+          run.hp = Math.min(run.maxHp, run.hp + 14);
+          return "苦到面都縐埋，但身子骨爽利咗。";
+        },
+      },
+      {
+        id: "buy_pills",
+        label: "買包感冒茶傍身",
+        effectText: "失去 4 HP；牌組加入「雨衣包紮」",
+        apply: (run) => {
+          run.hp = Math.max(1, run.hp - 4);
+          run.deck.push("S21");
+          return "藥苦，但袋中多咗一張包紮牌。";
+        },
+      },
+      {
+        id: "ask_gate",
+        label: "問阿伯鐵閘點行",
+        effectText: "下戰開場 +1 能量；牌組加入「掛波小心」",
+        apply: (run) => {
+          run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
+          run.deck.push("S22");
+          return "阿伯指咗條後巷——下一場多 1 能量，仲多張擋牌。";
+        },
+      },
+    ],
+  },
+  /** Act1-B：排檔收工 */
+  ev_dai_pai_dong: {
+    id: "ev_dai_pai_dong",
+    title: "排檔收工",
+    art: "assets/events/ev-dai-pai-dong.jpg",
+    body: "排檔阿姐收緊膠凳，見你一身傷：「執兩件嘢先走啦，唔好死喺我檔口前面。」",
+    choices: [
+      {
+        id: "eat",
+        label: "食碗車仔麵先",
+        effectText: "回 10 HP；牌組加入「最緊要開心」",
+        apply: (run) => {
+          run.hp = Math.min(run.maxHp, run.hp + 10);
+          run.deck.push("S09");
+          return "熱湯落肚，人都軟化咗，多咗張「最緊要開心」。";
+        },
+      },
+      {
+        id: "take_stool",
+        label: "攞張膠凳走",
+        effectText: "牌組加入「紅白藍砸」；最大生命 +2",
+        apply: (run) => {
+          run.maxHp += 2;
+          run.deck.push("S40");
+          return "膠凳揸手，多咗一張砸牌。";
+        },
+      },
+      {
+        id: "pay_tab",
+        label: "幫佢埋單",
+        effectText: "失去 6 HP（做義工累到）；下戰入場帶 9 擋",
+        apply: (run) => {
+          run.hp = Math.max(1, run.hp - 6);
+          run.nextBattleBlock = (run.nextBattleBlock || 0) + 9;
+          return "幫手幫到腰痠，不過街坊記住你——下場帶 9 擋入場。";
+        },
+      },
+    ],
+  },
+
+  /* ===== Act2 加厚 ===== */
+  /** Act2-A：地鐵逼爆 */
+  ev_mtr_squeeze: {
+    id: "ev_mtr_squeeze",
+    title: "地鐵逼爆",
+    art: "assets/events/ev-mtr-crowd.jpg",
+    body: "車門一開，人潮將你推入車廂。你背脊貼實玻璃，前面有人踩住你隻鞋——呢個城市連呼吸都要爭。",
+    choices: [
+      {
+        id: "squeeze_in",
+        label: "硬擠入去",
+        effectText: "失去 8 HP；下戰開場 +2 能量",
+        apply: (run) => {
+          run.hp = Math.max(1, run.hp - 8);
+          run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 2;
+          return "夾到骨都響，但逼出咗一肚子火——下場多 2 能量。";
+        },
+      },
+      {
+        id: "let_pass",
+        label: "讓位畀阿婆",
+        effectText: "最大生命 +5 並回 5；牌組加入「芝麻糊暖」",
+        apply: (run) => {
+          run.maxHp += 5;
+          run.hp = Math.min(run.maxHp, run.hp + 5);
+          run.deck.push("S47");
+          return "阿婆拍你手背，你個人暖返——多咗張「芝麻糊暖」。";
+        },
+      },
+      {
+        id: "pickpocket",
+        label: "順手摸個袋",
+        effectText: "牌組加入「椒鹽補刀」＋「埋單」；失去 10 HP",
+        apply: (run) => {
+          run.hp = Math.max(1, run.hp - 10);
+          run.deck.push("S02", "S12");
+          return "得手，但畀人發現——食咗兩拳，袋中多咗兩張牌。";
+        },
+      },
+    ],
+  },
+  /** Act2-B：霓虹招牌 */
+  ev_neon_sign: {
+    id: "ev_neon_sign",
+    title: "招牌跌下來",
+    art: "assets/events/ev-mtr-platform.jpg",
+    body: "頭頂招牌鐵架生鏽，風一吹就搖。下面仲有人行過——你上唔上去托住？",
+    choices: [
+      {
+        id: "hold_up",
+        label: "托住個招牌",
+        effectText: "牌組加入「鐵皮硬遮」；下戰入場帶 10 擋",
+        apply: (run) => {
+          run.deck.push("S46");
+          run.nextBattleBlock = (run.nextBattleBlock || 0) + 10;
+          return "膊頭頂到實，招牌冇跌——多咗張硬遮，下場帶 10 擋。";
+        },
+      },
+      {
+        id: "run_away",
+        label: "拉大隊走避",
+        effectText: "最大生命 +3；牌組加入「掛波小心」",
+        apply: (run) => {
+          run.maxHp += 3;
+          run.deck.push("S22");
+          return "街坊跟你走避，冇人受傷——身子骨同牌組都结实咗。";
+        },
+      },
+      {
+        id: "take_metal",
+        label: "拆條鐵枝走",
+        effectText: "牌組加入「大力出奇蹟」；失去 7 HP",
+        apply: (run) => {
+          run.hp = Math.max(1, run.hp - 7);
+          run.deck.push("S07");
+          return "鐵枝割手，但揸上手好实在——多咗張搏命牌。";
+        },
+      },
+    ],
+  },
+
+  /* ===== Act3 加厚 ===== */
+  /** Act3-A：天台晾衫 */
+  ev_rooftop_laundry: {
+    id: "ev_rooftop_laundry",
+    title: "天台晾衫",
+    art: "assets/events/ev-rooftop-night.jpg",
+    body: "天台橫杆掛滿衫，風一吹全部向你撲。角落有個阿嬸收衫，望你一眼：「後生仔，你仲未死呀？」",
+    choices: [
+      {
+        id: "help_hang",
+        label: "幫手收衫",
+        effectText: "回 12 HP；最大生命 +3",
+        apply: (run) => {
+          run.maxHp += 3;
+          run.hp = Math.min(run.maxHp, run.hp + 12);
+          return "阿嬸塞你一件乾衫，你換走濕透嗰件——個人暖返。";
+        },
+      },
+      {
+        id: "take_rope",
+        label: "拆條尼龍繩",
+        effectText: "牌組加入「萬年船」；下戰入場帶 8 擋",
+        apply: (run) => {
+          run.deck.push("S11");
+          run.nextBattleBlock = (run.nextBattleBlock || 0) + 8;
+          return "繩纏手當護腕——多咗張擋牌，下場帶 8 擋。";
+        },
+      },
+      {
+        id: "ask_cage",
+        label: "問阿嬸籠邊點去",
+        effectText: "下戰開場 +1 能量；牌組加入「舊帳對數」",
+        apply: (run) => {
+          run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
+          run.deck.push("S72");
+          return "阿嬸指住水塔後面——下一場多 1 能量，仲多張標記牌。";
+        },
+      },
+    ],
+  },
+  /** Act3-B：最後一支煙 */
+  ev_last_cigarette: {
+    id: "ev_last_cigarette",
+    title: "最後一支煙",
+    art: "assets/events/ev-expired-can.jpg",
+    body: "水塔後面有人遞你一支煙：「上去之前，食埋佢。落面嘅人，唔使留手。」火機一啪，燒亮你半邊面。",
+    choices: [
+      {
+        id: "smoke",
+        label: "食埋佢先上",
+        effectText: "失去 9 HP；最大生命 +8",
+        apply: (run) => {
+          run.hp = Math.max(1, run.hp - 9);
+          run.maxHp += 8;
+          return "一口氣頂到底——血少咗，但骨頭硬淨好多。";
+        },
+      },
+      {
+        id: "keep_it",
+        label: "袋住唔食",
+        effectText: "牌組加入「打邊爐氣」；下戰入場帶 6 擋",
+        apply: (run) => {
+          run.deck.push("S64");
+          run.nextBattleBlock = (run.nextBattleBlock || 0) + 6;
+          return "留住個火——多咗張低血爆發牌，下場帶 6 擋。";
+        },
+      },
+      {
+        id: "pass_it",
+        label: "傳畀下一個",
+        effectText: "回 8 HP；牌組加入「加底唔該」",
+        apply: (run) => {
+          run.hp = Math.min(run.maxHp, run.hp + 8);
+          run.deck.push("S25");
+          return "你傳出去，有人接住——手暖咗，多咗張回血抽牌。";
+        },
+      },
+    ],
+  },
 };
 
 /** 依 run.act 取當前地圖 */
 export function mapForAct(act) {
   if (act === 3) return ACT3_MAP;
   return act === 2 ? ACT2_MAP : ACT1_MAP;
+}
+
+/**
+ * 每 Act 事件池：事件節點行到時抽一個（同一節點抽定就記住）
+ * 每 Act 至少 3 個短事件（1 個固定 + 2 個加厚）
+ */
+export const EVENT_POOLS = {
+  1: ["ev_gate_whisper", "ev_herbal_tea", "ev_dai_pai_dong"],
+  2: ["ev_neon_hustle", "ev_mtr_squeeze", "ev_neon_sign"],
+  3: ["ev_rooftop_cage", "ev_rooftop_laundry", "ev_last_cigarette"],
+};
+
+/** 抽一個該 Act 的事件 id（可傳 rng 方便自測） */
+export function pickEventId(act, rng = Math.random) {
+  const pool = EVENT_POOLS[act] || EVENT_POOLS[1];
+  return pool[Math.floor(rng() * pool.length)] || pool[0];
+}
+
+/** 依 id 取事件；缺就 fallback 第一個 Act1 事件 */
+export function eventById(id) {
+  return EVENTS[id] || EVENTS.ev_gate_whisper;
 }
 
 export function actDisplayName(act) {
