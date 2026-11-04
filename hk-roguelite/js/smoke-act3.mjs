@@ -20,6 +20,9 @@ import {
   enemyTag,
   pickRewardChoices,
   SIGNATURE_CARDS,
+  EVENT_POOLS,
+  pickEventId,
+  eventById,
 } from "./data.js";
 import { createBattle, playCard, endTurn, startPlayerTurn } from "./battle.js";
 
@@ -102,8 +105,9 @@ function walkAct(run, map, actNo, notes) {
       run.deck.push("S12");
       notes.push(`A${actNo}-${i + 1} 選牌`);
     } else if (node.type === "event") {
-      const ev = EVENTS[node.eventId];
-      assert(ev, `事件 ${node.eventId} 缺失`);
+      // 事件由該 Act 池抽（地圖節點冇固定 eventId 時）
+      const ev = eventById(node.eventId || pickEventId(actNo));
+      assert(ev, `事件缺失：${node.eventId || actNo}`);
       assert(ev.choices.length === 3, `事件 ${ev.id} 要三選一`);
       const goldBefore = run.gold;
       const hpBefore = run.hp;
@@ -191,6 +195,55 @@ function simulateChar(charId) {
   const seen = new Set();
   for (let i = 0; i < 200; i++) seen.add(pickNodeEnemyId(ACT3_MAP[3]));
   assert(seen.has("E08") && seen.has("E10") && seen.has("E11"), "精英池抽樣不齊");
+
+  // —— 事件池：每 Act 至少 3 個短事件，全部三選一、全部改局、唔發死金 ——
+  for (const actNo of [1, 2, 3]) {
+    const pool = EVENT_POOLS[actNo];
+    assert(Array.isArray(pool) && pool.length >= 3, `Act${actNo} 事件池至少 3 個`);
+    // 抽 200 次，池內每個事件都要抽得到
+    const hit = new Set();
+    for (let i = 0; i < 200; i++) {
+      const id = pickEventId(actNo);
+      assert(pool.includes(id), `Act${actNo} 抽到池外事件 ${id}`);
+      hit.add(id);
+    }
+    assert(hit.size === pool.length, `Act${actNo} 有事件抽唔到`);
+
+    for (const evId of pool) {
+      const ev = EVENTS[evId];
+      assert(ev, `事件 ${evId} 不存在`);
+      assert(ev.art, `事件 ${evId} 缺插圖`);
+      assert(typeof ev.body === "string" && ev.body.length > 0, `${evId} 缺文案`);
+      assert(ev.choices.length === 3, `${evId} 要三選一`);
+      const ids = new Set(ev.choices.map((c) => c.id));
+      assert(ids.size === 3, `${evId} 選項 id 要唯一`);
+
+      for (const ch of ev.choices) {
+        assert(ch.label && ch.effectText, `${evId}/${ch.id} 缺 label／effectText`);
+        // 用一個基準 run 探測每個選項都要改局，而且唔可以改金幣（唔發死金）
+        const base = {
+          hp: 50,
+          maxHp: 80,
+          gold: 7,
+          deck: ["S01"],
+          nextBattleEnergyPenalty: 0,
+          nextBattleEnergyBonus: 0,
+          nextBattleBlock: 0,
+        };
+        const probe = { ...base, deck: [...base.deck] };
+        const msg = ch.apply(probe);
+        assert(typeof msg === "string" && msg.length > 0, `${evId}/${ch.id} 要回一句`);
+        assert(probe.gold === base.gold, `${evId}/${ch.id} 唔應該改金幣`);
+        const changed =
+          probe.hp !== base.hp ||
+          probe.maxHp !== base.maxHp ||
+          probe.deck.length !== base.deck.length ||
+          (probe.nextBattleEnergyBonus || 0) - (probe.nextBattleEnergyPenalty || 0) !== 0 ||
+          (probe.nextBattleBlock || 0) !== 0;
+        assert(changed, `${evId}/${ch.id} 必須改局`);
+      }
+    }
+  }
 
   // —— 每角 3 張專屬牌（共 9）＋starter 至少帶 1 ——
   const sigOwners = Object.keys(SIGNATURE_CARDS);
