@@ -11,12 +11,15 @@ import {
   EVENTS,
   SHOP,
   CARDS,
+  REWARD_POOL,
   mapForAct,
   actDisplayName,
   battleGoldReward,
   enemyById,
   pickNodeEnemyId,
   enemyTag,
+  pickRewardChoices,
+  SIGNATURE_CARDS,
 } from "./data.js";
 import { createBattle, playCard, endTurn, startPlayerTurn } from "./battle.js";
 
@@ -188,6 +191,47 @@ function simulateChar(charId) {
   const seen = new Set();
   for (let i = 0; i < 200; i++) seen.add(pickNodeEnemyId(ACT3_MAP[3]));
   assert(seen.has("E08") && seen.has("E10") && seen.has("E11"), "精英池抽樣不齊");
+
+  // —— 每角 3 張專屬牌（共 9）＋starter 至少帶 1 ——
+  const sigOwners = Object.keys(SIGNATURE_CARDS);
+  assert(sigOwners.length === 3, "要有三個角色專屬池");
+  let sigTotal = 0;
+  for (const owner of sigOwners) {
+    const ids = SIGNATURE_CARDS[owner];
+    assert(ids.length === 3, `${owner} 要有 3 張專屬牌`);
+    sigTotal += ids.length;
+    for (const id of ids) {
+      const card = CARDS[id];
+      assert(card, `專屬牌 ${id} 不存在`);
+      assert(card.owner === owner, `${id} owner 應為 ${owner}`);
+      assert(!REWARD_POOL.includes(id), `${id} 唔應該入共用池`);
+    }
+    const starter = CHARACTERS[owner].starterDeck;
+    assert(
+      ids.some((id) => starter.includes(id)),
+      `${owner} starter 至少要帶 1 張專屬牌`
+    );
+  }
+  assert(sigTotal === 9, "專屬牌總數要 9 張");
+
+  // 選牌池分角：唔會抽到別角專屬牌
+  for (const owner of sigOwners) {
+    const own = new Set(SIGNATURE_CARDS[owner]);
+    const others = new Set(
+      sigOwners.filter((o) => o !== owner).flatMap((o) => SIGNATURE_CARDS[o])
+    );
+    let sigHits = 0;
+    for (let i = 0; i < 400; i++) {
+      const pick = pickRewardChoices(3, [], owner);
+      assert(pick.length === 3, `${owner} 三選一要有 3 張`);
+      assert(new Set(pick).size === 3, `${owner} 三選一唔可以有重複`);
+      for (const id of pick) {
+        assert(!others.has(id), `${owner} 抽到別角專屬牌 ${id}`);
+        if (own.has(id)) sigHits += 1;
+      }
+    }
+    assert(sigHits > 0, `${owner} 400 抽都冇專屬牌，權重冇生效`);
+  }
 
   walkAct(run, ACT1_MAP, 1, notes);
   run.act = 2;
