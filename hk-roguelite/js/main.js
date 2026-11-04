@@ -32,6 +32,7 @@ import {
   playerHurtFlash,
   telegraphIntent,
   showKuaisouBanner,
+  syncHpBars,
 } from "./feel.js";
 
 /** @type {{
@@ -529,7 +530,6 @@ async function playCardWithFeel(handIndex, cardEl) {
 
   const result = playCard(b, handIndex);
   syncRunHpFromBattle();
-  render();
 
   if (!result.ok) {
     state.busy = false;
@@ -537,19 +537,33 @@ async function playCardWithFeel(handIndex, cardEl) {
     return;
   }
 
+  // 先就地扣血／上盾，再播命中 FX（HP bar 可平滑過渡；總命中段 ≤350ms）
+  syncHpBars(b);
+
   if (result.cardType === "attack") {
     const portrait = document.getElementById("enemy-portrait");
-    const big = !!result.usedKuaisou;
     sfx.hit();
-    floatText(
-      portrait,
-      result.usedKuaisou ? `-${result.dealt} 快手` : `-${result.dealt}`,
-      result.usedKuaisou ? "kuaisou" : "dmg"
-    );
+    if (result.dealt > 0) {
+      floatText(
+        portrait,
+        result.usedKuaisou ? `-${result.dealt}` : `-${result.dealt}`,
+        result.usedKuaisou ? "kuaisou" : "dmg"
+      );
+    }
     if (result.enemyBlocked) {
       floatText(portrait, `擋 ${result.enemyBlocked}`, "block");
     }
-    await impactTarget(portrait, { kind: "attack", kick: true, big });
+    if (result.usedKuaisou) {
+      floatText(document.getElementById("player-anchor"), "費用−1", "kuaisou");
+      floatText(portrait, "+3 傷", "kuaisou");
+      showKuaisouBanner();
+      sfx.kuaisou();
+    }
+    await impactTarget(portrait, {
+      kind: "attack",
+      kick: true,
+      shake: true,
+    });
   } else {
     const player = document.getElementById("fighter-player");
     if (result.blockGained) {
@@ -562,14 +576,10 @@ async function playCardWithFeel(handIndex, cardEl) {
     await impactTarget(player, { kind: "skill", kick: false });
   }
 
-  if (result.usedKuaisou) {
-    showKuaisouBanner();
-    sfx.kuaisou();
-  }
   if (result.kuaisouArmed) {
     showKuaisouBanner();
     sfx.kuaisou();
-    floatText(document.getElementById("player-anchor"), "快手就緒 −1／+3", "kuaisou");
+    floatText(document.getElementById("player-anchor"), "快手！−1／+3", "kuaisou");
   }
 
   state.busy = false;
@@ -579,11 +589,17 @@ async function playCardWithFeel(handIndex, cardEl) {
 async function endTurnWithFeel() {
   if (state.busy || !state.battle || state.battle.over) return;
   state.busy = true;
+  const preview = getIntent(state.battle);
   const intentEl = document.getElementById("enemy-intent");
-  await telegraphIntent(intentEl, 260);
+
+  // 只有即將出手攻擊先預示 0.2–0.3s
+  if (preview?.kind === "attack") {
+    await telegraphIntent(intentEl, 240);
+  }
 
   const result = endTurn(state.battle);
   syncRunHpFromBattle();
+  syncHpBars(state.battle);
 
   if (result?.kind === "attack") {
     const player = document.getElementById("fighter-player");
@@ -594,10 +610,14 @@ async function endTurnWithFeel() {
     if (result.dealt > 0) {
       sfx.hurt();
       floatText(player, `-${result.dealt}`, "dmg");
+      player?.classList.add("is-flash-red");
       await playerHurtFlash();
+      player?.classList.remove("is-flash-red");
     } else if (result.blocked) {
       await impactTarget(player, { kind: "skill", kick: false });
     }
+  } else {
+    await wait(60);
   }
 
   state.busy = false;

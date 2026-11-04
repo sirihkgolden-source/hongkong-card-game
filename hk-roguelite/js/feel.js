@@ -84,17 +84,42 @@ export function floatText(anchorEl, text, variant = "dmg") {
 }
 
 /**
- * 落點：肖像 scale + 色閃 + 可選 kickback
+ * 落點：肖像 scale + 色閃 + 可選 kickback／輕震屏
+ * @param {{ kind?: "attack"|"skill", kick?: boolean, shake?: boolean }} [opts]
  */
-export async function impactTarget(el, { kind = "attack", kick = true, big = false } = {}) {
+export async function impactTarget(el, { kind = "attack", kick = true, shake = false } = {}) {
   if (!el) return;
   const flash = kind === "attack" ? "is-flash-red" : "is-flash-cyan";
+  const screen = document.querySelector(".screen-battle");
   el.classList.add("is-impact", flash);
   if (kick && kind === "attack") el.classList.add("is-kickback");
-  if (big) document.querySelector(".screen-battle")?.classList.add("is-screen-shake");
-  await wait(big ? 100 : 80);
+  if (shake) screen?.classList.add("is-screen-shake");
+  await wait(shake ? 100 : 80);
   el.classList.remove("is-impact", flash, "is-kickback");
-  document.querySelector(".screen-battle")?.classList.remove("is-screen-shake");
+  screen?.classList.remove("is-screen-shake");
+}
+
+/**
+ * 就地更新 HP 條（保留 transition，避免整頁重繪瞬跳）
+ */
+export function syncHpBars(b) {
+  if (!b) return;
+  const enemyFill = document.getElementById("enemy-hp-fill");
+  const enemyText = document.getElementById("enemy-hp-text");
+  const playerFill = document.getElementById("player-hp-fill");
+  const playerText = document.getElementById("player-hp-text");
+  if (enemyFill) {
+    enemyFill.style.width = `${Math.max(0, (b.enemyHp / b.enemyMaxHp) * 100)}%`;
+  }
+  if (enemyText) {
+    enemyText.textContent = `${b.enemyHp}/${b.enemyMaxHp}${b.enemyBlock ? ` · 盾 ${b.enemyBlock}` : ""}`;
+  }
+  if (playerFill) {
+    playerFill.style.width = `${Math.max(0, (b.playerHp / b.playerMaxHp) * 100)}%`;
+  }
+  if (playerText) {
+    playerText.textContent = `${b.playerHp}/${b.playerMaxHp}${b.playerBlock ? ` · 盾 ${b.playerBlock}` : ""}`;
+  }
 }
 
 /**
