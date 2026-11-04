@@ -273,7 +273,7 @@ export const CHARACTERS = {
     passive: {
       id: "kuaisou",
       name: "快手",
-      desc: "每打出第 3 張攻擊牌，下一張攻擊費用 −1（最低 0）並額外 +3 傷害。",
+      desc: "每打出第 3 張攻擊牌，下一張攻擊平一費（最低 0）兼額外 +3 傷害。",
     },
     starterDeck: [
       "S01",
@@ -288,8 +288,8 @@ export const CHARACTERS = {
     ],
     rewardBias: ["S07", "S12", "S14", "S40", "S64", "S02"],
   },
-  shan: {
-    id: "shan",
+  asan: {
+    id: "asan",
     name: "阿珊・茶記夜更",
     short: "捱得、護得場；盾厚再反打",
     initial: "珊",
@@ -298,7 +298,7 @@ export const CHARACTERS = {
     passive: {
       id: "dangkou",
       name: "檔口",
-      desc: "每場戰鬥首次受擊後，立刻獲得 8 點護盾。",
+      desc: "每場戰鬥首次捱打之後，即刻加 8 擋。",
     },
     starterDeck: [
       "S15",
@@ -314,17 +314,17 @@ export const CHARACTERS = {
     ],
     rewardBias: ["S46", "S56", "S31", "S47", "S21", "S11"],
   },
-  gau: {
-    id: "gau",
+  kauko: {
+    id: "kauko",
     name: "九哥・招牌霓虹",
     short: "識睇牌、識抽牌；技能多、節奏活",
     initial: "九",
     maxHp: 65,
     energy: 3,
     passive: {
-      id: "yanli",
-      name: "眼利",
-      desc: "每打出技能牌有 45% 機率再抽 1 張（每戰首次技能必定抽 1）。",
+      id: "zhaopaiyan",
+      name: "招牌眼",
+      desc: "每場戰鬥首次打出技能牌，即刻多抽 1 張。",
     },
     starterDeck: [
       "S01",
@@ -346,7 +346,13 @@ export const CHARACTERS = {
 export const CHARACTER = CHARACTERS.oil;
 
 export function characterById(id) {
+  if (id === "shan") return CHARACTERS.asan;
+  if (id === "gau") return CHARACTERS.kauko;
   return CHARACTERS[id] || CHARACTERS.oil;
+}
+
+export function listCharacters() {
+  return [CHARACTERS.oil, CHARACTERS.asan, CHARACTERS.kauko];
 }
 
 /**

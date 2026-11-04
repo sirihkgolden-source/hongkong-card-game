@@ -166,7 +166,7 @@ function renderTitle() {
 
 function renderSelect() {
   const selected = characterById(state.selectedCharId);
-  const list = Object.values(CHARACTERS)
+  const list = [CHARACTERS.oil, CHARACTERS.asan, CHARACTERS.kauko]
     .map((c) => {
       const on = c.id === state.selectedCharId;
       return `
@@ -301,8 +301,10 @@ function renderBattle() {
       ? " · 快手就緒"
       : b.passiveId === "dangkou" && !b.dangkouUsed
         ? " · 檔口待命"
-        : b.passiveId === "yanli"
-          ? " · 眼利"
+        : b.passiveId === "zhaopaiyan"
+          ? b.zhaopaiyanUsed
+            ? " · 招牌眼已亮"
+            : " · 招牌眼待命"
           : "";
 
   return `
@@ -610,10 +612,10 @@ async function playCardWithFeel(handIndex, cardEl) {
     await wait(120);
   }
 
-  if (result.yanliDrew) {
-    showPassiveBanner("眼利！", "yanli");
+  if (result.zhaopaiyanDrew) {
+    showPassiveBanner("招牌眼 抽 1", "zhaopaiyan");
     sfx.kuaisou();
-    floatText(document.getElementById("player-anchor"), "眼利・抽1", "yanli");
+    floatText(document.getElementById("player-anchor"), "招牌眼 抽 1", "zhaopaiyan");
     await wait(120);
   }
 
@@ -656,9 +658,9 @@ async function endTurnWithFeel() {
 
     if (result.dangkou?.triggered) {
       syncHpBars(state.battle);
-      showPassiveBanner("檔口！", "dangkou");
+      showPassiveBanner(`檔口 +${result.dangkou.block} 擋`, "dangkou");
       sfx.block();
-      floatText(player, `+${result.dangkou.block} 盾`, "dangkou");
+      floatText(player, `檔口 +${result.dangkou.block} 擋`, "dangkou");
       await wait(140);
     }
   } else {

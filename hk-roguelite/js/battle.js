@@ -1,6 +1,6 @@
 /**
  * 《香江小風波》戰鬥邏輯（垂直切片・簡化可輸可贏）
- * 回傳明細供手感層動畫（打擊數字／快手／檔口／眼利／擋）
+ * 回傳明細供手感層動畫（打擊數字／快手／檔口／招牌眼／擋）
  */
 
 import { CARDS, characterById } from "./data.js";
@@ -63,7 +63,7 @@ export function createBattle(run, enemyDef) {
     attacksPlayed: 0,
     kuaisouReady: false,
     dangkouUsed: false,
-    yanliFirstSkillDone: false,
+    zhaopaiyanUsed: false,
     playerWeaken: 0,
     enemyMark: 0,
 
@@ -144,7 +144,7 @@ export function effectiveCost(b, cardId) {
  *   healed?: number,
  *   usedKuaisou?: boolean,
  *   kuaisouArmed?: boolean,
- *   yanliDrew?: boolean,
+ *   zhaopaiyanDrew?: boolean,
  *   drawnExtra?: number,
  *   target?: "enemy"|"self"
  * }}
@@ -227,20 +227,14 @@ export function playCard(b, handIndex) {
     }
   }
 
-  let yanliDrew = false;
+  let zhaopaiyanDrew = false;
   let drawnExtra = 0;
-  if (b.passiveId === "yanli" && card.type === "skill") {
-    const first = !b.yanliFirstSkillDone;
-    const proc = first || Math.random() < 0.45;
-    if (proc) {
-      drawCards(b, 1);
-      yanliDrew = true;
-      drawnExtra = 1;
-      b.yanliFirstSkillDone = true;
-      pushLog(b, first ? "【眼利】首次技能・抽 1！" : "【眼利】抽 1！");
-    } else {
-      b.yanliFirstSkillDone = true;
-    }
+  if (b.passiveId === "zhaopaiyan" && card.type === "skill" && !b.zhaopaiyanUsed) {
+    b.zhaopaiyanUsed = true;
+    drawCards(b, 1);
+    zhaopaiyanDrew = true;
+    drawnExtra = 1;
+    pushLog(b, "【招牌眼】首次技能・抽 1！");
   }
 
   if (b.enemyHp <= 0) {
@@ -258,7 +252,7 @@ export function playCard(b, handIndex) {
     healed,
     usedKuaisou,
     kuaisouArmed,
-    yanliDrew,
+    zhaopaiyanDrew,
     drawnExtra,
     target,
   };
@@ -275,7 +269,7 @@ export function tryDangkou(b, damageTaken) {
   b.dangkouUsed = true;
   const block = 8;
   b.playerBlock += block;
-  pushLog(b, `【檔口】首次受擊・獲得 ${block} 護盾！`);
+  pushLog(b, `【檔口】首次捱打・加 ${block} 擋！`);
   return { triggered: true, block };
 }
 
@@ -307,7 +301,8 @@ export function endTurn(b) {
     result.dealt = dealt;
     result.blocked = blocked;
     pushLog(b, `${b.enemyName}：${intent.label} → 你受到 ${dealt} 傷害`);
-    result.dangkou = tryDangkou(b, dealt);
+    // 捱打＝對方出手攻擊（全擋都算受擊）
+    result.dangkou = tryDangkou(b, raw);
   } else if (intent.kind === "block") {
     b.enemyBlock += intent.value;
     pushLog(b, `${b.enemyName}：${intent.label}`);

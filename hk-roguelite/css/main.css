@@ -872,6 +872,11 @@ body {
   font-size: 1.65rem;
 }
 
+.fx-float--zhaopaiyan {
+  color: #c9a0ff;
+  font-size: 1.45rem;
+}
+
 .fx-float--yanli {
   color: #b8ff5c;
   font-size: 1.65rem;
@@ -896,6 +901,11 @@ body {
 .fx-passive-banner--dangkou {
   color: var(--neon-cyan);
   text-shadow: 0 0 18px rgba(61, 224, 255, 0.55);
+}
+
+.fx-passive-banner--zhaopaiyan {
+  color: #c9a0ff;
+  text-shadow: 0 0 18px rgba(180, 120, 255, 0.55);
 }
 
 .fx-passive-banner--yanli {

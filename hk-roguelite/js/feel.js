@@ -162,9 +162,9 @@ export async function telegraphIntent(el, ms = 250) {
 }
 
 /**
- * 頂欄被動提示（快手／檔口／眼利）
+ * 頂欄被動提示（快手／檔口／招牌眼）
  * @param {string} text
- * @param {"kuaisou"|"dangkou"|"yanli"} [variant]
+ * @param {"kuaisou"|"dangkou"|"zhaopaiyan"} [variant]
  */
 export function showPassiveBanner(text, variant = "kuaisou") {
   const root = fxRoot();
@@ -172,8 +172,10 @@ export function showPassiveBanner(text, variant = "kuaisou") {
   banner.className = `fx-kuaisou-banner fx-passive-banner fx-passive-banner--${variant}`;
   banner.textContent = text;
   root.appendChild(banner);
-  requestAnimationFrame(() => banner.classList.add("is-on"));
-  setTimeout(() => banner.remove(), 750);
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => banner.classList.add("is-on"));
+  });
+  setTimeout(() => banner.remove(), 800);
 }
 
 /** @deprecated 用 showPassiveBanner("快手！", "kuaisou") */
