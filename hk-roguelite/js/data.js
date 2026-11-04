@@ -478,7 +478,7 @@ export const ENEMIES = {
       { kind: "attack", value: 13, label: "清場一推 13" },
     ],
   },
-  /** Act3 小怪：籠鬥 */
+  /** Act3 小怪：籠邊睇客 */
   E11: {
     id: "E11",
     name: "籠邊睇客",
