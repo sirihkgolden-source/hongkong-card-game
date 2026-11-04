@@ -80,7 +80,7 @@ export function floatText(anchorEl, text, variant = "dmg") {
   node.style.top = `${rect.top + rect.height * 0.25}px`;
   root.appendChild(node);
   requestAnimationFrame(() => node.classList.add("is-on"));
-  setTimeout(() => node.remove(), 700);
+  setTimeout(() => node.remove(), 900);
 }
 
 /**
