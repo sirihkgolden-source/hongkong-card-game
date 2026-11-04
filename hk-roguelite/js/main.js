@@ -190,7 +190,7 @@ function renderTitle() {
         <h2>一鋪一個傳奇</h2>
         <p class="lede">
           揀角色、組牌闖三區。短、上癮、想再來一局。<br />
-          三角色開局 → 後巷・夜醒 → 旺角霓虹 → 城寨・天台 → 籠鬥之王 → 通關結算。
+          三角色開局 → 後巷・夜醒 → 旺角霓虹 → 城寨・天台 → 籠門之王 → 通關結算。
         </p>
       </section>
       <div class="actions">
@@ -546,7 +546,7 @@ function renderVictory() {
         <p class="eyebrow">Act3・${escapeHtml(META.act3Name)}</p>
         <h2>天台無燈，你仲企得住</h2>
         <p class="lede">
-          ${escapeHtml(char.name)}喺「籠鬥之王」籠邊站到最後。<br />
+          ${escapeHtml(char.name)}喺「籠門之王」籠邊站到最後。<br />
           被動「${escapeHtml(char.passive.name)}」由後巷一路帶到天台。
         </p>
         <ul class="clear-stats">

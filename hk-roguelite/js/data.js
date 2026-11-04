@@ -506,10 +506,10 @@ export const ENEMIES = {
       { kind: "attack", value: 15, label: "收工埋數 15" },
     ],
   },
-  /** Act3 最終 Boss：籠鬥之王 */
+  /** Act3 最終 Boss：籠門之王 */
   E12: {
     id: "E12",
-    name: "籠鬥之王",
+    name: "籠門之王",
     hp: 136,
     art: "assets/enemies/E12.jpg",
     flavor: "天台無燈。今夜邊個落場，邊個落地。",
@@ -676,7 +676,7 @@ export const ACT3_MAP = [
   {
     id: "a3n6",
     type: "boss",
-    title: "籠鬥之王",
+    title: "籠門之王",
     subtitle: "最終 Boss",
     enemyId: "E12",
     bg: "assets/bg/bg-rooftop-playground.jpg",

@@ -1,5 +1,5 @@
 /**
- * Act3 smoke：三角色各一鋪打到最終 Boss（籠鬥之王）＋通關結算資料核對
+ * Act3 smoke：三角色各一鋪打到最終 Boss（籠門之王）＋通關結算資料核對
  * 用法：cd hk-roguelite && node js/smoke-act3.mjs
  */
 import {
@@ -167,12 +167,12 @@ function simulateChar(charId) {
   assert(META.act3Name === "城寨・天台", "META.act3Name");
   assert(enemyById("E04").name === "巷口鐵閘・睇場", "Act1 Boss");
   assert(enemyById("E05").name === "西裝收數隊", "Act2 Boss");
-  assert(enemyById("E12").name === "籠鬥之王", "Act3 最終 Boss");
+  assert(enemyById("E12").name === "籠門之王", "Act3 最終 Boss");
   assert(
     enemyById("E12").flavor === "天台無燈。今夜邊個落場，邊個落地。",
     "最終 Boss 停句"
   );
-  assert(enemyById("E12").isFinalBoss, "籠鬥之王要標最終 Boss");
+  assert(enemyById("E12").isFinalBoss, "籠門之王要標最終 Boss");
   assert(ACT3_MAP.length === 6, "Act3 六節點");
   assert(ACT3_MAP[0].type === "battle", "Act3 開頭戰鬥");
   assert(ACT3_MAP[1].type === "reward", "Act3 第 2 格選牌");
