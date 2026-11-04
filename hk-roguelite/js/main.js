@@ -33,6 +33,7 @@ import {
   telegraphIntent,
   showKuaisouBanner,
   syncHpBars,
+  clearFx,
 } from "./feel.js";
 
 /** @type {{
@@ -464,6 +465,7 @@ function renderDefeat() {
 
 function render() {
   if (!app) return;
+  if (state.screen !== "battle") clearFx();
   let html = "";
   switch (state.screen) {
     case "select":
@@ -526,8 +528,8 @@ async function playCardWithFeel(handIndex, cardEl) {
       : toPlayer?.getBoundingClientRect();
 
   sfx.whoosh();
-  // 飛軌 150ms（規格 120–180）；其後命中段 ≤180ms → 單次攻擊可視 FX 仍 ≤350ms
-  await flyProjectile(from, flyTo, card.type === "attack" ? "attack" : "skill", 150);
+  // 飛軌 140ms（規格 120–180）＋命中 ≤120ms → 單次攻擊可視 FX ≤350ms（含按卡約 320ms）
+  await flyProjectile(from, flyTo, card.type === "attack" ? "attack" : "skill", 140);
 
   const result = playCard(b, handIndex);
   syncRunHpFromBattle();
@@ -580,8 +582,8 @@ async function playCardWithFeel(handIndex, cardEl) {
     await wait(120);
   }
 
-  // 稍留一幀讓飄字／kickback 收束，再重繪手牌
-  await wait(40);
+  // 飄字／kickback 收束後再重繪（不計入 ≤350ms 命中預算）
+  await wait(30);
   state.busy = false;
   render();
 }
