@@ -136,6 +136,7 @@ export function syncHpBars(b) {
     playerText.textContent = `${b.playerHp}/${b.playerMaxHp}`;
   }
   syncEnergyBlock(b);
+  syncPileCounts(b);
 }
 
 /**
@@ -164,6 +165,46 @@ export function syncEnergyBlock(b) {
     blockEl.classList.toggle("is-off", block <= 0);
     if (!Number.isNaN(prev) && prev !== block) bump(blockEl);
   }
+}
+
+/**
+ * 牌堆數字就地更新：牌庫／棄牌／手牌。
+ * 抽牌、棄牌、洗牌之後即時反映，唔使重繪。
+ */
+export function syncPileCounts(b) {
+  if (!b) return;
+  const setNum = (sel, val) => {
+    const el = document.querySelector(`${sel} .pile-num`);
+    if (!el) return false;
+    const prev = Number(el.textContent);
+    el.textContent = String(val);
+    return !Number.isNaN(prev) && prev !== val;
+  };
+  const drawChanged = setNum("#pile-draw", b.drawPile?.length ?? 0);
+  const discardChanged = setNum("#pile-discard", b.discard?.length ?? 0);
+  setNum(".pile-hand", b.hand?.length ?? 0);
+
+  if (drawChanged) bump(document.getElementById("pile-draw"));
+  if (discardChanged) bump(document.getElementById("pile-discard"));
+}
+
+/** 洗牌提示：牌庫膠囊閃一下 + 跳字 */
+export function flashShuffle(b, recycled) {
+  const row = document.querySelector(".pile-row");
+  if (row) {
+    row.classList.add("is-shuffling");
+    setTimeout(() => row.classList.remove("is-shuffling"), 700);
+  }
+  setNumSafe("#pile-draw", b?.drawPile?.length ?? 0);
+  const anchor = document.getElementById("pile-draw");
+  if (anchor) {
+    floatText(anchor, recycled ? `洗牌 ${recycled} 張` : "洗牌", "block");
+  }
+}
+
+function setNumSafe(sel, val) {
+  const el = document.querySelector(`${sel} .pile-num`);
+  if (el) el.textContent = String(val);
 }
 
 /** 數字變動時彈一下 */

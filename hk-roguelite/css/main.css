@@ -995,6 +995,61 @@ body {
   background: rgba(255, 193, 74, 0.1);
 }
 
+/* 牌堆計數：牌庫／棄牌／手牌一眼見到 */
+.pile-row {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  margin: 0 0 0.1rem;
+}
+
+.pile-pill {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.22rem;
+  padding: 0.16rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 0.72rem;
+  color: var(--ink-dim);
+  line-height: 1.4;
+}
+
+.pile-icon {
+  font-size: 0.7rem;
+  opacity: 0.85;
+}
+
+.pile-label {
+  letter-spacing: 0.04em;
+}
+
+.pile-num {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.pile-draw .pile-num {
+  color: var(--neon-cyan);
+}
+
+.pile-discard .pile-num {
+  color: var(--neon-amber);
+}
+
+.pile-pill.is-bump {
+  animation: stat-bump 0.42s ease-out;
+}
+
+/* 洗牌提示 */
+.pile-row.is-shuffling .pile-draw {
+  border-color: rgba(255, 193, 74, 0.7);
+  background: rgba(255, 193, 74, 0.16);
+}
+
 /* 地圖 HUD 遺物列：每件一粒 chip，點一下講效果 */
 .relic-bar {
   display: flex;
