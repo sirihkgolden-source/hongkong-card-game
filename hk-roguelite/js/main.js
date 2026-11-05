@@ -1494,6 +1494,7 @@ function runKeyLine(run, char) {
 function renderVictory() {
   const run = state.run || { deck: [], hp: 0, maxHp: 0, gold: 0, encounters: [] };
   const char = activeChar();
+  state._resultBarSub = `通關 · ${char.route || "三區打穿"} · 再開一局`;
   const deckCount = {};
   for (const id of run.deck) deckCount[id] = (deckCount[id] || 0) + 1;
   const deckLines = Object.entries(deckCount)
@@ -1539,6 +1540,13 @@ function renderVictory() {
           <span class="clear-keys-label">本局關鍵</span>
           <span class="clear-keys-line">${escapeHtml(runKeyLine(run, char))}</span>
         </p>
+        <div class="next-run next-run-clear">
+          <p class="next-run-title">再開一局</p>
+          <ul class="next-run-list">
+            <li><strong>同路線：</strong>繼續行「${escapeHtml(char.route || "")}」——${escapeHtml(char.playstyle || "")}</li>
+            <li><strong>換口味：</strong>試吓其他三角色／勝仔，睇邊條路更啱你。</li>
+          </ul>
+        </div>
       </section>
       ${
         // 次要資料收埋：主掣先可見，玩家想睇細節自己展開
@@ -1593,31 +1601,39 @@ function renderVictory() {
   `;
 }
 
+/** 近失種類人話標籤（結算一眼明） */
+const NEAR_MISS_LABELS = {
+  boss: "差喺 Boss",
+  hp: "差喺血量",
+  energy: "差喺能量",
+  deck: "差喺牌組",
+  relic: "差喺遺物",
+};
+
 /**
  * 下一鋪建議：按呢局死因，講清可以點換角／換构筑。
  * 港味 + 具體（唔係空泛「再試一次」）。
  */
 function nextRunAdvice(near) {
-  const run = state.run || {};
   const char = activeChar();
   const others = ["oil", "asan", "kauko", "sing"].filter((id) => id !== char.id);
   // 推薦一個對應死因嘅角色（含勝仔回血線）
   const suggestByKind = {
     hp: char.id === "asan" ? "sing" : "asan", // 血唔夠 → 守／回血
-    energy: "kauko", // 唔夠能量 → 換抽牌鋪路嘅
-    deck: "kauko", // 牌太少 → 換抽牌多嘅
-    relic: "asan", // 冇遺物 → 守得穩、唔靠貨
-    boss: others.includes("sing") && near.kind === "boss" ? "sing" : others[0],
+    energy: "kauko",
+    deck: "kauko",
+    relic: "asan",
+    boss: others.includes("sing") ? "sing" : others[0],
   };
   const targetId = suggestByKind[near.kind] || others[0];
   const target = CHARACTERS[targetId] || CHARACTERS.oil;
 
   const buildHint = {
-    hp: "下次早啲入士多補血，或者揀多幾張擋牌。",
+    hp: "下次早啲入士多補血／食廿四味，或者揀多幾張擋牌同回血牌。",
     energy: "下次入士多買「提神能量飲品」，或者揀多幾張 0 費牌。",
     deck: "下次戰後唔好跳過選牌，牌組夠厚先撐到尾。",
-    relic: "下次記得行士多——遺物係白賺嘅。",
-    boss: "下次見 Boss 之前，留返一兩張爆發牌。",
+    relic: "下次記得行士多——遺物係白賺嘅，專屬貨只對自己有效。",
+    boss: "下次見 Boss 之前留爆發牌；勝仔回血線亦較捱得。",
   };
 
   return {
@@ -1625,13 +1641,15 @@ function nextRunAdvice(near) {
     targetName: target.name,
     targetRoute: target.route || "",
     line: buildHint[near.kind] || "下次換個打法試吓。",
+    barSub: `${NEAR_MISS_LABELS[near.kind] || "差一點"} · 換角或換牌路再試`,
   };
 }
 
 function renderDefeat() {
   const char = activeChar();
+  const run = state.run || {};
   const map = currentMap();
-  const act = state.run?.act || 1;
+  const act = run.act || 1;
   const actTitles = {
     1: "後巷吞沒你",
     2: "霓虹吞沒你",
@@ -1639,27 +1657,42 @@ function renderDefeat() {
   };
   const near = nearMissInfo();
   const advice = nextRunAdvice(near);
+  const nodeN = Math.min((run.mapIndex || 0) + 1, map.length);
+  const b = state.battle;
+  const enemyLine = b
+    ? `${b.enemyName} ${b.enemyHp}/${b.enemyMaxHp}`
+    : "—";
+  // 畀 render() 用動態底欄副標
+  state._resultBarSub = advice.barSub;
   return `
     <main class="screen screen-result is-lose" aria-label="敗北">
       <header class="brand-block">
         <h1 class="brand result-title dim">${escapeHtml(META.title)}</h1>
-        <p class="tagline result-sub">敗北 · 這一鋪完結了</p>
+        <p class="tagline result-sub">敗北 · Act${act} 節點 ${nodeN}/${map.length}</p>
       </header>
       <section class="panel">
         <h2>${escapeHtml(actTitles[act] || actTitles[1])}</h2>
-        <p class="near-miss">
-          <strong>差一點</strong>
+        <p class="near-miss" data-near-kind="${escapeHtml(near.kind)}">
+          <strong>${escapeHtml(NEAR_MISS_LABELS[near.kind] || "差一點")}</strong>
           <span>${escapeHtml(near.text)}</span>
         </p>
+        <ul class="clear-stats near-miss-stats" aria-label="本局尾聲數字">
+          <li><span>你嘅 HP</span><strong>${run.hp || 0}/${run.maxHp || 0}</strong></li>
+          <li><span>對手</span><strong>${escapeHtml(enemyLine)}</strong></li>
+          <li><span>牌組</span><strong>${(run.deck || []).length} 張</strong></li>
+          <li><span>遺物</span><strong>${(run.relics || []).length} 件</strong></li>
+          <li><span>金幣</span><strong>${run.gold || 0}</strong></li>
+          <li><span>能量（終局）</span><strong>${b ? b.energy : "—"}</strong></li>
+        </ul>
         <p class="lede">
-          死亡＝本局結束。Act${act}「${escapeHtml(actDisplayName(act))}」走到節點 ${Math.min(state.run?.mapIndex + 1 || 1, map.length)}／${map.length}。
+          死亡＝本局結束。行到 Act${act}「${escapeHtml(actDisplayName(act))}」第 ${nodeN} 格。
         </p>
         <div class="next-run">
-          <p class="next-run-title">下一鋪可以咁試</p>
+          <p class="next-run-title">再開一局 · 可以咁試</p>
           <ul class="next-run-list">
             <li><strong>換构筑：</strong>${escapeHtml(advice.line)}</li>
-            <li><strong>換角色：</strong>試吓「${escapeHtml(advice.targetName)}」——${escapeHtml(advice.targetRoute)}，${escapeHtml(CHARACTERS[advice.targetId]?.playstyle || "")}</li>
-            <li><strong>唔換都得：</strong>用返「${escapeHtml(char.passive.name)}」，今次行遠啲。</li>
+            <li><strong>換角色：</strong>試吓「${escapeHtml(advice.targetName)}」——${escapeHtml(advice.targetRoute)}。${escapeHtml(CHARACTERS[advice.targetId]?.playstyle || "")}</li>
+            <li><strong>唔換都得：</strong>用返「${escapeHtml(char.passive.name)}」（${escapeHtml(char.route || "")}），今次行遠啲。</li>
           </ul>
         </div>
         ${
@@ -1718,14 +1751,23 @@ function nearMissInfo() {
   const run = state.run || {};
   const b = state.battle;
   const char = activeChar();
+  const pack = (kind, text) => ({
+    kind,
+    label: NEAR_MISS_LABELS[kind] || "差一點",
+    text,
+  });
 
   // 0) 敗給 Boss：用該 Boss 專屬港味一句（最優先）
   if (b && b.isBoss) {
     const bossDef = enemyById(b.enemyId);
     if (bossDef?.nearMiss) {
+      const pct =
+        b.enemyMaxHp > 0 ? Math.round((b.enemyHp / b.enemyMaxHp) * 100) : 0;
       const hpNote =
-        b.enemyHp > 0 ? `（佢得返 ${b.enemyHp}/${b.enemyMaxHp} 血）` : "";
-      return { kind: "boss", text: `${bossDef.nearMiss}${hpNote}` };
+        b.enemyHp > 0
+          ? ` 對手仲有 ${b.enemyHp}/${b.enemyMaxHp}（${pct}%）——就差呢截。`
+          : "";
+      return pack("boss", `${bossDef.nearMiss}${hpNote}`);
     }
   }
 
@@ -1733,10 +1775,10 @@ function nearMissInfo() {
   if (b && b.enemyHp > 0 && b.enemyMaxHp > 0) {
     const pct = b.enemyHp / b.enemyMaxHp;
     if (pct <= 0.25) {
-      return {
-        kind: "hp",
-        text: `${b.enemyName} 得返 ${b.enemyHp}/${b.enemyMaxHp} 血。再多一擊，就係你企喺度。`,
-      };
+      return pack(
+        "hp",
+        `${b.enemyName} 得返 ${b.enemyHp}/${b.enemyMaxHp} 血（${Math.round(pct * 100)}%）。再多一擊，就係你企喺度。`
+      );
     }
   }
 
@@ -1747,40 +1789,43 @@ function nearMissInfo() {
       return c && (c.cost || 0) === 0;
     });
     if (playable.length === 0) {
-      return {
-        kind: "energy",
-        text: `手牌仲有 ${b.hand.length} 張，但張張都要費。差嗰一點能量。`,
-      };
+      const costs = b.hand
+        .map((id) => cardById(id)?.cost)
+        .filter((n) => typeof n === "number");
+      const minCost = costs.length ? Math.min(...costs) : "?";
+      return pack(
+        "energy",
+        `手牌仲有 ${b.hand.length} 張，能量 0；最平都要 ${minCost} 費。差嗰一點能量。`
+      );
     }
   }
 
   // 3) 差喺牌：牌組太薄
   if ((run.deck || []).length <= 11) {
-    return {
-      kind: "deck",
-      text: `牌組只得 ${(run.deck || []).length} 張，抽到後段已經冇牌接力。`,
-    };
+    return pack(
+      "deck",
+      `牌組只得 ${(run.deck || []).length} 張（建議 ≥12）。抽到後段已經冇牌接力。`
+    );
   }
 
   // 4) 差喺遺物：一件都冇／只得一件
   const relicCount = (run.relics || []).length;
   if (relicCount <= 1) {
-    return {
-      kind: "relic",
-      text:
-        relicCount === 0
-          ? "全場一件遺物都冇攞——士多行少咗轉。"
-          : "全場只得一件遺物，差件貨就撐得住。",
-    };
+    return pack(
+      "relic",
+      relicCount === 0
+        ? "全場一件遺物都冇攞——士多行少咗轉，白賺嘅貨冇入袋。"
+        : "全場只得一件遺物，差多一件就撐得住。"
+    );
   }
 
   // 5) 兜底：差喺血（自己）
   const hp = run.hp || 0;
   const maxHp = run.maxHp || 1;
-  return {
-    kind: "hp",
-    text: `${char.name} 頂到最後得返 ${hp}/${maxHp}。下一局留返一口氣。`,
-  };
+  return pack(
+    "hp",
+    `${char.name} 頂到最後得返 ${hp}/${maxHp}。下一局留返一口氣，早啲補血。`
+  );
 }
 
 /** 跑圖改動快照：用嚟算出「揀完之後改咗咩」 */
@@ -1937,10 +1982,17 @@ function render() {
   renderCardDetail();
   // 結算頁底欄：獨立掛 body（見 renderResultBar 註解）
   if (state.screen === "victory") {
-    renderResultBar("換角色・換牌路・再闖三區");
+    const char = activeChar();
+    renderResultBar(
+      state._resultBarSub ||
+        `通關 · ${char?.route || "再闖"} · 再開一局`
+    );
   } else if (state.screen === "defeat") {
-    renderResultBar("同一條後巷，唔同嘅打法");
+    renderResultBar(
+      state._resultBarSub || "同一條後巷，唔同嘅打法"
+    );
   } else {
+    state._resultBarSub = "";
     clearResultBar();
   }
 }

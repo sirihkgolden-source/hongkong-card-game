@@ -44,6 +44,7 @@ import {
   EXPECTED_REWARD_ROUTE,
 } from "./data.js";
 import { createBattle, playCard, endTurn, startPlayerTurn } from "./battle.js";
+import { readFileSync } from "node:fs";
 
 let checks = 0;
 const failures = [];
@@ -299,6 +300,13 @@ section("near-miss（四種情況都有文案）", () => {
   // 三句唔可以一樣
   const lines = ["E04", "E05", "E12"].map((id) => enemyById(id).nearMiss);
   assert(new Set(lines).size === 3, "Boss nearMiss 台詞重複");
+  // 結算提示用嘅標籤字串要喺 main 出現（靜態掃描）
+  const mainSrc = readFileSync(new URL("./main.js", import.meta.url), "utf8");
+  for (const label of ["差喺 Boss", "差喺血量", "差喺能量", "差喺牌組", "差喺遺物"]) {
+    assert(mainSrc.includes(label), `main.js 缺近失標籤「${label}」`);
+  }
+  assert(mainSrc.includes("near-miss-stats"), "敗北頁缺數字統計列");
+  assert(mainSrc.includes("再開一局 · 可以咁試"), "敗北頁缺再開一局標題");
 });
 
 /* ---------- 6. 再開一局 ---------- */
@@ -309,10 +317,14 @@ section("再開一局（資料層確保有鉤）", () => {
     assert(c.rerunHook?.clear, `${id} 缺 rerunHook.clear`);
     assert(c.rerunHook?.defeat, `${id} 缺 rerunHook.defeat`);
     assert(c.clearSummary, `${id} 缺 clearSummary`);
+    assert(c.route && c.route.length >= 2, `${id} 缺 route（結算要用）`);
+    assert(c.playstyle && c.playstyle.length >= 6, `${id} 缺 playstyle`);
   }
-  // 四句 clearSummary 唔可以一樣
+  // 四句 clearSummary／defeat 鉤唔可以一樣
   const sums = CHAR_IDS.map((id) => CHARACTERS[id].clearSummary);
   assert(new Set(sums).size === CHAR_IDS.length, "clearSummary 有重複");
+  const defeats = CHAR_IDS.map((id) => CHARACTERS[id].rerunHook.defeat);
+  assert(new Set(defeats).size === CHAR_IDS.length, "rerunHook.defeat 有重複");
 });
 
 /* ---------- 7. Act 銜接 ---------- */

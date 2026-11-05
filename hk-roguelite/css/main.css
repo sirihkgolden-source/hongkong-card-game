@@ -3566,6 +3566,19 @@ body {
   color: var(--danger);
 }
 
+.near-miss-stats {
+  margin-top: 0.65rem;
+}
+
+.screen-result.is-lose .near-miss-stats li {
+  border-color: rgba(255, 120, 90, 0.28);
+  background: rgba(40, 8, 8, 0.35);
+}
+
+.next-run-clear {
+  margin-top: 0.85rem;
+}
+
 .near-miss span {
   font-size: 0.85rem;
   line-height: 1.5;
