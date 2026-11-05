@@ -533,6 +533,40 @@ function flashPassiveChip() {
   setTimeout(() => chip.classList.remove("is-flash"), 600);
 }
 
+/** 意圖圖示：一眼分到攻／擋／強化／削弱 */
+function intentIcon(kind) {
+  switch (kind) {
+    case "attack":
+      return "⚔";
+    case "block":
+      return "🛡";
+    case "buff_attack":
+    case "buff":
+      return "↑";
+    case "weaken":
+      return "↓";
+    default:
+      return "•";
+  }
+}
+
+/** 意圖分類短語（港味） */
+function intentKindText(kind) {
+  switch (kind) {
+    case "attack":
+      return "準備出手";
+    case "block":
+      return "守緊";
+    case "buff_attack":
+    case "buff":
+      return "蓄勢";
+    case "weaken":
+      return "出陰招";
+    default:
+      return "未知";
+  }
+}
+
 function renderBattle() {
   const b = state.battle;
   const char = activeChar();
@@ -613,7 +647,11 @@ function renderBattle() {
             <strong>${escapeHtml(b.enemyName)}${b.isFinalBoss ? " · 最終 Boss" : b.isBoss ? " · Boss" : ""}</strong>
             <div class="hp-bar"><span id="enemy-hp-fill" style="width:${Math.max(0, (b.enemyHp / b.enemyMaxHp) * 100)}%"></span></div>
             <span class="hp-text" id="enemy-hp-text">${b.enemyHp}/${b.enemyMaxHp}${b.enemyBlock ? ` · 盾 ${b.enemyBlock}` : ""}</span>
-            <span class="intent" id="enemy-intent">意圖：${escapeHtml(intent.label)}</span>
+            <span class="intent intent--${intent.kind}" id="enemy-intent">
+              <span class="intent-icon" aria-hidden="true">${intentIcon(intent.kind)}</span>
+              <span class="intent-kind">${intentKindText(intent.kind)}</span>
+              <span class="intent-label">${escapeHtml(intent.label)}</span>
+            </span>
           </div>
         </div>
         <div class="fighter player" id="fighter-player">

@@ -961,11 +961,6 @@ body {
   letter-spacing: 0.02em;
 }
 
-.intent {
-  font-size: 0.84rem;
-  color: var(--ink-dim);
-}
-
 /* 選角後開場：一句港味 + 被動提示 */
 .opening-block {
   margin: 0.15rem 0 0;
@@ -993,6 +988,81 @@ body {
   padding: 0.28rem 0.4rem;
   border-radius: 7px;
   background: rgba(255, 193, 74, 0.1);
+}
+
+/* 敵人意圖：圖示 + 分類短語 + 具體數值 */
+.intent {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+  align-self: flex-start;
+  margin-top: 0.12rem;
+  padding: 0.14rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ink-dim);
+}
+
+.intent-icon {
+  font-size: 0.82rem;
+  line-height: 1;
+}
+
+.intent-kind {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.intent-label {
+  font-weight: 800;
+  font-family: var(--font-display);
+}
+
+/* 攻擊：紅（最需要提防） */
+.intent--attack {
+  border-color: rgba(255, 70, 80, 0.5);
+  background: rgba(255, 70, 80, 0.12);
+  color: #ff9aa4;
+}
+.intent--attack .intent-label {
+  color: #ff8c9a;
+}
+
+/* 防守：綠 */
+.intent--block {
+  border-color: rgba(93, 255, 176, 0.45);
+  background: rgba(93, 255, 176, 0.1);
+  color: var(--ok);
+}
+.intent--block .intent-label {
+  color: var(--ok);
+}
+
+/* 強化：琥珀 */
+.intent--buff_attack,
+.intent--buff {
+  border-color: rgba(255, 193, 74, 0.5);
+  background: rgba(255, 193, 74, 0.12);
+  color: var(--neon-amber);
+}
+.intent--buff_attack .intent-label,
+.intent--buff .intent-label {
+  color: var(--neon-amber);
+}
+
+/* 削弱：紫（陰招） */
+.intent--weaken {
+  border-color: rgba(178, 128, 255, 0.5);
+  background: rgba(178, 128, 255, 0.12);
+  color: #c9a6ff;
+}
+.intent--weaken .intent-label {
+  color: #c9a6ff;
 }
 
 /* 牌堆計數：牌庫／棄牌／手牌一眼見到 */
@@ -1233,10 +1303,6 @@ body {
   font-size: 0.68rem;
   color: var(--neon-amber);
   letter-spacing: 0.04em;
-}
-
-.intent {
-  color: var(--neon-amber);
 }
 
 .energy {
