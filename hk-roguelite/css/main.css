@@ -267,6 +267,88 @@ body {
   color: #c5d0e0;
 }
 
+/* —— 角色立繪（選角） —— */
+.avatar-portrait {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  padding: 0;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
+}
+
+.avatar-portrait .char-portrait {
+  width: 100%;
+  height: 100%;
+  /* 立繪多數係半身／胸像，對準上部避免只見到身 */
+  object-fit: cover;
+  object-position: center 18%;
+  display: block;
+  border-radius: inherit;
+}
+
+/* 有圖：藏字首；無圖／載入失敗：顯示字首漸層 */
+.avatar-portrait:not(.is-fallback) .avatar-fallback {
+  display: none;
+}
+
+.avatar-portrait.is-fallback .char-portrait {
+  display: none;
+}
+
+.avatar-fallback {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--bg-deep);
+}
+
+/* —— Act 區背景（戰鬥／事件／選牌／休息／Boss gate） —— */
+.screen.has-act-bg {
+  position: relative;
+  isolation: isolate;
+}
+
+.screen.has-act-bg::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  /* 上暗下更暗，保證手牌／HP／按鈕對比可讀 */
+  background-image:
+    linear-gradient(180deg, rgba(5, 8, 16, 0.74) 0%, rgba(5, 8, 16, 0.88) 55%, rgba(5, 8, 16, 0.95) 100%),
+    var(--act-bg, none);
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  opacity: 0.9;
+  /* 缺圖時只有漸層，仍然可讀 */
+  animation: rise-in 0.5s ease-out both;
+}
+
+/* Boss 戰／Boss gate：再壓暗一層，壓迫感 */
+.screen.screen-battle.has-act-bg::before {
+  background-image:
+    linear-gradient(180deg, rgba(5, 8, 16, 0.82) 0%, rgba(5, 8, 16, 0.92) 55%, rgba(5, 8, 16, 0.97) 100%),
+    var(--act-bg, none);
+}
+
+.screen.screen-boss-gate.has-act-bg::before {
+  background-image:
+    linear-gradient(180deg, rgba(5, 8, 16, 0.88) 0%, rgba(10, 4, 12, 0.94) 60%, rgba(5, 8, 16, 0.98) 100%),
+    var(--act-bg, none);
+}
+
+/* Boss gate 卡片本身已經有圖，背景只做氛圍，避免搶焦點 */
+.screen.screen-boss-gate.has-act-bg > * {
+  position: relative;
+}
+
 .char-meta {
   display: flex;
   flex-direction: column;
@@ -1237,6 +1319,17 @@ body {
   .char-card {
     min-height: 64px;
     padding: 0.85rem 0.75rem;
+  }
+
+  /* 立繪：窄屏 76px，唔好大到推走名／被動／開局掣 */
+  .avatar-portrait {
+    width: 76px;
+    height: 76px;
+  }
+
+  .char-card {
+    grid-template-columns: auto 1fr;
+    align-items: center;
   }
 
   .boss-gate-quote {

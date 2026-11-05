@@ -18,6 +18,7 @@ import {
   battleGoldReward,
   mapForAct,
   actDisplayName,
+  actBg,
   pickNodeEnemyId,
   enemyTag,
   pickEventId,
@@ -216,10 +217,18 @@ function renderSelect() {
   const list = [CHARACTERS.oil, CHARACTERS.asan, CHARACTERS.kauko]
     .map((c) => {
       const on = c.id === state.selectedCharId;
+      // 立繪：有圖就用，onerror 就 fallback 字首漸層（唔會留破圖）
+      const portrait = c.portrait
+        ? `<img class="char-portrait" src="${escapeHtml(c.portrait)}" alt="${escapeHtml(c.name)}" loading="lazy"
+             onerror="this.removeAttribute('src'); this.closest('.avatar').classList.add('is-fallback');" />`
+        : "";
       return `
         <li>
           <button type="button" class="char-card${on ? " is-selected" : ""}" data-action="pick-char" data-char="${escapeHtml(c.id)}" aria-pressed="${on}">
-            <span class="avatar" aria-hidden="true">${escapeHtml(c.initial)}</span>
+            <span class="avatar avatar-portrait${c.portrait ? "" : " is-fallback"}" aria-hidden="true">
+              ${portrait}
+              <span class="avatar-fallback">${escapeHtml(c.initial)}</span>
+            </span>
             <span class="char-meta">
               <span class="char-name">${escapeHtml(c.name)}</span>
               <span class="char-desc">${escapeHtml(c.short)}</span>
@@ -748,6 +757,35 @@ function render() {
       html = renderTitle();
   }
   app.innerHTML = html;
+  applyActBackdrop();
+}
+
+/** 當前節點背景；冇節點（選角／結算）就用 run.act 或 Act1 */
+function currentBackdrop() {
+  const node = currentNode();
+  if (node?.bg) return node.bg;
+  const act = state.run?.act || 1;
+  return actBg(act);
+}
+
+/**
+ * 把 Act 背景套落有 `.screen` 嘅畫面（戰鬥／事件／選牌／休息／Boss gate／地圖）。
+ * 唔郁玩法 layout，只用 CSS 變數 + ::before 圖層；缺圖會自動降級（CSS fallback）。
+ */
+function applyActBackdrop() {
+  const bg = currentBackdrop();
+  const screen = app?.querySelector(".screen");
+  if (!screen || !bg) return;
+  // CSS 自訂屬性裡面嘅相對 url() 會按「樣式表」路徑解析（會變 /css/assets/…），
+  // 所以呢度先解析成絕對路徑再寫入變數。
+  let abs = bg;
+  try {
+    abs = new URL(bg, document.baseURI).href;
+  } catch {
+    abs = bg;
+  }
+  screen.style.setProperty("--act-bg", `url("${abs}")`);
+  screen.classList.add("has-act-bg");
 }
 
 /* ---------- feel sequences ---------- */

@@ -13,6 +13,21 @@ export const META = {
   isolationNote: "目錄暫名 hk-roguelite；產品名《香江小風波》／與根目錄舊香江 demo 隔離",
 };
 
+/**
+ * Act 級區背景（每個 Act 共用一張）
+ * 路徑指向總導演確認嘅新美術；缺檔時 UI 會降級成內建霓虹漸層。
+ */
+export const ACT_BG = {
+  1: "assets/art/bg/bg_act1_alley.jpg",
+  2: "assets/art/bg/bg_act2_mongkok.jpg",
+  3: "assets/art/bg/bg_act3_rooftop.jpg",
+};
+
+/** 取該 Act 的背景路徑（未知 Act fallback 去 Act1） */
+export function actBg(act) {
+  return ACT_BG[act] || ACT_BG[1];
+}
+
 /** @typedef {"attack"|"skill"} CardType */
 
 /**
@@ -310,7 +325,7 @@ export const CARDS = {
     owner: "asan",
   },
 
-  /** 九哥・招牌霓虹：抽牌／標記 */
+  /** 九哥・招牌工：抽牌／標記 */
   S86: {
     id: "S86",
     name: "招牌著燈",
@@ -394,6 +409,7 @@ export const CHARACTERS = {
     name: "阿油・後巷經紀",
     short: "出手快、愛搏；一路削血一路加速",
     initial: "油",
+    portrait: "assets/art/portraits/ayau.jpg",
     maxHp: 68,
     energy: 3,
     passive: {
@@ -420,6 +436,7 @@ export const CHARACTERS = {
     name: "阿珊・茶記夜更",
     short: "捱得、護得場；盾厚再反打",
     initial: "珊",
+    portrait: "assets/art/portraits/ashan.jpg",
     maxHp: 80,
     energy: 3,
     passive: {
@@ -444,9 +461,10 @@ export const CHARACTERS = {
   },
   kauko: {
     id: "kauko",
-    name: "九哥・招牌霓虹",
+    name: "九哥・招牌工",
     short: "識睇牌、識抽牌；技能多、節奏活",
     initial: "九",
+    portrait: "assets/art/portraits/kauko.jpg",
     maxHp: 65,
     energy: 3,
     passive: {
@@ -660,14 +678,14 @@ export const ACT1_MAP = [
     title: "後巷影",
     subtitle: "戰鬥 → 選牌",
     enemyId: "E01",
-    bg: "assets/bg/bg-alley-mahjong-night.jpg",
+    bg: "assets/art/bg/bg_act1_alley.jpg",
   },
   {
     id: "n2",
     type: "event",
     title: "街頭閒事",
     subtitle: "短事件",
-    bg: "assets/bg/bg-stairwell-old.jpg",
+    bg: "assets/art/bg/bg_act1_alley.jpg",
   },
   {
     id: "n3",
@@ -675,14 +693,14 @@ export const ACT1_MAP = [
     title: "到期罐頭客",
     subtitle: "戰鬥 → 選牌",
     enemyId: "E02",
-    bg: "assets/bg/bg-tenement-stairwell.jpg",
+    bg: "assets/art/bg/bg_act1_alley.jpg",
   },
   {
     id: "n4",
     type: "rest",
     title: "簷篷底歇腳",
     subtitle: "休息／便利店",
-    bg: "assets/bg/bg-alley-mahjong-night.jpg",
+    bg: "assets/art/bg/bg_act1_alley.jpg",
   },
   {
     id: "n5",
@@ -690,7 +708,7 @@ export const ACT1_MAP = [
     title: "逼爆潮",
     subtitle: "戰鬥 → 選牌",
     enemyId: "E03",
-    bg: "assets/bg/bg-neon-street-day.jpg",
+    bg: "assets/art/bg/bg_act1_alley.jpg",
   },
   {
     id: "n6",
@@ -698,7 +716,7 @@ export const ACT1_MAP = [
     title: "巷口鐵閘・睇場",
     subtitle: "區 Boss",
     enemyId: "E04",
-    bg: "assets/bg/bg-stairwell-old.jpg",
+    bg: "assets/art/bg/bg_act1_alley.jpg",
   },
 ];
 
@@ -712,21 +730,21 @@ export const ACT2_MAP = [
     title: "旺角圍標",
     subtitle: "戰鬥",
     enemyId: "E06",
-    bg: "assets/bg/bg-neon-street-day.jpg",
+    bg: "assets/art/bg/bg_act2_mongkok.jpg",
   },
   {
     id: "a2n2",
     type: "reward",
     title: "夜檔執牌",
     subtitle: "選牌",
-    bg: "assets/bg/bg-neon-street-day.jpg",
+    bg: "assets/art/bg/bg_act2_mongkok.jpg",
   },
   {
     id: "a2n3",
     type: "event",
     title: "旺角閒事",
     subtitle: "短事件",
-    bg: "assets/bg/bg-neon-street-day.jpg",
+    bg: "assets/art/bg/bg_act2_mongkok.jpg",
   },
   {
     id: "a2n4",
@@ -734,14 +752,14 @@ export const ACT2_MAP = [
     title: "招牌拆遷隊",
     subtitle: "戰鬥 → 選牌",
     enemyId: "E07",
-    bg: "assets/bg/bg-neon-street-day.jpg",
+    bg: "assets/art/bg/bg_act2_mongkok.jpg",
   },
   {
     id: "a2n5",
     type: "rest",
     title: "通宵便利店",
     subtitle: "休息／便利店",
-    bg: "assets/bg/bg-neon-street-day.jpg",
+    bg: "assets/art/bg/bg_act2_mongkok.jpg",
   },
   {
     id: "a2n6",
@@ -749,7 +767,7 @@ export const ACT2_MAP = [
     title: "西裝收數隊",
     subtitle: "區 Boss",
     enemyId: "E05",
-    bg: "assets/bg/bg-neon-street-day.jpg",
+    bg: "assets/art/bg/bg_act2_mongkok.jpg",
   },
 ];
 
@@ -764,21 +782,21 @@ export const ACT3_MAP = [
     title: "紮鐵佬",
     subtitle: "戰鬥",
     enemyId: "E09",
-    bg: "assets/bg/bg-rooftop-playground.jpg",
+    bg: "assets/art/bg/bg_act3_rooftop.jpg",
   },
   {
     id: "a3n2",
     type: "reward",
     title: "天台執牌",
     subtitle: "選牌",
-    bg: "assets/bg/bg-rooftop-playground.jpg",
+    bg: "assets/art/bg/bg_act3_rooftop.jpg",
   },
   {
     id: "a3n3",
     type: "event",
     title: "天台閒事",
     subtitle: "短事件",
-    bg: "assets/bg/bg-rooftop-wooden-dummy.jpg",
+    bg: "assets/art/bg/bg_act3_rooftop.jpg",
   },
   {
     id: "a3n4",
@@ -786,14 +804,14 @@ export const ACT3_MAP = [
     title: "清場／精英",
     subtitle: "戰鬥 → 選牌",
     enemyPool: ["E10", "E11", "E08"],
-    bg: "assets/bg/bg-rooftop-wooden-dummy.jpg",
+    bg: "assets/art/bg/bg_act3_rooftop.jpg",
   },
   {
     id: "a3n5",
     type: "rest",
     title: "天台搭棚歇腳",
     subtitle: "休息／便利店",
-    bg: "assets/bg/bg-rooftop-playground.jpg",
+    bg: "assets/art/bg/bg_act3_rooftop.jpg",
   },
   {
     id: "a3n6",
@@ -801,7 +819,7 @@ export const ACT3_MAP = [
     title: "籠門之王",
     subtitle: "最終 Boss",
     enemyId: "E12",
-    bg: "assets/bg/bg-rooftop-playground.jpg",
+    bg: "assets/art/bg/bg_act3_rooftop.jpg",
   },
 ];
 
