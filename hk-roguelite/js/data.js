@@ -2137,6 +2137,28 @@ export const CONSUMABLES = {
       return "蛋撻入肚——最大生命 +3，下場多 1 能量。";
     },
   },
+  /** 缺項：清走下戰能量懲罰（事件負面狀態出口） */
+  cs_twenty_four: {
+    id: "cs_twenty_four",
+    name: "廿四味",
+    desc: "清走「下戰 −能量」；回 8 HP。",
+    flavor: "苦到面都縐——但晦氣真係沖得走。",
+    price: 7,
+    acts: [1, 2, 3],
+    apply: (run) => {
+      const had = run.nextBattleEnergyPenalty || 0;
+      run.nextBattleEnergyPenalty = 0;
+      const before = run.hp;
+      run.hp = Math.min(run.maxHp, run.hp + 8);
+      const healed = run.hp - before;
+      if (had > 0) {
+        return `飲完廿四味——清咗下戰 −${had} 能量，兼回 ${healed} HP。`;
+      }
+      return healed > 0
+        ? `飲完廿四味——冇晦氣好清，回咗 ${healed} HP。`
+        : "已經滿血，廿四味淨係苦口。";
+    },
+  },
 };
 
 /**
@@ -2241,9 +2263,9 @@ export const RELICS = {
   rl_kwun_yam: {
     id: "rl_kwun_yam",
     name: "觀音借庫",
-    desc: "入手即刻 +20 金幣。",
+    desc: "入手即刻 +16 金幣。",
     flavor: "借咗就係借咗，還唔還係另一件事。",
-    effect: { instantGold: 20 },
+    effect: { instantGold: 16 },
     rarity: "稀有",
   },
 
@@ -2290,18 +2312,18 @@ export const RELICS = {
     owner: "sing",
   },
 
-  /* ===== 通用遺物（新） ===== */
+  /* ===== 通用遺物（分檔：開場／續戰／經濟／輸出） ===== */
 
-  /** 通用：愈打愈順，手牌多就抽多張 */
+  /** 開場能量（唔同麻雀檯燈嘅抽牌） */
   rl_tram_token: {
     id: "rl_tram_token",
     name: "叮叮車票",
-    desc: "每場戰鬥開波多抽 1 張。",
-    flavor: "車票唔記得用，就一直袋喺度。",
-    effect: { startDraw: 1 },
+    desc: "每場戰鬥首回合額外 +1 能量。",
+    flavor: "車票唔記得用，就一直袋喺度——上到車先發覺仲有一格。",
+    effect: { firstTurnEnergy: 1 },
     rarity: "普通",
   },
-  /** 通用：抵打，捱得 */
+  /** 開場擋（低於安全帽，平貨） */
   rl_bamboo_hat: {
     id: "rl_bamboo_hat",
     name: "竹帽",
@@ -2310,7 +2332,7 @@ export const RELICS = {
     effect: { startBlock: 5 },
     rarity: "普通",
   },
-  /** 通用：錢滾錢 */
+  /** 經濟（低於茶記賬簿） */
   rl_stamp_card: {
     id: "rl_stamp_card",
     name: "印花卡",
@@ -2319,18 +2341,16 @@ export const RELICS = {
     effect: { goldBonus: 2 },
     rarity: "普通",
   },
-  /* ===== 通用遺物（新） ===== */
-
-  /** 通用：出牌多，食「涼茶」 */
+  /** 續戰回血（低於紅白藍袋；唔再同九哥專屬搶抽牌） */
   rl_herbal_cup: {
     id: "rl_herbal_cup",
     name: "涼茶碗",
-    desc: "每回合開始多抽 1 張。",
-    flavor: "苦口良藥——飲完，腦筋清一截。",
-    effect: { drawPerTurn: 1 },
+    desc: "每場戰鬥勝利回 3 HP。",
+    flavor: "苦口良藥——飲完，傷都冇咁痛。",
+    effect: { healOnWin: 3 },
     rarity: "稀有",
   },
-  /** 通用：攻擊牌每張加傷，食「搏命」型牌組 */
+  /** 輸出（低於霓虹燈膽嘅 +2） */
   rl_iron_knuckle: {
     id: "rl_iron_knuckle",
     name: "鐵指虎",
@@ -2338,6 +2358,24 @@ export const RELICS = {
     flavor: "戴上去，拳頭先算數。",
     effect: { attackPerCard: 1 },
     rarity: "稀有",
+  },
+  /** 缺項補齊：開場擋＋少金，中庸貨 */
+  rl_tin_lunchbox: {
+    id: "rl_tin_lunchbox",
+    name: "鐵飯盒",
+    desc: "每場開波自帶 4 擋；小怪勝場額外 +1 金。",
+    flavor: "盒蓋凹咗，但飯香仲在——擋得住，又賺到。",
+    effect: { startBlock: 4, goldBonus: 1 },
+    rarity: "普通",
+  },
+  /** 缺項補齊：勝場回血加成（叠喺 healOnWin 上面） */
+  rl_egg_waffle: {
+    id: "rl_egg_waffle",
+    name: "雞蛋仔紙袋",
+    desc: "勝場回血類效果額外 +2 HP。",
+    flavor: "紙袋透熱，甜味喺後巷都聞得到。",
+    effect: { healOnWinBonus: 2 },
+    rarity: "普通",
   },
 };
 

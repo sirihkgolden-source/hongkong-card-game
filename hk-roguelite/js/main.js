@@ -815,12 +815,14 @@ function relicPlainText(r) {
   if (!r) return "";
   const e = r.effect || {};
   if (e.startEnergy) return `每場開波多 ${e.startEnergy} 點能量——出手多一次。`;
+  if (e.firstTurnEnergy) return `每場第一回合多 ${e.firstTurnEnergy} 點能量——起手快一拍。`;
   if (e.startBlock) return `每場開波自動有 ${e.startBlock} 擋——第一下唔怕。`;
   if (e.startDraw) return `每場開波抽多 ${e.startDraw} 張——起手牌多。`;
   if (e.drawPerTurn) return `每個回合都抽多 ${e.drawPerTurn} 張——牌唔會斷。`;
   if (e.attackBonus) return `每張攻擊都痛多 ${e.attackBonus} 點。`;
   if (e.attackPerCard) return `每張攻擊牌再加 ${e.attackPerCard} 傷害。`;
   if (e.healOnWin) return `打贏一場回 ${e.healOnWin} HP——唔使成日入士多。`;
+  if (e.healOnWinBonus) return `勝場回血再多 ${e.healOnWinBonus} HP——甜品加成。`;
   if (e.goldBonus) return `打贏小怪多 ${e.goldBonus} 金——積少成多。`;
   if (e.healBonusFirst) return `每場首次回血多回 ${e.healBonusFirst} HP——一劑頂兩劑。`;
   if (e.instantMaxHp) return `入手即刻最大生命 +${e.instantMaxHp}。`;
@@ -1598,14 +1600,14 @@ function renderVictory() {
 function nextRunAdvice(near) {
   const run = state.run || {};
   const char = activeChar();
-  const others = ["oil", "asan", "kauko"].filter((id) => id !== char.id);
-  // 推薦一個對應死因嘅角色
+  const others = ["oil", "asan", "kauko", "sing"].filter((id) => id !== char.id);
+  // 推薦一個對應死因嘅角色（含勝仔回血線）
   const suggestByKind = {
-    hp: "asan", // 血唔夠 → 換守得硬淨嘅
+    hp: char.id === "asan" ? "sing" : "asan", // 血唔夠 → 守／回血
     energy: "kauko", // 唔夠能量 → 換抽牌鋪路嘅
     deck: "kauko", // 牌太少 → 換抽牌多嘅
     relic: "asan", // 冇遺物 → 守得穩、唔靠貨
-    boss: others[0],
+    boss: others.includes("sing") && near.kind === "boss" ? "sing" : others[0],
   };
   const targetId = suggestByKind[near.kind] || others[0];
   const target = CHARACTERS[targetId] || CHARACTERS.oil;
@@ -2937,9 +2939,10 @@ function onClick(event) {
         // 等新畫面（選牌／地圖）render 完，錨定金幣顯示位置再跳字
         state.pendingGoldFloat = gold;
       }
-      // 遺物：勝場回血
-      if (bonuses.healOnWin > 0) {
-        state.run.hp = Math.min(state.run.maxHp, state.run.hp + bonuses.healOnWin);
+      // 遺物：勝場回血（含 healOnWinBonus 叠層）
+      const winHeal = (bonuses.healOnWin || 0) + (bonuses.healOnWinBonus || 0);
+      if (winHeal > 0) {
+        state.run.hp = Math.min(state.run.maxHp, state.run.hp + winHeal);
       }
       recordEncounter(node);
       if (node?.type === "boss") {

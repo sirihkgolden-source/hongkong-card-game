@@ -204,9 +204,9 @@ section("便利店（金幣出口／遺物／消耗品／Act 差異）", () => {
 });
 
 /* ---------- 4. 遺物 ---------- */
-section("遺物（效果／錯角無效／專屬標示）", () => {
+section("遺物（效果／錯角無效／專屬標示／缺項）", () => {
   const ids = Object.keys(RELICS);
-  assert(ids.length >= 16, `遺物數量應該 ≥16，實際 ${ids.length}`);
+  assert(ids.length >= 18, `遺物數量應該 ≥18，實際 ${ids.length}`);
 
   // 每件都有名／人話／效果
   for (const id of ids) {
@@ -214,6 +214,41 @@ section("遺物（效果／錯角無效／專屬標示）", () => {
     assert(r.name && r.name.length >= 2, `${id} 缺名`);
     assert(r.desc && r.desc.length >= 6, `${id} 缺 desc`);
     assert(r.effect && Object.keys(r.effect).length > 0, `${id} 冇 effect`);
+  }
+
+  // 已接線效果鍵都要有至少一件遺物用（唔好留死欄位）
+  const wiredKeys = [
+    "startEnergy",
+    "startBlock",
+    "startDraw",
+    "attackBonus",
+    "healOnWin",
+    "goldBonus",
+    "drawPerTurn",
+    "attackPerCard",
+    "healBonusFirst",
+    "firstTurnEnergy",
+    "healOnWinBonus",
+    "instantMaxHp",
+    "instantGold",
+  ];
+  for (const key of wiredKeys) {
+    const hit = ids.some((id) => (RELICS[id].effect || {})[key]);
+    assert(hit, `效果鍵 ${key} 冇任何遺物使用（缺項）`);
+  }
+
+  // 消耗品：要有清能量懲罰出口
+  assert(CONSUMABLES.cs_twenty_four, "缺消耗品「廿四味」");
+  {
+    const probe = {
+      hp: 40,
+      maxHp: 60,
+      nextBattleEnergyPenalty: 2,
+      deck: [],
+    };
+    CONSUMABLES.cs_twenty_four.apply(probe);
+    assert(probe.nextBattleEnergyPenalty === 0, "廿四味清唔到能量懲罰");
+    assert(probe.hp > 40, "廿四味應該回血");
   }
 
   // 專屬：自己食到，別角食唔到
@@ -233,6 +268,23 @@ section("遺物（效果／錯角無效／專屬標示）", () => {
         `${id} 對 ${other} 竟然生效`
       );
     }
+  }
+
+  // 叮叮車票：首回合能量真係入戰鬥
+  {
+    const run = {
+      characterId: "oil",
+      hp: 50,
+      maxHp: 68,
+      deck: ["S01", "S01", "S15", "S15", "S02", "S02", "S11", "S14"],
+      relics: ["rl_tram_token"],
+      nextBattleEnergyPenalty: 0,
+      nextBattleEnergyBonus: 0,
+      nextBattleBlock: 0,
+    };
+    const b = createBattle(run, enemyById("E01"));
+    startPlayerTurn(b);
+    assert(b.energy >= 4, `叮叮車票首回合能量應 ≥4，實際 ${b.energy}`);
   }
 });
 

@@ -395,7 +395,7 @@ function simulateChar(charId) {
   for (const id of relicIds) {
     const r = RELICS[id];
     if (!r.owner) continue;
-    const otherId = ["oil", "asan", "kauko"].find((c) => c !== r.owner);
+    const otherId = ["oil", "asan", "kauko", "sing"].find((c) => c !== r.owner);
     const b = relicBonuses({
       characterId: otherId,
       hp: 40,
@@ -408,12 +408,17 @@ function simulateChar(charId) {
     assert(!anyEffect, `${id} 對非本角（${otherId}）仍然生效`);
   }
 
-  // 便利店貨架唔應該出現別角專屬遺物
-  for (const cid of ["oil", "asan", "kauko"]) {
+  // 便利店貨架唔應該出現別角專屬遺物（四角都驗，含勝仔）
+  for (const cid of ["oil", "asan", "kauko", "sing"]) {
     const pool = unownedRelics({ characterId: cid, relics: [] });
     for (const id of pool) {
       const owner = RELICS[id]?.owner;
       assert(!owner || owner === cid, `${cid} 貨架出現別角專屬 ${id}`);
+    }
+    // 自己專屬一定要喺可買池
+    const ownExclusive = Object.keys(RELICS).filter((id) => RELICS[id].owner === cid);
+    for (const id of ownExclusive) {
+      assert(pool.includes(id), `${cid} 貨架缺自己專屬 ${id}`);
     }
   }
   // 戰鬥內遺物生效：開場擋／能量／首回合多抽／攻擊加成
