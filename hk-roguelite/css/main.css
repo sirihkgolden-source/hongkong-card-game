@@ -787,10 +787,35 @@ body {
   min-height: 48px;
 }
 
-/* 戰鬥中：夾喺牌堆列同手牌之間，靠左但唔搶眼 */
-.deck-toggle--battle {
-  margin-top: -0.35rem;
-  font-size: 0.84rem;
+/* 戰鬥中：牌組掣併入牌堆列（慳一行 48px，令手牌同結束回合上到一屏） */
+.pile-deck-btn {
+  border: 1px solid rgba(61, 224, 255, 0.32);
+  background: rgba(10, 22, 38, 0.72);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 0.72rem;
+  cursor: pointer;
+  /* 觸控目標唔可以細過 44px */
+  min-height: 44px;
+  padding-inline: 0.6rem;
+}
+
+.pile-deck-btn:hover {
+  border-color: rgba(61, 224, 255, 0.6);
+}
+
+.pile-deck-btn:focus-visible {
+  outline: 2px solid var(--neon-cyan);
+  outline-offset: 2px;
+}
+
+.pile-deck-btn[aria-expanded="true"] {
+  border-color: var(--neon-amber);
+  background: rgba(255, 193, 74, 0.12);
+}
+
+.deck-panel--battle {
+  margin-top: -0.2rem;
 }
 
 .deck-panel {
@@ -1964,9 +1989,24 @@ body {
 /* 牌堆計數：牌庫／棄牌／手牌一眼見到 */
 .pile-row {
   display: flex;
-  gap: 0.35rem;
-  flex-wrap: wrap;
+  gap: 0.3rem;
+  /* 四格（牌庫／棄牌／手牌／牌組）要逼喺一行，390 都唔折行 */
+  flex-wrap: nowrap;
+  align-items: stretch;
   margin: 0 0 0.1rem;
+}
+
+.pile-row > * {
+  flex: 1 1 0;
+  min-width: 0;
+  justify-content: center;
+}
+
+/* 唔夠位就收細字，唔好折行 */
+.pile-row .pile-label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .pile-pill {
@@ -2232,33 +2272,63 @@ body {
 .battle-banner.win { color: var(--ok); }
 .battle-banner.lose { color: var(--danger); }
 
+/* 手牌：橫向滑動單行（390 一屏睇到手牌＋結束回合，唔使上下拉） */
 .hand {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
-  gap: 0.55rem;
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 0.45rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* 滑動時唔好俾瀏覽器當成「上一頁／下一頁」手勢 */
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  /* 上下留少少位，避免 hover 陰影／縮卡動畫被裁 */
+  padding: 0.2rem 0 0.35rem;
+  /* 隱藏 scrollbar 但保留滑動能力（手機本身都唔顯示） */
+  scrollbar-width: thin;
+}
+
+.hand::-webkit-scrollbar {
+  height: 4px;
+}
+
+.hand::-webkit-scrollbar-thumb {
+  background: rgba(61, 224, 255, 0.24);
+  border-radius: 999px;
+}
+
+/* 橫滑時每張卡都吸附一下，唔會停到一半 */
+.hand > .card-face {
+  scroll-snap-align: start;
 }
 
 .empty-hand {
   margin: 0;
   color: var(--ink-dim);
   text-align: center;
-  grid-column: 1 / -1;
+  flex: 1 0 100%;
 }
 
+/* 卡面：手牌用固定闊度（橫滑），唔再用 grid 撐高 */
 .card-face {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.18rem;
   text-align: left;
-  padding: 0.45rem 0.45rem 0.55rem;
+  padding: 0.4rem 0.4rem 0.45rem;
   border-radius: 12px;
   border: 1px solid rgba(61, 224, 255, 0.28);
   background: rgba(6, 12, 24, 0.92);
   color: inherit;
   font: inherit;
   cursor: pointer;
-  min-height: 168px;
+  /* 手牌卡：固定 118 闊，橫滑唔會變形；高度由內容決定（約 146） */
+  flex: 0 0 118px;
+  width: 118px;
+  min-height: 0;
   transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
   animation: rise-in 0.35s ease-out both;
 }
@@ -2295,9 +2365,10 @@ body {
   z-index: 1;
 }
 
+/* 手牌卡圖：4:3（唔再用 1:1，慳 30px 高） */
 .card-art {
   width: 100%;
-  aspect-ratio: 1;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   border-radius: 8px;
   background: #111;
@@ -2323,6 +2394,12 @@ body {
 
 .card-stats {
   color: var(--neon-cyan);
+}
+
+/* 手牌上嘅 blurb（flavor 句）唔顯示：長按睇詳情就有，
+   留返空間令 390 一屏放得晒手牌＋結束回合。 */
+.hand .card-blurb {
+  display: none;
 }
 
 .card-blurb {
@@ -2993,7 +3070,9 @@ body {
   .screen-wide,
   .screen-battle {
     width: 100%;
-    max-width: min(var(--app-max-w), 100%);
+    /* 用 100% 會跟父容器（.app 有 padding），390 下會變成 430 爆邊。
+       改用 100vw 減返 .app 嘅左右 padding（0.45rem × 2），確保永遠貼合視口。 */
+    max-width: min(var(--app-max-w), calc(100vw - 0.9rem));
     gap: 0.85rem;
   }
 

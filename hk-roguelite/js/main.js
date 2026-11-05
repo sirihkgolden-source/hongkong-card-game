@@ -1149,20 +1149,23 @@ function renderBattle() {
           <span class="pile-label">手牌</span>
           <strong class="pile-num">${b.hand.length}</strong>
         </span>
+        <button type="button" class="pile-pill pile-deck-btn" data-action="toggle-deck"
+          aria-expanded="${state.deckOpen ? "true" : "false"}" aria-label="睇成副牌組">
+          <span class="pile-icon" aria-hidden="true">📚</span>
+          <span class="pile-label">牌組</span>
+          <strong class="pile-num">${battleDeckIds(b).length}</strong>
+        </button>
       </div>
-      <button type="button" class="btn btn-ghost btn-pressable deck-toggle deck-toggle--battle"
-        data-action="toggle-deck" aria-expanded="${state.deckOpen ? "true" : "false"}">
-        ${state.deckOpen ? "收起牌組" : "睇成副牌組"}<span class="btn-sub">${battleDeckIds(b).length} 張</span>
-      </button>
       ${
         state.deckOpen
           ? `<section class="panel deck-panel deck-panel--battle">
               <h2>成副牌組</h2>
               ${renderDeckPreview(battleDeckIds(b))}
+              <button type="button" class="btn btn-ghost btn-pressable deck-toggle" data-action="toggle-deck">收起牌組</button>
             </section>`
           : ""
       }
-      <div class="hand" role="list">${hand || '<p class="empty-hand">沒有手牌</p>'}</div>
+      <div class="hand" role="list" aria-label="手牌（可左右滑）">${hand || '<p class="empty-hand">沒有手牌</p>'}</div>
       <div class="battle-actions">
         ${
           b.over === "win"

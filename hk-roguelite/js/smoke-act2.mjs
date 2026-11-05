@@ -28,6 +28,8 @@ import {
   ACT_TRANSITIONS,
 } from "./data.js";
 import { readdirSync, readFileSync } from "node:fs";
+import { readdirSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { createBattle, playCard, endTurn, startPlayerTurn } from "./battle.js";
 
 function assert(cond, msg) {
@@ -1271,6 +1273,8 @@ const results = ["oil", "asan", "kauko", "sing"].map(simulateChar);
 
 /* ---------- 三頁一屏：地圖兩欄／戰果細節收納／大掣固定 ---------- */
 /* Node 冇 DOM，所以驗 CSS 原文 + 資料層可唔可以砌出所需結構 */
+/* ---------- 戰鬥手牌一屏：CSS 規則要真係存在 ---------- */
+/* Node 冇 DOM，所以驗 CSS 原文有冇關鍵規則（防止日後被誤刪） */
 {
   const cssPath = new URL("../css/main.css", import.meta.url);
   const css = readFileSync(cssPath, "utf8");
@@ -1318,6 +1322,61 @@ const results = ["oil", "asan", "kauko", "sing"].map(simulateChar);
   );
 
   console.log("  ✓ 三頁一屏（地圖 2 欄／戰果 details 收納／底欄 fixed 且留位）");
+  // 抽出手牌規則區塊
+  const handBlock = /\.hand\s*\{([^}]*)\}/.exec(css);
+  assert(handBlock, "搵唔到 .hand 規則");
+  const handCss = handBlock[1];
+
+  // ① 手牌要橫向滑動（flex + overflow-x），唔可以再用 grid 換行
+  assert(/display:\s*flex/.test(handCss), ".hand 應該用 flex（橫滑）");
+  assert(/flex-wrap:\s*nowrap/.test(handCss), ".hand 唔應該換行（一屏關鍵）");
+  assert(/overflow-x:\s*auto/.test(handCss), ".hand 要有 overflow-x: auto（橫滑）");
+  assert(!/grid-template-columns/.test(handCss), ".hand 唔應該再用 grid 分欄（會換行撐高）");
+
+  // ② 卡面要有固定闊度（唔用 grid 撐開）
+  // 注意：.card-face 喺 CSS 出現多次（hover／is-disabled…），要搵「基礎規則」
+  const cardRules = [...css.matchAll(/\.card-face\s*\{([^}]*)\}/g)].map((m) => m[1]);
+  assert(cardRules.length > 0, "搵唔到 .card-face 規則");
+  const cardCss = cardRules.find((b) => /flex:/.test(b)) || cardRules[0];
+  assert(/flex:\s*0\s+0\s+\d+px/.test(cardCss), ".card-face 應該有固定 flex-basis");
+  assert(/width:\s*\d+px/.test(cardCss), ".card-face 應該有固定 width");
+  // 唔可以再有 min-height: 168（嗰個係一屏放唔晒嘅元兇）
+  assert(!/min-height:\s*168px/.test(cardCss), ".card-face 唔應該再有 min-height: 168px");
+
+  // ③ 卡圖用 4:3 而唔係 1:1（省 30px 高）
+  const artBlock = /\.card-art\s*\{([^}]*)\}/.exec(css);
+  assert(artBlock, "搵唔到 .card-art 規則");
+  assert(/aspect-ratio:\s*4\s*\/\s*3/.test(artBlock[1]), ".card-art 應該用 4:3");
+
+  // ④ 手牌上唔顯示 blurb（flavor 留返長按詳情）
+  assert(/\.hand \.card-blurb\s*\{[^}]*display:\s*none/.test(css), "手牌 blurb 應該隱藏");
+
+  // ⑤ 牌堆列唔可以換行（四格逼一行）
+  const pileBlock = /\.pile-row\s*\{([^}]*)\}/.exec(css);
+  assert(pileBlock, "搵唔到 .pile-row 規則");
+  assert(/flex-wrap:\s*nowrap/.test(pileBlock[1]), ".pile-row 唔應該換行");
+
+  // ⑥ 手機 media query 嘅 screen 寬度唔可以用 100%（會跟父容器 padding 爆邊）
+  // 斷點 = 400px（見 CSS 尾部）
+  assert(
+    /@media\s*\(max-width:\s*400px\)/.test(css),
+    "應該有 400px 斷點（390 走呢條規則）"
+  );
+  assert(
+    !/max-width:\s*min\(var\(--app-max-w\),\s*100%\)/.test(css),
+    "手機 media query 唔應該用 100%（390 下會爆到 430，要用 100vw - padding）"
+  );
+  assert(
+    /max-width:\s*min\(var\(--app-max-w\),\s*calc\(100vw/.test(css),
+    "手機 media query 應該用 calc(100vw - padding)"
+  );
+
+  // ⑦ 牌組掣要有 44px 觸控目標
+  const deckBtnBlock = /\.pile-deck-btn\s*\{([^}]*)\}/.exec(css);
+  assert(deckBtnBlock, "搵唔到 .pile-deck-btn 規則");
+  assert(/min-height:\s*44px/.test(deckBtnBlock[1]), ".pile-deck-btn 要 ≥44px");
+
+  console.log("  ✓ 戰鬥手牌一屏（橫滑／固定卡闊／4:3 圖／牌堆不換行／無 100% 爆邊）");
 }
 
 /* ---------- 新手教學：首局先彈，之後唔再彈 ---------- */
