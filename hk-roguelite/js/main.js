@@ -49,6 +49,15 @@ import { hasSeenTutorial, markTutorialSeen } from "./tutorial.js";
 import { pauseSummary, pauseLossLine, hasRunToLose } from "./pause.js";
 import { saveRun, loadRun, clearRun, saveSummary, unpackRun } from "./save.js";
 import {
+  loadBadges,
+  saveBadges,
+  unlockOnClear,
+  unlockOnBossWin,
+  badgeList,
+  badgeCount,
+  BADGE_TOTAL,
+} from "./badges.js";
+import {
   wait,
   pressCard,
   flyProjectile,
@@ -116,6 +125,10 @@ const state = {
   savedRun: null,
   /** 新局覆蓋存檔二次確認（"idle" → "confirm"） */
   overwriteConfirm: "idle",
+  /** 成就／首通標（由 localStorage 讀入） */
+  badges: { v: 1, ids: [] },
+  /** 今次通關／首殺新解鎖嘅標（結算頁用嚟顯示） */
+  newBadges: /** @type {object[]} */ ([]),
 };
 
 /** 現存角色 id（用嚟擋「角色已移除」嘅舊存檔） */
@@ -323,9 +336,9 @@ function renderTitle() {
         <button type="button" class="btn btn-${state.savedRun ? "ghost" : "primary"} btn-pressable" data-action="to-select">${
           state.savedRun ? "新局（會覆蓋存檔）" : "進入選角"
         }</button>
+        <button type="button" class="btn btn-ghost btn-pressable" data-action="to-codex">圖鑑<span class="btn-sub">${badgeCount(state.badges)}／${BADGE_TOTAL}</span></button>
         <button type="button" class="btn btn-ghost btn-pressable" data-action="to-settings">設定</button>`
-        }
-      </div>
+        }      </div>
       ${renderSfxToggle()}
       <p class="foot-note">入口：hk-roguelite/index.html · 目錄暫名 hk-roguelite</p>
     </main>
@@ -418,6 +431,92 @@ function renderSfxToggle() {
       <span class="sfx-toggle-icon" aria-hidden="true">${off ? "🔇" : "🔊"}</span>
       <span class="sfx-toggle-text">${off ? "音效：關" : "音效：開"}</span>
     </button>`;
+}
+
+/**
+ * 圖鑑頁：目前只放「成就／首通標」一節（薄層）。
+ *
+ * 鐵律：**未解鎖唔劇透**——只顯示「？？？」同標籤，唔會漏名、唔會漏 desc／flavor。
+ * 頂部有「已解鎖 N／7」，一眼睇到進度。
+ */
+/**
+ * 通關頁：今次新解鎖嘅標（可能 0–2 個）。
+ * 唔顯示就冇提示，玩家唔知自己解鎖咗嘢。
+ */
+function renderNewBadges() {
+  const list = state.newBadges || [];
+  if (!list.length) return "";
+  const items = list
+    .map(
+      (b) => `
+      <li class="new-badge">
+        <span class="new-badge-mark" aria-hidden="true">★</span>
+        <span class="new-badge-body">
+          <strong class="new-badge-name">${escapeHtml(b.name)}</strong>
+          <span class="new-badge-desc">${escapeHtml(b.desc)}</span>
+        </span>
+      </li>`
+    )
+    .join("");
+  return `
+    <section class="panel new-badge-panel">
+      <h2>新解鎖 ${list.length} 個標</h2>
+      <ul class="new-badge-list">${items}</ul>
+    </section>`;
+}
+
+function renderCodex() {
+  const list = badgeList(state.badges);
+  const done = badgeCount(state.badges);
+
+  const rows = list
+    .map((b) => {
+      if (!b.unlocked) {
+        return `
+        <li class="badge-row is-unknown">
+          <span class="badge-mark" aria-hidden="true">？</span>
+          <span class="badge-body">
+            <span class="badge-top">
+              <span class="badge-tag">${escapeHtml(b.tag)}</span>
+              <span class="badge-name">？？？</span>
+            </span>
+            <span class="badge-desc">未解鎖</span>
+          </span>
+        </li>`;
+      }
+      return `
+      <li class="badge-row is-unlocked">
+        <span class="badge-mark" aria-hidden="true">★</span>
+        <span class="badge-body">
+          <span class="badge-top">
+            <span class="badge-tag">${escapeHtml(b.tag)}</span>
+            <span class="badge-name">${escapeHtml(b.name)}</span>
+          </span>
+          <span class="badge-desc">${escapeHtml(b.desc)}</span>
+          <span class="badge-flavor">「${escapeHtml(b.flavor)}」</span>
+        </span>
+      </li>`;
+    })
+    .join("");
+
+  return `
+    <main class="screen screen-codex" aria-label="圖鑑">
+      <header class="brand-block brand-compact">
+        <h1 class="brand">圖鑑</h1>
+        <p class="tagline">解鎖咗先會出現 · 未解鎖唔劇透</p>
+      </header>
+
+      <section class="panel">
+        <h2>成就 · 首通標 <span class="codex-count">${done}／${BADGE_TOTAL}</span></h2>
+        <p class="lede">用每個角色打穿三區，或者第一次打贏各 Act Boss，都會亮一個。</p>
+        <ul class="badge-list">${rows}</ul>
+      </section>
+
+      <div class="actions">
+        <button type="button" class="btn btn-primary btn-pressable" data-action="back-title">返標題</button>
+      </div>
+    </main>
+  `;
 }
 
 /**
@@ -1387,6 +1486,7 @@ function renderVictory() {
             ? `<p class="rerun-hook">「${escapeHtml(char.rerunHook.clear)}」</p>`
             : ""
         }
+        ${renderNewBadges()}
         <ul class="clear-stats">
           <li><span>剩餘 HP</span><strong>${run.hp}/${run.maxHp}</strong></li>
           <li><span>金幣</span><strong>${run.gold}</strong></li>
@@ -1746,6 +1846,9 @@ function render() {
       break;
     case "pause":
       html = renderPause();
+      break;
+    case "codex":
+      html = renderCodex();
       break;
     default:
       html = renderTitle();
@@ -2347,6 +2450,15 @@ function advanceMap(opts = {}) {
       state.screen = "victory";
       // 通關：存檔使命完成，清走（唔會再彈「繼續」）
       clearRun();
+      // 成就：角色首通 + 最終 Boss 首殺（一次過結算，只會各亮一次）
+      {
+        const res = unlockOnClear(state.badges, state.run.characterId, "E12");
+        state.badges = res.data;
+        // 合併（最終 Boss 可能已經喺 battle-win 亮咗），唔可以覆蓋
+        const seen = new Set((state.newBadges || []).map((b) => b.id));
+        for (const b of res.unlocked) if (!seen.has(b.id)) state.newBadges.push(b);
+        saveBadges(state.badges);
+      }
       sfx.clear();
       sfx.win();
     }
@@ -2579,8 +2691,11 @@ function onClick(event) {
       const before = progressKeys().length;
       const res = clearProgress();
       state.clearConfirm = "idle";
+      // 清進度連成就都清走，記憶體亦要同步（否則圖鑑仍會顯示舊標）
+      state.badges = loadBadges();
+      state.newBadges = [];
       state.settingsMsg = res.ok
-        ? `已清除 ${before} 項本機進度。音效設定保留。`
+        ? `已清除 ${before} 項本機進度（含成就）。音效設定保留。`
         : "清除失敗（瀏覽器可能封鎖咗本機儲存）。";
       break;
     }
@@ -2609,7 +2724,12 @@ function onClick(event) {
       if (id && CHARACTERS[id]) state.selectedCharId = id;
       break;
     }
+    case "to-codex":
+      state.screen = "codex";
+      break;
     case "confirm-char":
+      // 新局：清走上一次嘅新解鎖提示（唔可以留到今次結算）
+      state.newBadges = [];
       state.run = createRun(state.selectedCharId);
       state.screen = "map";
       // 選角 → 第一戰唔好斷戲：講一句開場，同時提醒被動
@@ -2686,6 +2806,16 @@ function onClick(event) {
         state.run.hp = Math.min(state.run.maxHp, state.run.hp + bonuses.healOnWin);
       }
       recordEncounter(node);
+      if (isBossFight) {
+        // 成就：Boss 首殺（Act1／Act2 喺呢度亮；最終 Boss 喺通關時一齊算）
+        const bossId = nodeEnemyId(node);
+        const res = unlockOnBossWin(state.badges, bossId);
+        state.badges = res.data;
+        if (res.unlocked) {
+          state.newBadges = [...(state.newBadges || []), res.unlocked];
+          saveBadges(state.badges);
+        }
+      }
       if (node?.type === "boss") {
         // Act1 Boss → Act2；Act2 Boss → Act3；Act3 最終 Boss → 通關結算
         advanceMap();
@@ -2910,6 +3040,8 @@ function onClick(event) {
 app?.addEventListener("click", onClick);
 // 啟動時先讀存檔，標題頁才知道要唔要出「繼續」
 refreshSavedRun();
+// 讀成就（圖鑑同標題頁計數都要用）
+state.badges = loadBadges();
 render();
 
 // 通知 index.html 的兜底腳本：引擎已成功啟動（唔會再誤報載入失敗）

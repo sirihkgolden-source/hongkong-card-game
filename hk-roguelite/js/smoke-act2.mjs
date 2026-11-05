@@ -1133,4 +1133,150 @@ const results = ["oil", "asan", "kauko", "sing"].map(simulateChar);
   console.log("  ✓ 存檔續玩（六大欄位齊／版本驗證／覆蓋單份／降級安全）");
 }
 
+/* ---------- 成就／首通標：7 個標、唔劇透、只亮一次 ---------- */
+{
+  const store = new Map();
+  globalThis.localStorage = {
+    get length() {
+      return store.size;
+    },
+    key: (i) => Array.from(store.keys())[i] ?? null,
+    getItem: (k) => (store.has(k) ? store.get(k) : null),
+    setItem: (k, v) => void store.set(k, String(v)),
+    removeItem: (k) => void store.delete(k),
+  };
+
+  const {
+    BADGES_KEY,
+    BADGES_VERSION,
+    CHAR_BADGES,
+    BOSS_BADGES,
+    ALL_BADGES,
+    BADGE_ORDER,
+    BADGE_TOTAL,
+    emptyBadges,
+    loadBadges,
+    saveBadges,
+    unlockBadge,
+    unlockOnClear,
+    unlockOnBossWin,
+    badgeCount,
+    hasBadge,
+    badgeList,
+  } = await import("./badges.js");
+
+  // ① 數量同覆蓋：4 角色首通 + 3 Act Boss 首殺
+  assert(BADGE_TOTAL === 7, `應有 7 個標，實際 ${BADGE_TOTAL}`);
+  assert(Object.keys(CHAR_BADGES).length === 4, "角色首通標應為 4");
+  assert(Object.keys(BOSS_BADGES).length === 3, "Boss 首殺標應為 3");
+  // 每個現有角色都要有標（唔可以漏）
+  for (const cid of Object.keys(CHARACTERS)) {
+    assert(CHAR_BADGES[cid], `角色 ${cid} 缺首通標`);
+  }
+  // 每個 Boss 都要有標，而且敵人真係存在、真係 Boss
+  for (const eid of Object.keys(BOSS_BADGES)) {
+    const enemy = ENEMIES[eid];
+    assert(enemy, `${eid} 唔存在於 ENEMIES`);
+    assert(enemy.isBoss || enemy.isFinalBoss, `${eid} 唔係 Boss`);
+    assert(BOSS_BADGES[eid].enemyId === eid, `${eid} enemyId 唔對`);
+    assert(BOSS_BADGES[eid].act >= 1 && BOSS_BADGES[eid].act <= 3, `${eid} act 超界`);
+  }
+  // 三大 Boss 名寫死，成就定義唔可以偷改名
+  assert(ENEMIES.E04.name === "巷口鐵閘・睇場", "Act1 Boss 名唔可以改");
+  assert(ENEMIES.E05.name === "西裝收數隊", "Act2 Boss 名唔可以改");
+  assert(ENEMIES.E12.name === "籠門之王", "Act3 Boss 名唔可以改");
+
+  // ② 空機：一個都冇解鎖
+  assert(badgeCount(loadBadges()) === 0, "空機應 0 個標");
+  assert(hasBadge(loadBadges(), CHAR_BADGES.oil.id) === false, "空機唔應該有角色標");
+
+  // ③ 唔劇透：未解鎖要顯示「？？？」，而且唔可以漏真名
+  const blank = badgeList(emptyBadges());
+  assert(blank.length === BADGE_TOTAL, "清單長度要等於總數");
+  for (const row of blank) {
+    assert(row.unlocked === false, "空機全部應該未解鎖");
+    assert(row.name === "？？？", `未解鎖應該顯示？？？，實際 ${row.name}`);
+    assert(row.flavor === "", "未解鎖唔應該有 flavor（會劇透）");
+    const realName = ALL_BADGES[row.id].name;
+    assert(!row.desc.includes(realName), `未解鎖 desc 唔可以提真名 ${realName}`);
+  }
+
+  // ④ 解鎖一個 → 清單只有佢變真，其餘仍然？？？
+  let m = emptyBadges();
+  const r1 = unlockBadge(m, CHAR_BADGES.oil.id);
+  assert(r1.isNew === true, "第一次解鎖 isNew 應為 true");
+  m = r1.data;
+  assert(badgeCount(m) === 1, "應有 1 個標");
+  const list1 = badgeList(m);
+  const oilRow = list1.find((x) => x.id === CHAR_BADGES.oil.id);
+  assert(oilRow.unlocked === true, "阿油標應已解鎖");
+  assert(oilRow.name === CHAR_BADGES.oil.name, "解鎖後要顯示真名");
+  assert(oilRow.flavor.length > 0, "解鎖後要有 flavor");
+  for (const row of list1) {
+    if (row.id !== CHAR_BADGES.oil.id) {
+      assert(row.name === "？？？", `${row.id} 未解鎖應該仍然？？？`);
+    }
+  }
+
+  // ⑤ 重複解鎖唔會加兩次、亦唔會再報 isNew
+  const r2 = unlockBadge(m, CHAR_BADGES.oil.id);
+  assert(r2.isNew === false, "重複解鎖 isNew 應為 false");
+  assert(badgeCount(r2.data) === 1, "重複解鎖唔應該加");
+  // 未知 id 要靜靜忽略
+  const r3 = unlockBadge(m, "no_such_badge");
+  assert(r3.isNew === false && badgeCount(r3.data) === 1, "未知 id 應被忽略");
+
+  // ⑥ 通關一次過亮兩個（角色首通 + 最終 Boss 首殺）
+  const clear1 = unlockOnClear(emptyBadges(), "sing", "E12");
+  assert(clear1.unlocked.length === 2, `通關應解鎖 2 個，實際 ${clear1.unlocked.length}`);
+  assert(badgeCount(clear1.data) === 2, "應有 2 個標");
+  assert(hasBadge(clear1.data, CHAR_BADGES.sing.id), "應有勝仔標");
+  assert(hasBadge(clear1.data, BOSS_BADGES.E12.id), "應有籠門之王標");
+  // 第二次用同一角色通關：唔會再加
+  const clear2 = unlockOnClear(clear1.data, "sing", "E12");
+  assert(clear2.unlocked.length === 0, "重複通關唔應該再解鎖");
+  assert(badgeCount(clear2.data) === 2, "重複通關唔應該加");
+  // 換角色通關：只加角色標（Boss 已亮）
+  const clear3 = unlockOnClear(clear1.data, "oil", "E12");
+  assert(clear3.unlocked.length === 1, "換角通關應只解鎖角色標");
+  assert(clear3.unlocked[0].charId === "oil", "解鎖嘅應該係阿油");
+
+  // ⑦ Boss 首殺（Act1／Act2 提前亮）
+  const b1 = unlockOnBossWin(emptyBadges(), "E04");
+  assert(b1.unlocked !== null && b1.unlocked.id === BOSS_BADGES.E04.id, "Act1 Boss 應解鎖");
+  const b1again = unlockOnBossWin(b1.data, "E04");
+  assert(b1again.unlocked === null, "重複殺唔應該再解鎖");
+  // 非 Boss 敵人唔應該解鎖
+  const notBoss = unlockOnBossWin(emptyBadges(), "E01");
+  assert(notBoss.unlocked === null && badgeCount(notBoss.data) === 0, "小怪唔應該解鎖 Boss 標");
+
+  // ⑧ 存讀：寫入 → 讀回一致；重開仍然記得
+  const full = unlockOnClear(unlockOnBossWin(emptyBadges(), "E04").data, "kauko", "E12").data;
+  assert(saveBadges(full) === true, "saveBadges 應成功");
+  const back = loadBadges();
+  assert(badgeCount(back) === 3, `讀回應有 3 個，實際 ${badgeCount(back)}`);
+  assert(hasBadge(back, BOSS_BADGES.E04.id), "讀回應該有 Act1 Boss 標");
+  assert(localStorage.getItem(BADGES_KEY) !== null, "應該寫入 localStorage");
+
+  // ⑨ 壞資料／舊版本 → 回空，唔 throw
+  localStorage.setItem(BADGES_KEY, "{{壞");
+  assert(badgeCount(loadBadges()) === 0, "壞 JSON 應回空");
+  localStorage.setItem(BADGES_KEY, JSON.stringify({ v: 0, ids: [CHAR_BADGES.oil.id] }));
+  assert(badgeCount(loadBadges()) === 0, "舊版本應回空");
+  // 認唔到嘅 id 要過濾走
+  localStorage.setItem(
+    BADGES_KEY,
+    JSON.stringify({ v: BADGES_VERSION, ids: [CHAR_BADGES.oil.id, "ghost_badge"] })
+  );
+  assert(badgeCount(loadBadges()) === 1, "未知 id 應被過濾");
+
+  // ⑩ 無 localStorage 環境唔應該 throw
+  delete globalThis.localStorage;
+  assert(badgeCount(loadBadges()) === 0, "無 localStorage 應回空");
+  assert(saveBadges(full) === false, "無 localStorage 存檔應回 false");
+  assert(unlockBadge(emptyBadges(), CHAR_BADGES.oil.id).isNew === true, "純函式唔受影響");
+
+  console.log("  ✓ 成就／首通標（7 個標／唔劇透／只亮一次／存讀降級）");
+}
+
 console.log(JSON.stringify({ ok: true, act1: actDisplayName(1), act2: actDisplayName(2), results }, null, 2));
