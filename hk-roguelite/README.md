@@ -38,6 +38,7 @@ hk-roguelite/          ← 目錄暫名；產品名《香江小風波》
 │   ├── storage.js     ← 本機存儲層（列出／清除進度，保留設定 key）
 │   ├── tutorial.js    ← 新手教學記憶（首局彈一次）
 │   ├── pause.js       ← 暫停／返標題（丟失清單計算，純函式）
+│   ├── save.js        ← 存檔續玩（單份存檔、版本驗證）
 │   ├── data.js        ← 角色／牌／敵／Act1–3 地圖／事件
 │   ├── smoke-full.mjs ← 封測包（四角／分支／店／遺物／near-miss／再開一局）
 │   ├── smoke-act2.mjs ← Act1–2 流程自測
@@ -228,18 +229,54 @@ HP 68／68
 2 件遺物   ← 冇遺物時唔會出現（唔灌水）
 ```
 
-警告句：「返標題＝呢一局即刻報銷。Act1 行到第 1／6 格，全部冇得續。」
+警告句：「返標題會幫你存起呢一局（Act1 第 1／6 格），下次撳『繼續』返得嚟。」
 
-> 本作**冇存檔機制**，所以文案直接寫「冇得續」，唔會講「可以續」呃玩家。
+> **第八輪加咗存檔後，呢句文案已同步改**：唔會再講「冇得續」（嗰句係第七輪未有存檔時嘅講法，已作廢）。改動有 smoke 斷言守住——`pauseLossLine()` 必須提「存起」或「繼續」，而且**唔可以**含「冇得續」。
 
-二次確認實測：第一次撳只彈紅色確認區（`run` 仍在）→ 取消後局況完好 → 確認後 `screen: "title"`、`run: null`、`battle: null`。
+二次確認實測：第一次撳只彈紅色確認區（`run` 仍在、**存檔亦在**）→ 取消後局況完好 → 確認後返標題、`run: null`，但**存檔保留**，標題頁隨即出現「繼續」。
+
+### 存檔續玩（本機單份）
+
+每次畫面更新都自動存一次（`autoSave()`），key `hk_run_v1`。
+
+**存咩**（白名單，JSON 可序列化）：
+
+| 欄位 | 內容 |
+|---|---|
+| `characterId` | 角色 |
+| `act`／`mapIndex`／`completed` | Act、節點、已完成節點 |
+| `deck`／`relics` | 牌組、遺物 |
+| `hp`／`maxHp`／`gold` | 血、金 |
+| `encounters`／`nodeEnemies`／`nodeEvents` | 遭遇記錄、該格抽定嘅敵人／事件（重入要一致） |
+| `nextBattleEnergyPenalty`／`Bonus`／`Block` | 跨場加成（唔存就等於食咗玩家嘅遺物效果） |
+| `v`／`at` | 格式版本、時間戳 |
+
+**刻意唔存**：進行中戰鬥嘅 `hand`／`energy`／`intent` —— 戰鬥係即時運算，中途存會令回合數對唔上，所以一律由該節點重入。
+
+**驗證**（`validateSave`，任何一項唔過就當冇存檔）：
+
+- `v` 要對版本（防舊格式爆）
+- `characterId` 要存在於現有角色（防角色被移除）
+- `act` 1–3、`mapIndex ≥ 0`、`maxHp > 0`、`deck` 非空
+
+**生命週期**：
+
+| 時機 | 存檔 |
+|---|---|
+| 每次 render（有 run） | 自動寫 |
+| 戰鬥中 | 照存（標記 `screen: "battle"`，重入回地圖由該節點打） |
+| 暫停 → 返標題 | **保留**（可以續） |
+| 通關／敗北 | **清走**（局已完，唔應該再出「繼續」） |
+| 新局覆蓋（確認後） | **清走**，並同時清 `state.run` |
+
+> `autoSave()` 對 `victory`／`defeat` 有 guard，否則結算頁一 render 就會把已完嘅局寫返存檔。
 
 
 ## 自測
 
 ```bash
 cd hk-roguelite
-node js/smoke-act2.mjs   # Act1–2 流程、事件池、商店、選牌加權＋音效薄層＋設定頁清除進度＋教學記憶＋暫停丟失清單
+node js/smoke-act2.mjs   # Act1–2 流程、事件池、商店、選牌加權＋音效＋設定頁＋教學＋暫停＋存檔
 node js/smoke-act3.mjs   # 四角色×三區全程 → 最終 Boss → 結算資料
 node js/smoke-full.mjs   # 封測包：四角／分支／店／遺物／near-miss／再開一局
 node js/probe-act3.mjs   # 最終 Boss 勝率／超時（平衡下限參考）
@@ -276,8 +313,19 @@ node js/probe-act3.mjs   # 最終 Boss 勝率／超時（平衡下限參考）
 - 有 `run` 時 **act／done／total／hp／maxHp／gold／deck／relics 逐項對得上真實數值**
 - 清單要講「第 done+1／total 格」（而家正卡喺下一格，唔係已完成格數）
 - 冇遺物時**唔應該**提「0 件遺物」
-- 總結句必須含「報銷」或「冇得續」（唔可以含混，要講清後果）
+- 總結句必須含「存起」或「繼續」，而且**唔可以**含「冇得續」（有存檔仲講呢句就係呃人）
 - 怪值（`act: "3"`／`completed: null`／`hp: undefined`）要降級而唔 throw
+
+**「存檔續玩」**
+
+- 空機 `hasSave() === false`、`loadRun() === null`、摘要空字串
+- 寫入 → 讀回：六大必要欄位（角／Act／節點／牌／遺物／血金）逐項對值
+- `unpackRun` 補齊 16 個欄位、跨場加成保留、`deck` 係新陣列（唔共用 reference）
+- 版本唔對／角色已移除／壞 JSON／缺欄位／空牌組／Act 超界 → 一律當冇存檔
+- 空角色 id、負 `mapIndex`、`maxHp: 0` 都要驗證失敗
+- `clearRun()` 要**真係刪走個 key**（唔可以只回 true）
+- 再存一次會覆蓋，localStorage 只可以有一份存檔
+- 無 localStorage 環境下四個函式都降級，唔 throw
 
 ### 封測包（`smoke-full.mjs`）
 

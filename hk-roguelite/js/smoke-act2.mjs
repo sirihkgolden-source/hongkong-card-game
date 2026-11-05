@@ -968,9 +968,12 @@ const results = ["oil", "asan", "kauko", "sing"].map(simulateChar);
   const noRelic = pauseSummary({ ...run, relics: [] }, { totalNodes: 6 });
   assert(!noRelic.items.join("｜").includes("遺物"), "冇遺物時唔應該提遺物");
 
-  // ⑤ 一句總結要講明「冇得續」，唔可以含混
+  // ⑤ 一句總結要講清「返標題會點」，唔可以含混
+  //    第八輪加咗存檔：由「冇得續」改成「會幫你存起，可以續」，
+  //    所以要求變成「必須講到存檔／續」，而**唔可以**再講「冇得續」（會呃人）。
   const line = pauseLossLine(s);
-  assert(line.includes("報銷") || line.includes("冇得續"), `總結要講清後果：${line}`);
+  assert(line.includes("存起") || line.includes("繼續"), `總結要講清會存檔：${line}`);
+  assert(!line.includes("冇得續"), `有存檔就唔可以再講「冇得續」：${line}`);
   assert(line.includes("Act2"), `總結要提 Act：${line}`);
 
   // ⑥ 缺欄位／怪值都要降級而唔 throw
@@ -982,6 +985,152 @@ const results = ["oil", "asan", "kauko", "sing"].map(simulateChar);
   assert(pauseLossLine(weird).length > 0, "怪值都要有句人話");
 
   console.log("  ✓ 暫停／返標題（丟失清單逐項對得上真實數值）");
+}
+
+/* ---------- 存檔續玩：寫／讀／驗證／覆蓋 ---------- */
+{
+  const store = new Map();
+  globalThis.localStorage = {
+    get length() {
+      return store.size;
+    },
+    key: (i) => Array.from(store.keys())[i] ?? null,
+    getItem: (k) => (store.has(k) ? store.get(k) : null),
+    setItem: (k, v) => void store.set(k, String(v)),
+    removeItem: (k) => void store.delete(k),
+  };
+
+  const {
+    SAVE_KEY,
+    SAVE_VERSION,
+    packRun,
+    validateSave,
+    unpackRun,
+    saveRun,
+    loadRun,
+    clearRun,
+    hasSave,
+    saveSummary,
+  } = await import("./save.js");
+
+  const KNOWN = ["oil", "asan", "kauko", "sing"];
+  const mk = () => ({
+    characterId: "kauko",
+    act: 2,
+    hp: 51,
+    maxHp: 72,
+    gold: 19,
+    deck: ["S01", "S16", "S86", "S87"],
+    relics: ["rl_kuban"],
+    mapIndex: 3,
+    completed: ["n1", "n2", "n3"],
+    encounters: [{ enemyId: "E03", result: "win" }],
+    nodeEnemies: { n1: "E01" },
+    nodeEvents: { n3: "ev_stair" },
+    nextBattleEnergyPenalty: 0,
+    nextBattleEnergyBonus: 1,
+    nextBattleBlock: 5,
+    victories: 3,
+  });
+
+  // ① 空機：冇存檔
+  assert(hasSave(KNOWN) === false, "空機唔應該有存檔");
+  assert(loadRun(KNOWN) === null, "空機 loadRun 應回 null");
+  assert(saveSummary(null) === "", "冇存檔時摘要應為空");
+
+  // ② 寫入 → 讀回：六大必要欄位要齊（角／Act／節點／牌／遺物／血金）
+  assert(saveRun(mk(), "map") === true, "saveRun 應成功");
+  const back = loadRun(KNOWN);
+  assert(back !== null, "應該讀得返存檔");
+  assert(back.v === SAVE_VERSION, "版本號要對");
+  assert(back.characterId === "kauko", "角色要對");
+  assert(back.act === 2, "Act 要對");
+  assert(back.mapIndex === 3, "節點索引要對");
+  assert(back.deck.length === 4, "牌組要對");
+  assert(back.relics.length === 1, "遺物要對");
+  assert(back.hp === 51 && back.maxHp === 72, "血要對");
+  assert(back.gold === 19, "金要對");
+
+  // ③ unpack 要補齊缺欄位，唔會漏 key
+  const run = unpackRun(back);
+  for (const k of [
+    "characterId",
+    "act",
+    "hp",
+    "maxHp",
+    "gold",
+    "deck",
+    "relics",
+    "mapIndex",
+    "completed",
+    "encounters",
+    "nodeEnemies",
+    "nodeEvents",
+    "nextBattleEnergyPenalty",
+    "nextBattleEnergyBonus",
+    "nextBattleBlock",
+    "victories",
+  ]) {
+    assert(k in run, `unpackRun 漏 ${k}`);
+  }
+  assert(run.nextBattleEnergyBonus === 1 && run.nextBattleBlock === 5, "跨場加成要保留");
+  assert(Array.isArray(run.deck) && run.deck !== back.deck, "deck 要係新陣列（唔可以共用 reference）");
+
+  // ④ 版本唔對 → 當冇存檔（唔會用舊格式爆）
+  const oldVer = { ...packRun(mk(), "map"), v: 0 };
+  localStorage.setItem(SAVE_KEY, JSON.stringify(oldVer));
+  assert(validateSave(oldVer, KNOWN) === false, "舊版本要驗證失敗");
+  assert(loadRun(KNOWN) === null, "舊版本應讀成 null");
+
+  // ⑤ 角色已移除 → 當冇存檔
+  const ghost = packRun(mk(), "map");
+  localStorage.setItem(SAVE_KEY, JSON.stringify(ghost));
+  assert(validateSave(ghost, ["oil", "asan"]) === false, "角色不在名單要驗證失敗");
+
+  // ⑥ 壞 JSON / 缺欄位 都要降級
+  localStorage.setItem(SAVE_KEY, "{{壞");
+  assert(loadRun(KNOWN) === null, "壞 JSON 應回 null");
+  assert(validateSave(null) === false, "null 應該驗證失敗");
+  assert(validateSave({}) === false, "空 object 應該驗證失敗");
+  assert(validateSave({ v: SAVE_VERSION, characterId: "oil" }) === false, "缺欄位應該驗證失敗");
+  assert(validateSave({ ...packRun(mk()), deck: [] }) === false, "空牌組應該驗證失敗");
+  assert(validateSave({ ...packRun(mk()), act: 9 }) === false, "Act 超界應該驗證失敗");
+  assert(validateSave({ ...packRun(mk()), characterId: "" }) === false, "空角色 id 應該驗證失敗");
+  assert(validateSave({ ...packRun(mk()), mapIndex: -1 }) === false, "負節點索引應該驗證失敗");
+  assert(validateSave({ ...packRun(mk()), maxHp: 0 }) === false, "maxHp 0 應該驗證失敗");
+
+  // ⑦ 摘要用真實數值
+  const sum = saveSummary(packRun(mk(), "map"));
+  assert(sum.includes("Act2"), `摘要應有 Act2：${sum}`);
+  assert(sum.includes("第 4／6 格"), `摘要應有格數：${sum}`);
+  assert(sum.includes("51／72"), `摘要應有 HP：${sum}`);
+  assert(sum.includes("19 金"), `摘要應有金：${sum}`);
+  assert(sum.includes("4 張牌"), `摘要應有牌數：${sum}`);
+
+  // ⑧ clear 之後冇得續（用一份**有效**存檔驗，唔可以靠「壞資料」蒙混過關）
+  saveRun(mk(), "map");
+  assert(hasSave(KNOWN) === true, "清之前應該有存檔");
+  assert(clearRun() === true, "clearRun 應成功");
+  assert(localStorage.getItem(SAVE_KEY) === null, "clearRun 要真係刪走個 key");
+  assert(hasSave(KNOWN) === false, "清走後唔應該有存檔");
+  assert(clearRun() === true, "重複清走要安全");
+
+  // ⑨ 再存一次會覆蓋（唔會兩份並存）
+  saveRun(mk(), "map");
+  const second = { ...mk(), act: 3, mapIndex: 0, gold: 30 };
+  saveRun(second, "map");
+  const after = loadRun(KNOWN);
+  assert(after.act === 3 && after.gold === 30, "新存檔應覆蓋舊存檔");
+  assert(Array.from(store.keys()).filter((k) => k === SAVE_KEY).length === 1, "只可以有一份存檔");
+
+  // ⑩ 無 localStorage 環境唔應該 throw
+  delete globalThis.localStorage;
+  assert(loadRun(KNOWN) === null, "無 localStorage 應回 null");
+  assert(hasSave(KNOWN) === false, "無 localStorage hasSave 應 false");
+  assert(saveRun(mk(), "map") === false, "無 localStorage 存檔應回 false");
+  assert(clearRun() === false, "無 localStorage 清檔應回 false");
+
+  console.log("  ✓ 存檔續玩（六大欄位齊／版本驗證／覆蓋單份／降級安全）");
 }
 
 console.log(JSON.stringify({ ok: true, act1: actDisplayName(1), act2: actDisplayName(2), results }, null, 2));

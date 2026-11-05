@@ -47,6 +47,7 @@ import { sfx, isMuted, toggleMuted } from "./sfx.js";
 import { listKeys, progressKeys, hasProgress, clearProgress } from "./storage.js";
 import { hasSeenTutorial, markTutorialSeen } from "./tutorial.js";
 import { pauseSummary, pauseLossLine, hasRunToLose } from "./pause.js";
+import { saveRun, loadRun, clearRun, saveSummary, unpackRun } from "./save.js";
 import {
   wait,
   pressCard,
@@ -111,7 +112,38 @@ const state = {
   pauseResumeTo: "map",
   /** 設定頁由邊度入（"pause" 就返暫停，唔好誤跳標題） */
   settingsReturnTo: null,
+  /** 標題頁讀到嘅存檔（null = 冇得續） */
+  savedRun: null,
+  /** 新局覆蓋存檔二次確認（"idle" → "confirm"） */
+  overwriteConfirm: "idle",
 };
+
+/** 現存角色 id（用嚟擋「角色已移除」嘅舊存檔） */
+function knownCharIds() {
+  return Object.keys(CHARACTERS);
+}
+
+/**
+ * 自動存檔：每次畫面變化後都寫一次。
+ *
+ * 只在「有進行中一局」時寫；戰鬥中亦照存（下輪由該節點重入）。
+ * **結算畫面（victory／defeat）唔存**——嗰時局已經完，再寫就
+ * 會令標題頁錯誤噉顯示「繼續」。
+ */
+function autoSave() {
+  if (!state.run) return false;
+  if (state.screen === "victory" || state.screen === "defeat") return false;
+  // 戰鬥中存 "battle"，重入時由該節點重新開打（唔存戰鬥內部狀態）
+  const screen = state.screen === "battle" ? "battle" : state.screen;
+  return saveRun(state.run, screen);
+}
+
+/** 重讀標題頁要顯示嘅存檔摘要 */
+function refreshSavedRun() {
+  const data = loadRun(knownCharIds());
+  state.savedRun = data;
+  return data;
+}
 
 const app = document.getElementById("app");
 
@@ -250,6 +282,9 @@ function renderCardFace(cardId, opts = {}) {
 /* ---------- screens ---------- */
 
 function renderTitle() {
+  // 每次畫標題都同 localStorage 對一次，避免 state.savedRun 變 stale
+  // （例如覆蓋存檔之後、或者另一個 tab 清咗進度）
+  refreshSavedRun();
   return `
     <main class="screen screen-title" aria-label="標題">
       <header class="brand-block">
@@ -265,8 +300,31 @@ function renderTitle() {
         </p>
       </section>
       <div class="actions">
-        <button type="button" class="btn btn-primary btn-pressable" data-action="to-select">進入選角</button>
-        <button type="button" class="btn btn-ghost btn-pressable" data-action="to-settings">設定</button>
+        ${
+          state.overwriteConfirm === "confirm" && state.savedRun
+            ? `<div class="overwrite-confirm" role="alert">
+                 <p class="overwrite-title">開新局會蓋走而家嘅存檔。</p>
+                 <p class="overwrite-body">${escapeHtml(saveSummary(state.savedRun))}</p>
+                 <p class="overwrite-body">蓋走之後冇得返轉頭。想留住呢一局就撳「唔好」。</p>
+                 <div class="overwrite-actions">
+                   <button type="button" class="btn btn-danger btn-pressable" data-action="confirm-overwrite">係，開新局</button>
+                   <button type="button" class="btn btn-ghost btn-pressable" data-action="cancel-overwrite">唔好，留住存檔</button>
+                 </div>
+               </div>`
+            : `${
+                // 有存檔先顯示「繼續」——冇存檔唔應該出一個撳完冇反應嘅掣
+                state.savedRun
+                  ? `<button type="button" class="btn btn-primary btn-pressable btn-continue" data-action="continue-run">
+                 <span class="btn-continue-main">繼續</span>
+                 <span class="btn-continue-sub">${escapeHtml(saveSummary(state.savedRun))}</span>
+               </button>`
+                  : ""
+              }
+        <button type="button" class="btn btn-${state.savedRun ? "ghost" : "primary"} btn-pressable" data-action="to-select">${
+          state.savedRun ? "新局（會覆蓋存檔）" : "進入選角"
+        }</button>
+        <button type="button" class="btn btn-ghost btn-pressable" data-action="to-settings">設定</button>`
+        }
       </div>
       ${renderSfxToggle()}
       <p class="foot-note">入口：hk-roguelite/index.html · 目錄暫名 hk-roguelite</p>
@@ -456,8 +514,8 @@ function renderPause() {
   const confirmBlock = confirming
     ? `
       <div class="pause-confirm" role="alert">
-        <p class="pause-confirm-title">真係唔打？呢一局冇得續。</p>
-        <p class="pause-confirm-body">你嘅牌組、遺物、金幣、HP 會全部清走，下次要由選角重新開始。</p>
+        <p class="pause-confirm-title">返標題？而家會幫你存起呢一局。</p>
+        <p class="pause-confirm-body">下次入遊戲撳「繼續」就返得嚟。想開新局先要覆蓋存檔。</p>
         <div class="pause-confirm-actions">
           <button type="button" class="btn btn-danger btn-pressable" data-action="confirm-quit">係，返標題</button>
           <button type="button" class="btn btn-ghost btn-pressable" data-action="cancel-quit">唔好，繼續打</button>
@@ -1697,6 +1755,8 @@ function render() {
   flushGoldFloat();
   flushRunDeltas();
   flushTurnLine();
+  // 每次畫面更新都自動存一次（有 run 才存）
+  autoSave();
 }
 
 /**
@@ -2285,6 +2345,8 @@ function advanceMap(opts = {}) {
     } else {
       // Act3 最終 Boss 勝 → 通關結算
       state.screen = "victory";
+      // 通關：存檔使命完成，清走（唔會再彈「繼續」）
+      clearRun();
       sfx.clear();
       sfx.win();
     }
@@ -2425,18 +2487,58 @@ function onClick(event) {
       state.pauseConfirm = "idle";
       break;
     case "confirm-quit":
-      // 真係走：清走本局所有狀態，返標題
+      // 真係走：清走記憶體中嘅局況，但**保留存檔**（下次可以續）
       state.pauseConfirm = "idle";
       state.run = null;
       state.battle = null;
       state.pendingBossId = null;
       state.pauseResumeTo = "map";
       state.screen = "title";
+      refreshSavedRun();
       break;
     case "to-select":
+      // 有存檔時，開新局會覆蓋——先問清楚
+      if (loadRun(knownCharIds())) {
+        state.overwriteConfirm = "confirm";
+        state.screen = "title";
+        break;
+      }
       // 首局先教一次：睇過就直接入選角
       state.screen = hasSeenTutorial() ? "select" : "tutorial";
       break;
+    case "confirm-overwrite": {
+      // 玩家確認：舊存檔作廢，照常入選角（教學照首局規則）
+      clearRun();
+      state.savedRun = null;
+      state.overwriteConfirm = "idle";
+      // **必須一齊清走記憶體中嘅舊 run**：否則 render() 之後嘅 autoSave()
+      // 會即刻將舊局寫返入存檔，變成「話覆蓋咗但其實冇」。
+      state.run = null;
+      state.battle = null;
+      state.pendingBossId = null;
+      state.screen = hasSeenTutorial() ? "select" : "tutorial";
+      break;
+    }
+    case "cancel-overwrite":
+      state.overwriteConfirm = "idle";
+      break;
+    case "continue-run": {
+      const data = loadRun(knownCharIds());
+      if (!data) {
+        state.savedRun = null;
+        state.overwriteConfirm = "idle";
+        break;
+      }
+      state.run = unpackRun(data);
+      state.selectedCharId = state.run.characterId;
+      state.battle = null;
+      state.pendingBossId = null;
+      // 一律回地圖：戰鬥入面嘅存檔都係由該節點重入（唔存戰鬥內部狀態）
+      state.screen = "map";
+      state.statusMsg = `續上次——Act${state.run.act}，第 ${state.run.mapIndex + 1}／${currentMap().length} 格。`;
+      state.openingHint = "";
+      break;
+    }
     case "finish-tutorial":
       // 睇完或跳過都係同一條路：記住 + 入選角
       markTutorialSeen();
@@ -2498,6 +2600,9 @@ function onClick(event) {
       // 離開設定頁就清走確認狀態，唔會下次入嚟仍然紅色
       state.clearConfirm = "idle";
       state.settingsMsg = "";
+      state.overwriteConfirm = "idle";
+      // 由結算／暫停返標題：重讀存檔摘要（存檔已被清 = 唔再顯示「繼續」）
+      refreshSavedRun();
       break;
     case "pick-char": {
       const id = t.getAttribute("data-char");
@@ -2602,6 +2707,8 @@ function onClick(event) {
     case "to-defeat":
       syncRunHpFromBattle();
       state.screen = "defeat";
+      // 敗北：呢一局結束，清走存檔（唔會再彈「繼續」）
+      clearRun();
       sfx.lose();
       break;
     case "skip-reward":
@@ -2801,6 +2908,8 @@ function onClick(event) {
 }
 
 app?.addEventListener("click", onClick);
+// 啟動時先讀存檔，標題頁才知道要唔要出「繼續」
+refreshSavedRun();
 render();
 
 // 通知 index.html 的兜底腳本：引擎已成功啟動（唔會再誤報載入失敗）

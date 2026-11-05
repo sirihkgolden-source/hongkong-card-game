@@ -1094,6 +1094,70 @@ body {
   min-height: 48px;
 }
 
+/* —— 存檔：標題頁「繼續」+ 新局覆蓋確認 —— */
+.btn-continue {
+  display: flex;
+  flex-direction: column;
+  gap: 0.22rem;
+  min-height: 60px;
+  padding-block: 0.65rem;
+  text-align: center;
+}
+
+.btn-continue-main {
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* 摘要：細字但唔可以太淡（要有用），用 0.86 對比得住 */
+.btn-continue-sub {
+  font-size: 0.76rem;
+  line-height: 1.35;
+  font-weight: 500;
+  color: rgba(10, 22, 34, 0.82);
+  white-space: normal;
+}
+
+.overwrite-confirm {
+  width: 100%;
+  padding: 0.85rem 0.9rem;
+  border-radius: 12px;
+  background: rgba(120, 20, 20, 0.32);
+  border: 1px solid rgba(255, 107, 90, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  animation: settings-warn-in 0.22s ease-out both;
+}
+
+.overwrite-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffcec7;
+  line-height: 1.4;
+}
+
+.overwrite-body {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: rgba(255, 216, 210, 0.9);
+}
+
+.overwrite-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.15rem;
+}
+
+.overwrite-actions .btn {
+  width: 100%;
+  min-height: 48px;
+}
+
 /* —— Map —— */
 .run-bar {
   display: flex;
