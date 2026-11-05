@@ -516,14 +516,25 @@ body {
 
 .map-node {
   display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 0.75rem;
+  /* 序號｜內容｜CTA：內容欄用 minmax(0,1fr) 先唔會被 CTA 撐爆 */
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.6rem;
   align-items: center;
   padding: 0.7rem 0.85rem;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(0, 0, 0, 0.35);
   transition: border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+/* 內容欄：靠左收緊，唔好拉到成行闊而中間留白 */
+.map-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+  align-items: flex-start;
+  text-align: left;
 }
 
 .map-node.is-current {
@@ -583,6 +594,18 @@ body {
   font-size: 0.78rem;
   color: var(--neon-amber);
   font-weight: 700;
+  /* 觸控目標：最少 44×44（WCAG / iOS HIG） */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  min-height: 44px;
+  padding: 0 0.7rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 193, 74, 0.45);
+  background: rgba(255, 193, 74, 0.14);
+  white-space: nowrap;
+  flex: 0 0 auto;
 }
 
 .map-done {
@@ -761,7 +784,8 @@ body {
   font-weight: 700;
   font-size: 0.82rem;
   letter-spacing: 0.02em;
-  line-height: 1.25;
+  /* 1.25 會令 16px 行高裝唔落 18px 字，改用 1.35 */
+  line-height: 1.35;
 }
 
 .card-type,
@@ -1235,9 +1259,24 @@ body {
   }
 
   .map-node {
-    padding: 0.85rem 0.7rem;
-    min-height: 52px;
-    gap: 0.5rem;
+    /* 窄屏：左右收窄留返空間畀文字同 CTA */
+    padding: 0.7rem 0.55rem;
+    min-height: 56px;
+    gap: 0.45rem;
+  }
+
+  .map-idx {
+    width: 26px;
+    height: 26px;
+    font-size: 0.8rem;
+  }
+
+  .map-sub {
+    font-size: 0.68rem;
+  }
+
+  .map-title {
+    font-size: 0.92rem;
   }
 
   .map-node.is-current {
@@ -1251,14 +1290,16 @@ body {
   }
 
   .map-cta {
-    padding: 0.35rem 0.45rem;
-    border-radius: 8px;
-    background: rgba(255, 193, 74, 0.12);
+    /* 窄屏維持 ≥44px 觸控面，用縮短文字間距而非縮細高度 */
+    padding: 0 0.55rem;
+    min-width: 56px;
+    border-radius: 10px;
   }
 
   .hand {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.45rem;
+    /* 窄屏 3 欄：卡片約 118px 闊，一屏睇到 3 張，減少垂直滾動 */
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.35rem;
   }
 
   .card-face {
@@ -1266,6 +1307,11 @@ body {
     min-width: 0;
     width: 100%;
     padding: 0.4rem;
+  }
+
+  /* 窄屏手牌圖用 4:3 而唔係 1:1，減少中段空位同總高度 */
+  .card-art {
+    aspect-ratio: 4 / 3;
   }
 
   .reward-grid {
