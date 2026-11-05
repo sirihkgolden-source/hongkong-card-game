@@ -732,6 +732,7 @@ function renderDefeat() {
     2: "霓虹吞沒你",
     3: "天台吞沒你",
   };
+  const near = nearMissInfo();
   return `
     <main class="screen screen-result is-lose" aria-label="敗北">
       <header class="brand-block">
@@ -740,6 +741,10 @@ function renderDefeat() {
       </header>
       <section class="panel">
         <h2>${escapeHtml(actTitles[act] || actTitles[1])}</h2>
+        <p class="near-miss">
+          <strong>差一點</strong>
+          <span>${escapeHtml(near.text)}</span>
+        </p>
         <p class="lede">
           死亡＝本局結束。下一局可再試「${escapeHtml(char.passive.name)}」，或換角色換嘴感。<br />
           Act${act}「${escapeHtml(actDisplayName(act))}」走到節點 ${Math.min(state.run?.mapIndex + 1 || 1, map.length)}／${map.length}。
@@ -759,6 +764,66 @@ function renderDefeat() {
       </div>
     </main>
   `;
+}
+
+/** 敗北畫面用嘅「就差咁一點」診斷：指出差喺血／牌／遺物／能量邊一項 */
+function nearMissInfo() {
+  const run = state.run || {};
+  const b = state.battle;
+  const char = activeChar();
+
+  // 1) 差喺血：對手殘血未死
+  if (b && b.enemyHp > 0 && b.enemyMaxHp > 0) {
+    const pct = b.enemyHp / b.enemyMaxHp;
+    if (pct <= 0.25) {
+      return {
+        kind: "hp",
+        text: `${b.enemyName} 得返 ${b.enemyHp}/${b.enemyMaxHp} 血。再多一擊，就係你企喺度。`,
+      };
+    }
+  }
+
+  // 2) 差喺能量：手牌仍然有牌，但出唔到
+  if (b && Array.isArray(b.hand) && b.hand.length > 0 && b.energy === 0) {
+    const playable = b.hand.filter((id) => {
+      const c = cardById(id);
+      return c && (c.cost || 0) === 0;
+    });
+    if (playable.length === 0) {
+      return {
+        kind: "energy",
+        text: `手牌仲有 ${b.hand.length} 張，但張張都要費。差嗰一點能量。`,
+      };
+    }
+  }
+
+  // 3) 差喺牌：牌組太薄
+  if ((run.deck || []).length <= 11) {
+    return {
+      kind: "deck",
+      text: `牌組只得 ${(run.deck || []).length} 張，抽到後段已經冇牌接力。`,
+    };
+  }
+
+  // 4) 差喺遺物：一件都冇／只得一件
+  const relicCount = (run.relics || []).length;
+  if (relicCount <= 1) {
+    return {
+      kind: "relic",
+      text:
+        relicCount === 0
+          ? "全場一件遺物都冇攞——士多行少咗轉。"
+          : "全場只得一件遺物，差件貨就撐得住。",
+    };
+  }
+
+  // 5) 兜底：差喺血（自己）
+  const hp = run.hp || 0;
+  const maxHp = run.maxHp || 1;
+  return {
+    kind: "hp",
+    text: `${char.name} 頂到最後得返 ${hp}/${maxHp}。下一局留返一口氣。`,
+  };
 }
 
 function render() {
