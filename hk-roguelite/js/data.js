@@ -3,6 +3,12 @@
  * 目錄暫名 hk-roguelite；對外產品名《香江小風波》
  */
 
+/**
+ * 開局金幣：夠買最便宜消耗品（黃大仙靈符 6 金）兩件，
+ * 確保第一間士多唔會「乜都買唔到」。
+ */
+export const START_GOLD = 12;
+
 export const META = {
   title: "香江小風波",
   act1Name: "後巷・夜醒",

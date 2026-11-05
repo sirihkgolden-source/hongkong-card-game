@@ -6,6 +6,7 @@
 
 import {
   META,
+  START_GOLD,
   CHARACTERS,
   EVENTS,
   SHOP,
@@ -109,7 +110,9 @@ function createRun(characterId) {
     act: 1,
     hp: c.maxHp,
     maxHp: c.maxHp,
-    gold: 0,
+    // 開局畀 12 金：夠買最便宜消耗品（6）兩件，或一件＋找贖，
+    // 避免「0 金入第一間士多乜都買唔到」嘅死局。
+    gold: START_GOLD,
     deck: [...c.starterDeck],
     mapIndex: 0,
     completed: /** @type {string[]} */ ([]),
