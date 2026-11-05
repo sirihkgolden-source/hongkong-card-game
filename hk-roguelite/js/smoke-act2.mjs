@@ -110,6 +110,14 @@ function simulateChar(charId) {
 
   assert(enemyById("E04").name === "巷口鐵閘・睇場", "Act1 Boss 睇場");
   assert(!enemyById("E04").name.includes("看場"), "禁看場");
+  assert(!enemyById("E04").name.includes("離場"), "禁離場");
+
+  // 地圖節點文案同 Boss 卡都要用「睇場」
+  const act1BossNode = ACT1_MAP.find((n) => n.type === "boss");
+  assert(act1BossNode?.title === "巷口鐵閘・睇場", "Act1 Boss 節點名");
+  for (const bad of ["離場", "看場"]) {
+    assert(!act1BossNode.title.includes(bad), `節點名禁${bad}`);
+  }
 
   for (const node of ACT1_MAP) {
     if (node.type === "battle" || node.type === "boss") {
