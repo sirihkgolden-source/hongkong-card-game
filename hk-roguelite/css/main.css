@@ -1060,6 +1060,23 @@ body {
   gap: 0.65rem;
 }
 
+/* 選牌：每格 = 卡片 + 一句「呢張幫到你咩」 */
+.reward-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.reward-why {
+  margin: 0;
+  padding: 0 0.15rem;
+  font-size: 0.7rem;
+  line-height: 1.45;
+  color: var(--neon-amber);
+  opacity: 0.88;
+}
+
 @media (max-width: 560px) {
   .reward-grid {
     grid-template-columns: 1fr;
@@ -1131,6 +1148,21 @@ body {
 .card-face.is-pressing {
   transform: scale(0.92) !important;
   transition: transform 0.06s ease-out;
+}
+
+/* 選牌確認：放大高亮 + 輕微上彈，令「揀咗邊張」有明確回饋 */
+.card-face.is-picked {
+  transform: scale(1.06) translateY(-6px);
+  border-color: var(--neon-amber);
+  box-shadow: 0 0 0 2px rgba(255, 193, 74, 0.65), 0 10px 28px rgba(255, 193, 74, 0.3);
+  animation: pick-pop 0.24s ease-out both;
+  z-index: 3;
+}
+
+@keyframes pick-pop {
+  0% { transform: scale(1) translateY(0); }
+  55% { transform: scale(1.09) translateY(-9px); }
+  100% { transform: scale(1.06) translateY(-6px); }
 }
 
 .fx-proj {
