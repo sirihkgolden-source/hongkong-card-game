@@ -89,6 +89,7 @@ const state = {
   pendingGoldFloat: 0,
   pendingDeltas: /** @type {object|null} */ (null),
   pendingRestMsg: "",
+  pendingTurnLine: "",
 };
 
 const app = document.getElementById("app");
@@ -1188,6 +1189,7 @@ function render() {
   applyActBackdrop();
   flushGoldFloat();
   flushRunDeltas();
+  flushTurnLine();
 }
 
 /**
@@ -1421,6 +1423,15 @@ async function playCardWithFeel(handIndex, cardEl) {
     await impactTarget(player, { kind: "skill", kick: false });
   }
 
+  // 抽牌跳字：任何卡（攻擊或技能）有抽牌都要見到，唔止被動觸發先有
+  if (result.drew > 0) {
+    floatText(
+      document.getElementById("player-anchor"),
+      `抽 +${result.drew}`,
+      "zhaopaiyan"
+    );
+  }
+
   if (result.kuaisouArmed) {
     showPassiveBanner("快手！", "kuaisou");
     sfx.kuaisou();
@@ -1486,8 +1497,59 @@ async function endTurnWithFeel() {
     await wait(60);
   }
 
+  // 回合結束回饋：唔好靜過——講一句短港味 + 顯示關鍵數字
+  const b = state.battle;
+  if (b && !b.over) {
+    const enemy = document.getElementById("enemy-portrait");
+    if (result?.kind === "attack") {
+      const dealt = result.dealt || 0;
+      const blocked = result.blocked || 0;
+      if (dealt > 0) {
+        state.pendingTurnLine = blocked > 0
+          ? `擋咗 ${blocked}，仲食咗 ${dealt} 傷害。`
+          : `硬食 ${dealt} 傷害——下回合要小心。`;
+      } else if (blocked > 0) {
+        state.pendingTurnLine = `全擋 ${blocked}——一啖都冇漏。`;
+      } else {
+        state.pendingTurnLine = "捱過咗一下。";
+      }
+    } else if (result?.kind === "block") {
+      floatText(enemy, `擋 +${b.enemyBlock}`, "block");
+      state.pendingTurnLine = "對面守緊——下回合要撞穿佢。";
+    } else if (result?.kind === "buff_attack" || result?.kind === "buff") {
+      floatText(enemy, "蓄勢", "dmg");
+      state.pendingTurnLine = "對面喺度蓄勢，下擊會更痛。";
+    } else if (result?.kind === "weaken") {
+      state.pendingTurnLine = "被踩一腳——下張攻擊會鈍啲。";
+    } else {
+      state.pendingTurnLine = "輪到你——手牌仲喺度。";
+    }
+  } else if (b?.over === "win") {
+    state.pendingTurnLine = "對面企唔住喇——收工。";
+  } else if (b?.over === "lose") {
+    state.pendingTurnLine = "頂唔住……";
+  }
+
   state.busy = false;
   render();
+}
+
+/** 回合結束短回饋：render 之後插入戰鬥日誌頂，1.8 秒後淡出 */
+function flushTurnLine() {
+  const text = state.pendingTurnLine;
+  if (!text) return;
+  state.pendingTurnLine = "";
+  const log = document.querySelector(".battle-log");
+  if (!log) return;
+  const el = document.createElement("li");
+  el.className = "turn-line";
+  el.textContent = text;
+  log.prepend(el);
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => el.classList.add("is-on"));
+  });
+  setTimeout(() => el.classList.remove("is-on"), 1800);
+  setTimeout(() => el.remove(), 2400);
 }
 
 /* ---------- flow helpers ---------- */

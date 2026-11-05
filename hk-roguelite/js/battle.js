@@ -270,6 +270,8 @@ export function playCard(b, handIndex) {
     enemyBlocked,
     blockGained,
     healed,
+    /** 呢張卡本身抽咗幾多張（唔計被動） */
+    drew: card.draw || 0,
     usedKuaisou,
     kuaisouArmed,
     zhaopaiyanDrew,
