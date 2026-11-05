@@ -1468,6 +1468,59 @@ export const RELICS = {
     effect: { instantGold: 20 },
     rarity: "稀有",
   },
+
+  /* ===== 角色專屬遺物（三角色各一，名字／效果一眼分到） ===== */
+
+  /** 阿油專屬：快手＝第 3 張攻擊後嗰下，直接多打一下 */
+  rl_oil_flask: {
+    id: "rl_oil_flask",
+    name: "阿油・電油樽",
+    desc: "【阿油】每場戰鬥開始多 1 次抽牌機會（首回合多抽 2 張）。",
+    flavor: "電油唔止入電單車——入你對拳都得。",
+    effect: { startDraw: 2 },
+    rarity: "專屬",
+    owner: "oil",
+  },
+  /** 阿珊專屬：檔口＝守得更實 */
+  rl_asan_apron: {
+    id: "rl_asan_apron",
+    name: "阿珊・茶記圍裙",
+    desc: "【阿珊】每場戰鬥額外 +6 開場擋。",
+    flavor: "圍裙一綁，成個檔口都係你嘅防線。",
+    effect: { startBlock: 6 },
+    rarity: "專屬",
+    owner: "asan",
+  },
+  /** 九哥專屬：招牌眼＝睇得穿，出牌更順 */
+  rl_kauko_signboard: {
+    id: "rl_kauko_signboard",
+    name: "九哥・招牌眼鏡",
+    desc: "【九哥】每回合開始多抽 1 張。",
+    flavor: "招牌睇得穿，牌底自然都睇得穿。",
+    effect: { drawPerTurn: 1 },
+    rarity: "專屬",
+    owner: "kauko",
+  },
+  /* ===== 通用遺物（新） ===== */
+
+  /** 通用：出牌多，食「涼茶」 */
+  rl_herbal_cup: {
+    id: "rl_herbal_cup",
+    name: "涼茶碗",
+    desc: "每回合開始多抽 1 張。",
+    flavor: "苦口良藥——飲完，腦筋清一截。",
+    effect: { drawPerTurn: 1 },
+    rarity: "稀有",
+  },
+  /** 通用：攻擊牌每張加傷，食「搏命」型牌組 */
+  rl_iron_knuckle: {
+    id: "rl_iron_knuckle",
+    name: "鐵指虎",
+    desc: "每張攻擊牌額外 +1 傷害。",
+    flavor: "戴上去，拳頭先算數。",
+    effect: { attackPerCard: 1 },
+    rarity: "稀有",
+  },
 };
 
 export function relicById(id) {
@@ -1483,10 +1536,20 @@ export function relicBonuses(run) {
     attackBonus: 0,
     healOnWin: 0,
     goldBonus: 0,
+    /** 每回合開始額外抽牌（角色專屬遺物用） */
+    drawPerTurn: 0,
+    /** 攻擊牌每張額外傷害（角色專屬遺物用） */
+    attackPerCard: 0,
+    /** 每場戰鬥首回合額外能量（角色專屬遺物用） */
+    firstTurnEnergy: 0,
+    /** 戰鬥勝利額外回血（角色專屬遺物用） */
+    healOnWinBonus: 0,
   };
   for (const id of run?.relics || []) {
     const relic = RELICS[id];
     if (!relic) continue;
+    // 角色專屬遺物：只有對應角色先食到效果
+    if (relic.owner && relic.owner !== run?.characterId) continue;
     for (const [k, v] of Object.entries(relic.effect || {})) {
       if (k in out) out[k] += v;
     }
@@ -1494,10 +1557,19 @@ export function relicBonuses(run) {
   return out;
 }
 
-/** 未擁有嘅遺物（便利店抽貨用） */
+/**
+ * 未擁有嘅遺物（便利店抽貨用）
+ * 角色專屬遺物只會出現喺對應角色，否則貨架會擺滿用唔到嘅貨。
+ */
 export function unownedRelics(run) {
   const owned = new Set(run?.relics || []);
-  return Object.keys(RELICS).filter((id) => !owned.has(id));
+  const charId = run?.characterId;
+  return Object.keys(RELICS).filter((id) => {
+    if (owned.has(id)) return false;
+    const owner = RELICS[id]?.owner;
+    if (owner && owner !== charId) return false;
+    return true;
+  });
 }
 
 /** 抽 n 件未擁有遺物做便利店貨 */

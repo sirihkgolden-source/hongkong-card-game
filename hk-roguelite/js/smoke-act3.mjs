@@ -25,6 +25,7 @@ import {
   eventById,
   RELICS,
   relicBonuses,
+  unownedRelics,
   pickShopRelics,
 } from "./data.js";
 import { createBattle, playCard, endTurn, startPlayerTurn } from "./battle.js";
@@ -317,7 +318,8 @@ function simulateChar(charId) {
   for (const id of relicIds) {
     const r = RELICS[id];
     const probe = {
-      characterId: "oil",
+      // 角色專屬遺物要用對應角色測試，否則效果本來就唔會生效
+      characterId: r.owner || "oil",
       hp: 40,
       maxHp: 68,
       gold: 0,
@@ -333,9 +335,39 @@ function simulateChar(charId) {
       (eff.attackBonus && b.attackBonus > 0) ||
       (eff.healOnWin && b.healOnWin > 0) ||
       (eff.goldBonus && b.goldBonus > 0) ||
+      (eff.drawPerTurn && b.drawPerTurn > 0) ||
+      (eff.attackPerCard && b.attackPerCard > 0) ||
+      (eff.healOnWinBonus && b.healOnWinBonus > 0) ||
+      (eff.firstTurnEnergy && b.firstTurnEnergy > 0) ||
       !!eff.instantMaxHp ||
       !!eff.instantGold;
     assert(visible, `${id} 效果冇接到局況`);
+  }
+
+  // 角色專屬遺物：別角持有時必須完全無效（辨識度不能被混淆）
+  for (const id of relicIds) {
+    const r = RELICS[id];
+    if (!r.owner) continue;
+    const otherId = ["oil", "asan", "kauko"].find((c) => c !== r.owner);
+    const b = relicBonuses({
+      characterId: otherId,
+      hp: 40,
+      maxHp: 68,
+      gold: 0,
+      deck: ["S01"],
+      relics: [id],
+    });
+    const anyEffect = Object.entries(b).some(([, v]) => v > 0);
+    assert(!anyEffect, `${id} 對非本角（${otherId}）仍然生效`);
+  }
+
+  // 便利店貨架唔應該出現別角專屬遺物
+  for (const cid of ["oil", "asan", "kauko"]) {
+    const pool = unownedRelics({ characterId: cid, relics: [] });
+    for (const id of pool) {
+      const owner = RELICS[id]?.owner;
+      assert(!owner || owner === cid, `${cid} 貨架出現別角專屬 ${id}`);
+    }
   }
   // 戰鬥內遺物生效：開場擋／能量／首回合多抽／攻擊加成
   {
