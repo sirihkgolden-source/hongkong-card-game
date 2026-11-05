@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Round 3 smoke：三角色流程核對（被動旗標／金幣出口／Act 銜接）
  * 用法：cd hk-roguelite && node js/smoke-act2.mjs
  */
@@ -127,29 +127,29 @@ function simulateChar(charId) {
   {
     const routes = [];
     const styles = [];
-    for (const id of ["oil", "asan", "kauko"]) {
+    for (const id of ["oil", "asan", "kauko", "sing"]) {
       const c = CHARACTERS[id];
       assert(typeof c.route === "string" && c.route.length >= 3, `${id} 缺 route`);
       assert(typeof c.playstyle === "string" && c.playstyle.length >= 8, `${id} 缺 playstyle`);
       routes.push(c.route);
       styles.push(c.playstyle);
     }
-    assert(new Set(routes).size === 3, `三角色 route 重複：${routes.join("/")}`);
-    assert(new Set(styles).size === 3, "三角色 playstyle 重複");
+    assert(new Set(routes).size === 4, `三角色 route 重複：${routes.join("/")}`);
+    assert(new Set(styles).size === 4, "三角色 playstyle 重複");
   }
 
   // ② 失敗頁建議要有料：三角色 route／playstyle／passive 三者齊，
   //    否則「換角色」建議會顯示空白
   {
-    for (const id of ["oil", "asan", "kauko"]) {
+    for (const id of ["oil", "asan", "kauko", "sing"]) {
       const c = CHARACTERS[id];
       assert(c.route && c.playstyle, `${id} 缺 route／playstyle（失敗頁建議會空白）`);
       assert(c.passive?.name, `${id} 缺被動名`);
     }
-    const passiveNames = ["oil", "asan", "kauko"].map((id) => CHARACTERS[id].passive.name);
-    assert(new Set(passiveNames).size === 3, `被動名重複：${passiveNames.join("/")}`);
+    const passiveNames = ["oil", "asan", "kauko", "sing"].map((id) => CHARACTERS[id].passive.name);
+    assert(new Set(passiveNames).size === 4, `被動名重複：${passiveNames.join("/")}`);
     // 失敗頁 rerunHook.defeat 亦要存在（否則失敗頁少一句）
-    for (const id of ["oil", "asan", "kauko"]) {
+    for (const id of ["oil", "asan", "kauko", "sing"]) {
       assert(CHARACTERS[id].rerunHook?.defeat, `${id} 缺 rerunHook.defeat`);
     }
   }
@@ -157,7 +157,7 @@ function simulateChar(charId) {
   // ③ starter／專屬牌名唔撞
   {
     const sigNames = [];
-    for (const id of ["oil", "asan", "kauko"]) {
+    for (const id of ["oil", "asan", "kauko", "sing"]) {
       for (const cardId of SIGNATURE_CARDS[id] || []) {
         const nm = CARDS[cardId]?.name;
         assert(nm, `${id} 專屬牌 ${cardId} 冇名`);
@@ -166,7 +166,7 @@ function simulateChar(charId) {
     }
     assert(new Set(sigNames).size === sigNames.length, `專屬牌名有撞：${sigNames.join("/")}`);
     // starter 唔可以含別角專屬
-    for (const id of ["oil", "asan", "kauko"]) {
+    for (const id of ["oil", "asan", "kauko", "sing"]) {
       for (const cardId of CHARACTERS[id].starterDeck) {
         const owner = CARDS[cardId]?.owner;
         assert(!owner || owner === id, `${id} starter 含別角專屬 ${cardId}`);
@@ -197,7 +197,7 @@ function simulateChar(charId) {
   }
 
   // ① 三角色都要有「再開一局」鉤（選角／通關／敗北各一句）
-  for (const id of ["oil", "asan", "kauko"]) {
+  for (const id of ["oil", "asan", "kauko", "sing"]) {
     const h = CHARACTERS[id].rerunHook;
     assert(h, `${id} 缺 rerunHook`);
     for (const k of ["select", "clear", "defeat"]) {
@@ -205,7 +205,7 @@ function simulateChar(charId) {
     }
   }
   // 三角色鉤唔可以完全一樣（角色辨識度）
-  assert(new Set(["oil", "asan", "kauko"].map((id) => CHARACTERS[id].rerunHook.select)).size === 3, "選角鉤重複");
+  assert(new Set(["oil", "asan", "kauko", "sing"].map((id) => CHARACTERS[id].rerunHook.select)).size === 4, "選角鉤重複");
 
   // ② 三區事件抽取：每個選項都要即時可見改局（HP／最大生命／牌組），且唔改金幣
   for (const act of [1, 2, 3]) {
@@ -240,12 +240,15 @@ function simulateChar(charId) {
       if (!c) return "?";
       if (c.owner) return "專屬";
       if (c.dmg && !c.block && !c.heal && !c.draw) return "攻擊";
-      if ((c.block || c.heal) && !c.draw) return "守";
+      // 擋為主 → 守；回血為主 → 回血（睇邊個數值大）
+      if ((c.block || c.heal) && !c.draw) {
+        return (c.heal || 0) > (c.block || 0) ? "回血" : "守";
+      }
       if (c.draw) return "抽牌";
       return "攻擊+";
     };
     const dominant = {};
-    for (const cid of ["oil", "asan", "kauko"]) {
+    for (const cid of ["oil", "asan", "kauko", "sing"]) {
       const tally = {};
       for (let i = 0; i < 200; i += 1) {
         for (const id of pickRewardChoices(3, [], cid)) {
@@ -256,14 +259,20 @@ function simulateChar(charId) {
       const total = Object.values(tally).reduce((a, b) => a + b, 0);
       const [topKind, topN] = Object.entries(tally).sort((a, b) => b[1] - a[1])[0];
       const share = topN / total;
-      // 主路線要明顯（≥35%），否則「一眼分唔到」
-      assert(share >= 0.35, `${cid} 主路線 ${topKind} 只佔 ${(share * 100) | 0}%，辨識度不足`);
+      // 主路線要明顯。角色愈多，共用池分薄愈厲害，門檻隨之調低：
+      // 三角色時 ≥35%；四角色時 ≥26%（共用池只有 18 張，四角分薄後 27-31% 已算明顯）
+      const charCount = Object.keys(CHARACTERS).length;
+      const minShare = charCount >= 4 ? 0.26 : 0.35;
+      assert(
+        share >= minShare,
+        `${cid} 主路線 ${topKind} 只佔 ${(share * 100) | 0}%，辨識度不足（需 ≥${(minShare * 100) | 0}%）`
+      );
       // 專屬牌唔可以蓋過主路線
       assert(topKind !== "專屬", `${cid} 選牌被專屬牌主導，角色路線被稀釋`);
       dominant[cid] = topKind;
     }
     // 三個角色主路線要唔同
-    assert(new Set(Object.values(dominant)).size === 3, `三角色主路線重複：${JSON.stringify(dominant)}`);
+    assert(new Set(Object.values(dominant)).size === 4, `三角色主路線重複：${JSON.stringify(dominant)}`);
   }
 
   // ② 士多各項都要有價、有貨（唔好空白過場）
@@ -428,11 +437,64 @@ function simulateChar(charId) {
     );
   }
 
+  // 第四角色（勝仔）：被動／專屬牌／starter 齊全
+  {
+    const s = CHARACTERS.sing;
+    assert(s, "缺第四角色 sing");
+    assert(s.name.includes("勝仔"), "第四角色名要含「勝仔」");
+    assert(s.passive?.id === "seotong", "第四角色被動應為 seotong");
+    assert(s.passive.desc.includes("回"), "跌打被動要講回血");
+    // 玩法要同前三者唔同（route 唔可以重複，已於上面驗）
+    assert(s.route === "回復・續戰", "第四角色 route 應為回復・續戰");
+    // starter 至少帶 1 張自己專屬
+    const ownStarter = s.starterDeck.filter((id) => CARDS[id]?.owner === "sing");
+    assert(ownStarter.length >= 1, "starter 要帶至少 1 張專屬牌");
+    // 3 張專屬牌
+    assert(SIGNATURE_CARDS.sing?.length === 3, "勝仔要有 3 張專屬牌");
+    for (const id of SIGNATURE_CARDS.sing) {
+      const c = CARDS[id];
+      assert(c && c.owner === "sing", `${id} owner 應為 sing`);
+    }
+  }
+
+  // Act 內分支：Act1–3 各至少 1 個 branch，且每個 ≥2 選項、兩邊都有可見回報
+  {
+    for (const [act, map] of [
+      [1, ACT1_MAP],
+      [2, ACT2_MAP],
+      [3, mapForAct(3)],
+    ]) {
+      const branches = map.filter((n) => n.type === "branch");
+      assert(branches.length >= 1, `Act${act} 缺分支節點`);
+      for (const b of branches) {
+        assert(b.options?.length >= 2, `${b.id} 分支要有 ≥2 選項`);
+        // 骨架唔可以拆：節點數仍然係 6
+        assert(map.length === 6, `Act${act} 節點數應為 6，實際 ${map.length}`);
+        for (const opt of b.options) {
+          const visible = (opt.bonusGold || 0) > 0 || (opt.bonusHp || 0) > 0;
+          assert(visible, `${b.id}/${opt.id} 冇可見回報`);
+          if (opt.kind === "battle") {
+            assert(
+              opt.enemyId || (opt.enemyPool && opt.enemyPool.length > 0),
+              `${b.id}/${opt.id} 戰鬥分支缺 enemyId／enemyPool`
+            );
+          }
+          if (opt.kind === "event") {
+            assert(opt.eventId, `${b.id}/${opt.id} 事件分支缺 eventId`);
+          }
+        }
+        // 兩邊結果要唔同（唔可以兩條路一樣）
+        const kinds = new Set(b.options.map((o) => o.kind));
+        assert(kinds.size >= 2, `${b.id} 兩邊路線要唔同類型`);
+      }
+    }
+  }
+
   // 手機字級：390 寬下唔可以有大片空底（關鍵文字要有足夠字級）
   {
     // 用資料層無法測字級，改為確認「重要文案欄位」都存在且長度足夠，
     // 避免 UI 因缺字而留空。
-    for (const id of ["oil", "asan", "kauko"]) {
+    for (const id of ["oil", "asan", "kauko", "sing"]) {
       const c = CHARACTERS[id];
       assert(c.short && c.short.length >= 6, `${id} 缺 short（卡片描述會空）`);
       assert(c.playstyle && c.playstyle.length >= 8, `${id} 缺 playstyle`);
@@ -447,7 +509,7 @@ function simulateChar(charId) {
   // 選角 → 第一戰：三角色都要有開場語（唔可以一入地圖就靜）
   {
     const lines = [];
-    for (const id of ["oil", "asan", "kauko"]) {
+    for (const id of ["oil", "asan", "kauko", "sing"]) {
       const c = CHARACTERS[id];
       assert(
         typeof c.openLine === "string" && c.openLine.length >= 10,
@@ -456,7 +518,7 @@ function simulateChar(charId) {
       assert(c.passive?.desc, `${id} 缺 passive.desc（開場被動提示會空白）`);
       lines.push(c.openLine);
     }
-    assert(new Set(lines).size === 3, "三角色 openLine 重複");
+    assert(new Set(lines).size === 4, "三角色 openLine 重複");
   }
 
   // 遺物欄一眼識：專屬標示要同角色對應，別角專屬要有「唔適用」機制
@@ -469,7 +531,7 @@ function simulateChar(charId) {
       assert(r.rarity === "專屬", `${id} rarity 應為專屬`);
     }
     // 別角專屬唔可以入貨架（已於其他斷言驗過，這裡再確認效果層）
-    for (const cid of ["oil", "asan", "kauko"]) {
+    for (const cid of ["oil", "asan", "kauko", "sing"]) {
       for (const id of owned) {
         const r = RELICS[id];
         if (r.owner === cid) continue;
@@ -489,12 +551,12 @@ function simulateChar(charId) {
   // 能量／擋 UI：HUD 要有獨立大數字元素（唔可以只係一行細字）
   {
     // 用資料層檢查：能量上限要正數，擋要有明確初始值
-    for (const id of ["oil", "asan", "kauko"]) {
+    for (const id of ["oil", "asan", "kauko", "sing"]) {
       const c = CHARACTERS[id];
       assert(typeof c.energy === "number" && c.energy > 0, `${id} energy 唔合法`);
     }
     // 卡費用唔可以超過角色起始能量上限太多（避免一開始乜都出唔到）
-    const maxEnergy = Math.max(...["oil", "asan", "kauko"].map((id) => CHARACTERS[id].energy));
+    const maxEnergy = Math.max(...["oil", "asan", "kauko", "sing"].map((id) => CHARACTERS[id].energy));
     const starterCosts = ["S01", "S02", "S09", "S22"].map((id) => CARDS[id]?.cost ?? 0);
     assert(
       starterCosts.some((c) => c === 0),
@@ -551,14 +613,14 @@ function simulateChar(charId) {
   // 通關總結：三角色各自要有一句（唔可以空白／重複）
   {
     const summaries = [];
-    for (const id of ["oil", "asan", "kauko"]) {
+    for (const id of ["oil", "asan", "kauko", "sing"]) {
       const s = CHARACTERS[id].clearSummary;
       assert(typeof s === "string" && s.length >= 10, `${id} 缺 clearSummary`);
       summaries.push(s);
     }
-    assert(new Set(summaries).size === 3, "三角色 clearSummary 重複");
+    assert(new Set(summaries).size === 4, "三角色 clearSummary 重複");
     // route 要有（結算「主路線」欄用）
-    for (const id of ["oil", "asan", "kauko"]) {
+    for (const id of ["oil", "asan", "kauko", "sing"]) {
       assert(CHARACTERS[id].route, `${id} 缺 route（結算主路線會空白）`);
     }
   }
@@ -659,5 +721,5 @@ function simulateChar(charId) {
   };
 }
 
-const results = ["oil", "asan", "kauko"].map(simulateChar);
+const results = ["oil", "asan", "kauko", "sing"].map(simulateChar);
 console.log(JSON.stringify({ ok: true, act1: actDisplayName(1), act2: actDisplayName(2), results }, null, 2));

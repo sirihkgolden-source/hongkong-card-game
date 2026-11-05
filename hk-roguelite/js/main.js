@@ -22,6 +22,7 @@ import {
   actDisplayName,
   actBg,
   pickNodeEnemyId,
+  branchOptionById,
   enemyTag,
   pickEventId,
   EVENT_POOLS,
@@ -258,7 +259,7 @@ function renderTitle() {
 
 function renderSelect() {
   const selected = characterById(state.selectedCharId);
-  const list = [CHARACTERS.oil, CHARACTERS.asan, CHARACTERS.kauko]
+  const list = [CHARACTERS.oil, CHARACTERS.asan, CHARACTERS.kauko, CHARACTERS.sing]
     .map((c) => {
       const on = c.id === state.selectedCharId;
       // 立繪：有圖就用，onerror 就 fallback 字首漸層（唔會留破圖）
@@ -326,6 +327,9 @@ function nodeTypeMeta(node) {
   }
   if (node.type === "reward") {
     return { key: "reward", icon: "＋", label: "選牌", cls: "node-reward" };
+  }
+  if (node.type === "branch") {
+    return { key: "branch", icon: "⑂", label: "分支", cls: "node-branch" };
   }
   if (node.enemyPool) {
     return { key: "elite", icon: "★", label: "精英", cls: "node-elite" };
@@ -406,9 +410,39 @@ function relicPlainText(r) {
   if (e.attackPerCard) return `每張攻擊牌再加 ${e.attackPerCard} 傷害。`;
   if (e.healOnWin) return `打贏一場回 ${e.healOnWin} HP——唔使成日入士多。`;
   if (e.goldBonus) return `打贏小怪多 ${e.goldBonus} 金——積少成多。`;
+  if (e.healBonusFirst) return `每場首次回血多回 ${e.healBonusFirst} HP——一劑頂兩劑。`;
   if (e.instantMaxHp) return `入手即刻最大生命 +${e.instantMaxHp}。`;
   if (e.instantGold) return `入手即刻多 ${e.instantGold} 金。`;
   return r.desc;
+}
+
+/** Act 內分支：二揀一，兩邊都必改局 */
+function renderBranch() {
+  const node = currentNode();
+  const opts = node?.options || [];
+  if (!opts.length) return renderMap();
+  const char = activeChar();
+  const cards = opts
+    .map(
+      (o) => `
+      <button type="button" class="branch-choice" data-action="pick-branch" data-branch="${escapeHtml(o.id)}">
+        <strong>${escapeHtml(o.label)}</strong>
+        <span class="branch-effect">${escapeHtml(o.effectText)}</span>
+      </button>`
+    )
+    .join("");
+  return `
+    <main class="screen" aria-label="分支">
+      <header class="brand-block brand-compact">
+        <h1 class="section-title">${escapeHtml(node.title || "二揀一")}</h1>
+        <p class="tagline">行邊條路由你話事</p>
+      </header>
+      <section class="panel">
+        <p class="lede">${escapeHtml(char.name)}企喺巷口，前面兩條路。兩邊都唔會白行。</p>
+        <div class="branch-list">${cards}</div>
+      </section>
+    </main>
+  `;
 }
 
 function renderMap() {
@@ -606,7 +640,11 @@ function renderBattle() {
           ? b.zhaopaiyanUsed
             ? " · 招牌眼已亮"
             : " · 招牌眼待命"
-          : "";
+          : b.passiveId === "seotong"
+            ? b.seotongUsed
+              ? " · 跌打已用"
+              : " · 跌打待命"
+            : "";
 
   // HUD 被動短標：一眼見到自己被動叫咩、狀態係待命／就緒／用過
   const passiveChip = (() => {
@@ -630,6 +668,11 @@ function renderBattle() {
       if (b.zhaopaiyanUsed) {
         state = "used";
         stateText = "已亮";
+      }
+    } else if (b.passiveId === "seotong") {
+      if (b.seotongUsed) {
+        state = "used";
+        stateText = "用過";
       }
     }
     return `<span class="passive-chip passive-chip--${b.passiveId} is-${state}">
@@ -1376,6 +1419,9 @@ function render() {
     case "act-transition":
       html = renderActTransition();
       break;
+    case "branch":
+      html = renderBranch();
+      break;
     case "boss-gate":
       html = renderBossGate();
       break;
@@ -1681,6 +1727,20 @@ async function playCardWithFeel(handIndex, cardEl) {
     await wait(120);
   }
 
+  // 跌打：首次技能牌回血
+  if (result.seotongHealed > 0) {
+    showPassiveBanner(`跌打 +${result.seotongHealed} HP`, "seotong");
+    sfx.block();
+    flashPassiveChip();
+    floatText(
+      document.getElementById("fighter-player"),
+      `跌打 +${result.seotongHealed}`,
+      "heal"
+    );
+    syncHpBars(state.battle);
+    await wait(140);
+  }
+
   // 飄字／kickback 收束後再重繪（不計入 ≤350ms 命中預算）
   await wait(30);
   state.busy = false;
@@ -1879,9 +1939,23 @@ function beginBattle(enemyId) {
 function nodeEnemyId(node) {
   if (!node) return null;
   if (node.enemyId) return node.enemyId;
+  // 分支節點：如果已揀「打」嗰邊，用該選項嘅敵人
   const run = state.run;
   if (!run) return null;
   run.nodeEnemies = run.nodeEnemies || {};
+  if (node.type === "branch") {
+    const opt = branchOptionById(node, run.branchPicks?.[node.id]);
+    if (!opt) return null;
+    if (opt.enemyId) return opt.enemyId;
+    const pool = opt.enemyPool || [];
+    if (!pool.length) return null;
+    // 抽定就記住，唔好每次重抽
+    const key = `${node.id}::${opt.id}`;
+    if (!run.nodeEnemies[key]) {
+      run.nodeEnemies[key] = pool[Math.floor(Math.random() * pool.length)] || pool[0];
+    }
+    return run.nodeEnemies[key];
+  }
   if (!run.nodeEnemies[node.id]) {
     run.nodeEnemies[node.id] = pickNodeEnemyId(node);
   }
@@ -1982,6 +2056,8 @@ function enterNode() {
   state.openingHint = "";
   if (node.type === "battle" || node.type === "boss") {
     beginBattle(nodeEnemyId(node));
+  } else if (node.type === "branch") {
+    state.screen = "branch";
   } else if (node.type === "reward") {
     openReward();
   } else if (node.type === "event") {
@@ -2110,6 +2186,34 @@ function onClick(event) {
       state.actTransition = null;
       state.screen = "map";
       break;
+    case "pick-branch": {
+      const branchId = t.getAttribute("data-branch");
+      const node = currentNode();
+      const opt = branchOptionById(node, branchId);
+      if (!opt || !node) break;
+      const before = runSnapshot();
+      state.run.branchPicks = state.run.branchPicks || {};
+      state.run.branchPicks[node.id] = opt.id;
+      // 兩邊都要有即時可見回報
+      if (opt.bonusGold) state.run.gold += opt.bonusGold;
+      if (opt.bonusHp) state.run.hp = Math.min(state.run.maxHp, state.run.hp + opt.bonusHp);
+      showRunDeltas(before);
+      if (opt.kind === "battle") {
+        // 用 nodeEnemyId（已處理 enemyPool 抽樣）
+        beginBattle(nodeEnemyId(node));
+      } else {
+        // 事件路線：用指定事件
+        state.run.nodeEvents = state.run.nodeEvents || {};
+        state.run.nodeEvents[node.id] = opt.eventId || pickEventId(state.run.act || 1);
+        state.run.nodeEventQueue = state.run.nodeEventQueue || {};
+        state.run.nodeEventQueue[node.id] = [state.run.nodeEvents[node.id]];
+        state.eventResult = null;
+        state.eventChoiceLabel = "";
+        state.eventChoiceText = "";
+        state.screen = "event";
+      }
+      break;
+    }
     case "enter-node":
       enterNode();
       break;

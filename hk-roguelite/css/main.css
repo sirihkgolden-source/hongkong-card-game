@@ -492,6 +492,14 @@ body {
   color: var(--neon-cyan);
 }
 
+/* 勝仔・跌打：回復流，用綠色（同檔口綠撞就用薄荷青綠區分） */
+.passive-chip.is-ready.passive-chip--seotong,
+.passive-chip.is-used.passive-chip--seotong {
+  border-color: rgba(120, 255, 200, 0.6);
+  background: rgba(120, 255, 200, 0.14);
+  color: #78ffc8;
+}
+
 /* 待命：低調，但被動名仍然清楚 */
 .passive-chip.is-idle .passive-chip-name {
   color: var(--ink);
@@ -988,6 +996,63 @@ body {
   padding: 0.28rem 0.4rem;
   border-radius: 7px;
   background: rgba(255, 193, 74, 0.1);
+}
+
+/* Act 內分支：二揀一 */
+.branch-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+}
+
+.branch-choice {
+  appearance: none;
+  font: inherit;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  /* 觸控目標 ≥44px */
+  min-height: 64px;
+  padding: 0.85rem 0.9rem;
+  border-radius: 12px;
+  border: 1px solid rgba(178, 128, 255, 0.35);
+  background: rgba(178, 128, 255, 0.09);
+  color: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.12s ease;
+}
+
+.branch-choice:hover {
+  border-color: rgba(178, 128, 255, 0.7);
+  background: rgba(178, 128, 255, 0.16);
+}
+
+.branch-choice:active {
+  transform: scale(0.99);
+}
+
+.branch-choice strong {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.branch-effect {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: #c9a6ff;
+}
+
+/* 地圖分支節點：紫色 */
+.map-node.node-branch {
+  border-left: 3px solid rgba(178, 128, 255, 0.65);
+}
+.map-node.node-branch .map-type {
+  color: #c9a6ff;
+  background: rgba(178, 128, 255, 0.14);
+  border-color: rgba(178, 128, 255, 0.35);
 }
 
 /* 敵人意圖：圖示 + 分類短語 + 具體數值 */
@@ -1808,6 +1873,11 @@ body {
 .fx-passive-banner--zhaopaiyan {
   color: #c9a0ff;
   text-shadow: 0 0 18px rgba(180, 120, 255, 0.55);
+}
+
+.fx-passive-banner--seotong {
+  color: #78ffc8;
+  text-shadow: 0 0 18px rgba(120, 255, 200, 0.6);
 }
 
 .fx-passive-banner--yanli {

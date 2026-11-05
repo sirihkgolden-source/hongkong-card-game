@@ -388,6 +388,43 @@ export const CARDS = {
     rarity: "專屬",
     owner: "kauko",
   },
+
+  /* ===== 勝仔・跌打館學徒專屬（回復流） ===== */
+  S89: {
+    id: "S89",
+    name: "跌打酒",
+    type: "skill",
+    cost: 1,
+    heal: 6,
+    block: 4,
+    blurb: "推埋瘀血，順手包紮——回 6 HP 兼 4 擋。",
+    art: "assets/skills/S21.png",
+    rarity: "專屬",
+    owner: "sing",
+  },
+  S90: {
+    id: "S90",
+    name: "駁骨",
+    type: "skill",
+    cost: 2,
+    heal: 12,
+    blurb: "啪一聲駁返原位——即刻回 12 HP。",
+    art: "assets/skills/S47.png",
+    rarity: "專屬",
+    owner: "sing",
+  },
+  S91: {
+    id: "S91",
+    name: "藥油拳",
+    type: "attack",
+    cost: 1,
+    dmg: 7,
+    heal: 3,
+    blurb: "藥油抹拳頭，打完順手醫自己——傷 7 兼回 3 HP。",
+    art: "assets/skills/S09.png",
+    rarity: "專屬",
+    owner: "sing",
+  },
 };
 
 /** 角色專屬牌 id（每角 3 張） */
@@ -395,6 +432,7 @@ export const SIGNATURE_CARDS = {
   oil: ["S80", "S81", "S82"],
   asan: ["S83", "S84", "S85"],
   kauko: ["S86", "S87", "S88"],
+  sing: ["S89", "S90", "S91"],
 };
 
 /** 共用獎勵池（三選一抽樣來源） */
@@ -511,7 +549,7 @@ export const CHARACTERS = {
       "S83",
     ],
     /** 選牌傾向：守住型（擋／回血為主，一眼認得係阿珊） */
-    rewardBias: ["S46", "S56", "S31", "S21", "S09", "S47", "S11", "S83", "S84", "S85"],
+    rewardBias: ["S46", "S56", "S31", "S11", "S83", "S84", "S85"],
   },
   kauko: {
     id: "kauko",
@@ -554,6 +592,46 @@ export const CHARACTERS = {
     ],
     /** 選牌傾向：抽牌／節奏型（一眼認得係九哥） */
     rewardBias: ["S06", "S12", "S02", "S22", "S25", "S16", "S86", "S87", "S88"],
+  },
+  sing: {
+    id: "sing",
+    name: "勝仔・跌打館學徒",
+    short: "捱得痛、識自救；血薄但有得回",
+    /** 一句講清點玩：回復流，同快手／檔口／招牌眼完全唔同 */
+    playstyle: "邊打邊醫——每場第一次出技能牌就回血，愈拖愈唔死。",
+    route: "回復・續戰",
+    initial: "勝",
+    maxHp: 58,
+    energy: 3,
+    passive: {
+      id: "seotong",
+      name: "跌打",
+      desc: "每場戰鬥首次打出技能牌，即刻回 5 HP。",
+    },
+    /** 「再開一局」鉤 */
+    rerunHook: {
+      select: "跌打館學徒，最識捱痛——呢鋪想試幾耐？",
+      clear: "由後巷捱到天台，你都冇嗌過一聲痛。下一鋪，捱得更耐。",
+      defeat: "骨都未駁好就想再打？好，跌打館隨時開門。",
+    },
+    /** 通關總結 */
+    clearSummary: "一身瘀傷行落天台，但你仲企得住。捱得，就係本事。",
+    /** 選角後第一句 */
+    openLine: "跌打館關咗門，你仲孭住藥箱。出去行一轉，順便試下自己副骨頭。",
+    starterDeck: [
+      "S01",
+      "S01",
+      "S21",
+      "S21",
+      "S09",
+      "S47",
+      "S25",
+      "S11",
+      "S22",
+      "S89",
+    ],
+    /** 選牌傾向：純回血型（一眼認得係勝仔） */
+    rewardBias: ["S21", "S09", "S90", "S89", "S91", "S47"],
   },
 };
 
@@ -778,11 +856,30 @@ export const ACT1_MAP = [
   },
   {
     id: "n3",
-    type: "battle",
-    title: "到期罐頭客",
-    subtitle: "戰鬥 → 選牌",
-    enemyId: "E02",
+    // Act 內分支：二揀一，兩邊獎勵／風險唔同，但都必改局
+    type: "branch",
+    title: "路口二揀一",
+    subtitle: "分支路線",
     bg: "assets/art/bg/bg_act1_alley.jpg",
+    options: [
+      {
+        id: "hard",
+        label: "頂硬上：打埋呢班人",
+        effectText: "入戰鬥（敵人較硬）；贏咗多 6 金",
+        kind: "battle",
+        enemyId: "E02",
+        bonusGold: 6,
+      },
+      {
+        id: "detour",
+        label: "繞路：行後巷尾",
+        effectText: "入事件；順手拾到 5 金，兼回 6 HP",
+        kind: "event",
+        eventId: "ev_dai_pai_dong",
+        bonusGold: 5,
+        bonusHp: 6,
+      },
+    ],
   },
   {
     id: "n4",
@@ -837,11 +934,30 @@ export const ACT2_MAP = [
   },
   {
     id: "a2n4",
-    type: "battle",
-    title: "招牌拆遷隊",
-    subtitle: "戰鬥 → 選牌",
-    enemyId: "E07",
+    // Act2 分支：兩條路都改局
+    type: "branch",
+    title: "旺角路口",
+    subtitle: "分支路線",
     bg: "assets/art/bg/bg_act2_mongkok.jpg",
+    options: [
+      {
+        id: "hard",
+        label: "照拆：同拆遷隊硬碰",
+        effectText: "入戰鬥（招牌拆遷隊）；贏咗多 7 金",
+        kind: "battle",
+        enemyId: "E07",
+        bonusGold: 7,
+      },
+      {
+        id: "detour",
+        label: "兜路：行後樓梯落去",
+        effectText: "入事件；順手拾到 6 金，兼回 5 HP",
+        kind: "event",
+        eventId: "ev_neon_sign",
+        bonusGold: 6,
+        bonusHp: 5,
+      },
+    ],
   },
   {
     id: "a2n5",
@@ -889,11 +1005,30 @@ export const ACT3_MAP = [
   },
   {
     id: "a3n4",
-    type: "battle",
-    title: "清場／精英",
-    subtitle: "戰鬥 → 選牌",
-    enemyPool: ["E10", "E11", "E08"],
+    // Act3 分支：尾段，兩邊都改局
+    type: "branch",
+    title: "上天台前",
+    subtitle: "分支路線",
     bg: "assets/art/bg/bg_act3_rooftop.jpg",
+    options: [
+      {
+        id: "hard",
+        label: "清場：正面衝上去",
+        effectText: "入戰鬥（可能遇到精英）；贏咗多 8 金",
+        kind: "battle",
+        enemyPool: ["E10", "E11", "E08"],
+        bonusGold: 8,
+      },
+      {
+        id: "detour",
+        label: "攀水管：由外牆爬",
+        effectText: "入事件；順手拾到 7 金，兼回 4 HP",
+        kind: "event",
+        eventId: "ev_rooftop_laundry",
+        bonusGold: 7,
+        bonusHp: 4,
+      },
+    ],
   },
   {
     id: "a3n5",
@@ -1453,6 +1588,7 @@ export const SHOP = {
     "S80", "S81", "S82",
     "S83", "S84", "S85",
     "S86", "S87", "S88",
+    "S89", "S90", "S91",
   ],
   /** 「換貨」：花少少金刷新士多遺物貨架 */
   rerollCost: 5,
@@ -1642,6 +1778,46 @@ export const RELICS = {
     rarity: "專屬",
     owner: "kauko",
   },
+  /** 勝仔專屬：跌打館藥箱，邊打邊回 */
+  rl_sing_kit: {
+    id: "rl_sing_kit",
+    name: "勝仔・跌打藥箱",
+    desc: "【勝仔】每場戰鬥首次回血時，額外多回 4 HP。",
+    flavor: "箱仔細細，但入面乜都有——連你估唔到嘅都有。",
+    effect: { healBonusFirst: 4 },
+    rarity: "專屬",
+    owner: "sing",
+  },
+
+  /* ===== 通用遺物（新） ===== */
+
+  /** 通用：愈打愈順，手牌多就抽多張 */
+  rl_tram_token: {
+    id: "rl_tram_token",
+    name: "叮叮車票",
+    desc: "每場戰鬥開波多抽 1 張。",
+    flavor: "車票唔記得用，就一直袋喺度。",
+    effect: { startDraw: 1 },
+    rarity: "普通",
+  },
+  /** 通用：抵打，捱得 */
+  rl_bamboo_hat: {
+    id: "rl_bamboo_hat",
+    name: "竹帽",
+    desc: "每場戰鬥開波自帶 5 擋。",
+    flavor: "落雨唔怕，落石都頂得住兩下。",
+    effect: { startBlock: 5 },
+    rarity: "普通",
+  },
+  /** 通用：錢滾錢 */
+  rl_stamp_card: {
+    id: "rl_stamp_card",
+    name: "印花卡",
+    desc: "打贏小怪多 2 金——儲夠有得換。",
+    flavor: "儲滿十個印花換個電飯煲，可惜你冇命等到。",
+    effect: { goldBonus: 2 },
+    rarity: "普通",
+  },
   /* ===== 通用遺物（新） ===== */
 
   /** 通用：出牌多，食「涼茶」 */
@@ -1685,6 +1861,8 @@ export function relicBonuses(run) {
     firstTurnEnergy: 0,
     /** 戰鬥勝利額外回血（角色專屬遺物用） */
     healOnWinBonus: 0,
+    /** 每場首次回血額外加成（勝仔專屬遺物用） */
+    healBonusFirst: 0,
   };
   for (const id of run?.relics || []) {
     const relic = RELICS[id];
@@ -1808,6 +1986,15 @@ export function pickNodeEnemyId(node, rng = Math.random) {
   const pool = node.enemyPool || [];
   if (!pool.length) return null;
   return pool[Math.floor(rng() * pool.length)] || pool[0];
+}
+
+/**
+ * Act 內分支：取某選項對應嘅實際節點內容。
+ * 回傳 { kind, enemyId?, eventId?, bonusGold?, bonusHp? }
+ */
+export function branchOptionById(node, optionId) {
+  if (!node?.options) return null;
+  return node.options.find((o) => o.id === optionId) || node.options[0] || null;
 }
 
 /** 遭遇紀錄一句（結算畫面用） */

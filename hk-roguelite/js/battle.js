@@ -74,11 +74,16 @@ export function createBattle(run, enemyDef) {
     relicDrawPerTurn: relics.drawPerTurn,
     /** 遺物：每張攻擊牌額外加傷（鐵指虎） */
     relicAttackPerCard: relics.attackPerCard,
+    /** 遺物：每場首次回血額外加成（跌打藥箱） */
+    relicHealBonusFirst: relics.healBonusFirst,
+    /** 標記本場是否已用過首次回血加成 */
+    healBonusUsed: false,
 
     attacksPlayed: 0,
     kuaisouReady: false,
     dangkouUsed: false,
     zhaopaiyanUsed: false,
+    seotongUsed: false,
     playerWeaken: 0,
     enemyMark: 0,
     /** 上次抽牌洗牌回收咗幾多張（0 = 冇洗過） */
@@ -231,7 +236,14 @@ export function playCard(b, handIndex) {
   }
   if (card.heal) {
     const before = b.playerHp;
-    b.playerHp = Math.min(b.playerMaxHp, b.playerHp + card.heal);
+    let amount = card.heal;
+    // 遺物：每場首次回血額外加成（跌打藥箱）
+    if (!b.healBonusUsed && (b.relicHealBonusFirst || 0) > 0) {
+      amount += b.relicHealBonusFirst;
+      b.healBonusUsed = true;
+      pushLog(b, `【跌打藥箱】首次回血 +${b.relicHealBonusFirst}`);
+    }
+    b.playerHp = Math.min(b.playerMaxHp, b.playerHp + amount);
     healed = b.playerHp - before;
     target = "self";
     pushLog(b, `打出「${card.name}」回復 ${healed} HP`);
@@ -265,6 +277,16 @@ export function playCard(b, handIndex) {
     pushLog(b, "【招牌眼】首次技能・抽 1！");
   }
 
+  // 跌打：每場首次打技能牌即刻回 5 HP
+  let seotongHealed = 0;
+  if (b.passiveId === "seotong" && card.type === "skill" && !b.seotongUsed) {
+    b.seotongUsed = true;
+    const before = b.playerHp;
+    b.playerHp = Math.min(b.playerMaxHp, b.playerHp + 5);
+    seotongHealed = b.playerHp - before;
+    pushLog(b, `【跌打】首次技能・回 ${seotongHealed} HP！`);
+  }
+
   if (b.enemyHp <= 0) {
     b.over = "win";
     pushLog(b, "對手倒下！");
@@ -284,6 +306,8 @@ export function playCard(b, handIndex) {
     kuaisouArmed,
     zhaopaiyanDrew,
     drawnExtra,
+    /** 跌打被動回咗幾多 HP（0 = 未觸發） */
+    seotongHealed,
     target,
   };
 }
