@@ -591,6 +591,67 @@ body { overflow-x: clip; overflow-x: hidden; }   /* 禁水平捲動 */
 
 **直版回歸**：390×844 下 `gridTemplateColumns: none`（冇套用三欄）、一屏、對稱 —— 完全冇受影響。
 
+#### 獨立驗收（每頁四項）
+
+每頁量四件事，全部要過：
+
+| 檢查 | 判準 |
+|---|---|
+| **一屏** | `documentElement.scrollHeight <= innerHeight`（唔使上下拉） |
+| **對稱** | `main.screen` 左邊距 − 右邊距 ≤ 2px |
+| **唔裁邊** | 冇任何可互動元素 `left < 0` 或 `right > innerWidth` |
+| **主掣可點** | `elementFromPoint(中心)` 要係自己（唔被遮） |
+
+**10 個頁面實測（844×390）**：
+
+```
+title / select / map / event / reward / rest / settings
+tutorial / pause / victory / defeat
+→ 全部 fits: true、overPx: 0、sym: true、overflowCount: 0
+```
+
+**關鍵元素位置（844×390）**：
+
+| 元素 | 位置 | 在視口 |
+|---|---|---|
+| 結束回合 | x 586–838、y 283–329、251×46 | ✅ |
+| 暫停 | x 680–744、y 334–372 | ✅ |
+| 手牌區 | x 6–581、y 162–372 | ✅ |
+| 第一張卡 | x 6–102、y 164–275、96×112 | ✅ |
+| 地圖「進入」 | x 15–283、y 127–227 | ✅ |
+| 事件選項 | x 15–283、y 163–230 | ✅ |
+| 戰果「再來一局」 | x 213–529、y 347–387 | ✅ |
+| 戰果「返回標題」 | x 535–631、y 348–386 | ✅ |
+
+**hit-test**：上述四類掣嘅中心點 `elementFromPoint` 全部 `isSelf: true`。
+
+**多解析度掃描**：
+
+| 尺寸 | 四頁一屏 | 對稱 | 水平捲動 |
+|---|---|---|---|
+| 844×390 | ✅ | ✅ 6/6 | 冇 |
+| 780×360 | ✅ | ✅ | 冇 |
+| **693×320**（極矮） | ✅ | ✅ | 冇 |
+| 667×375 | ✅ | ✅ | 冇 |
+
+**壓力測試**：
+
+- **10 張手牌**（正常 5 張）→ 仍然 `overPx: 0`、`handScrollWidth 1010 > clientWidth 574`（橫滑，唔撐高）
+- **牌組預覽展開** → `overPx: 0`
+- **真選牌頁 3 張卡** → `overPx: 0`
+- **Boss 戰前／Act 過場／分支** → 全部 `overPx: 0`
+
+**對稱嘅決定性證據**（唔靠肉眼、唔靠截圖）：
+
+```js
+// 搵 .screen 內最左／最右可見元素
+leftMost:  { el: "screen screen-battle", l: 6 }
+rightMost: { el: "screen screen-battle", r: 838 }
+// 844 - 838 = 6 → symDiff = 0
+```
+
+> ⚠️ 像素掃描（截圖逐行找最左/最右亮點）對橫屏**唔可靠**：右欄按鈕顏色較暗，亮度閾值會漏掉，量出嚟 6.5 vs 19（假差異）。**以 DOM `getBoundingClientRect()` 為準。**
+
 > ⚠️ 用截圖核對時要小心：截圖工具會用自己嘅裝置尺寸（實測影到 2208×1331），同 CDP `Emulation.setDeviceMetricsOverride` 設定嘅 844×390 唔一致。**以 `getBoundingClientRect()` 量到嘅數值為準**。
 
 ## 自測
@@ -601,7 +662,7 @@ node js/smoke-act2.mjs   # Act1–2 流程＋音效＋設定頁＋教學＋暫�
 node js/smoke-act3.mjs   # 四角色×三區全程 → 最終 Boss → 結算資料
 node js/smoke-full.mjs   # 封測包：四角／分支／店／遺物／near-miss／再開一局
 node js/probe-act3.mjs   # 最終 Boss 勝率／超時（平衡下限參考）
-node js/smoke-deploy.mjs # 部署＋窄屏置中＋手機橫屏：相對路徑／無外部依賴／assets／CSS 規則（292 項）
+node js/smoke-deploy.mjs # 部署＋窄屏置中＋橫屏驗收：相對路徑／無外部依賴／assets／CSS 規則＋高度預算（300 項）
 ```
 
 `smoke-act2.mjs` 尾段有兩組唔需要瀏覽器嘅檢查：
