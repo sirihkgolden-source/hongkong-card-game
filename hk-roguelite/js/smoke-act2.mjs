@@ -28,8 +28,6 @@ import {
   ACT_TRANSITIONS,
 } from "./data.js";
 import { readdirSync, readFileSync } from "node:fs";
-import { readdirSync } from "node:fs";
-import { readFileSync } from "node:fs";
 import { createBattle, playCard, endTurn, startPlayerTurn } from "./battle.js";
 
 function assert(cond, msg) {
