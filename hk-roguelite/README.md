@@ -5,6 +5,28 @@
 > 狀態：完整三區（Act1 → Act2 → Act3 → 通關結算）・四角色  
 > **這是全新遊戲，不是《香江 Card Game》續作。**
 
+## 即刻玩
+
+### 公開網址（GitHub Pages）
+
+**<https://sirihkgolden-source.github.io/hongkong-card-game/hk-roguelite/>**
+
+- 手機／桌面瀏覽器直接開，唔使安裝
+- **零外部依賴**：字體用系統中文字體、圖全部喺 repo 內，弱網都開得快
+- 建議用 390×844 直版（iPhone 12/13/14）睇，體驗最貼設計
+
+### 本機（離線）
+
+```bash
+cd hk-roguelite
+python -m http.server 8766
+```
+
+開 <http://127.0.0.1:8766/>（**唔好**直接雙擊 `index.html`——`file://` 下 ES module 會被瀏覽器 CORS 政策擋）。
+
+> 想完全離線：斷網後開上面網址一樣玩得（已無任何 CDN 請求）。
+
+
 ## 產品定位
 
 香港霓虹街頭卡牌 Rogue-lite：揀角色、組牌闖三區，一鋪一個傳奇——短、上癮、想再來一局。
@@ -13,16 +35,34 @@
 - 完整路線：開局四揀一 → Act1「後巷・夜醒」→ **自動**進 Act2「旺角霓虹」→ **自動**進 Act3「城寨・天台」→ 最終 Boss **籠門之王** → 通關結算＋再來一局
 - 未做：完整局外商城、名片分享實作、Act4
 
-## 如何本地打開
+## 部署（GitHub Pages）
+
+repo root 已設定 Pages（source: `main` 分支 `/`），所以 `hk-roguelite/` 直接可達：
+
+| | URL |
+|---|---|
+| 遊戲 | <https://sirihkgolden-source.github.io/hongkong-card-game/hk-roguelite/> |
+| 入口檔 | `hk-roguelite/index.html` |
+| 資源 | `hk-roguelite/assets/…`（全部相對路徑） |
+
+**唔使另開 `docs/` 或 `gh-pages`** —— 現有 root 部署已經覆蓋到子目錄，重複設定反而會多一份要同步嘅副本。
+
+### 部署前自檢
 
 ```bash
 cd hk-roguelite
-python -m http.server 8766
+node js/smoke-deploy.mjs
 ```
 
-瀏覽器開啟：<http://127.0.0.1:8766/>
+會檢查 257 項：本地引用檔案存在、**冇絕對路徑**（`/xxx` 在子目錄會 404）、**冇外部 CDN**、資料層 81 個 assets 都存在、CSS `url()` 冇外鏈、必要檔案齊。
 
-**入口檔**：`hk-roguelite/index.html`
+### 離線可開（已達成）
+
+- 字體：系統中文字體堆疊（PingFang HK／Microsoft JhengHei／Noto Sans CJK…），**零 Google Fonts 請求**
+- 圖：全部喺 `assets/`，相對路徑
+- 冇 `fetch()`／`import()` 遠端模組
+
+> 之前用 Google Fonts，實測部署版仍會請求 `fonts.googleapis.com`；已移除，連 `preconnect` 都刪埋。
 
 ## 目錄結構
 
@@ -451,6 +491,7 @@ node js/smoke-act2.mjs   # Act1–2 流程、事件池、商店、選牌加權�
 node js/smoke-act3.mjs   # 四角色×三區全程 → 最終 Boss → 結算資料
 node js/smoke-full.mjs   # 封測包：四角／分支／店／遺物／near-miss／再開一局
 node js/probe-act3.mjs   # 最終 Boss 勝率／超時（平衡下限參考）
+node js/smoke-deploy.mjs # 部署自檢：相對路徑／無外部依賴／assets 存在（257 項）
 ```
 
 `smoke-act2.mjs` 尾段有兩組唔需要瀏覽器嘅檢查：
