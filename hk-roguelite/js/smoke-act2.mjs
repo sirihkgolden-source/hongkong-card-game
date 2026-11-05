@@ -222,7 +222,11 @@ function simulateChar(charId) {
         const visible =
           probe.hp !== 50 || probe.maxHp !== 60 || probe.deck.length !== 1;
         assert(visible, `${ev.title}/${ch.id} 揀完即時不可見`);
-        assert(probe.gold === 30, `${ev.title}/${ch.id} 唔應該改金幣`);
+        // 事件唔可以「發死金」（白送金幣），但可以花錢換其他回報
+        assert(
+          probe.gold <= 30,
+          `${ev.title}/${ch.id} 唔應該發金幣（實際 ${probe.gold}）`
+        );
         if (!visible) thisEventAllVisible = false;
       }
       if (thisEventAllVisible) fullyVisible += 1;
@@ -652,7 +656,7 @@ function simulateChar(charId) {
     } else if (node.type === "event") {
       const goldBefore = run.gold;
       eventById(node.eventId || pickEventId(1)).choices[1].apply(run);
-      assert(run.gold === goldBefore, "A1 事件唔發死金");
+      assert(run.gold <= goldBefore, "A1 事件唔應該發死金");
       notes.push("A1 event ok");
     } else if (node.type === "rest") {
       notes.push(`A1 shop spent ${applyShopSink(run)}`);

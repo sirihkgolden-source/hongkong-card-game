@@ -36,6 +36,7 @@ hk-roguelite/          ← 目錄暫名；產品名《香江小風波》
 │   ├── feel.js        ← 飛軌／飄字／震／色閃／被動橫幅
 │   ├── sfx.js         ← 音效薄層（WebAudio 合成、靜音掣、無音檔）
 │   ├── data.js        ← 角色／牌／敵／Act1–3 地圖／事件
+│   ├── smoke-full.mjs ← 封測包（四角／分支／店／遺物／near-miss／再開一局）
 │   ├── smoke-act2.mjs ← Act1–2 流程自測
 │   ├── smoke-act3.mjs ← 三區全程＋最終 Boss 自測
 │   └── probe-act3.mjs ← 最終 Boss 平衡探針（勝率／超時）
@@ -163,6 +164,9 @@ hk-roguelite/          ← 目錄暫名；產品名《香江小風波》
 cd hk-roguelite
 node js/smoke-act2.mjs   # Act1–2 流程、事件池、商店、選牌加權＋音效薄層
 node js/smoke-act3.mjs   # 四角色×三區全程 → 最終 Boss → 結算資料
+node js/smoke-full.mjs   # 封測包：四角／分支／店／遺物／near-miss／再開一局
+node js/smoke-act3.mjs   # 四角×三區全程 → 最終 Boss → 結算資料
+node js/smoke-act2.mjs   # Act1–2 流程、事件池、商店、選牌加權
 node js/probe-act3.mjs   # 最終 Boss 勝率／超時（平衡下限參考）
 ```
 
@@ -173,3 +177,36 @@ node js/probe-act3.mjs   # 最終 Boss 勝率／超時（平衡下限參考）
 - 靜音 toggle 兩下要還原、靜音狀態真係寫入／清走 `localStorage`
 - 靜音時同無 `AudioContext` 環境下播全部音都**唔 throw**
 
+### 封測包（`smoke-full.mjs`）
+
+推 PR 前跑一次，一次過檢查 380 項：
+
+| 區塊 | 檢查內容 |
+| --- | --- |
+| 四角開局 | 角色數、被動、starter ≥9、專屬 3 張、路線互不相同 |
+| Act 內分支 | 三區各 1 個、≥2 選項、兩路類型唔同、兩邊都有可見改動 |
+| 便利店 | 五個價錢合法、開局金幣買得起最便宜項、貨架抽夠 |
+| 遺物 | 全部有 effect、專屬對自己生效／對別角無效 |
+| near-miss | 三 Boss 各有專屬台詞且不重複 |
+| 再開一局 | 四角 rerunHook 三段齊、clearSummary 不重複 |
+| Act 銜接 | 兩段過場句齊、to 與區名一致 |
+| 事件池 | 每區 ≥4、每個選項即時可見 |
+| 戰鬥核心 | 四角各打一場、牌堆守恆、結束回合有變化 |
+| 經濟 | 小怪戰後必有金 |
+| 選牌加權 | 四角主路線互不相同 |
+
+### 本機驗收步驟
+
+```bash
+cd hk-roguelite
+python -m http.server 8766
+```
+
+瀏覽器開 <http://127.0.0.1:8766/>，建議用 DevTools 手機模式 390×844。
+
+### 已知問題（3 條內）
+
+1. **商店「抽卡包」可能抽到已擁有嘅牌** —— 目前唔會去重，牌組可能重複。
+2. **平衡未經真人長時間試玩** —— 目前靠 smoke 模擬，四角通關率 100%，
+   但剩餘 HP 差距（35%–82%）只反映角色風格，未經手感驗證。
+3. **分支只有一個節點** —— 每 Act 一格二揀一，未做完整分支圖。

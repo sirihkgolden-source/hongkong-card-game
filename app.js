@@ -129,8 +129,14 @@
     if (!id) return null;
     return storyPacksList().find((p) => p.id === id) || null;
   }
-  /** 預設故事包：打工仔輓歌（可用時優先；否則退回第一個可用包） */
-  const DEFAULT_STORY_PACK_ID = "office_ballad";
+  /**
+   * 預設故事包：《你的保安，李步岸》（可用時優先；否則退回第一個可用包）
+   *
+   * t410：由 office_ballad 改為 guard_baoan。
+   * `ensureActiveStoryPack()` 會優先揀這個包；
+   * 讀檔時（見 `storyPackUserPicked`）若玩家未自己揀過，亦會歸位到此包。
+   */
+  const DEFAULT_STORY_PACK_ID = "guard_baoan";
 
   function ensureActiveStoryPack() {
     const packs = storyPacksList();
@@ -466,8 +472,8 @@
   /** 現時遊玩中的故事包（優先用 run 記住的 packId） */
   function officePack(run) {
     const r = run || state.officeRun;
-    const id = (r && r.packId) || state.activeStoryPackId || "office_ballad";
-    return storyPackById(id) || storyPackById("office_ballad") || null;
+    const id = (r && r.packId) || state.activeStoryPackId || DEFAULT_STORY_PACK_ID;
+    return storyPackById(id) || storyPackById(DEFAULT_STORY_PACK_ID) || null;
   }
 
   /** 某個故事包的路線 key 清單 */
@@ -2722,7 +2728,7 @@
       state.minigame = null;
       state.activeStoryPackId = (data.activeStoryPackId && storyPackById(data.activeStoryPackId))
         ? data.activeStoryPackId : null;
-      /* 舊存檔若仍停留在舊預設（初入香江）而玩家未主動改過，跟隨新預設打工仔輓歌 */
+      /* 舊存檔若仍停留在舊預設而玩家未主動改過，跟隨新預設（見 DEFAULT_STORY_PACK_ID） */
       if (data.activeStoryPackId && data.storyPackUserPicked !== true
           && data.activeStoryPackId !== DEFAULT_STORY_PACK_ID
           && storyPackById(DEFAULT_STORY_PACK_ID)
@@ -5626,7 +5632,7 @@
     const fin = officeFinishRun();
     if (fin && fin.endingEv) {
       if (!state.lifeFlags || typeof state.lifeFlags !== "object") state.lifeFlags = {};
-      const packId = (run && run.packId) || (pack && pack.id) || "office_ballad";
+      const packId = (run && run.packId) || (pack && pack.id) || DEFAULT_STORY_PACK_ID;
       if (!state.lifeFlags["office_route_" + fin.routeKey]) state.lifeFlags["office_route_" + fin.routeKey] = 1;
       /*
        * t375：同時寫入 `office_ending_<id>`（同結局事件自身嘅 flag_on_complete 一致）。
