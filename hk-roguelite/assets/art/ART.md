@@ -8,7 +8,7 @@
 
 | 檔名 | 用途 | 角色 id | 顯示名 | 備註 |
 |------|------|---------|--------|------|
-| `portraits/ayau.jpg` | 選角立繪 | `oil` | 阿油・後巷經紀 | 街頭造型、霓虹背景 |
+| `portraits/ayau.webp` | 選角立繪 | `oil` | 阿油・後巷經紀 | **男**：綠外套＋花恤＋waist pouch，手遞卡片；透明底 |
 | `portraits/ashan.jpg` | 選角立繪 | `asan` | 阿珊・茶記夜更 | 茶記圍裙＋鉛筆咬嘴（禁維港遊客女） |
 | `portraits/kauko.jpg` | 選角立繪 | `kauko` | 九哥・招牌工 | 工圍裙＋工具枱＋啤牌（唔叫霓虹工） |
 
@@ -34,9 +34,16 @@
 
 ## 副檔名與降級
 
-- 現時全部為 **`.jpg`**。
-- 若日後換 `webp`／`png`，只需同名改副檔名，`js/data.js` 嘅 `ART` 常數改一處即可。
+- 立繪：`ayau.webp`（透明底 RGBA）、`ashan.jpg`、`kauko.jpg`。
+- 背景：三張均為 `.jpg`。
+- 若日後換格式，只需同名改副檔名，`js/data.js` 嘅 `portrait` / `ACT_BG` 改一處即可。
 - **缺圖降級**：`<img onerror>` 會加 `is-fallback` class，顯示字首漸層（油／珊／九）；背景用 `--act-bg`，缺檔時自動落回內建霓虹漸層，唔會爆 layout。
+
+## 阿油立繪（曾出錯，已修）
+
+- **2026-11-05 事故**：`ayau.jpg` 誤用女角圖，選角時 `oil` 顯示女性，與角色設定（後巷經紀，男）不符。
+- **修正**：改用綠外套＋花恤男圖（來源 `hk_1970s_mong_kok_broker_character_transparent.png`，1632×2176 RGBA），轉存為 `ayau.webp`（768×1024，q90，249KB），舊 `ayau.jpg` 已刪除。
+- **驗收**：選角畫面 `oil` 必須見到男性、綠外套、手持卡片。
 
 ## 未改動
 
