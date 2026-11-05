@@ -722,4 +722,66 @@ function simulateChar(charId) {
 }
 
 const results = ["oil", "asan", "kauko", "sing"].map(simulateChar);
+
+/* ---------- 音效薄層：唔開瀏覽器都驗得到嘅部分 ---------- */
+{
+  // Node 冇 localStorage：用記憶體版本模擬，順便驗「靜音狀態真係存到」
+  const store = new Map();
+  globalThis.localStorage = {
+    getItem: (k) => (store.has(k) ? store.get(k) : null),
+    setItem: (k, v) => void store.set(k, String(v)),
+    removeItem: (k) => void store.delete(k),
+  };
+  const localStorageGet = (k) => (store.has(k) ? store.get(k) : null);
+
+  const {
+    SFX_MUTED_KEY,
+    MASTER_GAIN,
+    SFX_NAMES,
+    isMuted,
+    setMuted,
+    toggleMuted,
+    sfx,
+  } = await import("./sfx.js");
+
+  // ① 四類必需音都在（出牌／受傷／金幣／通關）
+  for (const name of ["card", "hurt", "coin", "clear"]) {
+    assert(typeof sfx[name] === "function", `缺音效 ${name}`);
+    assert(SFX_NAMES.includes(name), `SFX_NAMES 未登記 ${name}`);
+  }
+  assert(SFX_NAMES.length >= 4, "SFX_NAMES 太短");
+  // 每個登記名都要真係有對應方法（唔可以登記咗但冇實作）
+  for (const name of SFX_NAMES) {
+    assert(typeof sfx[name] === "function", `SFX_NAMES 有 ${name} 但 sfx 冇實作`);
+  }
+
+  // ② 音量預設要低（< 0.6），而且係正數（唔係 0＝靜音）
+  assert(MASTER_GAIN > 0 && MASTER_GAIN < 0.6, `主音量應偏低，實際 ${MASTER_GAIN}`);
+
+  // ③ 靜音掣：toggle 兩下要返原狀；靜音狀態要寫入 localStorage
+  const before = isMuted();
+  assert(toggleMuted() === !before, "toggleMuted 第一次唔對");
+  assert(isMuted() === !before, "toggleMuted 後 isMuted 唔對");
+  assert(toggleMuted() === before, "toggleMuted 第二次唔返原狀");
+  assert(isMuted() === before, "toggle 兩次後狀態唔還原");
+
+  setMuted(true);
+  assert(localStorageGet(SFX_MUTED_KEY) === "1", "靜音要寫入 localStorage");
+  setMuted(false);
+  assert(localStorageGet(SFX_MUTED_KEY) === null, "取消靜音要清走 localStorage");
+
+  // ④ 無音檔亦無問題：靜音時播任何音都唔 throw（Node 本身無 AudioContext）
+  setMuted(true);
+  for (const name of SFX_NAMES) sfx[name]();
+  setMuted(false);
+  for (const name of SFX_NAMES) sfx[name](); // Node 無 window → 應靜靜降級
+  assert(true, "播音降級唔應該 throw");
+
+  console.log("  ✓ 音效薄層（四類必需音／低音量／靜音狀態）");
+
+  // 收工：避免污染其他測試
+  setMuted(false);
+  delete globalThis.localStorage;
+}
+
 console.log(JSON.stringify({ ok: true, act1: actDisplayName(1), act2: actDisplayName(2), results }, null, 2));

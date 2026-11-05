@@ -34,7 +34,7 @@ hk-roguelite/          ← 目錄暫名；產品名《香江小風波》
 │   ├── main.js        ← 畫面流程＋手感序列＋Act 銜接＋通關結算
 │   ├── battle.js      ← 戰鬥（四角色被動）
 │   ├── feel.js        ← 飛軌／飄字／震／色閃／被動橫幅
-│   ├── sfx.js         ← 極簡 WebAudio stub
+│   ├── sfx.js         ← 音效薄層（WebAudio 合成、靜音掣、無音檔）
 │   ├── data.js        ← 角色／牌／敵／Act1–3 地圖／事件
 │   ├── smoke-act2.mjs ← Act1–2 流程自測
 │   ├── smoke-act3.mjs ← 三區全程＋最終 Boss 自測
@@ -138,12 +138,38 @@ hk-roguelite/          ← 目錄暫名；產品名《香江小風波》
 
 出牌縮卡→飛軌→落點閃／kickback→傷害上飄；受擊預示＋紅閃；被動橫幅；單次攻擊總延遲 ≤350ms
 
-預覽請用本機靜態伺服器（見上），瀏覽器需允許音訊（首次點擊後 WebAudio stub 才有 beep）。
+### 音效薄層（無音檔，WebAudio 即時合成）
+
+全遊戲**冇一個 .mp3／.wav**——所有聲都係 `OscillatorNode` 即時砌，零檔案、零外部請求。
+
+| 時機 | 音效 | 聲音設計 |
+|---|---|---|
+| 出牌 | `sfx.card()` | 760Hz → 560Hz 兩個短 square，似「甩牌」 |
+| 受傷 | `sfx.hurt()` | 120Hz → 78Hz sawtooth 下沉，似被打中 |
+| 金幣 | `sfx.coin()` | 1180Hz → 1560Hz 兩粒 triangle，似「叮噹」 |
+| 通關 | `sfx.clear()` | C-E-G-C 四粒上行大調，最後一粒長 170ms |
+
+- **音量預設低**：`MASTER_GAIN = 0.42`，再乘每個音本身 gain（0.03–0.062）；全部經同一個 master gain 節點，一次過調
+- **每粒音都有包絡**：6ms 起音 → 指數衰減，避免「噗」聲同爆音
+- **靜音掣**：標題頁／選角頁／戰鬥頁都有，44px 高，`localStorage` key `hk_sfx_muted`，重開機都記得
+- **靜音時完全唔開 AudioContext**（連 oscillator 都唔建），省電
+- **無 AudioContext 環境**（舊瀏覽器／Node 自測）→ 靜靜降級，唔 throw
+
+預覽請用本機靜態伺服器（見上）。瀏覽器政策要求**首次用戶互動**後才可出聲，所以入場撳第一下（例如「進入選角」）之後音效才會響——呢個係正常，唔係壞。
 
 ## 自測
 
 ```bash
 cd hk-roguelite
+node js/smoke-act2.mjs   # Act1–2 流程、事件池、商店、選牌加權＋音效薄層
 node js/smoke-act3.mjs   # 四角色×三區全程 → 最終 Boss → 結算資料
 node js/probe-act3.mjs   # 最終 Boss 勝率／超時（平衡下限參考）
 ```
+
+`smoke-act2.mjs` 尾段有「音效薄層」檢查，唔需要瀏覽器都跑得：
+
+- 四類必需音（`card`／`hurt`／`coin`／`clear`）都存在，而且 `SFX_NAMES` 每個登記名都真係有實作
+- `MASTER_GAIN` 必須 > 0 且 < 0.6（防止有人日後不小心調到炸耳）
+- 靜音 toggle 兩下要還原、靜音狀態真係寫入／清走 `localStorage`
+- 靜音時同無 `AudioContext` 環境下播全部音都**唔 throw**
+
