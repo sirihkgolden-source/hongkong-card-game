@@ -1,5 +1,5 @@
 ﻿/**
- * Round 3 smoke：三角色流程核對（被動旗標／金幣出口／Act 銜接）
+ * Round 3 smoke：四角色流程核對（被動旗標／金幣出口／Act 銜接）
  * 用法：cd hk-roguelite && node js/smoke-act2.mjs
  */
 import {
@@ -123,7 +123,7 @@ function simulateChar(charId) {
   assert(!enemyById("E04").name.includes("看場"), "禁看場");
   assert(!enemyById("E04").name.includes("離場"), "禁離場");
 
-  // ① 三角色都要有 route（主路線標籤）同 playstyle（一句講清點玩）
+  // ① 四角色都要有 route（主路線標籤）同 playstyle（一句講清點玩）
   {
     const routes = [];
     const styles = [];
@@ -134,11 +134,11 @@ function simulateChar(charId) {
       routes.push(c.route);
       styles.push(c.playstyle);
     }
-    assert(new Set(routes).size === 4, `三角色 route 重複：${routes.join("/")}`);
-    assert(new Set(styles).size === 4, "三角色 playstyle 重複");
+    assert(new Set(routes).size === 4, `四角色 route 重複：${routes.join("/")}`);
+    assert(new Set(styles).size === 4, "四角色 playstyle 重複");
   }
 
-  // ② 失敗頁建議要有料：三角色 route／playstyle／passive 三者齊，
+  // ② 失敗頁建議要有料：四角色 route／playstyle／passive 三者齊，
   //    否則「換角色」建議會顯示空白
   {
     for (const id of ["oil", "asan", "kauko", "sing"]) {
@@ -196,7 +196,7 @@ function simulateChar(charId) {
     assert(new Set(nearMisses).size === 3, "Boss 敗北台詞重複");
   }
 
-  // ① 三角色都要有「再開一局」鉤（選角／通關／敗北各一句）
+  // ① 四角色都要有「再開一局」鉤（選角／通關／敗北各一句）
   for (const id of ["oil", "asan", "kauko", "sing"]) {
     const h = CHARACTERS[id].rerunHook;
     assert(h, `${id} 缺 rerunHook`);
@@ -204,7 +204,7 @@ function simulateChar(charId) {
       assert(typeof h[k] === "string" && h[k].trim().length >= 6, `${id} rerunHook.${k} 太短`);
     }
   }
-  // 三角色鉤唔可以完全一樣（角色辨識度）
+  // 四角色鉤唔可以完全一樣（角色辨識度）
   assert(new Set(["oil", "asan", "kauko", "sing"].map((id) => CHARACTERS[id].rerunHook.select)).size === 4, "選角鉤重複");
 
   // ② 三區事件抽取：每個選項都要即時可見改局（HP／最大生命／牌組），且唔改金幣
@@ -233,7 +233,7 @@ function simulateChar(charId) {
     assert(pool.length >= 2, `Act${act} 事件池少於 2 個，每局唔會唔同`);
   }
 
-  // ① 選牌傾向：三角色各自要明顯偏一類（唔可以揀邊個都一樣）
+  // ① 選牌傾向：四角色各自要明顯偏一類（唔可以揀邊個都一樣）
   {
     const classify = (id) => {
       const c = CARDS[id];
@@ -272,7 +272,7 @@ function simulateChar(charId) {
       dominant[cid] = topKind;
     }
     // 三個角色主路線要唔同
-    assert(new Set(Object.values(dominant)).size === 4, `三角色主路線重複：${JSON.stringify(dominant)}`);
+    assert(new Set(Object.values(dominant)).size === 4, `四角色主路線重複：${JSON.stringify(dominant)}`);
   }
 
   // ② 士多各項都要有價、有貨（唔好空白過場）
@@ -506,7 +506,7 @@ function simulateChar(charId) {
     }
   }
 
-  // 選角 → 第一戰：三角色都要有開場語（唔可以一入地圖就靜）
+  // 選角 → 第一戰：四角色都要有開場語（唔可以一入地圖就靜）
   {
     const lines = [];
     for (const id of ["oil", "asan", "kauko", "sing"]) {
@@ -518,7 +518,7 @@ function simulateChar(charId) {
       assert(c.passive?.desc, `${id} 缺 passive.desc（開場被動提示會空白）`);
       lines.push(c.openLine);
     }
-    assert(new Set(lines).size === 4, "三角色 openLine 重複");
+    assert(new Set(lines).size === 4, "四角色 openLine 重複");
   }
 
   // 遺物欄一眼識：專屬標示要同角色對應，別角專屬要有「唔適用」機制
@@ -610,7 +610,7 @@ function simulateChar(charId) {
     assert(enemyById("E12").name === "籠門之王", "Act3 Boss 名被改");
   }
 
-  // 通關總結：三角色各自要有一句（唔可以空白／重複）
+  // 通關總結：四角色各自要有一句（唔可以空白／重複）
   {
     const summaries = [];
     for (const id of ["oil", "asan", "kauko", "sing"]) {
@@ -618,7 +618,7 @@ function simulateChar(charId) {
       assert(typeof s === "string" && s.length >= 10, `${id} 缺 clearSummary`);
       summaries.push(s);
     }
-    assert(new Set(summaries).size === 4, "三角色 clearSummary 重複");
+    assert(new Set(summaries).size === 4, "四角色 clearSummary 重複");
     // route 要有（結算「主路線」欄用）
     for (const id of ["oil", "asan", "kauko", "sing"]) {
       assert(CHARACTERS[id].route, `${id} 缺 route（結算主路線會空白）`);

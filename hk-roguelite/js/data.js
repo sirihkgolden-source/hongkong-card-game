@@ -458,7 +458,7 @@ export const REWARD_POOL = [
 ];
 
 /**
- * 開局三角色（名取自 PREP_PACK／brief；被動依 Round 2 可見回饋）
+ * 開局四角色（名取自 PREP_PACK／brief；被動依 Round 2 可見回饋）
  * @type {Record<string, {
  *   id: string, name: string, short: string, initial: string,
  *   maxHp: number, energy: number,
@@ -1746,7 +1746,7 @@ export const RELICS = {
     rarity: "稀有",
   },
 
-  /* ===== 角色專屬遺物（三角色各一，名字／效果一眼分到） ===== */
+  /* ===== 角色專屬遺物（四角色各一，名字／效果一眼分到） ===== */
 
   /** 阿油專屬：快手＝第 3 張攻擊後嗰下，直接多打一下 */
   rl_oil_flask: {
