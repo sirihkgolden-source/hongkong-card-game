@@ -966,6 +966,35 @@ body {
   color: var(--ink-dim);
 }
 
+/* 選角後開場：一句港味 + 被動提示 */
+.opening-block {
+  margin: 0.15rem 0 0;
+  padding: 0.55rem 0.7rem;
+  border-radius: 10px;
+  border-left: 3px solid var(--neon-magenta);
+  background: rgba(255, 45, 149, 0.09);
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+}
+
+.opening-line {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.opening-passive {
+  margin: 0;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--neon-amber);
+  padding: 0.28rem 0.4rem;
+  border-radius: 7px;
+  background: rgba(255, 193, 74, 0.1);
+}
+
 /* 地圖 HUD 遺物列：每件一粒 chip，點一下講效果 */
 .relic-bar {
   display: flex;

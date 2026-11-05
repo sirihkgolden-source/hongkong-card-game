@@ -322,6 +322,21 @@ function simulateChar(charId) {
     assert(pickShopConsumables(1).length === 1, "消耗品貨架抽唔到貨");
   }
 
+  // 選角 → 第一戰：三角色都要有開場語（唔可以一入地圖就靜）
+  {
+    const lines = [];
+    for (const id of ["oil", "asan", "kauko"]) {
+      const c = CHARACTERS[id];
+      assert(
+        typeof c.openLine === "string" && c.openLine.length >= 10,
+        `${id} 缺 openLine（選角後會靜）`
+      );
+      assert(c.passive?.desc, `${id} 缺 passive.desc（開場被動提示會空白）`);
+      lines.push(c.openLine);
+    }
+    assert(new Set(lines).size === 3, "三角色 openLine 重複");
+  }
+
   // 遺物欄一眼識：專屬標示要同角色對應，別角專屬要有「唔適用」機制
   {
     const owned = ["rl_oil_flask", "rl_asan_apron", "rl_kauko_signboard"];
