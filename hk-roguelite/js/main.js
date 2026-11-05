@@ -53,6 +53,7 @@ import {
   syncHpBars,
   clearFx,
   floatGold,
+  floatRunDeltas,
 } from "./feel.js";
 
 /** @type {{
@@ -82,6 +83,7 @@ const state = {
   shopRelics: /** @type {string[]} */ ([]),
   shopConsumables: /** @type {string[]} */ ([]),
   pendingGoldFloat: 0,
+  pendingDeltas: /** @type {object|null} */ (null),
 };
 
 const app = document.getElementById("app");
@@ -858,6 +860,63 @@ function nearMissInfo() {
   };
 }
 
+/** 跑圖改動快照：用嚟算出「揀完之後改咗咩」 */
+function runSnapshot() {
+  const run = state.run || {};
+  return {
+    hp: run.hp || 0,
+    maxHp: run.maxHp || 0,
+    deck: (run.deck || []).length,
+    gold: run.gold || 0,
+    relics: (run.relics || []).length,
+    nextBlock: run.nextBattleBlock || 0,
+    nextEnergy: run.nextBattleEnergyBonus || 0,
+  };
+}
+
+/** 對比兩次快照，回傳 delta（只含有變嘅欄位） */
+function diffSnapshot(before) {
+  const after = runSnapshot();
+  const d = {};
+  for (const k of Object.keys(after)) {
+    const delta = after[k] - before[k];
+    if (delta !== 0) d[k] = delta;
+  }
+  return d;
+}
+
+/** 跑圖改動回饋：跳字 + 一句文字摘要 */
+function showRunDeltas(before, extraText) {
+  const d = diffSnapshot(before);
+  const map = {
+    hp: "hp",
+    maxHp: "maxHp",
+    deck: "deck",
+    gold: "gold",
+    nextBlock: "block",
+    nextEnergy: "energy",
+    relics: "deck",
+  };
+  const deltas = {};
+  for (const [k, v] of Object.entries(d)) {
+    const key = map[k];
+    if (key) deltas[key] = (deltas[key] || 0) + v;
+  }
+  // 畫面即將重繪，所以暫存起，等 render 之後先播
+  state.pendingDeltas = deltas;
+  return d;
+}
+
+/** render 完之後播暫存嘅改動跳字 */
+function flushRunDeltas() {
+  const deltas = state.pendingDeltas;
+  if (!deltas || !Object.keys(deltas).length) return;
+  state.pendingDeltas = null;
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => floatRunDeltas(deltas));
+  });
+}
+
 function render() {
   if (!app) return;
   if (state.screen !== "battle") clearFx();
@@ -896,6 +955,7 @@ function render() {
   patchScreen(html);
   applyActBackdrop();
   flushGoldFloat();
+  flushRunDeltas();
 }
 
 /**
@@ -1373,8 +1433,10 @@ function onClick(event) {
 
   const pickId = t.getAttribute("data-pick");
   if (pickId) {
+    const before = runSnapshot();
     state.run.deck.push(pickId);
     state.statusMsg = `已加入「${cardById(pickId)?.name ?? pickId}」`;
+    showRunDeltas(before);
     advanceMap();
     render();
     return;
@@ -1385,7 +1447,9 @@ function onClick(event) {
     const ev = currentNodeEvent();
     const choice = ev?.choices.find((c) => c.id === evChoice);
     if (choice) {
+      const before = runSnapshot();
       state.eventResult = choice.apply(state.run);
+      showRunDeltas(before);
     }
     render();
     return;
@@ -1486,20 +1550,22 @@ function onClick(event) {
       break;
     case "shop-heal":
       if (state.run.gold >= SHOP.healCost) {
+        const before = runSnapshot();
         state.run.gold -= SHOP.healCost;
         state.run.hp = Math.min(state.run.maxHp, state.run.hp + SHOP.healAmt);
         state.shopMsg = `回咗 ${SHOP.healAmt} HP。`;
-        state.pendingGoldFloat = -SHOP.healCost;
+        showRunDeltas(before);
       } else {
         state.shopMsg = "金幣不足";
       }
       break;
     case "shop-card":
       if (state.run.gold >= SHOP.cardCost) {
+        const before = runSnapshot();
         state.run.gold -= SHOP.cardCost;
         state.run.deck.push(SHOP.cardId);
         state.shopMsg = `入手「${cardById(SHOP.cardId)?.name ?? SHOP.cardId}」。`;
-        state.pendingGoldFloat = -SHOP.cardCost;
+        showRunDeltas(before);
       } else {
         state.shopMsg = "金幣不足";
       }
@@ -1514,11 +1580,12 @@ function onClick(event) {
         state.shopMsg = "今晚卡包賣晒。";
         break;
       }
+      const before = runSnapshot();
       state.run.gold -= SHOP.packCost;
       state.run.deck.push(packCardId);
       const pc = cardById(packCardId);
       state.shopMsg = `抽到「${pc?.name ?? packCardId}」——${pc?.rarity ?? ""}牌。`;
-      state.pendingGoldFloat = -SHOP.packCost;
+      showRunDeltas(before);
       break;
     }
     case "shop-reroll": {
@@ -1526,13 +1593,14 @@ function onClick(event) {
         state.shopMsg = "金幣不足";
         break;
       }
+      const before = runSnapshot();
       state.run.gold -= SHOP.rerollCost;
       state.shopRelics = pickShopRelics(state.run, 2);
       state.shopConsumables = pickShopConsumables(1);
       state.shopMsg = state.shopRelics.length
         ? `老闆換咗批貨：${state.shopRelics.map((id) => relicById(id)?.name ?? id).join("、")}。`
         : "老闆話今晚冇新貨喇。";
-      state.pendingGoldFloat = -SHOP.rerollCost;
+      showRunDeltas(before);
       break;
     }
     case "buy-consumable": {
@@ -1543,12 +1611,13 @@ function onClick(event) {
         state.shopMsg = "金幣不足";
         break;
       }
+      const before = runSnapshot();
       state.run.gold -= cs.price;
       const msg = cs.apply(state.run);
       // 買完即用，貨架移走該件
       state.shopConsumables = (state.shopConsumables || []).filter((id) => id !== csId);
       state.shopMsg = `「${cs.name}」——${msg}`;
-      state.pendingGoldFloat = -cs.price;
+      showRunDeltas(before);
       break;
     }
     case "shop-relic": {
@@ -1563,6 +1632,7 @@ function onClick(event) {
         state.shopMsg = "已經有你件貨。";
         break;
       }
+      const before = runSnapshot();
       state.run.gold -= SHOP.relicCost;
       state.run.relics = state.run.relics || [];
       state.run.relics.push(relicId);
@@ -1575,13 +1645,14 @@ function onClick(event) {
       }
       if (eff.instantGold) state.run.gold += eff.instantGold;
       state.shopMsg = `買咗「${relic.name}」——${relic.desc}`;
-      state.pendingGoldFloat = -(SHOP.relicCost - (eff.instantGold || 0));
+      showRunDeltas(before);
       break;
     }
     case "sell-relic": {
       const relicId = t.getAttribute("data-relic");
       const relic = relicById(relicId);
       if (!relic || !(state.run.relics || []).includes(relicId)) return;
+      const before = runSnapshot();
       state.run.relics = state.run.relics.filter((id) => id !== relicId);
       state.run.gold += SHOP.sellRelicGain;
       // 賣走即時型遺物要扣返（最低保 1 HP）
@@ -1591,17 +1662,18 @@ function onClick(event) {
         state.run.hp = Math.max(1, Math.min(state.run.hp, state.run.maxHp));
       }
       state.shopMsg = `賣咗「${relic.name}」，+${SHOP.sellRelicGain} 金幣。`;
-      state.pendingGoldFloat = SHOP.sellRelicGain;
+      showRunDeltas(before);
       break;
     }
     case "sell-card": {
       const cardId = t.getAttribute("data-card");
       const idx = state.run.deck.indexOf(cardId);
       if (idx < 0) return;
+      const before = runSnapshot();
       state.run.deck.splice(idx, 1);
       state.run.gold += SHOP.sellCardGain;
       state.shopMsg = `賣咗「${cardById(cardId)?.name ?? cardId}」，+${SHOP.sellCardGain} 金幣。`;
-      state.pendingGoldFloat = SHOP.sellCardGain;
+      showRunDeltas(before);
       break;
     }
     case "leave-shop":

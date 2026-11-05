@@ -200,6 +200,65 @@ export function floatGold(delta) {
   floatText(goldEl, text, delta > 0 ? "gold" : "gold-spend");
 }
 
+/**
+ * 跑圖畫面（選牌／事件／士多）嘅改動回饋：
+ * 一次顯示多項 delta，例如 +12 HP、+1 張牌、−8 金幣。
+ * 全部用 fx-float，錨定畫面中央偏上，唔會遮住按鈕。
+ * @param {{hp?:number,maxHp?:number,deck?:number,block?:number,energy?:number,gold?:number}} deltas
+ * @param {(s:string)=>void} [pushLine] 可選：同時寫入文字摘要
+ */
+export function floatRunDeltas(deltas, pushLine) {
+  const lines = [];
+  const { hp = 0, maxHp = 0, deck = 0, block = 0, energy = 0, gold = 0 } = deltas || {};
+  if (hp) {
+    lines.push({ text: hp > 0 ? `+${hp} HP` : `${hp} HP`, variant: hp > 0 ? "heal" : "dmg" });
+  }
+  if (maxHp) {
+    lines.push({ text: maxHp > 0 ? `+${maxHp} 最大生命` : `${maxHp} 最大生命`, variant: "heal" });
+  }
+  if (deck) {
+    lines.push({ text: deck > 0 ? `+${deck} 張牌` : `${deck} 張牌`, variant: "kuaisou" });
+  }
+  if (block) {
+    lines.push({ text: block > 0 ? `+${block} 擋` : `${block} 擋`, variant: "block" });
+  }
+  if (energy) {
+    lines.push({ text: energy > 0 ? `+${energy} 能量` : `${energy} 能量`, variant: "kuaisou" });
+  }
+  if (gold) {
+    lines.push({ text: gold > 0 ? `+${gold} 金幣` : `${gold} 金幣`, variant: gold > 0 ? "gold" : "gold-spend" });
+  }
+  if (!lines.length) return;
+
+  // 錨定：面板標題附近，逐行向下錯開
+  const anchor =
+    document.querySelector(".panel h2") ||
+    document.querySelector(".section-title") ||
+    document.querySelector(".brand");
+  const rect = anchor?.getBoundingClientRect?.();
+  const baseTop = rect ? rect.top + rect.height + 18 : 140;
+  const baseLeft = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
+
+  lines.forEach((line, i) => {
+    floatText(
+      {
+        getBoundingClientRect: () => ({
+          left: baseLeft,
+          top: baseTop + i * 30,
+          width: 0,
+          height: 0,
+        }),
+      },
+      line.text,
+      line.variant
+    );
+  });
+
+  if (typeof pushLine === "function") {
+    pushLine(lines.map((l) => l.text).join(" · "));
+  }
+}
+
 /** 搵「金幣」所在嘅狀態列 span，搵唔到就用畫面中央 */
 function findGoldAnchor() {
   const selectors = [
