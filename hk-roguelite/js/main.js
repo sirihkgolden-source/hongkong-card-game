@@ -25,6 +25,7 @@ import {
   eventById,
   relicBonuses,
   pickShopRelics,
+  pickPackCard,
   relicById,
 } from "./data.js";
 import {
@@ -509,6 +510,8 @@ function renderRest() {
   const canHealBuy = has(SHOP.healCost);
   const canCardBuy = has(SHOP.cardCost);
   const canRelicBuy = has(SHOP.relicCost) && state.shopRelics.length > 0;
+  const canPackBuy = has(SHOP.packCost);
+  const canReroll = has(SHOP.rerollCost) && state.shopRelics.length > 0;
   const shopCard = cardById(SHOP.cardId);
   const node = currentNode();
   const isAct3 = (state.run.act || 1) === 3;
@@ -577,6 +580,10 @@ function renderRest() {
             <strong>便利店・執牌</strong>
             <span>花 ${SHOP.cardCost} 金幣入手「${escapeHtml(shopCard?.name ?? SHOP.cardId)}」${canCardBuy ? "" : "（金幣不足）"}</span>
           </button>
+          <button type="button" class="event-choice${canPackBuy ? "" : " is-disabled"}" data-action="shop-pack" ${canPackBuy ? "" : "disabled"}>
+            <strong>便利店・抽卡包</strong>
+            <span>花 ${SHOP.packCost} 金幣抽一張稀有／專屬牌${canPackBuy ? "" : "（金幣不足）"}</span>
+          </button>
         </div>
         ${state.shopMsg ? `<p class="status" role="status">${escapeHtml(state.shopMsg)}</p>` : ""}
       </section>
@@ -586,6 +593,14 @@ function renderRest() {
           ? `<section class="panel panel-shop">
         <h2>士多・遺物</h2>
         <div class="event-choices">${relicStock || '<p class="lede">今晚冇新貨。</p>'}</div>
+        ${
+          state.shopRelics.length
+            ? `<button type="button" class="event-choice is-sell${canReroll ? "" : " is-disabled"}" data-action="shop-reroll" ${canReroll ? "" : "disabled"}>
+            <strong>換貨</strong>
+            <span>花 ${SHOP.rerollCost} 金幣叫老闆換過批貨${canReroll ? "" : "（金幣不足）"}</span>
+          </button>`
+            : ""
+        }
         ${
           relicSell
             ? `<p class="shop-sub">變賣（換金）</p><div class="event-choices">${relicSell}</div>`
@@ -1353,6 +1368,36 @@ function onClick(event) {
         state.shopMsg = "金幣不足";
       }
       break;
+    case "shop-pack": {
+      if (state.run.gold < SHOP.packCost) {
+        state.shopMsg = "金幣不足";
+        break;
+      }
+      const packCardId = pickPackCard(state.run.characterId);
+      if (!packCardId) {
+        state.shopMsg = "今晚卡包賣晒。";
+        break;
+      }
+      state.run.gold -= SHOP.packCost;
+      state.run.deck.push(packCardId);
+      const pc = cardById(packCardId);
+      state.shopMsg = `抽到「${pc?.name ?? packCardId}」——${pc?.rarity ?? ""}牌。`;
+      state.pendingGoldFloat = -SHOP.packCost;
+      break;
+    }
+    case "shop-reroll": {
+      if (state.run.gold < SHOP.rerollCost) {
+        state.shopMsg = "金幣不足";
+        break;
+      }
+      state.run.gold -= SHOP.rerollCost;
+      state.shopRelics = pickShopRelics(state.run, 2);
+      state.shopMsg = state.shopRelics.length
+        ? `老闆換咗批貨：${state.shopRelics.map((id) => relicById(id)?.name ?? id).join("、")}。`
+        : "老闆話今晚冇新貨喇。";
+      state.pendingGoldFloat = -SHOP.rerollCost;
+      break;
+    }
     case "shop-relic": {
       const relicId = t.getAttribute("data-relic");
       const relic = relicById(relicId);

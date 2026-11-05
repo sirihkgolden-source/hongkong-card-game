@@ -1207,6 +1207,125 @@ export const EVENTS = {
       },
     ],
   },
+
+  /* ===== 密度補充：每 Act 再補一個短事件（三選一全部即時可見改局） ===== */
+
+  /** Act1-C：樓梯口阿婆 */
+  ev_stair_auntie: {
+    id: "ev_stair_auntie",
+    title: "樓梯口阿婆",
+    art: "assets/events/ev-alley-wake.jpg",
+    body: "唐樓樓梯口，阿婆攔住你：「後生仔，幫手托包米上四樓得唔得？」你望望自己一身傷，又望望佢隻手——呢條街，冇人幫就冇人幫。",
+    choices: [
+      {
+        id: "carry_rice",
+        label: "托住包米上四樓",
+        effectText: "失去 5 HP；最大生命 +6",
+        apply: (run) => {
+          run.hp = Math.max(1, run.hp - 5);
+          run.maxHp += 6;
+          return "爬到四樓，腰骨酸到震——但條腰此後實淨咗。";
+        },
+      },
+      {
+        id: "give_tissue",
+        label: "遞佢一張紙巾",
+        effectText: "牌組加入「雨衣包紮」",
+        apply: (run) => {
+          run.deck.push("S21");
+          return "阿婆抹咗抹手，硬塞你一卷膠布——多咗張包紮牌。";
+        },
+      },
+      {
+        id: "chat",
+        label: "企喺樓梯口傾兩句",
+        effectText: "回 9 HP；牌組加入「最緊要開心」",
+        apply: (run) => {
+          run.hp = Math.min(run.maxHp, run.hp + 9);
+          run.deck.push("S09");
+          return "阿婆講咗半個鐘舊事，你笑到咳——氣順咗，仲多張開心牌。";
+        },
+      },
+    ],
+  },
+
+  /** Act2-C：旺角截的士 */
+  ev_taxi_run: {
+    id: "ev_taxi_run",
+    title: "旺角截的士",
+    art: "assets/events/ev-mtr-crowd.jpg",
+    body: "凌晨三點，彌敦道仲塞。有架的士慢車埋嚟，司機探頭：「去邊？上車先講。」你知呢區啲的士——上得去，落唔落得返嚟係另一件事。",
+    choices: [
+      {
+        id: "ride_rest",
+        label: "上車唞一轉",
+        effectText: "回 6 HP；牌組加入「單車變摩托」",
+        apply: (run) => {
+          run.hp = Math.min(run.maxHp, run.hp + 6);
+          run.deck.push("S06");
+          return "冷氣一吹，人鬆咗——落車多咗張搏命牌。";
+        },
+      },
+      {
+        id: "bargain",
+        label: "同司機講價講到落車",
+        effectText: "最大生命 +4；失去 6 HP（講到口乾）",
+        apply: (run) => {
+          run.maxHp += 4;
+          run.hp = Math.max(1, run.hp - 6);
+          return "講到落車都未講掂，但你把口練得更硬淨。";
+        },
+      },
+      {
+        id: "read_shift",
+        label: "幫佢睇更表",
+        effectText: "牌組加入「舊帳對數」",
+        apply: (run) => {
+          run.deck.push("S72");
+          return "你幫佢數清更數，佢教你點睇數——多咗張對數牌。";
+        },
+      },
+    ],
+  },
+
+  /** Act3-C：天台水缸 */
+  ev_water_tank: {
+    id: "ev_water_tank",
+    title: "天台水缸",
+    art: "assets/events/ev-rooftop-night.jpg",
+    body: "舊水缸鏽到穿孔，但水仲係涼。你扭開水喉，水聲喺天台回響——上去之前，洗乾淨塊面，人都清醒啲。",
+    choices: [
+      {
+        id: "wash_face",
+        label: "洗個面",
+        effectText: "回 10 HP；最大生命 +2",
+        apply: (run) => {
+          run.maxHp += 2;
+          run.hp = Math.min(run.maxHp, run.hp + 10);
+          return "凍水一淋，血都醒返——個人清清爽爽。";
+        },
+      },
+      {
+        id: "drink_raw",
+        label: "就咁飲一啖",
+        effectText: "失去 4 HP；最大生命 +7",
+        apply: (run) => {
+          run.hp = Math.max(1, run.hp - 4);
+          run.maxHp += 7;
+          return "鏽味衝上鼻，你嘔咗兩聲——但身子骨反而頂得住。";
+        },
+      },
+      {
+        id: "fill_canteen",
+        label: "裝滿個水壺",
+        effectText: "牌組加入「萬年船」",
+        apply: (run) => {
+          run.deck.push("S11");
+          return "水壺孭上身，行路穩咗——多咗張穩陣擋牌。";
+        },
+      },
+    ],
+  },
 };
 
 /** 依 run.act 取當前地圖 */
@@ -1220,9 +1339,9 @@ export function mapForAct(act) {
  * 每 Act 至少 3 個短事件（1 個固定 + 2 個加厚）
  */
 export const EVENT_POOLS = {
-  1: ["ev_gate_whisper", "ev_herbal_tea", "ev_dai_pai_dong"],
-  2: ["ev_neon_hustle", "ev_mtr_squeeze", "ev_neon_sign"],
-  3: ["ev_rooftop_cage", "ev_rooftop_laundry", "ev_last_cigarette"],
+  1: ["ev_gate_whisper", "ev_herbal_tea", "ev_dai_pai_dong", "ev_stair_auntie"],
+  2: ["ev_neon_hustle", "ev_mtr_squeeze", "ev_neon_sign", "ev_taxi_run"],
+  3: ["ev_rooftop_cage", "ev_rooftop_laundry", "ev_last_cigarette", "ev_water_tank"],
 };
 
 /** 抽一個該 Act 的事件 id（可傳 rng 方便自測） */
@@ -1253,6 +1372,19 @@ export const SHOP = {
   sellRelicGain: 6,
   /** 賣牌換金 */
   sellCardGain: 4,
+  /**
+   * 「抽卡包」：貴啲，但一定係稀有牌池，手感更爽。
+   * 池子只放稀有／專屬級，唔會抽到普通牌。
+   */
+  packCost: 11,
+  packPool: [
+    "S07", "S64", "S72", "S06", "S56",
+    "S80", "S81", "S82",
+    "S83", "S84", "S85",
+    "S86", "S87", "S88",
+  ],
+  /** 「換貨」：花少少金刷新士多遺物貨架 */
+  rerollCost: 5,
 };
 
 /**
@@ -1373,6 +1505,23 @@ export function pickShopRelics(run, n = 2, rng = Math.random) {
   const pool = unownedRelics(run);
   const shuffled = [...pool].sort(() => rng() - 0.5);
   return shuffled.slice(0, Math.min(n, shuffled.length));
+}
+
+/**
+ * 抽卡包：由 SHOP.packPool（稀有／專屬級）抽一張。
+ * 專屬牌只會抽自己角色嘅，避免角色辨識度被打亂。
+ * @param {string} charId 角色 id（'oil'|'asan'|'kauko'）
+ */
+export function pickPackCard(charId, rng = Math.random) {
+  const pool = SHOP.packPool.filter((id) => {
+    const card = CARDS[id];
+    if (!card) return false;
+    // 專屬牌：只抽自己
+    if (card.owner) return card.owner === charId;
+    return true;
+  });
+  if (!pool.length) return null;
+  return pool[Math.floor(rng() * pool.length)];
 }
 
 
