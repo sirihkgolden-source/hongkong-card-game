@@ -443,6 +443,71 @@ body {
   color: var(--ink-dim);
 }
 
+/* HUD 被動短標：一眼見被動名同狀態（待命／就緒／用過） */
+.passive-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  align-self: flex-start;
+  margin: 0.1rem 0 0.15rem;
+  padding: 0.06rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.64rem;
+  line-height: 1.5;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ink-dim);
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.passive-chip-name {
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.passive-chip-state {
+  font-size: 0.6rem;
+  opacity: 0.85;
+}
+
+/* 就緒／觸發：亮起（快手金色、檔口綠色、招牌眼青色） */
+.passive-chip.is-ready.passive-chip--kuaisou,
+.passive-chip.is-used.passive-chip--kuaisou {
+  border-color: rgba(255, 193, 74, 0.6);
+  background: rgba(255, 193, 74, 0.16);
+  color: var(--neon-amber);
+}
+
+.passive-chip.is-ready.passive-chip--dangkou,
+.passive-chip.is-used.passive-chip--dangkou {
+  border-color: rgba(93, 255, 176, 0.6);
+  background: rgba(93, 255, 176, 0.14);
+  color: var(--ok);
+}
+
+.passive-chip.is-ready.passive-chip--zhaopaiyan,
+.passive-chip.is-used.passive-chip--zhaopaiyan {
+  border-color: rgba(61, 224, 255, 0.6);
+  background: rgba(61, 224, 255, 0.14);
+  color: var(--neon-cyan);
+}
+
+/* 待命：低調，但被動名仍然清楚 */
+.passive-chip.is-idle .passive-chip-name {
+  color: var(--ink);
+}
+
+/* 觸發瞬間閃一下（配合跳字） */
+.passive-chip.is-flash {
+  animation: passive-chip-flash 0.55s ease-out;
+}
+
+@keyframes passive-chip-flash {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.14); }
+  100% { transform: scale(1); }
+}
+
 /* 戰鬥 HUD：當前角色主路線（一眼見到） */
 .battle-route {
   display: inline-block;
