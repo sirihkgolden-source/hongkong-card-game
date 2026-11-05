@@ -209,7 +209,7 @@ export function floatGold(delta) {
  */
 export function floatRunDeltas(deltas, pushLine) {
   const lines = [];
-  const { hp = 0, maxHp = 0, deck = 0, block = 0, energy = 0, gold = 0 } = deltas || {};
+  const { hp = 0, maxHp = 0, deck = 0, block = 0, energy = 0, gold = 0, relic = 0 } = deltas || {};
   if (hp) {
     lines.push({ text: hp > 0 ? `+${hp} HP` : `${hp} HP`, variant: hp > 0 ? "heal" : "dmg" });
   }
@@ -218,6 +218,9 @@ export function floatRunDeltas(deltas, pushLine) {
   }
   if (deck) {
     lines.push({ text: deck > 0 ? `+${deck} 張牌` : `${deck} 張牌`, variant: "kuaisou" });
+  }
+  if (relic) {
+    lines.push({ text: relic > 0 ? `+${relic} 件遺物` : `${relic} 件遺物`, variant: "kuaisou" });
   }
   if (block) {
     lines.push({ text: block > 0 ? `+${block} 擋` : `${block} 擋`, variant: "block" });

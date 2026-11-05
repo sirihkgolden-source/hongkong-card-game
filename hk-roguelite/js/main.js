@@ -84,6 +84,7 @@ const state = {
   shopConsumables: /** @type {string[]} */ ([]),
   pendingGoldFloat: 0,
   pendingDeltas: /** @type {object|null} */ (null),
+  pendingRestMsg: "",
 };
 
 const app = document.getElementById("app");
@@ -344,6 +345,11 @@ function renderMap() {
         </div>
       </header>
       <ol class="act-strip" aria-label="三區進度">${actStrip}</ol>
+      ${
+        state.statusMsg
+          ? `<p class="status status-map" role="status">${escapeHtml(state.statusMsg)}</p>`
+          : ""
+      }
       <section class="panel map-panel">
         <h2>節點路線</h2>
         <ol class="map-list">${nodes}</ol>
@@ -895,12 +901,15 @@ function showRunDeltas(before, extraText) {
     gold: "gold",
     nextBlock: "block",
     nextEnergy: "energy",
-    relics: "deck",
   };
   const deltas = {};
   for (const [k, v] of Object.entries(d)) {
     const key = map[k];
     if (key) deltas[key] = (deltas[key] || 0) + v;
+  }
+  // 遺物數量變動另外標示，唔好當成「張牌」
+  if (d.relics) {
+    deltas.relic = d.relics;
   }
   // 畫面即將重繪，所以暫存起，等 render 之後先播
   state.pendingDeltas = deltas;
@@ -910,8 +919,16 @@ function showRunDeltas(before, extraText) {
 /** render 完之後播暫存嘅改動跳字 */
 function flushRunDeltas() {
   const deltas = state.pendingDeltas;
-  if (!deltas || !Object.keys(deltas).length) return;
+  const restMsg = state.pendingRestMsg;
   state.pendingDeltas = null;
+  state.pendingRestMsg = "";
+  if (restMsg) {
+    // 休息節點行完會返地圖，用 statusMsg 顯示一句港味回饋
+    state.statusMsg = restMsg;
+    const statusEl = document.querySelector(".status");
+    if (statusEl) statusEl.textContent = restMsg;
+  }
+  if (!deltas || !Object.keys(deltas).length) return;
   requestAnimationFrame(() => {
     requestAnimationFrame(() => floatRunDeltas(deltas));
   });
@@ -1539,15 +1556,22 @@ function onClick(event) {
       break;
     case "rest-heal": {
       const healAmt = Math.floor(state.run.maxHp * 0.3);
+      const before = runSnapshot();
       state.run.hp = Math.min(state.run.maxHp, state.run.hp + healAmt);
+      state.pendingRestMsg = `眯咗一陣，回咗 ${healAmt} HP。`;
+      showRunDeltas(before);
       advanceMap();
       break;
     }
-    case "rest-upgrade":
+    case "rest-upgrade": {
+      const before = runSnapshot();
       state.run.deck.push("S15");
       state.run.hp = Math.min(state.run.maxHp, state.run.hp + 4);
+      state.pendingRestMsg = "磨好把刀——牌組加入「廊燈直拳」，順手回 4 HP。";
+      showRunDeltas(before);
       advanceMap();
       break;
+    }
     case "shop-heal":
       if (state.run.gold >= SHOP.healCost) {
         const before = runSnapshot();
