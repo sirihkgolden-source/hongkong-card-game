@@ -1438,10 +1438,11 @@ export const EVENTS = {
       {
         id: "give_tissue",
         label: "遞佢一張紙巾",
-        effectText: "牌組加入「雨衣包紮」",
+        effectText: "回 4 HP；牌組加入「雨衣包紮」",
         apply: (run) => {
+          run.hp = Math.min(run.maxHp, run.hp + 4);
           run.deck.push("S21");
-          return "阿婆抹咗抹手，硬塞你一卷膠布——多咗張包紮牌。";
+          return "阿婆抹咗抹手，硬塞你一卷膠布——回 4 HP，多咗張包紮牌。";
         },
       },
       {
@@ -1487,10 +1488,11 @@ export const EVENTS = {
       {
         id: "read_shift",
         label: "幫佢睇更表",
-        effectText: "牌組加入「舊帳對數」",
+        effectText: "下戰開場 +1 能量；牌組加入「舊帳對數」",
         apply: (run) => {
+          run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
           run.deck.push("S72");
-          return "你幫佢數清更數，佢教你點睇數——多咗張對數牌。";
+          return "你幫佢數清更數，佢教你點睇數——下場多 1 能量，仲多張對數牌。";
         },
       },
     ],
@@ -1526,10 +1528,11 @@ export const EVENTS = {
       {
         id: "fill_canteen",
         label: "裝滿個水壺",
-        effectText: "牌組加入「萬年船」",
+        effectText: "回 5 HP；牌組加入「萬年船」",
         apply: (run) => {
+          run.hp = Math.min(run.maxHp, run.hp + 5);
           run.deck.push("S11");
-          return "水壺孭上身，行路穩咗——多咗張穩陣擋牌。";
+          return "水壺孭上身，行路穩咗——回 5 HP，多咗張穩陣擋牌。";
         },
       },
     ],
@@ -1658,6 +1661,135 @@ export const EVENTS = {
       },
     ],
   },
+
+  /* ===== 內容密度：每 Act 再補一個港味短事件（三選一全部可見改局） ===== */
+
+  /** Act1-E：茶樓點心 */
+  ev_yum_cha: {
+    id: "ev_yum_cha",
+    title: "茶樓點心",
+    art: "assets/events/ev-yum-cha.jpg",
+    body: "茶樓未收爐，推車阿嬸企喺你檯邊：「蝦餃定鳳爪？唔食都畀你睇一眼——呢條街，食完先講公事。」蒸籠一揭，熱氣蓋住半邊臉。",
+    choices: [
+      {
+        id: "shrimp",
+        label: "來一籠蝦餃",
+        effectText: "回 11 HP；牌組加入「加底唔該」",
+        apply: (run) => {
+          run.hp = Math.min(run.maxHp, run.hp + 11);
+          run.deck.push("S25");
+          return "蝦餃落肚，人都醒神——多咗張回血抽牌。";
+        },
+      },
+      {
+        id: "pay_yum",
+        label: "夾埋鄰桌埋單",
+        effectText: "失去 4 金；最大生命 +4；下戰開場 +1 能量",
+        apply: (run) => {
+          run.gold = Math.max(0, run.gold - 4);
+          run.maxHp += 4;
+          run.hp = Math.min(run.maxHp, run.hp + 4);
+          run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
+          return "畀完數，伙記拍你膊頭——身子實淨，下場多 1 能量。";
+        },
+      },
+      {
+        id: "steal_cart",
+        label: "推走半架點心車",
+        effectText: "失去 7 HP；牌組加入「紅白藍砸」＋「椒鹽補刀」",
+        apply: (run) => {
+          run.hp = Math.max(1, run.hp - 7);
+          run.deck.push("S40", "S02");
+          return "車轆輾腳，痛到跳——但袋多咗兩張搶手牌。";
+        },
+      },
+    ],
+  },
+
+  /** Act2-E：女人街尾檔 */
+  ev_ladies_market: {
+    id: "ev_ladies_market",
+    title: "女人街尾檔",
+    art: "assets/events/ev-mtr-platform.jpg",
+    body: "女人街尾燈未熄，檔主收緊雨布：「後生，呢啲貨淨係夜半先擺。睇中就講，唔好摸完走。」霓虹映住一排假錶同真刀仔。",
+    choices: [
+      {
+        id: "buy_watch",
+        label: "買隻假勞力士傍身",
+        effectText: "失去 5 金；下戰入場帶 9 擋；牌組加入「掛波小心」",
+        apply: (run) => {
+          run.gold = Math.max(0, run.gold - 5);
+          run.nextBattleBlock = (run.nextBattleBlock || 0) + 9;
+          run.deck.push("S22");
+          return "錶殼反光——下場帶 9 擋，仲多張擋牌。";
+        },
+      },
+      {
+        id: "haggle_hard",
+        label: "同檔主講價講到啞",
+        effectText: "失去 5 HP；最大生命 +6；牌組加入「埋單」",
+        apply: (run) => {
+          run.hp = Math.max(1, run.hp - 5);
+          run.maxHp += 6;
+          run.hp = Math.min(run.maxHp, run.hp);
+          run.deck.push("S12");
+          return "講到聲沙，但你把口硬淨咗——多咗張「埋單」。";
+        },
+      },
+      {
+        id: "help_fold",
+        label: "幫手收雨布",
+        effectText: "回 8 HP；下戰開場 +1 能量",
+        apply: (run) => {
+          run.hp = Math.min(run.maxHp, run.hp + 8);
+          run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
+          return "雨布一折，檔主塞你一枝冰——回 8 HP，下場多 1 能量。";
+        },
+      },
+    ],
+  },
+
+  /** Act3-E：天台拜神 */
+  ev_incense_altar: {
+    id: "ev_incense_altar",
+    title: "天台拜神",
+    art: "assets/events/ev-rooftop-night.jpg",
+    body: "水塔旁一個鐵皮神龕，香灰積到腳趾。有人塞你三炷香：「上去之前拜一拜。上面個王，唔係你一個人打得低。」煙直上夜空，像一條未斷嘅命。",
+    choices: [
+      {
+        id: "kneel",
+        label: "跪低拜三拜",
+        effectText: "回 9 HP；最大生命 +4；下戰入場帶 7 擋",
+        apply: (run) => {
+          run.maxHp += 4;
+          run.hp = Math.min(run.maxHp, run.hp + 9);
+          run.nextBattleBlock = (run.nextBattleBlock || 0) + 7;
+          return "香灰沾衫——血厚咗，下場帶 7 擋入場。";
+        },
+      },
+      {
+        id: "offer_gold",
+        label: "塞幾蚊入功德箱",
+        effectText: "失去 6 金；下戰開場 +2 能量；牌組加入「舊帳對數」",
+        apply: (run) => {
+          run.gold = Math.max(0, run.gold - 6);
+          run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 2;
+          run.deck.push("S72");
+          return "箱蓋一響——下場多 2 能量，仲多張對數牌。";
+        },
+      },
+      {
+        id: "take_ash",
+        label: "拈一撮香灰入袋",
+        effectText: "失去 6 HP；牌組加入「打邊爐氣」＋「大力出奇蹟」",
+        apply: (run) => {
+          run.hp = Math.max(1, run.hp - 6);
+          run.deck.push("S64", "S07");
+          return "灰入鼻，咳到眼紅——袋多咗兩張搏命牌。";
+        },
+      },
+    ],
+  },
 };
 
 /** 依 run.act 取當前地圖 */
@@ -1668,12 +1800,33 @@ export function mapForAct(act) {
 
 /**
  * 每 Act 事件池：事件節點行到時抽一個（同一節點抽定就記住）
- * 每 Act 至少 3 個短事件（1 個固定 + 2 個加厚）
+ * 每 Act ≥5 個短事件（港味場景互不重複；選項全部可見改局）
  */
 export const EVENT_POOLS = {
-  1: ["ev_gate_whisper", "ev_herbal_tea", "ev_dai_pai_dong", "ev_stair_auntie", "ev_market_stall"],
-  2: ["ev_neon_hustle", "ev_mtr_squeeze", "ev_neon_sign", "ev_taxi_run", "ev_cha_closing"],
-  3: ["ev_rooftop_cage", "ev_rooftop_laundry", "ev_last_cigarette", "ev_water_tank", "ev_stair_corner"],
+  1: [
+    "ev_gate_whisper",
+    "ev_herbal_tea",
+    "ev_dai_pai_dong",
+    "ev_stair_auntie",
+    "ev_market_stall",
+    "ev_yum_cha",
+  ],
+  2: [
+    "ev_neon_hustle",
+    "ev_mtr_squeeze",
+    "ev_neon_sign",
+    "ev_taxi_run",
+    "ev_cha_closing",
+    "ev_ladies_market",
+  ],
+  3: [
+    "ev_rooftop_cage",
+    "ev_rooftop_laundry",
+    "ev_last_cigarette",
+    "ev_water_tank",
+    "ev_stair_corner",
+    "ev_incense_altar",
+  ],
 };
 
 /** 抽一個該 Act 的事件 id（可傳 rng 方便自測） */
@@ -1697,6 +1850,7 @@ export const SHOP = {
   healCost: 6,
   healAmt: 12,
   cardCost: 8,
+  /** fallback；正式用 shopCardIdForAct(act) */
   cardId: "S12",
   /** 買遺物（隨機未擁有） */
   relicCost: 14,
@@ -1721,6 +1875,133 @@ export const SHOP = {
 };
 
 /**
+ * 休息／便利店 Act 差異化（港味文案 + 執牌貨不同）
+ * 價錢沿用 SHOP；只有標籤、回饋句、執牌貨卡、休息升級牌按區換。
+ * @type {Record<number, {
+ *   subtitle: string,
+ *   restHealLabel: string, restHealDesc: (amt:number)=>string, restHealMsg: (amt:number)=>string,
+ *   restUpgradeLabel: string, restUpgradeDesc: string, restUpgradeCardId: string, restUpgradeHeal: number, restUpgradeMsg: string,
+ *   restCleanseLabel: string, restCleanseClear: (n:number)=>string, restCleansePlain: string, restCleanseMsgClear: (n:number)=>string, restCleanseMsgPlain: string,
+ *   shopHealLabel: string, shopHealDesc: string, shopHealMsg: (amt:number)=>string,
+ *   shopCardLabel: string, shopCardId: string, shopCardMsg: (name:string)=>string,
+ *   shopPackLabel: string, shopPackDesc: string, shopPackMsg: (name:string, rarity:string)=>string,
+ *   shopRerollLabel: string, shopRerollDesc: string, shopRerollMsg: (names:string)=>string, shopRerollEmpty: string,
+ *   consumableTitle: string, relicTitle: string, sellTitle: string, leaveLabel: string,
+ * }>}
+ */
+export const REST_SHOP_BY_ACT = {
+  1: {
+    subtitle: "鐵皮簷篷 · 唐樓士多燈仲亮",
+    restHealLabel: "眯一陣（簷篷底）",
+    restHealDesc: (amt) => `回復 ${amt} HP（約三成）· 雨聲拍鐵皮`,
+    restHealMsg: (amt) => `簷篷底眯咗一陣，回咗 ${amt} HP。`,
+    restUpgradeLabel: "磨刀（後巷感）",
+    restUpgradeDesc: "牌組加入「廊燈直拳」；回復 4 HP",
+    restUpgradeCardId: "S15",
+    restUpgradeHeal: 4,
+    restUpgradeMsg: "後巷磨好把刀——牌組加入「廊燈直拳」，順手回 4 HP。",
+    restCleanseLabel: "沖個涼（街喉）",
+    restCleanseClear: (n) => `清走「下戰 −${n} 能量」；回復 6 HP`,
+    restCleansePlain: "冇負面狀態；街喉水涼，純粹回復 6 HP",
+    restCleanseMsgClear: (n) => `街喉沖走晦氣——清咗下戰 −${n} 能量，兼回 6 HP。`,
+    restCleanseMsgPlain: "街喉沖完，人都醒神——回 6 HP。",
+    shopHealLabel: "士多・豉油雞飯",
+    shopHealDesc: `花 ${SHOP.healCost} 金幣回復 ${SHOP.healAmt} HP`,
+    shopHealMsg: (amt) => `阿婆遞過嚟盒豉油雞飯——回咗 ${amt} HP，人都醒神。`,
+    shopCardLabel: "士多・執後巷牌",
+    shopCardId: "S40",
+    shopCardMsg: (name) => `執咗張「${name}」入袋——後巷用得着。`,
+    shopPackLabel: "士多・稀有卡包",
+    shopPackDesc: `花 ${SHOP.packCost} 金幣抽一張稀有／專屬牌`,
+    shopPackMsg: (name, rarity) => `拆開後巷卡包——「${name}」，${rarity}牌，手氣唔錯。`,
+    shopRerollLabel: "叫老闆換貨",
+    shopRerollDesc: `花 ${SHOP.rerollCost} 金幣叫唐樓老闆換過批貨`,
+    shopRerollMsg: (names) => `老闆換咗批貨：${names}。`,
+    shopRerollEmpty: "今晚唐樓冇新貨。",
+    consumableTitle: "士多・消耗品（後巷貨）",
+    relicTitle: "士多・遺物",
+    sellTitle: "變賣牌組",
+    leaveLabel: "離開簷篷（繼續地圖）",
+  },
+  2: {
+    subtitle: "通宵螢光燈 · 雪糕櫃嗡嗡響",
+    restHealLabel: "眯一陣（冷氣位）",
+    restHealDesc: (amt) => `回復 ${amt} HP（約三成）· 雪櫃風吹面`,
+    restHealMsg: (amt) => `便利店冷氣位眯咗一陣，回咗 ${amt} HP。`,
+    restUpgradeLabel: "磨刀（霓虹底）",
+    restUpgradeDesc: "牌組加入「單車變摩托」；回復 4 HP",
+    restUpgradeCardId: "S06",
+    restUpgradeHeal: 4,
+    restUpgradeMsg: "霓虹底磨好把刀——牌組加入「單車變摩托」，順手回 4 HP。",
+    restCleanseLabel: "沖個涼（公廁）",
+    restCleanseClear: (n) => `清走「下戰 −${n} 能量」；回復 6 HP`,
+    restCleansePlain: "冇負面狀態；公廁水溫古怪，純粹回復 6 HP",
+    restCleanseMsgClear: (n) => `公廁沖走一身霓虹味——清咗下戰 −${n} 能量，兼回 6 HP。`,
+    restCleanseMsgPlain: "公廁沖完，人都醒神——回 6 HP。",
+    shopHealLabel: "便利店・魚蛋杯",
+    shopHealDesc: `花 ${SHOP.healCost} 金幣回復 ${SHOP.healAmt} HP`,
+    shopHealMsg: (amt) => `夜班阿姐遞過嚟杯魚蛋——回咗 ${amt} HP，胃都暖。`,
+    shopCardLabel: "便利店・執旺角牌",
+    shopCardId: "S47",
+    shopCardMsg: (name) => `執咗張「${name}」入袋——旺角夜路用得着。`,
+    shopPackLabel: "便利店・霓虹卡包",
+    shopPackDesc: `花 ${SHOP.packCost} 金幣抽一張稀有／專屬牌`,
+    shopPackMsg: (name, rarity) => `拆開霓虹卡包——「${name}」，${rarity}牌，手氣唔錯。`,
+    shopRerollLabel: "叫夜班換貨",
+    shopRerollDesc: `花 ${SHOP.rerollCost} 金幣叫夜班換過批貨`,
+    shopRerollMsg: (names) => `夜班換咗批貨：${names}。`,
+    shopRerollEmpty: "通宵店今晚冇新貨。",
+    consumableTitle: "便利店・消耗品（夜貨）",
+    relicTitle: "便利店・遺物",
+    sellTitle: "變賣牌組",
+    leaveLabel: "離開便利店（繼續地圖）",
+  },
+  3: {
+    subtitle: "鐵皮滴水 · 籠屋底士多仲未關門",
+    restHealLabel: "眯一陣（搭棚底）",
+    restHealDesc: (amt) => `回復 ${amt} HP（約三成）· 鐵皮滴水聲`,
+    restHealMsg: (amt) => `搭棚底眯咗一陣，回咗 ${amt} HP。`,
+    restUpgradeLabel: "磨刀（天台感）",
+    restUpgradeDesc: "牌組加入「萬年船」；回復 4 HP",
+    restUpgradeCardId: "S11",
+    restUpgradeHeal: 4,
+    restUpgradeMsg: "天台磨好把刀——牌組加入「萬年船」，順手回 4 HP。",
+    restCleanseLabel: "沖個涼（水塔喉）",
+    restCleanseClear: (n) => `清走「下戰 −${n} 能量」；回復 6 HP`,
+    restCleansePlain: "冇負面狀態；水塔喉凍到震，純粹回復 6 HP",
+    restCleanseMsgClear: (n) => `水塔喉沖走晦氣——清咗下戰 −${n} 能量，兼回 6 HP。`,
+    restCleanseMsgPlain: "水塔喉沖完，人都醒神——回 6 HP。",
+    shopHealLabel: "籠屋士多・即食麵",
+    shopHealDesc: `花 ${SHOP.healCost} 金幣回復 ${SHOP.healAmt} HP`,
+    shopHealMsg: (amt) => `士多老闆遞過嚟碗即食麵——回咗 ${amt} HP，熱氣沖面。`,
+    shopCardLabel: "籠屋士多・執天台牌",
+    shopCardId: "S72",
+    shopCardMsg: (name) => `執咗張「${name}」入袋——上天台用得着。`,
+    shopPackLabel: "籠屋士多・最終卡包",
+    shopPackDesc: `花 ${SHOP.packCost} 金幣抽一張稀有／專屬牌`,
+    shopPackMsg: (name, rarity) => `拆開天台卡包——「${name}」，${rarity}牌，手氣唔錯。`,
+    shopRerollLabel: "叫老闆換貨",
+    shopRerollDesc: `花 ${SHOP.rerollCost} 金幣叫籠屋老闆換過批貨`,
+    shopRerollMsg: (names) => `老闆換咗批貨：${names}。`,
+    shopRerollEmpty: "天台今晚冇新貨。",
+    consumableTitle: "籠屋士多・消耗品",
+    relicTitle: "籠屋士多・遺物",
+    sellTitle: "變賣牌組",
+    leaveLabel: "離開搭棚（繼續地圖）",
+  },
+};
+
+/** 取該 Act 休息／便利店文案；缺就 fallback Act1 */
+export function restShopForAct(act) {
+  return REST_SHOP_BY_ACT[act] || REST_SHOP_BY_ACT[1];
+}
+
+/** 該 Act 便利店「執牌」貨卡 id */
+export function shopCardIdForAct(act) {
+  return restShopForAct(act).shopCardId || SHOP.cardId;
+}
+
+/**
  * 消耗品（士多貨架一定有 1 件）
  * 買完即用，唔會入遺物欄，所以叫「消耗」。
  * @type {Record<string, {
@@ -1736,6 +2017,8 @@ export const CONSUMABLES = {
     desc: "即刻回 18 HP。",
     flavor: "一板四粒，痛就食兩粒——剩返兩粒留返下次。",
     price: 7,
+    /** 三區都見得到；偏後巷／唐樓 */
+    acts: [1, 2, 3],
     apply: (run) => {
       const before = run.hp;
       run.hp = Math.min(run.maxHp, run.hp + 18);
@@ -1749,6 +2032,7 @@ export const CONSUMABLES = {
     desc: "即刻最大生命 +5，並回 5。",
     flavor: "貼住傷口，行路都冇咁痛。",
     price: 9,
+    acts: [1, 2, 3],
     apply: (run) => {
       run.maxHp += 5;
       run.hp = Math.min(run.maxHp, run.hp + 5);
@@ -1761,6 +2045,7 @@ export const CONSUMABLES = {
     desc: "下一場戰鬥開場 +1 能量。",
     flavor: "味道似藥水，但真係頂得一陣。",
     price: 8,
+    acts: [1, 2, 3],
     apply: (run) => {
       run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
       return "飲完心跳快咗——下一場開局多 1 能量。";
@@ -1772,18 +2057,77 @@ export const CONSUMABLES = {
     desc: "牌組加入一張「椒鹽補刀」。",
     flavor: "求個心安，順手多張平價補刀。",
     price: 6,
+    acts: [1, 2, 3],
     apply: (run) => {
       run.deck.push("S02");
       return "靈符入袋——牌組多咗張「椒鹽補刀」。";
     },
   },
+  /** Act1 偏唐樓：維他奶 */
+  cs_vitamilk: {
+    id: "cs_vitamilk",
+    name: "維他奶",
+    desc: "回 10 HP；下戰入場帶 4 擋。",
+    flavor: "紙包一扭，豆香散滿唐樓梯間。",
+    price: 5,
+    acts: [1],
+    apply: (run) => {
+      run.hp = Math.min(run.maxHp, run.hp + 10);
+      run.nextBattleBlock = (run.nextBattleBlock || 0) + 4;
+      return "飲完維他奶——回 10 HP，下場帶 4 擋。";
+    },
+  },
+  /** Act2 偏旺角夜：魚蛋 */
+  cs_fishballs: {
+    id: "cs_fishballs",
+    name: "魚蛋杯",
+    desc: "回 8 HP；牌組加入「芝麻糊暖」。",
+    flavor: "竹籤戳住，辣醬多到滴落霓虹地。",
+    price: 7,
+    acts: [2],
+    apply: (run) => {
+      run.hp = Math.min(run.maxHp, run.hp + 8);
+      run.deck.push("S47");
+      return "魚蛋落肚——回 8 HP，多咗張「芝麻糊暖」。";
+    },
+  },
+  /** Act3 偏天台：蛋撻 */
+  cs_egg_tart: {
+    id: "cs_egg_tart",
+    name: "蛋撻",
+    desc: "最大生命 +3 並回 3；下戰開場 +1 能量。",
+    flavor: "酥皮碎落鐵皮棚，甜到你忘記上面有個王。",
+    price: 8,
+    acts: [3],
+    apply: (run) => {
+      run.maxHp += 3;
+      run.hp = Math.min(run.maxHp, run.hp + 3);
+      run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
+      return "蛋撻入肚——最大生命 +3，下場多 1 能量。";
+    },
+  },
 };
 
-/** 抽 n 件消耗品做貨架（每局洗一次） */
-export function pickShopConsumables(n = 1, rng = Math.random) {
+/**
+ * 抽 n 件消耗品做貨架（每局洗一次）
+ * 傳 act 時優先抽該區專屬貨；唔夠就由共用池補。
+ */
+export function pickShopConsumables(n = 1, rng = Math.random, act = 0) {
   const ids = Object.keys(CONSUMABLES);
-  const shuffled = [...ids].sort(() => rng() - 0.5);
-  return shuffled.slice(0, Math.min(n, shuffled.length));
+  const preferred = act
+    ? ids.filter((id) => {
+        const acts = CONSUMABLES[id].acts;
+        return Array.isArray(acts) && acts.includes(act) && acts.length === 1;
+      })
+    : [];
+  const shared = ids.filter((id) => !preferred.includes(id));
+  const shuffle = (arr) => [...arr].sort(() => rng() - 0.5);
+  const ordered = [...shuffle(preferred), ...shuffle(shared)];
+  // 有專屬貨時 70% 機率先擺專屬，否則照洗
+  if (preferred.length && rng() < 0.7) {
+    return ordered.slice(0, Math.min(n, ordered.length));
+  }
+  return shuffle(ids).slice(0, Math.min(n, ids.length));
 }
 
 export function consumableById(id) {
