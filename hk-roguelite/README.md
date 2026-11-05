@@ -35,6 +35,7 @@ hk-roguelite/          ← 目錄暫名；產品名《香江小風波》
 │   ├── battle.js      ← 戰鬥（四角色被動）
 │   ├── feel.js        ← 飛軌／飄字／震／色閃／被動橫幅
 │   ├── sfx.js         ← 音效薄層（WebAudio 合成、靜音掣、無音檔）
+│   ├── storage.js     ← 本機存儲層（列出／清除進度，保留設定 key）
 │   ├── data.js        ← 角色／牌／敵／Act1–3 地圖／事件
 │   ├── smoke-full.mjs ← 封測包（四角／分支／店／遺物／near-miss／再開一局）
 │   ├── smoke-act2.mjs ← Act1–2 流程自測
@@ -158,24 +159,56 @@ hk-roguelite/          ← 目錄暫名；產品名《香江小風波》
 
 預覽請用本機靜態伺服器（見上）。瀏覽器政策要求**首次用戶互動**後才可出聲，所以入場撳第一下（例如「進入選角」）之後音效才會響——呢個係正常，唔係壞。
 
+### 設定頁（靜音記憶＋清除進度）
+
+標題頁「設定」入 → `screen: settings`。入面只有兩件事，但兩件都要可靠：
+
+**① 音效開關（記住）**
+
+- 狀態寫入 `localStorage`（key `hk_sfx_muted`），**重開瀏覽器仍然生效**
+- 撳掣即刻反映：圖示 🔇／🔊、文案「音效：關／開」、`aria-pressed`、`is-muted` class 四樣同步
+- 由 `sfx.js` 嘅 `isMuted()`／`toggleMuted()` 單一來源驅動，唔會出現「UI 話關但其實有聲」
+
+**② 清除本機進度（要撳兩下）**
+
+| 步驟 | 會發生咩 |
+|---|---|
+| 撳「清除本機進度」 | **只係問**，彈紅色確認區，列出將會清走邊幾個 key。**資料完全冇動** |
+| 撳「係，清除」 | 真係清，只清 `hk_` 前綴嘅**進度** key |
+| 撳「唔好，取消」 | 回上一步，資料完好，提示「冇清到任何嘢。」 |
+
+- **音效設定一定保留**（`SETTING_KEYS` 白名單），唔會清完進度連靜音都冇埋
+- **唔會碰其他 App 嘅 key**（嚴格 `hk_` 前綴）
+- 冇進度時掣**禁用**，文案講明「（冇進度可清）」
+- 每次入設定頁都由「未確認」開始，唔會殘留上次嘅紅色確認區
+- 清除後有回饋：「已清除 N 項本機進度。音效設定保留。」
+
+
 ## 自測
 
 ```bash
 cd hk-roguelite
-node js/smoke-act2.mjs   # Act1–2 流程、事件池、商店、選牌加權＋音效薄層
+node js/smoke-act2.mjs   # Act1–2 流程、事件池、商店、選牌加權＋音效薄層＋設定頁清除進度
 node js/smoke-act3.mjs   # 四角色×三區全程 → 最終 Boss → 結算資料
 node js/smoke-full.mjs   # 封測包：四角／分支／店／遺物／near-miss／再開一局
-node js/smoke-act3.mjs   # 四角×三區全程 → 最終 Boss → 結算資料
-node js/smoke-act2.mjs   # Act1–2 流程、事件池、商店、選牌加權
 node js/probe-act3.mjs   # 最終 Boss 勝率／超時（平衡下限參考）
 ```
 
-`smoke-act2.mjs` 尾段有「音效薄層」檢查，唔需要瀏覽器都跑得：
+`smoke-act2.mjs` 尾段有兩組唔需要瀏覽器嘅檢查：
+
+**「音效薄層」**
 
 - 四類必需音（`card`／`hurt`／`coin`／`clear`）都存在，而且 `SFX_NAMES` 每個登記名都真係有實作
 - `MASTER_GAIN` 必須 > 0 且 < 0.6（防止有人日後不小心調到炸耳）
 - 靜音 toggle 兩下要還原、靜音狀態真係寫入／清走 `localStorage`
 - 靜音時同無 `AudioContext` 環境下播全部音都**唔 throw**
+
+**「設定頁清除進度」**
+
+- 只列出 `hk_` 前綴嘅 key，其他 App 嘅 key 唔會被掃到
+- 清除進度**必須保留** `hk_sfx_muted`（唔可以連靜音設定都洗走）
+- 冇進度時重複清除要安全回空，唔 throw
+- `removeItem` 拋錯時要回 `ok: false`，唔會令遊戲崩
 
 ### 封測包（`smoke-full.mjs`）
 

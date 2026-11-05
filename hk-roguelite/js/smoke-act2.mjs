@@ -788,4 +788,78 @@ const results = ["oil", "asan", "kauko", "sing"].map(simulateChar);
   delete globalThis.localStorage;
 }
 
+/* ---------- 設定頁：清除進度（唔可以洗走音效設定） ---------- */
+{
+  // 完整模擬 localStorage（要有 length／key 才驗得到「列出全部 key」）
+  const store = new Map();
+  globalThis.localStorage = {
+    get length() {
+      return store.size;
+    },
+    key: (i) => Array.from(store.keys())[i] ?? null,
+    getItem: (k) => (store.has(k) ? store.get(k) : null),
+    setItem: (k, v) => void store.set(k, String(v)),
+    removeItem: (k) => void store.delete(k),
+  };
+
+  const { KEY_PREFIX, SETTING_KEYS, listKeys, progressKeys, hasProgress, clearProgress } =
+    await import("./storage.js");
+
+  // ① 空機：冇任何進度
+  assert(listKeys().length === 0, "空機唔應該有 key");
+  assert(hasProgress() === false, "空機 hasProgress 應為 false");
+
+  // ② 寫入混合資料：3 個進度 + 1 個設定，另加 1 個無關 key（唔應該被掃到）
+  localStorage.setItem("hk_meta_v1", '{"owned":["x"]}');
+  localStorage.setItem("hk_codex_v1", "{}");
+  localStorage.setItem("hk_runs_v1", "[]");
+  localStorage.setItem(SETTING_KEYS[0], "1"); // 靜音設定
+  localStorage.setItem("_other_app_key", "leave-me");
+
+  assert(listKeys().length === 4, `listKeys 應為 4，實際 ${listKeys().length}`);
+  assert(progressKeys().length === 3, `progressKeys 應為 3，實際 ${progressKeys().length}`);
+  assert(
+    !progressKeys().includes(SETTING_KEYS[0]),
+    "設定 key 唔應該當成進度"
+  );
+  assert(hasProgress() === true, "有進度時 hasProgress 應為 true");
+  // 無關 key 唔應該被列入（前綴嚴格）
+  for (const k of listKeys()) assert(k.startsWith(KEY_PREFIX), `${k} 唔係本遊戲嘅 key`);
+
+  // ③ 清除進度：進度清空，設定保留，無關 key 不受影響
+  const res = clearProgress();
+  assert(res.ok === true, "clearProgress 應成功");
+  assert(res.removed.length === 3, `應清 3 個，實際 ${res.removed.length}`);
+  assert(progressKeys().length === 0, "清除後唔應該再有進度");
+  assert(hasProgress() === false, "清除後 hasProgress 應為 false");
+  assert(
+    localStorage.getItem(SETTING_KEYS[0]) === "1",
+    "音效設定必須保留（清除進度唔可以洗走靜音）"
+  );
+  assert(
+    localStorage.getItem("_other_app_key") === "leave-me",
+    "其他 App 嘅 key 唔可以被清"
+  );
+
+  // ④ 冇進度時再清一次：唔應該 throw，removed 為空
+  const again = clearProgress();
+  assert(again.ok === true && again.removed.length === 0, "重複清除應該安全回空");
+
+  // ⑤ 清除失敗要降級而唔 throw（模擬 removeItem 拋錯）
+  localStorage.setItem("hk_meta_v1", "{}");
+  const origRemove = localStorage.removeItem;
+  localStorage.removeItem = () => {
+    throw new Error("quota");
+  };
+  const failed = clearProgress();
+  assert(failed.ok === false, "removeItem 拋錯時 clearProgress 應回 ok:false");
+  localStorage.removeItem = origRemove;
+
+  console.log("  ✓ 設定頁清除進度（保留音效設定／唔碰其他 key）");
+
+  // 收工
+  store.clear();
+  delete globalThis.localStorage;
+}
+
 console.log(JSON.stringify({ ok: true, act1: actDisplayName(1), act2: actDisplayName(2), results }, null, 2));
