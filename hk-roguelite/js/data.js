@@ -408,6 +408,9 @@ export const CHARACTERS = {
     id: "oil",
     name: "阿油・後巷經紀",
     short: "出手快、愛搏；一路削血一路加速",
+    /** 一句講清點玩（選角一眼睇到路線） */
+    playstyle: "連環出拳——每三張攻擊，第四張平一費兼加傷。",
+    route: "搏命・攻擊",
     initial: "油",
     portrait: "assets/art/portraits/ayau.webp",
     maxHp: 68,
@@ -442,6 +445,9 @@ export const CHARACTERS = {
     id: "asan",
     name: "阿珊・茶記夜更",
     short: "捱得、護得場；盾厚再反打",
+    /** 一句講清點玩（選角一眼睇到路線） */
+    playstyle: "疊盾捱打——擋夠先還手，愈守愈硬淨。",
+    route: "守住・擋回",
     initial: "珊",
     portrait: "assets/art/portraits/ashan.jpg",
     maxHp: 80,
@@ -477,6 +483,9 @@ export const CHARACTERS = {
     id: "kauko",
     name: "九哥・招牌工",
     short: "識睇牌、識抽牌；技能多、節奏活",
+    /** 一句講清點玩（選角一眼睇到路線） */
+    playstyle: "抽牌鋪路——技能先起手，牌多就有得揀。",
+    route: "節奏・抽牌",
     initial: "九",
     portrait: "assets/art/portraits/kauko.jpg",
     maxHp: 65,
