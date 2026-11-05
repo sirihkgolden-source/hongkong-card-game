@@ -726,6 +726,61 @@ body {
   white-space: nowrap;
 }
 
+/* —— 每日一局鉤 —— */
+/* 標題頁狀態句：已領用灰綠、未領用琥珀（唔用紅，唔係錯誤） */
+.daily-line {
+  margin: 0;
+  text-align: center;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.42rem 0.7rem;
+  border-radius: 999px;
+  width: 100%;
+}
+
+.daily-line.is-todo {
+  color: rgba(255, 205, 120, 0.96);
+  background: rgba(255, 193, 74, 0.1);
+  border: 1px solid rgba(255, 193, 74, 0.26);
+}
+
+.daily-line.is-claimed {
+  color: rgba(160, 214, 196, 0.9);
+  background: rgba(24, 60, 44, 0.34);
+  border: 1px solid rgba(90, 220, 170, 0.22);
+}
+
+/* 結算頁：今日獎勵 panel */
+.daily-panel {
+  border-color: rgba(255, 193, 74, 0.34);
+}
+
+.daily-panel h2 {
+  color: var(--neon-amber);
+}
+
+.daily-lede {
+  margin: 0 0 0.45rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: rgba(190, 212, 236, 0.86);
+}
+
+.daily-body {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.daily-body strong {
+  color: var(--neon-amber);
+}
+
 /* —— 設定頁 —— */
 .screen-settings .panel {
   display: flex;

@@ -49,6 +49,12 @@ import { hasSeenTutorial, markTutorialSeen } from "./tutorial.js";
 import { pauseSummary, pauseLossLine, hasRunToLose } from "./pause.js";
 import { saveRun, loadRun, clearRun, saveSummary, unpackRun } from "./save.js";
 import {
+  claimDaily,
+  consumePendingGold,
+  isClaimedToday,
+  dailyStatusLine,
+} from "./daily.js";
+import {
   wait,
   pressCard,
   flyProjectile,
@@ -116,6 +122,8 @@ const state = {
   savedRun: null,
   /** 新局覆蓋存檔二次確認（"idle" → "confirm"） */
   overwriteConfirm: "idle",
+  /** 今次結算領到嘅每日獎勵（null = 今日已領過） */
+  dailyReward: /** @type {object|null} */ (null),
 };
 
 /** 現存角色 id（用嚟擋「角色已移除」嘅舊存檔） */
@@ -145,6 +153,40 @@ function refreshSavedRun() {
   return data;
 }
 
+/**
+ * 每日鉤：今日第一次完局先派獎勵。
+ * 回傳今次**新領到**嘅獎勵（今日已領過就回 null，唔會重複派）。
+ */
+function claimDailyOnce() {
+  const res = claimDaily();
+  if (res.claimed) {
+    state.dailyReward = res.reward;
+    sfx.coin();
+    return res.reward;
+  }
+  state.dailyReward = null;
+  return null;
+}
+
+/**
+ * 結算頁（通關／敗北共用）：今日領到咩。
+ * 今日已領過就唔顯示（唔好日日彈同一個 panel）。
+ */
+function renderDailyReward() {
+  const r = state.dailyReward;
+  if (!r) return "";
+  const body =
+    r.kind === "gold"
+      ? `<p class="daily-body">下一局開局 <strong>+${r.value} 金</strong>（會自動入袋）。</p>`
+      : `<p class="daily-body">${escapeHtml(r.text)}</p>`;
+  return `
+    <section class="panel daily-panel">
+      <h2>今日一局</h2>
+      <p class="daily-lede">今日第一次完局——收低呢份。</p>
+      ${body}
+    </section>`;
+}
+
 const app = document.getElementById("app");
 
 function escapeHtml(value) {
@@ -161,6 +203,8 @@ function activeChar() {
 
 function createRun(characterId) {
   const c = characterById(characterId);
+  // 每日鉤：上一日／之前幾日累積落嚟嘅金幣獎勵，喺開局一次過加
+  const dailyGold = consumePendingGold();
   return {
     characterId: c.id,
     act: 1,
@@ -168,7 +212,9 @@ function createRun(characterId) {
     maxHp: c.maxHp,
     // 開局畀 12 金：夠買最便宜消耗品（6）兩件，或一件＋找贖，
     // 避免「0 金入第一間士多乜都買唔到」嘅死局。
-    gold: START_GOLD,
+    gold: START_GOLD + dailyGold,
+    /** 每日鉤加咗幾多（結算頁可講返） */
+    dailyBonusGold: dailyGold,
     deck: [...c.starterDeck],
     mapIndex: 0,
     completed: /** @type {string[]} */ ([]),
@@ -326,6 +372,7 @@ function renderTitle() {
         <button type="button" class="btn btn-ghost btn-pressable" data-action="to-settings">設定</button>`
         }
       </div>
+      <p class="daily-line${isClaimedToday() ? " is-claimed" : " is-todo"}">${escapeHtml(dailyStatusLine())}</p>
       ${renderSfxToggle()}
       <p class="foot-note">入口：hk-roguelite/index.html · 目錄暫名 hk-roguelite</p>
     </main>
@@ -1440,6 +1487,7 @@ function renderVictory() {
           <span class="stub-note">分享名片功能下一版先開；呢格留位。</span>
         </p>
       </section>
+      ${renderDailyReward()}
       <div class="actions result-actions">
         <button type="button" class="btn btn-primary btn-pressable btn-rerun" data-action="again">
           <span class="btn-rerun-main">再來一局</span>
@@ -1526,6 +1574,7 @@ function renderDefeat() {
             : ""
         }
       </section>
+      ${renderDailyReward()}
       <div class="actions result-actions">
         <button type="button" class="btn btn-primary btn-pressable btn-rerun" data-action="again">
           <span class="btn-rerun-main">再來一局</span>
@@ -2347,6 +2396,8 @@ function advanceMap(opts = {}) {
       state.screen = "victory";
       // 通關：存檔使命完成，清走（唔會再彈「繼續」）
       clearRun();
+      // 每日鉤：今日第一次完局先派（通關都算）
+      claimDailyOnce();
       sfx.clear();
       sfx.win();
     }
@@ -2709,6 +2760,8 @@ function onClick(event) {
       state.screen = "defeat";
       // 敗北：呢一局結束，清走存檔（唔會再彈「繼續」）
       clearRun();
+      // 每日鉤：失敗都算完一局
+      claimDailyOnce();
       sfx.lose();
       break;
     case "skip-reward":
@@ -2899,6 +2952,8 @@ function onClick(event) {
       state.run = null;
       state.battle = null;
       state.pendingBossId = null;
+      // 開新局：清走上一局嘅每日獎勵提示，唔會殘留到今次結算
+      state.dailyReward = null;
       state.screen = "select";
       break;
     default:
