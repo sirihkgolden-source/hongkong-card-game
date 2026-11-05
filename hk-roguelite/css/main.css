@@ -179,31 +179,53 @@ body {
 
 /*
  * 進場動畫只在「真轉場」時播：
- * - 預設所有 screen 子元素都唔播動畫（避免局部更新時由 opacity 0 淡入 → 全屏白閃）
+ * - 預設 screen 內所有元素（含偽元素）都唔播動畫
  * - 只有 .app.is-screen-swap 期間才播一次
  * 用 !important 蓋過各處 `animation: rise-in … both`（both 會鎖住起始 opacity 0）。
+ *
+ * 注意：一定要用 `*`（連子元素一齊中），唔可以逐個列 class。
+ * 之前只列 .panel/.actions/.brand-block，漏咗 .boss-gate-art、.battle-banner、
+ * .status、.event-art、.card-face … 結果嗰啲仍然由 opacity 0 淡入 = 閃。
  */
-.screen > *,
-.screen .panel,
-.screen .actions,
-.screen .brand-block,
-.screen .card-face,
-.screen .event-art,
-.screen .map-node.is-current,
-.screen .boss-gate-quote {
+.screen,
+.screen *,
+.screen::before,
+.screen::after,
+.screen *::before,
+.screen *::after {
   animation: none !important;
 }
 
+/*
+ * 轉場動畫：只用位移，唔用 opacity。
+ * 背景層本身已經冇淡入；如果前景再淡入，加起來仍然似「閃一下」。
+ * 位移由 10px 開始，視覺上足夠交代「換咗畫面」，但唔會黑／白一片。
+ */
+@keyframes slide-in {
+  from { transform: translateY(10px); }
+  to { transform: translateY(0); }
+}
+
 .app.is-screen-swap .screen > * {
-  animation: rise-in 0.5s ease-out both !important;
+  animation: slide-in 0.32s ease-out both !important;
 }
 
 .app.is-screen-swap .screen .panel {
-  animation: rise-in 0.5s ease-out 0.06s both !important;
+  animation: slide-in 0.32s ease-out 0.04s both !important;
 }
 
 .app.is-screen-swap .screen .actions {
-  animation: rise-in 0.5s ease-out 0.12s both !important;
+  animation: slide-in 0.32s ease-out 0.08s both !important;
+}
+
+/*
+ * 背景層例外：任何情況都唔可以郁 opacity。
+ * 佢係 position:fixed + inset:-12px，覆蓋整個畫面，
+ * 由 opacity 0 淡入 = 全屏閃白。
+ */
+.screen.has-act-bg::before {
+  animation: none !important;
+  opacity: 1 !important;
 }
 
 .panel {
@@ -361,8 +383,14 @@ body {
   background-position: center top;
   background-repeat: no-repeat;
   filter: blur(2.5px) saturate(0.72);
-  /* 缺圖時只有漸層，仍然可讀 */
-  animation: rise-in 0.5s ease-out both;
+  /*
+   * 背景層唔可以有任何 opacity 動畫：
+   * 佢係 position:fixed + inset:-12px，等於覆蓋整個畫面，
+   * 由 opacity 0 淡入就係成個屏幕閃白一次。
+   * （局部更新時 ::before 亦會因 .screen 重建而重新觸發）
+   */
+  animation: none !important;
+  opacity: 1;
 }
 
 /* Boss 戰／Boss gate：再壓暗一層，壓迫感 */
