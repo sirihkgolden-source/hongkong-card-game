@@ -159,6 +159,21 @@ function simulateChar(charId) {
     assert(!act1BossNode.title.includes(bad), `節點名禁${bad}`);
   }
 
+  // ① 三個 Boss 都要有戰前（flavor）／戰後（afterword）／敗北（nearMiss）各一句
+  {
+    for (const id of ["E04", "E05", "E12"]) {
+      const e = enemyById(id);
+      assert(e?.flavor && e.flavor.length >= 8, `${id} 缺戰前台詞`);
+      assert(e?.afterword && e.afterword.length >= 8, `${id} 缺戰後台詞`);
+      assert(e?.nearMiss && e.nearMiss.length >= 8, `${id} 缺敗北台詞`);
+    }
+    // 三句唔可以完全一樣（Boss 要有各自辨識度）
+    const afterwords = ["E04", "E05", "E12"].map((id) => enemyById(id).afterword);
+    assert(new Set(afterwords).size === 3, "Boss 戰後台詞重複");
+    const nearMisses = ["E04", "E05", "E12"].map((id) => enemyById(id).nearMiss);
+    assert(new Set(nearMisses).size === 3, "Boss 敗北台詞重複");
+  }
+
   // ① 三角色都要有「再開一局」鉤（選角／通關／敗北各一句）
   for (const id of ["oil", "asan", "kauko"]) {
     const h = CHARACTERS[id].rerunHook;

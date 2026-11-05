@@ -579,6 +579,10 @@ export const ENEMIES = {
     hp: 78,
     art: "assets/enemies/E04.jpg",
     flavor: "呢條巷我睇場。生面孔，先過我呢關。",
+    /** Boss 戰後一句（打贏之後先出現） */
+    afterword: "鐵閘慢慢升起——你行得過，呢條巷以後都認得你。",
+    /** 敗給呢個 Boss 時嘅專屬近 miss 一句 */
+    nearMiss: "鐵閘落淨半呎。你隻手已經摸到閘邊，就差嗰一下推。",
     isBoss: true,
     intents: [
       { kind: "attack", value: 10, label: "攔閘 10" },
@@ -617,6 +621,10 @@ export const ENEMIES = {
     hp: 95,
     art: "assets/enemies/E05.jpg",
     flavor: "月光底落數。散水定散骨，你揀。",
+    /** Boss 戰後一句（打贏之後先出現） */
+    afterword: "西裝散咗，數簿跌落地下——今晚冇人再問你拎。",
+    /** 敗給呢個 Boss 時嘅專屬近 miss 一句 */
+    nearMiss: "數簿翻到最後一頁。爭一個數位，你就唔使還。",
     isBoss: true,
     intents: [
       { kind: "attack", value: 12, label: "問數 12" },
@@ -686,6 +694,10 @@ export const ENEMIES = {
     hp: 136,
     art: "assets/enemies/E12.jpg",
     flavor: "天台無燈。今夜邊個落場，邊個落地。",
+    /** Boss 戰後一句（打贏之後先出現） */
+    afterword: "籠門開咗。天台上面，第一次有人企住落嚟。",
+    /** 敗給呢個 Boss 時嘅專屬近 miss 一句 */
+    nearMiss: "籠門差一寸就閂埋。你隻手指，仲夾喺門邊。",
     isBoss: true,
     isFinalBoss: true,
     intents: [

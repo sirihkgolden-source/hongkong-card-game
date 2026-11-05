@@ -1663,6 +1663,20 @@ body {
   color: var(--danger);
 }
 
+/* Boss 戰後一句：金框、置中、唔搶手牌 */
+.boss-afterword {
+  margin: 0;
+  padding: 0.7rem 0.85rem;
+  border-radius: 10px;
+  border-left: 3px solid var(--neon-amber);
+  background: rgba(255, 193, 74, 0.1);
+  color: var(--ink);
+  font-size: 0.85rem;
+  line-height: 1.55;
+  text-align: center;
+  animation: rise-in 0.4s ease-out both;
+}
+
 /* 「差一點」診斷：失敗頁最搶眼嘅一句 */
 .near-miss {
   margin: 0.75rem 0 0.9rem;

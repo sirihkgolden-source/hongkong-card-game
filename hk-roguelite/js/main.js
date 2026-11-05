@@ -407,6 +407,12 @@ function renderBattle() {
         ? `<div class="battle-banner lose">你倒下了</div>`
         : "";
 
+  // Boss 戰後一句（只有打贏 Boss 先出）
+  const bossAfterword =
+    b.over === "win" && (b.isBoss || b.isFinalBoss) && b.afterword
+      ? `<blockquote class="boss-afterword">「${escapeHtml(b.afterword)}」</blockquote>`
+      : "";
+
   const readyHint =
     b.kuaisouReady
       ? " · 快手就緒"
@@ -441,6 +447,7 @@ function renderBattle() {
         </div>
       </header>
       ${overBanner}
+      ${bossAfterword}
       <div class="hand" role="list">${hand || '<p class="empty-hand">沒有手牌</p>'}</div>
       <div class="battle-actions">
         ${
@@ -814,6 +821,16 @@ function nearMissInfo() {
   const run = state.run || {};
   const b = state.battle;
   const char = activeChar();
+
+  // 0) 敗給 Boss：用該 Boss 專屬港味一句（最優先）
+  if (b && b.isBoss) {
+    const bossDef = enemyById(b.enemyId);
+    if (bossDef?.nearMiss) {
+      const hpNote =
+        b.enemyHp > 0 ? `（佢得返 ${b.enemyHp}/${b.enemyMaxHp} 血）` : "";
+      return { kind: "boss", text: `${bossDef.nearMiss}${hpNote}` };
+    }
+  }
 
   // 1) 差喺血：對手殘血未死
   if (b && b.enemyHp > 0 && b.enemyMaxHp > 0) {
