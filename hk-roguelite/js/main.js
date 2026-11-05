@@ -781,9 +781,102 @@ function render() {
     default:
       html = renderTitle();
   }
-  app.innerHTML = html;
+  patchScreen(html);
   applyActBackdrop();
   flushGoldFloat();
+}
+
+/**
+ * 局部更新畫面：同一個 screen（同 aria-label）就只換內部內容，
+ * 保留最外層 <main class="screen"> 節點 —— 背景圖層與進入動畫都唔會重播，
+ * 避免換畫面／點選項時全屏白閃。
+ * screen 真係轉咗（例如地圖 → 戰鬥）先整份換。
+ */
+function patchScreen(html) {
+  const nextKey = screenKeyOf(html);
+  const current = app.querySelector(".screen");
+  const currentLabel = current ? current.getAttribute("aria-label") || "" : "";
+  const currentKey = currentLabel ? screenGroupOf(currentLabel) : "";
+
+  if (current && nextKey !== null && nextKey === currentKey) {
+    // 同一畫面：只換內容，保留 .screen 節點同 has-act-bg class
+    if (current.outerHTML === html) return; // 完全一樣，連 patch 都免
+    // 關鍵：先移除轉場標記，否則新插入的子節點會跟住播 rise-in → 白閃
+    app.classList.remove("is-screen-swap");
+    preserveScrollAndPatch(current, html);
+    return;
+  }
+
+  // 換畫面：整份替換。先加 is-screen-swap 再插 DOM，令新節點一入場就有動畫
+  app.classList.add("is-screen-swap");
+  app.innerHTML = html;
+  // 轉場動畫播完就解除，避免之後局部更新仍被 is-screen-swap 影響
+  setTimeout(() => app.classList.remove("is-screen-swap"), 700);
+}
+
+/** 局部更新：完全唔加 is-screen-swap，所以子節點無進場動畫 → 唔會白閃 */
+function suppressEnterAnimations(screenEl) {
+  // 保留函式名以免其他呼叫點壞掉；實際靠「冇 is-screen-swap」達成
+  screenEl.classList.remove("is-local-patch");
+}
+
+/** 由 HTML 字串取出 screen 的 aria-label（用作「係唔係同一個畫面」判斷） */
+function screenKeyOf(html) {
+  const m = /<main[^>]*class="[^"]*\bscreen\b[^"]*"[^>]*aria-label="([^"]*)"/.exec(html);
+  if (m) return screenGroupOf(m[1]);
+  // 冇 aria-label 就退而用整個 class 字串做 key
+  const c = /<main[^>]*class="([^"]*)"/.exec(html);
+  return c ? `__class__${c[1]}` : null;
+}
+
+/**
+ * 畫面「組」：同一組共用同一個 .screen 節點，局部更新唔重播進場動畫。
+ * 事件／事件結果係同一個畫面的兩個狀態，唔應該當轉場（會全屏閃）。
+ */
+function screenGroupOf(label) {
+  const groups = {
+    事件: "event",
+    事件結果: "event",
+    選牌: "reward",
+    通關結算: "result",
+    敗北: "result",
+  };
+  return groups[label] || label;
+}
+
+/**
+ * 就地替換 .screen 的內部 HTML，但要保住：
+ * - 外層 .screen（連 background 層、has-act-bg）
+ * - 焦點元素（用 data-action 記住）
+ * - 滾動位置
+ */
+function preserveScrollAndPatch(screenEl, html) {
+  const scrollY = window.scrollY;
+  const focused = document.activeElement?.closest?.("[data-action]");
+  const focusAction = focused?.getAttribute("data-action") || null;
+
+  const tmp = document.createElement("div");
+  tmp.innerHTML = html;
+  const incoming = tmp.querySelector(".screen");
+  if (!incoming) {
+    app.innerHTML = html;
+    return;
+  }
+
+  // 保留外層屬性：新舊 class 取聯集，確保 has-act-bg 唔會被洗走
+  const keepBg = screenEl.classList.contains("has-act-bg");
+  screenEl.className = incoming.className;
+  if (keepBg && !screenEl.classList.contains("has-act-bg")) {
+    screenEl.classList.add("has-act-bg");
+  }
+  suppressEnterAnimations(screenEl);
+  screenEl.replaceChildren(...Array.from(incoming.childNodes));
+
+  if (focusAction) {
+    const again = screenEl.querySelector(`[data-action="${focusAction}"]`);
+    if (again) again.focus({ preventScroll: true });
+  }
+  window.scrollTo(0, scrollY);
 }
 
 /**
@@ -839,8 +932,14 @@ function applyActBackdrop() {
   } catch {
     abs = bg;
   }
-  screen.style.setProperty("--act-bg", `url("${abs}")`);
-  screen.classList.add("has-act-bg");
+  const nextValue = `url("${abs}")`;
+  // 同一個背景就唔重設，避免背景圖層重新解碼／重新淡入造成閃
+  if (screen.style.getPropertyValue("--act-bg") !== nextValue) {
+    screen.style.setProperty("--act-bg", nextValue);
+  }
+  if (!screen.classList.contains("has-act-bg")) {
+    screen.classList.add("has-act-bg");
+  }
 }
 
 /* ---------- feel sequences ---------- */

@@ -177,6 +177,35 @@ body {
   }
 }
 
+/*
+ * 進場動畫只在「真轉場」時播：
+ * - 預設所有 screen 子元素都唔播動畫（避免局部更新時由 opacity 0 淡入 → 全屏白閃）
+ * - 只有 .app.is-screen-swap 期間才播一次
+ * 用 !important 蓋過各處 `animation: rise-in … both`（both 會鎖住起始 opacity 0）。
+ */
+.screen > *,
+.screen .panel,
+.screen .actions,
+.screen .brand-block,
+.screen .card-face,
+.screen .event-art,
+.screen .map-node.is-current,
+.screen .boss-gate-quote {
+  animation: none !important;
+}
+
+.app.is-screen-swap .screen > * {
+  animation: rise-in 0.5s ease-out both !important;
+}
+
+.app.is-screen-swap .screen .panel {
+  animation: rise-in 0.5s ease-out 0.06s both !important;
+}
+
+.app.is-screen-swap .screen .actions {
+  animation: rise-in 0.5s ease-out 0.12s both !important;
+}
+
 .panel {
   background: var(--panel);
   border: 1px solid var(--line);
