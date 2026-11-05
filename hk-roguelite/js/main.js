@@ -327,7 +327,7 @@ function renderMap() {
         </div>
       </header>
       <ol class="act-strip" aria-label="三區進度">${actStrip}</ol>
-      <section class="panel map-panel" style="--map-bg:url('${escapeHtml(currentNode()?.bg ?? map[0].bg)}')">
+      <section class="panel map-panel">
         <h2>節點路線</h2>
         <ol class="map-list">${nodes}</ol>
       </section>
