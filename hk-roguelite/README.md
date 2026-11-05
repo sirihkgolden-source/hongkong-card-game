@@ -39,6 +39,7 @@ hk-roguelite/          ← 目錄暫名；產品名《香江小風波》
 │   ├── tutorial.js    ← 新手教學記憶（首局彈一次）
 │   ├── pause.js       ← 暫停／返標題（丟失清單計算，純函式）
 │   ├── save.js        ← 存檔續玩（單份存檔、版本驗證）
+│   ├── badges.js      ← 成就／首通標（7 個標、唔劇透）
 │   ├── data.js        ← 角色／牌／敵／Act1–3 地圖／事件
 │   ├── smoke-full.mjs ← 封測包（四角／分支／店／遺物／near-miss／再開一局）
 │   ├── smoke-act2.mjs ← Act1–2 流程自測
@@ -271,12 +272,47 @@ HP 68／68
 
 > `autoSave()` 對 `victory`／`defeat` 有 guard，否則結算頁一 render 就會把已完嘅局寫返存檔。
 
+### 成就／首通標（7 個標，薄）
+
+標題頁「圖鑑」入 → `screen: codex`，key `hk_badges_v1`。
+
+| 類型 | 數量 | 條件 | 幾時亮 |
+|---|---|---|---|
+| 角色首通 | 4 | 用該角色打穿三個 Act | 通關結算 |
+| Boss 首殺 | 3 | 第一次打贏該 Act Boss | **該 Boss 一贏就亮**（唔需要通關） |
+
+| 角色 | 標名 | | Boss | 標名 |
+|---|---|---|---|---|
+| 阿油 | 後巷走過三區 | | Act1 巷口鐵閘・睇場 | 過閘 |
+| 阿珊 | 茶記守到最後 | | Act2 西裝收數隊 | 散水 |
+| 九哥 | 招牌最亮嗰盞 | | Act3 籠門之王 | 籠門開 |
+| 勝仔 | 跌打館之光 | | | |
+
+**鐵律：未解鎖唔劇透**
+
+- 未解鎖只顯示「？？？」，`desc` 一律「未解鎖」，`flavor` 空字串
+- CSS `.badge-row.is-unknown { opacity: 0.55 }` 明顯暗一級，但「？？？」仍然讀得到
+- smoke 會逐個檢查：**未解鎖行嘅 desc 唔可以包含真名**
+
+**只亮一次**
+
+- `unlockBadge()` 重複解鎖回 `isNew: false`，數量唔會加
+- 通關一次過結算 2 個標（角色首通 + 最終 Boss 首殺），會**合併** `state.newBadges` 而唔係覆蓋
+
+**喺邊度見到**
+
+- 標題頁「圖鑑 2／7」掣（`btn-sub` 細字顯示進度）
+- 圖鑑頁：7 行，已解鎖給名／desc／flavor，未解鎖「？？？」
+- **通關頁**：「新解鎖 N 個標」panel（實測通關顯示「新解鎖 2 個標」：籠門開、跌打館之光）
+
+**生命週期**：屬進度類 → 設定頁「清除本機進度」會連成就一齊清走（實測訊息「已清除 3 項本機進度（含成就）。音效設定保留。」）。
+
 
 ## 自測
 
 ```bash
 cd hk-roguelite
-node js/smoke-act2.mjs   # Act1–2 流程、事件池、商店、選牌加權＋音效＋設定頁＋教學＋暫停＋存檔
+node js/smoke-act2.mjs   # Act1–2 流程、事件池、商店、選牌加權＋音效＋設定頁＋教學＋暫停＋存檔＋成就
 node js/smoke-act3.mjs   # 四角色×三區全程 → 最終 Boss → 結算資料
 node js/smoke-full.mjs   # 封測包：四角／分支／店／遺物／near-miss／再開一局
 node js/probe-act3.mjs   # 最終 Boss 勝率／超時（平衡下限參考）
@@ -326,6 +362,19 @@ node js/probe-act3.mjs   # 最終 Boss 勝率／超時（平衡下限參考）
 - `clearRun()` 要**真係刪走個 key**（唔可以只回 true）
 - 再存一次會覆蓋，localStorage 只可以有一份存檔
 - 無 localStorage 環境下四個函式都降級，唔 throw
+
+**「成就／首通標」**
+
+- 總數 7（4 角色 + 3 Boss），每個現有角色都要有標、每個 Boss 標嘅敵人要真係存在同真係 Boss
+- **三大 Boss 名寫死**：E04 巷口鐵閘・睇場／E05 西裝收數隊／E12 籠門之王（成就定義唔可以偷改名）
+- 空機 0 個標
+- **唔劇透**：未解鎖行 `name === "？？？"`、`flavor === ""`、`desc` 唔可以包含真名
+- 解鎖後只有該行變真，其餘仍然「？？？」
+- 重複解鎖 `isNew === false`、數量唔加；未知 id 靜靜忽略
+- 通關一次過亮 2 個；重複通關 0 個；換角色只加角色標
+- Boss 首殺：Act1／Act2 獨立亮；小怪（E01）唔會解鎖 Boss 標
+- 壞 JSON／舊版本／未知 id → 存讀過濾正確
+- 無 localStorage 時 `loadBadges` 回空、`saveBadges` 回 false、純函式唔受影響
 
 ### 封測包（`smoke-full.mjs`）
 

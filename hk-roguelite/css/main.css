@@ -1158,6 +1158,171 @@ body {
   min-height: 48px;
 }
 
+/* —— 圖鑑（成就／首通標） —— */
+.btn-sub {
+  margin-left: 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  opacity: 0.75;
+}
+
+.screen-codex .codex-count {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--neon-amber);
+  letter-spacing: 0.02em;
+}
+
+.badge-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.badge-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.7rem 0.75rem;
+  border-radius: 12px;
+  background: rgba(6, 14, 26, 0.6);
+  border: 1px solid rgba(61, 224, 255, 0.14);
+}
+
+/* 未解鎖：明顯暗一級，但仍然讀得到「？？？」 */
+.badge-row.is-unknown {
+  background: rgba(6, 14, 26, 0.34);
+  border-color: rgba(154, 173, 200, 0.14);
+  opacity: 0.55;
+}
+
+.badge-row.is-unlocked {
+  border-color: rgba(255, 193, 74, 0.34);
+  box-shadow: inset 0 0 0 1px rgba(255, 193, 74, 0.08);
+}
+
+.badge-mark {
+  flex: 0 0 auto;
+  width: 1.7rem;
+  height: 1.7rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.badge-row.is-unlocked .badge-mark {
+  color: #221800;
+  background: linear-gradient(140deg, var(--neon-amber), #ffe6a8);
+  box-shadow: 0 0 12px rgba(255, 193, 74, 0.3);
+}
+
+.badge-row.is-unknown .badge-mark {
+  color: rgba(154, 173, 200, 0.7);
+  background: rgba(154, 173, 200, 0.12);
+}
+
+.badge-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.22rem;
+  min-width: 0;
+}
+
+.badge-top {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.badge-tag {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.08rem 0.38rem;
+  border-radius: 999px;
+  color: rgba(163, 190, 220, 0.9);
+  background: rgba(163, 190, 220, 0.1);
+  border: 1px solid rgba(163, 190, 220, 0.2);
+}
+
+.badge-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.badge-desc {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: rgba(190, 212, 236, 0.86);
+}
+
+.badge-flavor {
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: rgba(154, 173, 200, 0.8);
+}
+
+/* —— 通關頁：新解鎖提示 —— */
+.new-badge-panel {
+  border-color: rgba(255, 193, 74, 0.34);
+}
+
+.new-badge-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.new-badge {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  animation: settings-warn-in 0.3s ease-out both;
+}
+
+.new-badge-mark {
+  flex: 0 0 auto;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: #221800;
+  background: linear-gradient(140deg, var(--neon-amber), #ffe6a8);
+}
+
+.new-badge-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.new-badge-name {
+  font-size: 0.9rem;
+  color: var(--neon-amber);
+}
+
+.new-badge-desc {
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: rgba(190, 212, 236, 0.86);
+}
+
 /* —— Map —— */
 .run-bar {
   display: flex;
