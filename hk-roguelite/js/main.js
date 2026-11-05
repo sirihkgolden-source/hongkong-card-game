@@ -55,6 +55,7 @@ import {
   dailyStatusLine,
 } from "./daily.js";
 import { summarizeDeck, deckOverviewLine, battleDeckIds } from "./deckview.js";
+import { cardDetail } from "./carddetail.js";
 import {
   wait,
   pressCard,
@@ -129,6 +130,8 @@ const state = {
   starterOpen: /** @type {string|null} */ (null),
   /** 戰鬥中：牌組預覽開關 */
   deckOpen: false,
+  /** 長按卡牌：而家顯示詳情嘅牌 id（null = 冇開） */
+  cardDetailId: /** @type {string|null} */ (null),
 };
 
 /** 現存角色 id（用嚟擋「角色已移除」嘅舊存檔） */
@@ -319,7 +322,7 @@ function renderCardFace(cardId, opts = {}) {
   if (card.dmgBonusOnLowHp) bits.push(`半血以下 +${card.dmgBonusOnLowHp} 傷`);
 
   return `
-    <${tag} type="button" class="card-face${disabled}${kuai}"${idxAttr}${pickAttr}>
+    <${tag} type="button" class="card-face${disabled}${kuai}"${idxAttr}${pickAttr} data-card="${escapeHtml(card.id)}">
       <span class="card-cost" aria-label="費用">${cost}</span>
       <img class="card-art" src="${escapeHtml(card.art)}" alt="" loading="lazy" />
       <span class="card-name">${escapeHtml(card.name)}</span>
@@ -488,6 +491,15 @@ function renderSettings() {
           <span class="sfx-toggle-icon" aria-hidden="true">${off ? "🔇" : "🔊"}</span>
           <span class="sfx-toggle-text">${off ? "音效：關" : "音效：開"}</span>
         </button>
+      </section>
+
+      <section class="panel settings-howto">
+        <h2>點玩（操作一句）</h2>
+        <ul class="howto-list">
+          <li><strong>撳牌</strong>就出牌；<strong>撳住牌 0.4 秒</strong>睇詳情（唔會出牌）。</li>
+          <li>敵人頭上寫住今回合想打幾多——睇清楚先決定擋定打。</li>
+          <li>冇牌打就撳「結束回合」，敵人出手，之後重新抽牌回滿⚡。</li>
+        </ul>
       </section>
 
       <section class="panel">
@@ -1877,6 +1889,53 @@ function render() {
   flushTurnLine();
   // 每次畫面更新都自動存一次（有 run 才存）
   autoSave();
+  // 卡牌詳情彈層：獨立掛喺 body，唔受 patchScreen 影響
+  renderCardDetail();
+}
+
+/**
+ * 卡牌詳情彈層（長按卡觸發）。
+ *
+ * 掛喺 body 而唔係 `.screen` 入面，原因有兩個：
+ *   1. `patchScreen` 只換 `.screen` 內部內容，放喺入面會被重繪沖走
+ *   2. 彈層要蓋住成個 viewport（`position: fixed`），唔應該受 screen 寬度限制
+ *
+ * 因為掛喺 body，而 `onClick` 只綁喺 `#app`，所以關閉要靠獨立嘅 document 監聽
+ * （見下面 `bindCardDetailEvents`）。
+ */
+function renderCardDetail() {
+  const existing = document.getElementById("card-detail-overlay");
+  const id = state.cardDetailId;
+  if (!id) {
+    if (existing) existing.remove();
+    return;
+  }
+  const card = cardById(id);
+  const d = cardDetail(card);
+  const html = `
+    <div class="card-detail" role="dialog" aria-modal="true" aria-label="${escapeHtml(d.name)} 詳情">
+      <div class="card-detail-box">
+        <p class="card-detail-top">
+          <span class="card-detail-cost">${d.cost}</span>
+          <span class="card-detail-name">${escapeHtml(d.name)}</span>
+          <span class="card-detail-meta">${escapeHtml(d.typeLabel)}・${escapeHtml(d.rarity)}</span>
+        </p>
+        <ul class="card-detail-lines">
+          ${d.lines.map((l) => `<li>${escapeHtml(l)}</li>`).join("")}
+        </ul>
+        ${d.whenToUse ? `<p class="card-detail-when">${escapeHtml(d.whenToUse)}</p>` : ""}
+        ${d.blurb ? `<p class="card-detail-blurb">「${escapeHtml(d.blurb)}」</p>` : ""}
+        <button type="button" class="btn btn-primary btn-pressable card-detail-close" data-action="close-card-detail">知道</button>
+      </div>
+    </div>`;
+  if (existing) {
+    existing.outerHTML = html;
+  } else {
+    const wrap = document.createElement("div");
+    wrap.id = "card-detail-overlay";
+    wrap.innerHTML = html;
+    document.body.appendChild(wrap);
+  }
 }
 
 /**
@@ -2514,6 +2573,13 @@ function enterNode() {
 }
 
 function onClick(event) {
+  // 長按睇完詳情之後放手，會補一個 click —— 唔可以當成出牌。
+  // 但詳情層自己嘅掣（例如「知道」）要放行，所以先檢查係唔係喺 .card-detail 入面。
+  if (state.cardDetailId && !event.target.closest?.(".card-detail")) {
+    state.cardDetailId = null;
+    renderCardDetail();
+    return;
+  }
   const t = event.target.closest(
     "[data-action], [data-play], [data-pick], [data-event-choice], .map-node.is-current"
   );  if (!t) return;
@@ -2744,6 +2810,10 @@ function onClick(event) {
     case "toggle-deck":
       state.deckOpen = !state.deckOpen;
       sfx.click();
+      break;
+    case "close-card-detail":
+      state.cardDetailId = null;
+      renderCardDetail();
       break;
     case "confirm-char":
       state.run = createRun(state.selectedCharId);
@@ -3049,6 +3119,84 @@ function onClick(event) {
   render();
 }
 
+/* ---------- 長按卡牌睇詳情（手機為主） ---------- */
+
+/** 長按判定時長（ms）：太短會誤觸、太長似壞 */
+export const HOLD_MS = 420;
+
+let holdTimer = null;
+let holdStart = null;
+
+/**
+ * 開始計時。撳住卡面 420ms 就開詳情。
+ *
+ * 關鍵：手指一郁多過 10px 就當「滑動」，取消計時 ——
+ * 否則玩家想捲頁睇手牌，會被誤判成長按。
+ */
+function onPointerDown(event) {
+  const cardEl = event.target.closest?.(".card-face[data-card]");
+  if (!cardEl) return;
+  holdStart = { x: event.clientX, y: event.clientY, id: cardEl.getAttribute("data-card") };
+  clearTimeout(holdTimer);
+  holdTimer = setTimeout(() => {
+    if (!holdStart) return;
+    state.cardDetailId = holdStart.id;
+    sfx.click();
+    renderCardDetail();
+    holdStart = null;
+  }, HOLD_MS);
+}
+
+function cancelHold() {
+  clearTimeout(holdTimer);
+  holdTimer = null;
+  holdStart = null;
+}
+
+/** 手指移動：郁得多就唔算長按 */
+function onPointerMove(event) {
+  if (!holdStart) return;
+  const dx = event.clientX - holdStart.x;
+  const dy = event.clientY - holdStart.y;
+  if (Math.hypot(dx, dy) > 10) cancelHold();
+}
+
+app?.addEventListener("pointerdown", onPointerDown);
+app?.addEventListener("pointermove", onPointerMove);
+app?.addEventListener("pointerup", cancelHold);
+app?.addEventListener("pointercancel", cancelHold);
+app?.addEventListener("pointerleave", cancelHold);
+
+/**
+ * 詳情彈層掛喺 body，所以要喺 document 層接「知道」同「撳外面關閉」。
+ * 用捕獲階段，確保喺 `onClick`（綁喺 #app）之前處理。
+ */
+document.addEventListener(
+  "click",
+  (event) => {
+    if (!state.cardDetailId) return;
+    const inDetail = event.target.closest?.(".card-detail");
+    if (!inDetail) return; // 詳情以外嘅撳法交返 onClick 處理（佢會關詳情）
+    // 喺詳情層入面：只認「知道」掣同撳背景
+    const isClose = event.target.closest?.("[data-action='close-card-detail']");
+    const isBackdrop = event.target.classList?.contains("card-detail");
+    if (isClose || isBackdrop) {
+      event.stopPropagation();
+      state.cardDetailId = null;
+      renderCardDetail();
+    }
+  },
+  true
+);
+
+// 桌機：右鍵都當「睇詳情」（唔會觸發 click，唔會誤出牌）
+app?.addEventListener("contextmenu", (event) => {
+  const cardEl = event.target.closest?.(".card-face[data-card]");
+  if (!cardEl) return;
+  event.preventDefault();
+  state.cardDetailId = cardEl.getAttribute("data-card");
+  renderCardDetail();
+});
 app?.addEventListener("click", onClick);
 // 啟動時先讀存檔，標題頁才知道要唔要出「繼續」
 refreshSavedRun();

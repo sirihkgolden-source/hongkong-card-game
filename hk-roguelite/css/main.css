@@ -873,6 +873,170 @@ body {
   color: rgba(154, 173, 200, 0.82);
 }
 
+/* —— 長按卡牌詳情 —— */
+/* 卡面提示「可以長按」：只喺觸控裝置顯示細細一句，唔搶版面 */
+.card-face::after {
+  content: "撳住睇詳情";
+  position: absolute;
+  right: 0.3rem;
+  bottom: 0.3rem;
+  font-size: 0.56rem;
+  letter-spacing: 0.02em;
+  color: rgba(198, 216, 240, 0.62);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* 桌面 hover 才顯示（手機長按自然會出，唔需要提示字） */
+@media (hover: hover) and (pointer: fine) {
+  .card-face:hover::after {
+    opacity: 1;
+  }
+}
+
+.card-face {
+  position: relative;
+}
+
+/* 詳情彈層：蓋住全屏，中央 box */
+.card-detail {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(3, 8, 16, 0.78);
+  backdrop-filter: blur(3px);
+  animation: card-detail-in 0.16s ease-out both;
+}
+
+@keyframes card-detail-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.card-detail-box {
+  width: min(360px, 100%);
+  max-height: 82vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 1rem 1.05rem 1.1rem;
+  border-radius: 16px;
+  background: linear-gradient(160deg, rgba(14, 24, 40, 0.98), rgba(8, 14, 24, 0.98));
+  border: 1px solid rgba(61, 224, 255, 0.28);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.6);
+}
+
+.card-detail-top {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.card-detail-cost {
+  width: 1.75rem;
+  height: 1.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #04121c;
+  background: linear-gradient(140deg, var(--neon-cyan), #8ef0ff);
+}
+
+.card-detail-name {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.card-detail-meta {
+  font-size: 0.72rem;
+  color: rgba(154, 173, 200, 0.86);
+}
+
+.card-detail-lines {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.card-detail-lines li {
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: rgba(206, 222, 240, 0.96);
+  padding-left: 0.75rem;
+  position: relative;
+}
+
+.card-detail-lines li::before {
+  content: "・";
+  position: absolute;
+  left: 0;
+  color: var(--neon-cyan);
+}
+
+.card-detail-when {
+  margin: 0;
+  padding: 0.5rem 0.65rem;
+  border-radius: 9px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: rgba(255, 205, 120, 0.95);
+  background: rgba(255, 193, 74, 0.1);
+  border: 1px solid rgba(255, 193, 74, 0.24);
+}
+
+.card-detail-blurb {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: rgba(154, 173, 200, 0.84);
+}
+
+.card-detail-close {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 0.15rem;
+}
+
+/* —— 設定頁：操作一句 —— */
+.howto-list {
+  margin: 0;
+  padding: 0 0 0 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  list-style: disc;
+}
+
+.howto-list li {
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: rgba(200, 218, 238, 0.92);
+}
+
+.howto-list strong {
+  color: var(--neon-cyan);
+  font-weight: 700;
+}
+
 /* —— 設定頁 —— */
 .screen-settings .panel {
   display: flex;

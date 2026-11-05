@@ -290,7 +290,9 @@ function simulateChar(charId) {
     const dominant = {};
     for (const cid of ["oil", "asan", "kauko", "sing"]) {
       const tally = {};
-      for (let i = 0; i < 200; i += 1) {
+      // 樣本由 200 提到 900：原本 200 次會偶爾因隨機波動踩線（實測 5 次有 1 次誤報），
+      // 唔關遊戲事，純粹係抽樣變異。提高樣本次數令結果穩定。
+      for (let i = 0; i < 900; i += 1) {
         for (const id of pickRewardChoices(3, [], cid)) {
           const k = classify(id);
           tally[k] = (tally[k] || 0) + 1;
@@ -1181,6 +1183,90 @@ const results = ["oil", "asan", "kauko", "sing"].map(simulateChar);
   }
 
   console.log("  ✓ 牌組預覽（分組／排序／重複計數／戰鬥守恆）");
+}
+
+/* ---------- 長按卡詳情：人話效果要對得上牌的數值 ---------- */
+{
+  const { cardEffectLines, cardWhenToUse, cardDetail } = await import("./carddetail.js");
+
+  // ① 每張牌都要砌得出詳情（唔可以空白或者 throw）
+  for (const id of Object.keys(CARDS)) {
+    const card = CARDS[id];
+    const d = cardDetail(card);
+    assert(d.name === card.name, `${id} 詳情名唔對：${d.name}`);
+    assert(d.cost === card.cost, `${id} 詳情費用唔對`);
+    assert(d.lines.length > 0, `${id} 詳情冇任何效果句`);
+    assert(typeof d.whenToUse === "string" && d.whenToUse.length > 4, `${id} 缺「幾時用」提示`);
+    // 效果句唔可以空字串
+    for (const line of d.lines) {
+      assert(typeof line === "string" && line.trim().length > 3, `${id} 有空白效果句`);
+    }
+  }
+
+  // ② 有傷害嘅牌，詳情要講返正確數字（唔可以講錯）
+  for (const [id, card] of Object.entries(CARDS)) {
+    if (card.dmg) {
+      const lines = cardEffectLines(card).join("｜");
+      assert(lines.includes(String(card.dmg)), `${id} 詳情應提傷害 ${card.dmg}：${lines}`);
+    }
+    if (card.block) {
+      const lines = cardEffectLines(card).join("｜");
+      assert(lines.includes(String(card.block)), `${id} 詳情應提擋 ${card.block}：${lines}`);
+    }
+    if (card.heal) {
+      const lines = cardEffectLines(card).join("｜");
+      assert(lines.includes(String(card.heal)), `${id} 詳情應提回血 ${card.heal}：${lines}`);
+    }
+    if (card.draw) {
+      const lines = cardEffectLines(card).join("｜");
+      assert(lines.includes(String(card.draw)), `${id} 詳情應提抽牌 ${card.draw}：${lines}`);
+    }
+    if (card.mark) {
+      const lines = cardEffectLines(card).join("｜");
+      assert(lines.includes(String(card.mark)), `${id} 詳情應提標記 ${card.mark}：${lines}`);
+    }
+  }
+
+  // ③ 半血加成要特別講明（呢個係玩家最易忽略嘅機制）
+  {
+    const withBonus = Object.values(CARDS).filter((c) => c.dmgBonusOnLowHp);
+    assert(withBonus.length > 0, "應該有牌帶 dmgBonusOnLowHp");
+    for (const c of withBonus) {
+      const lines = cardEffectLines(c).join("｜");
+      assert(lines.includes("半血以下"), `${c.id} 應講明半血加成：${lines}`);
+      assert(lines.includes(String(c.dmgBonusOnLowHp)), `${c.id} 應講加成數字`);
+    }
+  }
+
+  // ④ 冇數值效果嘅牌都要有一句（唔可以空白）
+  {
+    const plain = cardEffectLines({ id: "X", name: "空牌", type: "skill", cost: 1 });
+    assert(plain.length === 1, "冇效果都應該有一句");
+    assert(plain[0].length > 5, "冇效果句都要有人話");
+  }
+
+  // ⑤ 缺資料要降級而唔 throw
+  {
+    const missing = cardDetail(null);
+    assert(missing.name === "（冇資料）", "null 要降級");
+    assert(missing.lines.length === 1, "null 都應該有一行");
+    assert(cardWhenToUse(null) === "", "null 唔應該有提示");
+    assert(cardEffectLines(undefined).length === 1, "undefined 都要有一行");
+  }
+
+  // ⑥ 「幾時用」要按牌型分流（唔可以全部一樣）
+  {
+    const bigDmg = Object.values(CARDS).find((c) => c.dmg && c.dmg >= 12);
+    const blocky = Object.values(CARDS).find((c) => c.block && !c.dmg);
+    const free = Object.values(CARDS).find((c) => c.cost === 0 && !c.dmg && !c.block);
+    const tips = new Set();
+    if (bigDmg) tips.add(cardWhenToUse(bigDmg));
+    if (blocky) tips.add(cardWhenToUse(blocky));
+    if (free) tips.add(cardWhenToUse(free));
+    assert(tips.size >= 2, `按牌型應該有唔同提示，實際 ${[...tips]}`);
+  }
+
+  console.log("  ✓ 長按卡詳情（每張牌有人話效果／數字對得上／降級安全）");
 }
 
 /* ---------- 新手教學：首局先彈，之後唔再彈 ---------- */
