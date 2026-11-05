@@ -1531,53 +1531,54 @@ function renderVictory() {
         </p>
       </section>
       ${
-        (run.relics || []).length
-          ? `<section class="panel">
-        <h2>遺物</h2>
-        <ul class="relic-list">${(run.relics || [])
-          .map((id) => {
-            const r = RELICS[id];
-            if (!r) return "";
-            const isOwn = !!r.owner;
-            const notApplicable = isOwn && r.owner !== run?.characterId;
-            const tag = notApplicable
-              ? '<span class="relic-owner-tag is-other">唔適用</span>'
-              : isOwn
-                ? '<span class="relic-owner-tag">專屬</span>'
-                : "";
-            return `<li>
-              <span class="relic-name">${escapeHtml(r.name)}${tag}</span>
-              <span class="relic-plain">${escapeHtml(relicPlainText(r))}</span>
-            </li>`;
-          })
-          .join("")}</ul>
-      </section>`
-          : ""
+        // 次要資料收埋：主掣先可見，玩家想睇細節自己展開
+        `<details class="result-details">
+              <summary class="result-details-summary">睇本局細節（遺物／遭遇／牌組／名片）</summary>
+              <div class="result-details-body">
+                ${
+                  (run.relics || []).length
+                    ? `<section class="panel">
+                        <h2>遺物</h2>
+                        <ul class="relic-list">${(run.relics || [])
+                          .map((id) => {
+                            const r = RELICS[id];
+                            if (!r) return "";
+                            const isOwn = !!r.owner;
+                            const notApplicable = isOwn && r.owner !== run?.characterId;
+                            const tag = notApplicable
+                              ? '<span class="relic-owner-tag is-other">唔適用</span>'
+                              : isOwn
+                                ? '<span class="relic-owner-tag">專屬</span>'
+                                : "";
+                            return `<li>
+                              <span class="relic-name">${escapeHtml(r.name)}${tag}</span>
+                              <span class="relic-plain">${escapeHtml(relicPlainText(r))}</span>
+                            </li>`;
+                          })
+                          .join("")}</ul>
+                      </section>`
+                    : ""
+                }
+                <section class="panel">
+                  <h2>遭遇</h2>
+                  <ol class="enc-list">${encounterList(run)}</ol>
+                </section>
+                <section class="panel">
+                  <h2>牌組構成</h2>
+                  <ul class="deck-list">${deckLines || "<li>（空）</li>"}</ul>
+                </section>
+                <section class="panel stub-card">
+                  <h2>名片（stub）</h2>
+                  <p class="lede">
+                    《香江小風波》・${escapeHtml(char.name)}<br />
+                    三區通關 · 被動「${escapeHtml(char.passive.name)}」<br />
+                    <span class="stub-note">分享名片功能下一版先開；呢格留位。</span>
+                  </p>
+                </section>
+              </div>
+            </details>`
       }
-      <section class="panel">
-        <h2>遭遇</h2>
-        <ol class="enc-list">${encounterList(run)}</ol>
-      </section>
-      <section class="panel">
-        <h2>牌組構成</h2>
-        <ul class="deck-list">${deckLines || "<li>（空）</li>"}</ul>
-      </section>
-      <section class="panel stub-card">
-        <h2>名片（stub）</h2>
-        <p class="lede">
-          《香江小風波》・${escapeHtml(char.name)}<br />
-          三區通關 · 被動「${escapeHtml(char.passive.name)}」<br />
-          <span class="stub-note">分享名片功能下一版先開；呢格留位。</span>
-        </p>
-      </section>
       ${renderDailyReward()}
-      <div class="actions result-actions">
-        <button type="button" class="btn btn-primary btn-pressable btn-rerun" data-action="again">
-          <span class="btn-rerun-main">再來一局</span>
-          <span class="btn-rerun-sub">換角色・換牌路・再闖三區</span>
-        </button>
-        <button type="button" class="btn btn-ghost" data-action="back-title">返回標題</button>
-      </div>
     </main>
   `;
 }
@@ -1658,15 +1659,48 @@ function renderDefeat() {
         }
       </section>
       ${renderDailyReward()}
-      <div class="actions result-actions">
-        <button type="button" class="btn btn-primary btn-pressable btn-rerun" data-action="again">
-          <span class="btn-rerun-main">再來一局</span>
-          <span class="btn-rerun-sub">同一條後巷，唔同嘅打法</span>
-        </button>
-        <button type="button" class="btn btn-ghost" data-action="back-title">返回標題</button>
-      </div>
     </main>
   `;
+}
+
+/**
+ * 結算頁底部固定欄（再來一局／返回標題）。
+ *
+ * 點解要獨立掛 body：`.screen-result.is-lose` 有 `filter`、`.is-win` 有
+ * `animation`，兩者都會令 `position: fixed` 改以該元素為包含塊，
+ * 底欄就唔會貼住視口（實測 bottom 854 > 844）。掛 body 就冇呢個問題。
+ */
+function renderResultBar(subText) {
+  const existing = document.getElementById("result-bar");
+  // 已存在就只更新副標文字，唔重建（避免每次 render 都整走焦點／重播動畫）
+  if (existing) {
+    const sub = existing.querySelector(".btn-rerun-sub");
+    if (sub && sub.textContent !== subText) sub.textContent = subText;
+    return;
+  }
+  const wrap = document.createElement("div");
+  wrap.id = "result-bar";
+  wrap.innerHTML = `
+    <div class="result-bar">
+      <button type="button" class="btn btn-primary btn-pressable btn-rerun" data-action="again">
+        <span class="btn-rerun-main">再來一局</span>
+        <span class="btn-rerun-sub">${escapeHtml(subText)}</span>
+      </button>
+      <button type="button" class="btn btn-ghost" data-action="back-title">返回標題</button>
+    </div>`;
+  document.body.appendChild(wrap);
+  // 底欄喺 body，click 要喺 document 層接
+  wrap.addEventListener("click", (event) => {
+    const btn = event.target.closest("[data-action]");
+    if (!btn) return;
+    onClick(event);
+  });
+}
+
+/** 離開結算頁就拆走底欄 */
+function clearResultBar() {
+  const el = document.getElementById("result-bar");
+  if (el) el.remove();
 }
 
 /** 敗北畫面用嘅「就差咁一點」診斷：指出差喺血／牌／遺物／能量邊一項 */
@@ -1891,6 +1925,14 @@ function render() {
   autoSave();
   // 卡牌詳情彈層：獨立掛喺 body，唔受 patchScreen 影響
   renderCardDetail();
+  // 結算頁底欄：獨立掛 body（見 renderResultBar 註解）
+  if (state.screen === "victory") {
+    renderResultBar("換角色・換牌路・再闖三區");
+  } else if (state.screen === "defeat") {
+    renderResultBar("同一條後巷，唔同嘅打法");
+  } else {
+    clearResultBar();
+  }
 }
 
 /**

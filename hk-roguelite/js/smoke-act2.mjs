@@ -27,7 +27,7 @@ import {
   START_GOLD,
   ACT_TRANSITIONS,
 } from "./data.js";
-import { readdirSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { createBattle, playCard, endTurn, startPlayerTurn } from "./battle.js";
 
 function assert(cond, msg) {
@@ -1267,6 +1267,57 @@ const results = ["oil", "asan", "kauko", "sing"].map(simulateChar);
   }
 
   console.log("  ✓ 長按卡詳情（每張牌有人話效果／數字對得上／降級安全）");
+}
+
+/* ---------- 三頁一屏：地圖兩欄／戰果細節收納／大掣固定 ---------- */
+/* Node 冇 DOM，所以驗 CSS 原文 + 資料層可唔可以砌出所需結構 */
+{
+  const cssPath = new URL("../css/main.css", import.meta.url);
+  const css = readFileSync(cssPath, "utf8");
+
+  // ① 地圖：六格要兩欄（3 行），唔好一欄六行逼人拉
+  const mapListBlock = /\.map-list\s*\{([^}]*)\}/.exec(css);
+  assert(mapListBlock, "搵唔到 .map-list 規則");
+  const mapCss = mapListBlock[1];
+  assert(/display:\s*grid/.test(mapCss), ".map-list 應該用 grid（兩欄）");
+  assert(
+    /grid-template-columns:\s*repeat\(2,/.test(mapCss),
+    ".map-list 應該係 2 欄（6 格 → 3 行，一屏放得晒）"
+  );
+  assert(!/flex-direction:\s*column/.test(mapCss), ".map-list 唔應該再用單欄 flex");
+
+  // ② 戰果：細節要收埋（details），主掣先見到
+  assert(/\.result-details\s*\{/.test(css), "應該有 .result-details 收納區");
+  assert(
+    /\.result-details-summary\s*\{[^}]*min-height:\s*48px/.test(css),
+    ".result-details-summary 要 ≥48px（觸控目標）"
+  );
+  // summary 唔可以有預設 marker（唔同瀏覽器樣式唔一致）
+  assert(
+    /\.result-details-summary::-webkit-details-marker\s*\{[^}]*display:\s*none/.test(css),
+    "要隱藏 details 預設 marker"
+  );
+
+  // ③ 結算底欄：一定要 fixed（sticky 會被 filter／animation 影響）
+  assert(/\.result-bar\s*\{/.test(css), "應該有 .result-bar 底欄");
+  const barBlock = /\.result-bar\s*\{([^}]*)\}/.exec(css)[1];
+  assert(/position:\s*fixed/.test(barBlock), ".result-bar 必須 position: fixed");
+  assert(/bottom:\s*0/.test(barBlock), ".result-bar 要貼底（bottom: 0）");
+  assert(/z-index:\s*\d+/.test(barBlock), ".result-bar 要有 z-index（唔會被內容蓋住）");
+  // 底欄按鈕要有 44px
+  const barBtn = /\.result-bar \.btn\s*\{([^}]*)\}/.exec(css);
+  assert(barBtn, "搵唔到 .result-bar .btn 規則");
+  assert(/min-height:\s*44px/.test(barBtn[1]), ".result-bar .btn 要 ≥44px");
+
+  // ④ 結算頁要留底部空間，否則最後一段被底欄蓋住
+  const resultScreen = /\.screen-result\s*\{([^}]*)\}/.exec(css);
+  assert(resultScreen, "搵唔到 .screen-result 規則");
+  assert(
+    /padding-bottom:\s*\d/.test(resultScreen[1]),
+    ".screen-result 要有 padding-bottom（留位畀 fixed 底欄）"
+  );
+
+  console.log("  ✓ 三頁一屏（地圖 2 欄／戰果 details 收納／底欄 fixed 且留位）");
 }
 
 /* ---------- 新手教學：首局先彈，之後唔再彈 ---------- */

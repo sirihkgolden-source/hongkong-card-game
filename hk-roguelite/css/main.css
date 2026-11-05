@@ -1513,22 +1513,27 @@ body {
   z-index: 1;
 }
 
+/* 地圖節點：390 一屏要睇到全部 6 格 + 可撳「進入」，
+   所以手機用兩欄 grid（6 格 → 3 行），唔好逼玩家上下拉。 */
 .map-list {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
 }
 
 .map-node {
   display: grid;
-  /* 序號｜內容｜CTA：內容欄用 minmax(0,1fr) 先唔會被 CTA 撐爆 */
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: 0.6rem;
-  align-items: center;
-  padding: 0.7rem 0.85rem;
+  /* 兩欄版面：圖示｜內容（CTA 放落第二行右邊） */
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "idx body"
+    "idx cta";
+  gap: 0.3rem 0.45rem;
+  align-items: start;
+  padding: 0.5rem 0.55rem;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(0, 0, 0, 0.35);
@@ -1543,6 +1548,18 @@ body {
   min-width: 0;
   align-items: flex-start;
   text-align: left;
+  grid-area: body;
+}
+
+/* 兩欄版面：圖示／CTA 要指定區域 */
+.map-node .map-idx {
+  grid-area: idx;
+}
+
+.map-node .map-cta,
+.map-node .map-done {
+  grid-area: cta;
+  justify-self: start;
 }
 
 .map-node.is-current {
@@ -3264,6 +3281,9 @@ body {
   animation: brand-pulse 2.2s ease-in-out infinite;
 }
 
+/* 注意：呢個 filter 會令 `.screen-result` 變成 fixed 子元素嘅包含塊，
+   所以結算頁嘅底欄一定要掛喺 body 而唔可以留喺 .screen 入面
+   （見 renderResultBar()）。 */
 .screen-result.is-lose {
   filter: saturate(0.7) brightness(0.88);
 }
@@ -3459,9 +3479,120 @@ body {
 }
 
 /* 「再來一局」大掣：通關／敗北共用，窄屏都易點 */
+/* 用 fixed 底欄之後，內容底部要留返位，否則最後一段會被蓋住 */
+
 .result-actions {
   margin-top: 0.2rem;
 }
+
+/* —— 結算頁：細節收納（主掣先見到，唔使拉到底） —— */
+.result-details {
+  border-radius: 12px;
+  border: 1px solid rgba(61, 224, 255, 0.18);
+  background: rgba(6, 14, 26, 0.5);
+  overflow: hidden;
+}
+
+.result-details-summary {
+  padding: 0.75rem 0.9rem;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: rgba(198, 216, 240, 0.9);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  /* 觸控目標 */
+  min-height: 48px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 自訂箭頭（唔同瀏覽器預設樣式唔一致） */
+.result-details-summary::-webkit-details-marker {
+  display: none;
+}
+
+.result-details-summary::after {
+  content: "▾";
+  font-size: 0.8rem;
+  color: var(--neon-cyan);
+  transition: transform 0.18s ease;
+  flex: 0 0 auto;
+}
+
+.result-details[open] .result-details-summary::after {
+  transform: rotate(180deg);
+}
+
+.result-details-summary:hover {
+  color: var(--ink);
+}
+
+.result-details-summary:focus-visible {
+  outline: 2px solid var(--neon-cyan);
+  outline-offset: -2px;
+}
+
+.result-details-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0 0.5rem 0.7rem;
+}
+
+/* 結算頁主掣：永遠可見（fixed 底部），唔使拉到底先撳到。
+   用 fixed 而唔用 sticky：sticky 只喺容器高度內生效，
+   內容一長過視口就會被推落去（實測 actions top 922，仍喺屏外）。 */
+.screen-result .result-actions {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  z-index: 20;
+  width: min(var(--app-max-w), 100%);
+  margin: 0;
+  /* 底欄要薄：390 高度有限，唔可以食太多 */
+  padding: 0.45rem 0.45rem calc(0.45rem + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(to top, rgba(4, 10, 18, 0.97) 60%, rgba(4, 10, 18, 0));
+  pointer-events: auto;
+  border-top: 1px solid rgba(61, 224, 255, 0.12);
+}
+
+/* 結算頁底欄：因為 .screen-result.is-lose 有 filter、.is-win 有 animation，
+   兩者都會令 fixed 定位改以該元素為包含塊（唔再貼視口），所以底欄由
+   `renderResultBar()` 直接掛喺 body，唔留喺 .screen 入面。 */
+.result-bar {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  z-index: 20;
+  width: min(var(--app-max-w), 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0.45rem 0.45rem calc(0.45rem + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(to top, rgba(4, 10, 18, 0.97) 62%, rgba(4, 10, 18, 0));
+  border-top: 1px solid rgba(61, 224, 255, 0.12);
+}
+
+.result-bar .btn {
+  width: 100%;
+  min-height: 44px;
+}
+
+.result-bar .btn-rerun {
+  min-height: 56px;
+}
+
+/* 底欄出現時，結算內容要留位（否則最後一段被蓋住） */
+.screen-result {
+  padding-bottom: 9rem;
+}
+
 
 .btn-rerun {
   display: flex;

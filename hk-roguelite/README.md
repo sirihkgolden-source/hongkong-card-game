@@ -381,12 +381,44 @@ return `${y}-${m}-${day}`;
 2. 敵人頭上寫住今回合想打幾多——睇清楚先決定擋定打。
 3. 冇牌打就撳「結束回合」，敵人出手，之後重新抽牌回滿⚡。
 
+### 三頁一屏（地圖／事件／戰果）
+
+目標：390×844 下**唔使上下拉**都操作得到。
+
+| 頁 | 改前超出 | 改法 | 改後 |
+|---|---|---|---|
+| 地圖 | **+198px** | `.map-list` 單欄 flex → **兩欄 grid**（6 格 → 3 行）；節點 padding 收緊 | **0px** |
+| 事件 | 0（本身 OK） | 保持；選項卡 75px 高、3 個全在屏內 | 0px |
+| 戰果 | **+593px** | 遺物／遭遇／牌組／名片收進 `<details>`；底欄獨立掛 body | 0px（內容仍可拉，但**主掣唔使拉**） |
+
+**大掣固定可見（踩過兩個坑）**
+
+1. 先試 `position: sticky` → 實測 actions `top: 922`（仍喺屏外）。**sticky 只喺容器高度內生效**，內容一長過視口就被推走。
+2. 改 `position: fixed` 放喺 `.screen-result` 入面 → 實測 `bottom: 854 > 844`（超出 10px）。
+
+   根因：`.screen-result.is-lose` 有 `filter: saturate(...)`、`.is-win` 有 `animation` —— **兩者都會令該元素成為 fixed 子元素嘅包含塊**，fixed 就唔再對齊視口。
+
+   修法：底欄由 `renderResultBar()` **直接掛 `body`**，唔留喺 `.screen` 入面。
+
+**戰果頁細節收納**
+
+```html
+<details class="result-details">
+  <summary class="result-details-summary">睇本局細節（遺物／遭遇／牌組／名片）</summary>
+  ...
+</details>
+```
+
+- 預設收起 → 主掣同 summary 都喺屏內
+- summary `min-height: 48px`、自訂箭頭（隱藏 `::-webkit-details-marker`，各瀏覽器一致）
+- `.screen-result` 加 `padding-bottom: 9rem`，否則最後一段被 fixed 底欄蓋住
+
 
 ## 自測
 
 ```bash
 cd hk-roguelite
-node js/smoke-act2.mjs   # Act1–2 流程、事件池、商店、選牌加權＋音效＋設定頁＋教學＋暫停＋存檔＋每日鉤＋牌組預覽＋長按詳情
+node js/smoke-act2.mjs   # Act1–2 流程、事件池、商店、選牌加權＋音效＋設定頁＋教學＋暫停＋存檔＋每日鉤＋牌組預覽＋長按詳情＋三頁一屏
 node js/smoke-act3.mjs   # 四角色×三區全程 → 最終 Boss → 結算資料
 node js/smoke-full.mjs   # 封測包：四角／分支／店／遺物／near-miss／再開一局
 node js/probe-act3.mjs   # 最終 Boss 勝率／超時（平衡下限參考）
@@ -472,6 +504,15 @@ node js/probe-act3.mjs   # 最終 Boss 勝率／超時（平衡下限參考）
 - 冇數值效果嘅牌都要有一句人話
 - `null`／`undefined` 降級而唔 throw
 - 「幾時用」要按牌型分流，唔可以全部一樣
+
+**「三頁一屏」**（Node 冇 DOM，所以驗 CSS 原文）
+
+- `.map-list` 要用 `display: grid` + `repeat(2, ...)`（6 格 → 3 行），**唔可以**再用單欄 `flex-direction: column`
+- `.result-details` 同 `.result-details-summary`（`min-height: 48px`）要存在
+- `.result-details-summary::-webkit-details-marker` 要 `display: none`（自訂箭頭，跨瀏覽器一致）
+- `.result-bar` **必須 `position: fixed`** + `bottom: 0` + `z-index`（sticky 會被長內容推走）
+- `.result-bar .btn` 要 `min-height: 44px`
+- `.screen-result` 要有 `padding-bottom`（留位畀 fixed 底欄，否則最後一段被蓋）
 
 ### 封測包（`smoke-full.mjs`）
 
