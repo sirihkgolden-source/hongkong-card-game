@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/main.css?v=7" />
 </head>
 <body>
   <div id="app" class="app" aria-live="polite">
@@ -19,6 +19,45 @@
   <noscript>
     <p class="noscript">請啟用 JavaScript 以遊玩《香江小風波》。</p>
   </noscript>
-  <script type="module" src="js/main.js"></script>
+  <!--
+    載入失敗兜底：module 若因「混合版本快取」（舊 feel.js 冇新 export）而整份失敗，
+    畫面會完全空白。呢段會偵測到並自動帶 cache-bust 重載一次，再失敗就顯示原因。
+  -->
+  <script>
+    (function () {
+      var booted = false;
+      var KEY = "hk_boot_retry";
+      window.__HK_BOOTED__ = function () {
+        booted = true;
+        try { sessionStorage.removeItem(KEY); } catch (e) {}
+      };
+      function fail(msg) {
+        if (booted) return;
+        if (!sessionStorage.getItem(KEY)) {
+          try { sessionStorage.setItem(KEY, "1"); } catch (e) {}
+          location.replace(location.pathname + "?v=" + Date.now());
+          return;
+        }
+        var box = document.createElement("div");
+        box.className = "boot-error";
+        box.innerHTML =
+          "<h1>載入失敗</h1>" +
+          "<p>" + msg + "</p>" +
+          "<p>請按 <b>Ctrl + Shift + R</b> 強制重新載入。</p>" +
+          '<button onclick="location.replace(location.pathname + \'?v=\' + Date.now())">重新載入</button>';
+        document.body.appendChild(box);
+      }
+      window.addEventListener("error", function (e) {
+        if (e.target && e.target.tagName === "SCRIPT") fail("腳本載入出錯：" + (e.target.src || ""));
+      }, true);
+      window.addEventListener("unhandledrejection", function (e) {
+        fail("啟動時發生錯誤：" + (e.reason && e.reason.message ? e.reason.message : e.reason));
+      });
+      setTimeout(function () {
+        if (!booted) fail("遊戲引擎超過 4 秒未啟動（多數係快取到舊版模組）。");
+      }, 4000);
+    })();
+  </script>
+  <script type="module" src="js/main.js?v=7"></script>
 </body>
 </html>
