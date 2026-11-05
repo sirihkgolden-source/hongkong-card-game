@@ -86,16 +86,29 @@ body {
   to { transform: translateY(12px); }
 }
 
+/*
+ * 直版優先：所有畫面鎖同一個最大寬度並置中。
+ * 之前 .screen 440px、.screen-wide/.screen-battle 720px，
+ * 寬螢幕下地圖／戰鬥會拉到 720 而內容只佔左半，右邊一大片空；
+ * 而且切換畫面時寬度跳變（440 ↔ 720），觀感差。
+ */
+:root {
+  --app-max-w: 430px;
+}
+
 .screen {
-  width: min(440px, 100%);
+  width: min(var(--app-max-w), 100%);
+  margin-inline: auto;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 }
 
+/* 地圖／戰鬥／選牌一律同寬（唔再 720），保持直版比例 */
 .screen-wide,
 .screen-battle {
-  width: min(720px, 100%);
+  width: min(var(--app-max-w), 100%);
+  margin-inline: auto;
 }
 
 .brand-block {
@@ -1390,7 +1403,7 @@ body {
   .screen-wide,
   .screen-battle {
     width: 100%;
-    max-width: 100%;
+    max-width: min(var(--app-max-w), 100%);
     gap: 0.85rem;
   }
 
