@@ -205,24 +205,48 @@ for (const need of ["index.html", "css/main.css", "js/main.js", "js/data.js", "j
     `橫屏高度上限應 ≤520px（實測手機橫屏 360–430），實際 ${heightCap && heightCap[1]}`
   );
 
-  // ② 戰鬥頁：三欄 grid
-  const battleLand = /\.screen-battle\s*\{([^}]*)\}/.exec(land);
-  assert(battleLand, "landscape.css 應該有 .screen-battle 規則");
-  const bl = battleLand[1];
+  // ② 戰鬥頁：三區 grid（左敵 / 中日誌 / 右 HUD + 操作）
+  // 注意：landscape.css 有多個 .screen-battle 區塊，要搵「有三欄 + areas」嗰個
+  const sbBlocks = [...land.matchAll(/\.screen-battle\s*\{([\s\S]*?)\n  \}/g)].map((m) => m[1]);
+  assert(sbBlocks.length > 0, "landscape.css 應該有 .screen-battle 規則");
+  const bl = sbBlocks.find((b) => /grid-template-areas/.test(b)) || sbBlocks[0];
   assert(/display:\s*grid/.test(bl), "橫屏 .screen-battle 要用 grid");
-  assert(
-    /grid-template-columns:\s*minmax\(0,\s*1fr\)\s+minmax\(0,\s*1\.\d+fr\)\s+minmax\(0,\s*0?\.?\d+fr\)/.test(bl) ||
-      /grid-template-columns:[^;]*minmax\(0,\s*1fr\)[^;]*minmax\(0,\s*1fr\)[^;]*minmax\(0,\s*1fr\)/.test(bl),
-    "橫屏 .screen-battle 應該係三欄（左 HUD / 中手牌 / 右操作）"
-  );
+  // 三欄
+  const colCount = (bl.match(/minmax\(0,/g) || []).length;
+  assert(colCount >= 3, `橫屏 .screen-battle 應該係三欄，實際 ${colCount} 個 minmax`);
   assert(/grid-template-areas/.test(bl), "橫屏 .screen-battle 應該用 grid-template-areas 排位");
   assert(/max-height/.test(bl), "橫屏 .screen-battle 要限高（否則一定溢出）");
+  assert(/overflow:\s*hidden/.test(bl), "橫屏 .screen-battle 要 overflow: hidden（禁上下拉）");
 
-  // ③ 手牌同操作欄各有 grid-area，唔會疊
+  // ②b 版面方向：左敵、中日誌、右 HUD（唔係上下堆疊）
+  assert(
+    /"enemy\s+log\s+player"/.test(bl),
+    "橫屏第一行應該係 enemy | log | player（左敵 / 中日誌 / 右 HUD）"
+  );
+  assert(/"piles\s+piles\s+player"/.test(bl), "橫屏第二行：牌堆跨左中，右邊仍然係 player");
+  assert(/"hand\s+hand\s+act"/.test(bl), "橫屏第三行：手牌跨左中，右邊係 act（操作）");
+  // battle-top 要用 display:contents 拆開，令敵人／玩家成為 grid item
+  assert(
+    /\.battle-top\s*\{[^}]*display:\s*contents/.test(land),
+    "橫屏 .battle-top 要 display: contents（否則敵人／玩家排唔到左右）"
+  );
+
+  // ③ 各區 grid-area
+  assert(/#fighter-enemy\s*\{[^}]*grid-area:\s*enemy/.test(land), "橫屏 #fighter-enemy 要 grid-area: enemy");
+  assert(
+    /#fighter-player\s*\{[^}]*grid-area:\s*player/.test(land),
+    "橫屏 #fighter-player 要 grid-area: player"
+  );
+  assert(/\.battle-log\s*\{[^}]*grid-area:\s*log/.test(land), "橫屏 .battle-log 要 grid-area: log");
   assert(/\.hand\s*\{[^}]*grid-area:\s*hand/.test(land), "橫屏 .hand 要 grid-area: hand");
   assert(
     /\.battle-actions\s*\{[^}]*grid-area:\s*act/.test(land),
-    "橫屏 .battle-actions 要 grid-area: act（即結束回合掣固定喺右欄）"
+    "橫屏 .battle-actions 要 grid-area: act（結束回合固定右下）"
+  );
+  // 日誌要可滾，唔可以撐高
+  assert(
+    /\.battle-log\s*\{[^}]*overflow-y:\s*auto/.test(land),
+    "橫屏 .battle-log 要 overflow-y: auto（日誌自己滾，唔撐版面）"
   );
 
   // ④ 橫屏卡片要縮細（一屏見到多幾張）
@@ -263,55 +287,59 @@ for (const need of ["index.html", "css/main.css", "js/main.js", "js/data.js", "j
   );
 }
 
-/* ---------- 9. 橫屏驗收（模擬量度邏輯，確保規則真係可以一屏） ---------- */
+/* ---------- 9. 橫屏高度預算（三列佈局） ---------- */
 
 /*
- * 上一節只驗「規則存在」。呢節驗「規則計出嚟嘅高度真係入得落 390」。
- * 做法：由 CSS 抽關鍵數值（gap、padding、min-height），砌一個高度預算，
- * 睇下最壞情況（戰鬥頁 4 行 + 手牌）夠唔夠位。呢個係靜態估算，
- * 但可以捉到「有人把 gap 改大 3 倍」之類嘅回歸。
+ * 新佈局係 3 行：
+ *   row1 = enemy / log / player（minmax(0,1fr) 自適應）
+ *   row2 = piles（auto，約 24px）
+ *   row3 = hand / act（minmax(0,0.95fr) 自適應）
+ * 所以固定高度 = app padding + 2 個 row-gap + piles。
+ * 只要固定部分 + 最小可接受高度 ≤ 320，就一屏。
  */
 {
   const land = readFileSync(join(ROOT, "css", "landscape.css"), "utf8");
 
-  // 抽 .screen-battle 的 gap（第一個值係 row-gap）
-  const sbBlock = /\.screen-battle\s*\{([^}]*)\}/.exec(land)[1];
-  const gapMatch = /gap:\s*([\d.]+)rem\s+([\d.]+)rem/.exec(sbBlock);
-  assert(gapMatch, "橫屏 .screen-battle 應該有明確 gap（row column）");
-  const rowGap = parseFloat(gapMatch[1]) * 16; // rem → px（16px 基準）
-  assert(rowGap <= 8, `橫屏 row-gap 應 ≤8px（一屏高度緊），實際 ${rowGap}px`);
+  // row-gap：喺整份 landscape.css 搵（唔局限於某個 block）
+  const gapMatch = /row-gap:\s*([\d.]+)rem/.exec(land);
+  assert(gapMatch, "橫屏要定義 row-gap（三列佈局高度緊）");
+  const rowGap = parseFloat(gapMatch[1]) * 16;
+  assert(rowGap <= 6, `橫屏 row-gap 應 ≤6px（三列佈局高度緊），實際 ${rowGap}px`);
 
-  // .app padding 上下
-  const appBlock = /\.app\s*\{([^}]*)\}/.exec(land);
-  assert(appBlock, "landscape.css 應該有 .app 規則");
-  const padMatch = /padding:\s*([\d.]+)rem/.exec(appBlock[1]);
-  assert(padMatch, "橫屏 .app 應該有明確 padding");
-  const padY = parseFloat(padMatch[1]) * 16 * 2; // 上下各一次
-  assert(padY <= 16, `橫屏 .app 上下 padding 合計應 ≤16px，實際 ${padY}px`);
+  // height 用 calc(100vh - Nrem)
+  const hMatch = /height:\s*calc\(100vh\s*-\s*([\d.]+)rem\)/.exec(land);
+  assert(hMatch, "橫屏 .screen-battle 高度要用 calc(100vh - Nrem)");
+  const hOffset = parseFloat(hMatch[1]) * 16;
+  assert(hOffset <= 12, `橫屏 100vh 減少量應 ≤12px，實際 ${hOffset}px`);
 
-  // 高度預算：390 視口
-  // app padding(2×4.8) + 4 行 gap(3×4.8) + top(~110) + piles(26) + hand(~150) + log(~42)
-  const VIEWPORT = 390;
-  const budget = padY + rowGap * 3 + 110 + 26 + 150 + 42;
+  // app 上下 padding（搵第一個 .app 區塊）
+  const appMatch = /\.app\s*\{([\s\S]*?)\}/.exec(land);
+  assert(appMatch, "landscape.css 應該有 .app 規則");
+  const padMatch = /padding:\s*([\d.]+)rem/.exec(appMatch[1]);
+  assert(padMatch, "橫屏 .app 要有明確 padding");
+  const padY = parseFloat(padMatch[1]) * 16 * 2;
+  assert(padY <= 12, `橫屏 .app 上下 padding 合計應 ≤12px，實際 ${padY}px`);
+
+  // 最矮可接受：320 高（Galaxy 橫屏）。row1 需 ≥110、row2 ≥24、row3 需 ≥100
+  const MIN_VIEWPORT = 320;
+  const fixed = padY + rowGap * 2 + 24;
+  const flexibleNeed = 110 + 100;
   assert(
-    budget <= VIEWPORT,
-    `橫屏高度預算 ${Math.round(budget)}px 超出 390 視口（要麼縮 gap、要麼縮元件）`
+    fixed + flexibleNeed <= MIN_VIEWPORT,
+    `橫屏固定高度 ${Math.round(fixed)} + 最小內容 ${flexibleNeed} = ${Math.round(fixed + flexibleNeed)}px 超出 ${MIN_VIEWPORT} 視口`
   );
 
-  // 手牌卡片高度：橫屏 96 闊 + 3:2 圖 => 圖 64 + 文字約 48 = 112
+  // 卡片闊度（新值 92）
   const cardBlock = /\.hand \.card-face,\s*\.card-face\s*\{([^}]*)\}/.exec(land);
-  assert(cardBlock, "搵唔到橫屏卡片規則");
-  const cw = /width:\s*(\d+)px/.exec(cardBlock[1]);
+  const cw = cardBlock ? /width:\s*(\d+)px/.exec(cardBlock[1]) : null;
   const cardWidth = cw ? Number(cw[1]) : 118;
   assert(
     cardWidth >= 80 && cardWidth <= 110,
-    `橫屏卡片闊度應 80–110px（太窄睇唔清、太闊一屏放唔到），實際 ${cardWidth}px`
+    `橫屏卡片闊度應 80–110px，實際 ${cardWidth}px`
   );
 
-  console.log("  ✓ 橫屏高度預算（gap／padding／卡片闊度喺 390 內）");
+  console.log("  ✓ 橫屏高度預算（三列佈局：row-gap／padding／最小內容喺 320 內）");
 }
-
-
 /* ---------- 結果 ---------- */
 
 if (failures.length) {

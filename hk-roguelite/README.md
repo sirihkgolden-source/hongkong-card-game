@@ -548,112 +548,89 @@ body { overflow-x: clip; overflow-x: hidden; }   /* 禁水平捲動 */
 
 ### 手機橫屏（主驗收尺寸）
 
-**橫屏高度只有 360–430px**，直版嘅垂直堆疊一定唔夠位（實測 844×390 下 `docH = 751`，要拉 **361px** 才見到結束回合）。
+**橫屏高度只有 320–430px**，直版嘅垂直堆疊一定唔夠位。
 
-另開 `css/landscape.css`，喺 `(orientation: landscape) and (max-height: 500px)` 之下換版面：
+所以 `css/landscape.css` 提供**一套獨立版面**（唔係把直版壓扁），喺 `(orientation: landscape) and (max-height: 500px)` 之下生效。
 
-| 頁 | 直版 | 橫屏 |
-|---|---|---|
-| **戰鬥** | 單欄垂直堆疊 | **三欄**：左 HUD｜中手牌｜右操作（結束回合 + 暫停） |
-| **地圖** | 兩欄（3 行） | **三欄**（6 格 → 2 行） |
-| **事件** | 選項縱排 | 選項**橫排三欄** |
-| **戰果** | 底欄縱排 | 底欄**橫排並排**、副標收起 |
+#### 戰鬥頁：真三區佈局
 
-**判斷式用 `orientation` + 高度上限**，唔用固定闊度 —— 手機橫屏高度 360–430，桌面橫屏通常 >600，唔會誤中。
+```
+┌──────────┬─────────────┬──────────┐
+│ 敵人     │  戰鬥日誌   │ 玩家 HUD │
+│ 立繪/HB  │  （可滾）   │ 血/能量  │
+│ 意圖     │             │ 擋       │
+├──────────┴─────────────┼──────────┤
+│ 牌堆（4 格）           │ 結束回合 │
+├────────────────────────┤ 暫停     │
+│ 手牌（一排橫滑）       │          │
+└────────────────────────┴──────────┘
+```
 
-**戰鬥頁三欄 grid**：
+實作關鍵：`.battle-top` 用 **`display: contents`** 拆開，令敵人卡同玩家卡直接成為 grid item —— 唔使改 HTML 結構。
 
 ```css
 .screen-battle {
-  grid-template-columns: minmax(0,1fr) minmax(0,1.15fr) minmax(0,0.95fr);
+  grid-template-columns: minmax(0,26%) minmax(0,1fr) minmax(0,25%);
+  grid-template-rows: minmax(0,1fr) auto minmax(0,0.95fr);
   grid-template-areas:
-    "top   top   top"
-    "piles piles piles"
-    "hand  hand  act"
-    "log   log   log";
-  height: calc(100vh - 0.6rem);
+    "enemy log    player"
+    "piles piles  player"
+    "hand  hand   act";
+  height: calc(100vh - 0.56rem);
+  overflow: hidden;
 }
-.hand          { grid-area: hand; }
-.battle-actions{ grid-area: act; }   /* 結束回合固定右欄 */
+.battle-top { display: contents; }
 ```
 
-卡片縮到 **96px 闊**（直版 118），5 張一屏放得晒。
-
-**橫屏實測（CDP 量 DOM 佈局）**：
-
-| 尺寸 | 一屏 | 左右對稱 | 手牌可見 | 結束回合可見 |
-|---|---|---|---|---|
-| **844×390**（iPhone 14 橫） | ✅ `over: 0` | ✅ 6/6 | ✅ | ✅ |
-| **780×360** | ✅ `over: 0` | ✅ | ✅ | ✅ |
-| **667×375**（iPhone SE 橫） | ✅ `over: 0` | ✅ | ✅ | ✅ |
-
-**戰果頁底欄**：由 184px 壓到 **47px**（兩粒掣並排：主掣 316×40、返回 96px），兩粒都喺屏內。
-
-**直版回歸**：390×844 下 `gridTemplateColumns: none`（冇套用三欄）、一屏、對稱 —— 完全冇受影響。
-
-#### 獨立驗收（每頁四項）
-
-每頁量四件事，全部要過：
-
-| 檢查 | 判準 |
+| 區 | 位置（844×390 實測） |
 |---|---|
-| **一屏** | `documentElement.scrollHeight <= innerHeight`（唔使上下拉） |
-| **對稱** | `main.screen` 左邊距 − 右邊距 ≤ 2px |
-| **唔裁邊** | 冇任何可互動元素 `left < 0` 或 `right > innerWidth` |
-| **主掣可點** | `elementFromPoint(中心)` 要係自己（唔被遮） |
+| 敵人 | x 6–223、y 4–184（216×180） |
+| 日誌 | x 228–624、y 4–124（396×120，`overflow-y: auto`） |
+| 玩家 HUD | x 630–838、y 4–212（208×207） |
+| 牌堆 | x 6–624、y 188–212（618×24） |
+| 手牌 | x 6–624、y 215–386（618×171，橫滑） |
+| 操作 | x 630–838、y 215–386（208×171） |
+| **結束回合** | 630–838、**307–353**（208×46） |
+| **暫停** | 630–838、357–385（208×28） |
 
-**10 個頁面實測（844×390）**：
+#### 其他三頁
 
-```
-title / select / map / event / reward / rest / settings
-tutorial / pause / victory / defeat
-→ 全部 fits: true、overPx: 0、sym: true、overflowCount: 0
-```
+| 頁 | 橫屏佈局 |
+|---|---|
+| **地圖** | 六格 → **三欄兩行** |
+| **事件** | 三選項 → **橫排三欄** |
+| **戰果** | 底欄**橫排並排**、副標收起、`padding-bottom` 收窄至 3.1rem |
 
-**關鍵元素位置（844×390）**：
+#### 橫屏實測（CDP 量 DOM）
 
-| 元素 | 位置 | 在視口 |
-|---|---|---|
-| 結束回合 | x 586–838、y 283–329、251×46 | ✅ |
-| 暫停 | x 680–744、y 334–372 | ✅ |
-| 手牌區 | x 6–581、y 162–372 | ✅ |
-| 第一張卡 | x 6–102、y 164–275、96×112 | ✅ |
-| 地圖「進入」 | x 15–283、y 127–227 | ✅ |
-| 事件選項 | x 15–283、y 163–230 | ✅ |
-| 戰果「再來一局」 | x 213–529、y 347–387 | ✅ |
-| 戰果「返回標題」 | x 535–631、y 348–386 | ✅ |
+| 尺寸 | 一屏 | 超出 | 對稱 | 裁邊 | 水平捲動 |
+|---|---|---|---|---|---|
+| **844×390** | ✅ | 0px | ✅ 6/6 | 0 | 冇 |
+| **780×360** | ✅ | 0px | ✅ | 0 | 冇 |
+| **693×320**（極矮） | ✅ | 0px | ✅ | 0 | 冇 |
+| 667×375 | ✅ | 0px | ✅ | 0 | 冇 |
 
-**hit-test**：上述四類掣嘅中心點 `elementFromPoint` 全部 `isSelf: true`。
-
-**多解析度掃描**：
-
-| 尺寸 | 四頁一屏 | 對稱 | 水平捲動 |
-|---|---|---|---|
-| 844×390 | ✅ | ✅ 6/6 | 冇 |
-| 780×360 | ✅ | ✅ | 冇 |
-| **693×320**（極矮） | ✅ | ✅ | 冇 |
-| 667×375 | ✅ | ✅ | 冇 |
+**全部 13 頁**都一屏：`title`／`select`／`map`／`event`／`reward`／`rest`／`settings`／`tutorial`／`pause`／`victory`／`defeat`／`boss-gate`／`act-transition`。
 
 **壓力測試**：
 
-- **10 張手牌**（正常 5 張）→ 仍然 `overPx: 0`、`handScrollWidth 1010 > clientWidth 574`（橫滑，唔撐高）
-- **牌組預覽展開** → `overPx: 0`
-- **真選牌頁 3 張卡** → `overPx: 0`
-- **Boss 戰前／Act 過場／分支** → 全部 `overPx: 0`
+| 情境 | 結果 |
+|---|---|
+| **10 張手牌**（正常 5） | `overPx: 0`；`scrollWidth 960 > clientWidth 618` → 橫滑，唔撐高 |
+| 牌組預覽展開 | `overPx: 0`（內部自己滾） |
+| Boss 戰前／Act 過場／分支 | `overPx: 0` |
 
-**對稱嘅決定性證據**（唔靠肉眼、唔靠截圖）：
+**hit-test**（`elementFromPoint` 打中心點，確認冇被遮）：
 
-```js
-// 搵 .screen 內最左／最右可見元素
-leftMost:  { el: "screen screen-battle", l: 6 }
-rightMost: { el: "screen screen-battle", r: 838 }
-// 844 - 838 = 6 → symDiff = 0
+```
+結束回合 → btn btn-ghost              isSelf: true
+暫停     → pause-btn pause-btn--battle isSelf: true
+手牌卡   → card-art                    isSelf: true
 ```
 
-> ⚠️ 像素掃描（截圖逐行找最左/最右亮點）對橫屏**唔可靠**：右欄按鈕顏色較暗，亮度閾值會漏掉，量出嚟 6.5 vs 19（假差異）。**以 DOM `getBoundingClientRect()` 為準。**
+**直版回歸**：390×844 下冇套用橫屏規則（`landscape.css` 唔含 `orientation: portrait`），一切照舊。
 
-> ⚠️ 用截圖核對時要小心：截圖工具會用自己嘅裝置尺寸（實測影到 2208×1331），同 CDP `Emulation.setDeviceMetricsOverride` 設定嘅 844×390 唔一致。**以 `getBoundingClientRect()` 量到嘅數值為準**。
-
+> ⚠️ 驗收唔靠截圖：截圖工具會用自己嘅裝置尺寸（實測影到 2208×1331），同 CDP 設定嘅 844×390 唔一致。**一律以 `getBoundingClientRect()` 為準**。
 ## 自測
 
 ```bash
