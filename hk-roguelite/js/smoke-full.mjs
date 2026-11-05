@@ -41,6 +41,7 @@ import {
   metaBonuses,
 } from "./data.js";
 import { createBattle, playCard, endTurn, startPlayerTurn } from "./battle.js";
+import { readdirSync } from "node:fs";
 import {
   loadMeta,
   saveMeta,
@@ -74,6 +75,18 @@ function section(name, fn) {
 }
 
 const CHAR_IDS = Object.keys(CHARACTERS);
+
+/**
+ * 立繪檔案清單（實際讀 assets/art/portraits/）：
+ * 唔靠人眼睇選角頁，直接確認 data.js 指住嘅檔真係喺度，
+ * 避免「路徑寫錯 → 靜靜 fallback 字塊」呢種無聲失敗。
+ */
+const PORTRAIT_DIR = new URL("../assets/art/portraits/", import.meta.url);
+const PORTRAIT_FILES = new Set(
+  readdirSync(PORTRAIT_DIR)
+    .filter((f) => /\.(webp|png|jpg|jpeg)$/i.test(f))
+    .map((f) => `assets/art/portraits/${f}`)
+);
 
 function mkRun(charId) {
   const c = CHARACTERS[charId];
@@ -125,7 +138,15 @@ section("四角開局", () => {
     // 開局金幣夠買最便宜消耗品
     const cheapest = Math.min(...Object.values(CONSUMABLES).map((x) => x.price));
     assert(START_GOLD >= cheapest, `開局 ${START_GOLD} 金買唔到 ${cheapest} 金消耗品`);
+
+    // 立繪：四角都要有圖（唔可以留純色字首塊），而且檔案真係存在
+    assert(c.portrait, `${id} 缺立繪路徑（會顯示字首色塊）`);
+    assert(/^assets\/art\/portraits\/.+\.(webp|png|jpg|jpeg)$/i.test(c.portrait), `${id} 立繪路徑唔對：${c.portrait}`);
+    assert(PORTRAIT_FILES.has(c.portrait), `${id} 立繪檔案唔存在：${c.portrait}`);
   }
+  // 四角立繪唔可以重用同一張
+  const portraits = CHAR_IDS.map((id) => CHARACTERS[id].portrait);
+  assert(new Set(portraits).size === portraits.length, `立繪重複：${portraits.join("/")}`);
   // 四角路線互不相同
   assert(new Set(routes).size === 4, `角色路線重複：${routes.join("/")}`);
 });
