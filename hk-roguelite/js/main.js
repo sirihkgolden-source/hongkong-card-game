@@ -492,9 +492,9 @@ function renderBattle() {
         ? `<div class="battle-banner lose">你倒下了</div>`
         : "";
 
-  // Boss 戰後一句（只有打贏 Boss 先出）
+  // 戰後一句：所有敵人都可以有（Boss 用 .boss-afterword，普通戰用同一 class 唔影響版面）
   const bossAfterword =
-    b.over === "win" && (b.isBoss || b.isFinalBoss) && b.afterword
+    b.over === "win" && b.afterword
       ? `<blockquote class="boss-afterword">「${escapeHtml(b.afterword)}」</blockquote>`
       : "";
 

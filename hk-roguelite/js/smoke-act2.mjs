@@ -16,6 +16,7 @@ import {
   actDisplayName,
   battleGoldReward,
   enemyById,
+  ENEMIES,
   pickRewardChoices,
   SIGNATURE_CARDS,
   CONSUMABLES,
@@ -317,6 +318,23 @@ function simulateChar(charId) {
     }
     // 每次洗貨都要抽到 ≥1 件
     assert(pickShopConsumables(1).length === 1, "消耗品貨架抽唔到貨");
+  }
+
+  // 敵名港味：禁止會計腔／生硬直譯
+  {
+    const forbidden = ["圍標", "到期", "清場沙包", "逼爆潮"];
+    for (const [id, e] of Object.entries(ENEMIES)) {
+      for (const bad of forbidden) {
+        assert(!e.name.includes(bad), `${id} 名稱含會計腔「${bad}」：${e.name}`);
+      }
+      // 全部敵人都要有戰前 + 戰後各一句
+      assert(e.flavor && e.flavor.length >= 8, `${id} 缺戰前台詞`);
+      assert(e.afterword && e.afterword.length >= 6, `${id} 缺戰後台詞`);
+    }
+    // 三大 Boss 正式名不可改
+    assert(enemyById("E04").name === "巷口鐵閘・睇場", "Act1 Boss 名被改");
+    assert(enemyById("E05").name === "西裝收數隊", "Act2 Boss 名被改");
+    assert(enemyById("E12").name === "籠門之王", "Act3 Boss 名被改");
   }
 
   // 通關總結：三角色各自要有一句（唔可以空白／重複）
