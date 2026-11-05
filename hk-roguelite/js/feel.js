@@ -183,6 +183,20 @@ export function showKuaisouBanner() {
   showPassiveBanner("快手！", "kuaisou");
 }
 
+/**
+ * 選牌確認動感：卡片放大高亮 + 輕輕上彈，然後才離開畫面。
+ * 令「揀咗邊張」有明確回饋，唔會一 click 就跳走。
+ */
+export async function confirmPick(el, ms = 260) {
+  if (!el) {
+    await wait(ms);
+    return;
+  }
+  el.classList.add("is-picked");
+  await wait(ms);
+  el.classList.remove("is-picked");
+}
+
 export function clearFx() {
   const root = document.getElementById("fx-root");
   if (root) root.replaceChildren();

@@ -54,6 +54,7 @@ import {
   clearFx,
   floatGold,
   floatRunDeltas,
+  confirmPick,
 } from "./feel.js";
 
 /** @type {{
@@ -490,9 +491,44 @@ function renderBattle() {
   `;
 }
 
+/** 選牌後一句人話：講清呢張牌實際幫到你咩 */
+function pickFeedback(card) {
+  if (!card) return "入咗牌組。";
+  const name = card.name;
+  if (card.dmg && card.dmg >= 12) {
+    return `入咗「${name}」——一張重拳，Boss 都食唔消。`;
+  }
+  if (card.dmg && card.draw) {
+    return `入咗「${name}」——打得又抽得，牌唔會斷。`;
+  }
+  if (card.dmg) {
+    return `入咗「${name}」——出手多一個選擇，唔使淨靠 starter。`;
+  }
+  if (card.block && card.heal) {
+    return `入咗「${name}」——擋得又回得，捱得更耐。`;
+  }
+  if (card.block) {
+    return `入咗「${name}」——多一層擋，命硬啲。`;
+  }
+  if (card.heal) {
+    return `入咗「${name}」——有得回血，唔使咁快死。`;
+  }
+  if (card.draw) {
+    return `入咗「${name}」——抽多張，牌路順啲。`;
+  }
+  return `入咗「${name}」——牌組厚一分。`;
+}
+
 function renderReward() {
   const choices = state.rewardChoices
-    .map((id) => renderCardFace(id, { pickId: id }))
+    .map((id) => {
+      const card = cardById(id);
+      return `
+        <div class="reward-cell">
+          ${renderCardFace(id, { pickId: id })}
+          <p class="reward-why">${escapeHtml(pickFeedback(card).replace(/^入咗「.*?」——/, ""))}</p>
+        </div>`;
+    })
     .join("");
   return `
     <main class="screen screen-wide" aria-label="選牌">
@@ -1571,12 +1607,24 @@ function onClick(event) {
 
   const pickId = t.getAttribute("data-pick");
   if (pickId) {
+    if (state.busy) return;
+    state.busy = true;
+    const card = cardById(pickId);
     const before = runSnapshot();
-    state.run.deck.push(pickId);
-    state.statusMsg = `已加入「${cardById(pickId)?.name ?? pickId}」`;
-    showRunDeltas(before);
-    advanceMap();
-    render();
+    // 短動感：卡片放大高亮，同時出跳字，之後才離開
+    const cardEl = t.closest(".card-face") || t;
+    sfx.click();
+    floatText(cardEl, "入手！", "kuaisou");
+    confirmPick(cardEl, 240).then(() => {
+      state.run.deck.push(pickId);
+      const msg = pickFeedback(card);
+      showRunDeltas(before);
+      state.busy = false;
+      advanceMap();
+      // advanceMap 會清 statusMsg，所以推進之後才設定，令地圖畫面顯示得到
+      state.statusMsg = msg;
+      render();
+    });
     return;
   }
 
@@ -1665,7 +1713,12 @@ function onClick(event) {
       sfx.lose();
       break;
     case "skip-reward":
+      // 唔要都有回饋：講清你放棄咗咩、之後要靠咩
       advanceMap();
+      state.statusMsg =
+        (state.run.deck || []).length <= 10
+          ? "冇揀牌——牌組仍然薄，下一場要小心啲。"
+          : "跳過咗呢張。牌組冇變，但慳返個位。";
       break;
     case "finish-event":
       // 每局事件節點抽 2 個：行完第一個接第二個，行完先返地圖
