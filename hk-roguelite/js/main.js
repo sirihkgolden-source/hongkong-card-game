@@ -44,6 +44,7 @@ import {
   effectiveCost,
 } from "./battle.js";
 import { sfx, isMuted, toggleMuted } from "./sfx.js";
+import { listKeys, progressKeys, hasProgress, clearProgress } from "./storage.js";
 import {
   wait,
   pressCard,
@@ -96,6 +97,10 @@ const state = {
   pendingTurnLine: "",
   actTransition: /** @type {object|null} */ (null),
   openingHint: "",
+  /** 設定頁：清除進度二次確認狀態（"idle" → "confirm"） */
+  clearConfirm: "idle",
+  /** 設定頁：上次操作結果一句（清除後回饋） */
+  settingsMsg: "",
 };
 
 const app = document.getElementById("app");
@@ -251,9 +256,82 @@ function renderTitle() {
       </section>
       <div class="actions">
         <button type="button" class="btn btn-primary btn-pressable" data-action="to-select">進入選角</button>
+        <button type="button" class="btn btn-ghost btn-pressable" data-action="to-settings">設定</button>
       </div>
       ${renderSfxToggle()}
       <p class="foot-note">入口：hk-roguelite/index.html · 目錄暫名 hk-roguelite</p>
+    </main>
+  `;
+}
+
+/**
+ * 設定頁：靜音記憶 + 清除本機進度（二次確認）。
+ *
+ * 設計重點：
+ *   - 靜音狀態由 `sfx.js` 嘅 localStorage 驅動，重開瀏覽器仍生效
+ *   - 清除進度要**撳兩下**：第一下變成紅色「確定清除？」並顯示會清走咩，
+ *     第二下才真係清；中間有「取消」可以全身而退
+ *   - 清除**唔會**洗走音效設定（純設定 key 有白名單）
+ *   - 冇任何進度時，清除掣禁用並講明「本機未有進度」
+ */
+function renderSettings() {
+  const off = isMuted();
+  const keys = progressKeys();
+  const confirming = state.clearConfirm === "confirm";
+  const anyProgress = keys.length > 0;
+
+  const keyList = keys.length
+    ? `<ul class="settings-keys">${keys.map((k) => `<li><code>${escapeHtml(k)}</code></li>`).join("")}</ul>`
+    : `<p class="settings-empty">本機未有進度——打過一局、遇過敵人、解鎖過嘢，先會喺度見到。</p>`;
+
+  const confirmBlock = confirming
+    ? `
+      <div class="settings-confirm" role="alert">
+        <p class="settings-confirm-title">真係要清除？清走就冇得救。</p>
+        <p class="settings-confirm-body">會清走上面列住嘅本機進度（圖鑑、名冊、解鎖）。音效設定會保留。</p>
+        <div class="settings-confirm-actions">
+          <button type="button" class="btn btn-danger btn-pressable" data-action="confirm-clear">係，清除</button>
+          <button type="button" class="btn btn-ghost btn-pressable" data-action="cancel-clear">唔好，取消</button>
+        </div>
+      </div>`
+    : `
+      <button type="button" class="btn btn-ghost btn-pressable settings-clear-btn" data-action="ask-clear"
+        ${anyProgress ? "" : "disabled"}>
+        ${anyProgress ? "清除本機進度" : "清除本機進度（冇進度可清）"}
+      </button>`;
+
+  return `
+    <main class="screen screen-settings" aria-label="設定">
+      <header class="brand-block brand-compact">
+        <h1 class="brand">設定</h1>
+        <p class="tagline">本機設定 · 唔會上載任何資料</p>
+      </header>
+
+      <section class="panel">
+        <h2>音效</h2>
+        <p class="lede">而家：<strong>${off ? "關" : "開"}</strong>。設定會記住，重開瀏覽器都仍然生效。</p>
+        <button type="button" class="sfx-toggle${off ? " is-muted" : ""}" data-action="toggle-sfx"
+          aria-pressed="${off ? "true" : "false"}" aria-label="${off ? "音效已關，撳一下開啟" : "音效已開，撳一下靜音"}">
+          <span class="sfx-toggle-icon" aria-hidden="true">${off ? "🔇" : "🔊"}</span>
+          <span class="sfx-toggle-text">${off ? "音效：關" : "音效：開"}</span>
+        </button>
+      </section>
+
+      <section class="panel">
+        <h2>本機進度</h2>
+        <p class="lede">呢啲資料只存喺你部機（localStorage），冇上雲。</p>
+        ${keyList}
+        ${confirmBlock}
+        ${
+          state.settingsMsg
+            ? `<p class="settings-result" role="status">${escapeHtml(state.settingsMsg)}</p>`
+            : ""
+        }
+      </section>
+
+      <div class="actions">
+        <button type="button" class="btn btn-primary btn-pressable" data-action="back-title">返標題</button>
+      </div>
     </main>
   `;
 }
@@ -1460,6 +1538,9 @@ function render() {
     case "defeat":
       html = renderDefeat();
       break;
+    case "settings":
+      html = renderSettings();
+      break;
     default:
       html = renderTitle();
   }
@@ -2182,11 +2263,45 @@ function onClick(event) {
       if (!nowMuted) sfx.coin();
       break;
     }
+    case "to-settings":
+      state.screen = "settings";
+      // 每次入嚟都由「未確認」開始，唔會殘留上一次嘅紅色確認狀態
+      state.clearConfirm = "idle";
+      state.settingsMsg = "";
+      break;
+    case "ask-clear": {
+      // 第一下：只係問，唔清任何嘢
+      if (!hasProgress()) {
+        state.settingsMsg = "本機未有進度可清。";
+        break;
+      }
+      state.clearConfirm = "confirm";
+      state.settingsMsg = "";
+      sfx.click();
+      break;
+    }
+    case "cancel-clear":
+      state.clearConfirm = "idle";
+      state.settingsMsg = "冇清到任何嘢。";
+      break;
+    case "confirm-clear": {
+      // 第二下：真係清，但只清進度，音效設定保留
+      const before = progressKeys().length;
+      const res = clearProgress();
+      state.clearConfirm = "idle";
+      state.settingsMsg = res.ok
+        ? `已清除 ${before} 項本機進度。音效設定保留。`
+        : "清除失敗（瀏覽器可能封鎖咗本機儲存）。";
+      break;
+    }
     case "back-title":
       state.screen = "title";
       state.run = null;
       state.battle = null;
       state.pendingBossId = null;
+      // 離開設定頁就清走確認狀態，唔會下次入嚟仍然紅色
+      state.clearConfirm = "idle";
+      state.settingsMsg = "";
       break;
     case "pick-char": {
       const id = t.getAttribute("data-char");

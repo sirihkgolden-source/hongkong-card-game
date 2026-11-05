@@ -641,6 +641,19 @@ body {
   border-color: rgba(61, 224, 255, 0.45);
 }
 
+/* 危險動作（清除進度）：用紅但唔刺眼，hover 才加深 */
+.btn-danger {
+  color: #ffd9d4;
+  background: rgba(140, 24, 24, 0.42);
+  border: 1px solid rgba(255, 107, 90, 0.55);
+  font-weight: 700;
+}
+
+.btn-danger:hover {
+  background: rgba(170, 28, 28, 0.58);
+  border-color: rgba(255, 130, 110, 0.8);
+}
+
 .status {
   min-height: 1.25rem;
   text-align: center;
@@ -711,6 +724,126 @@ body {
 
 .sfx-toggle-text {
   white-space: nowrap;
+}
+
+/* —— 設定頁 —— */
+.screen-settings .panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  align-items: flex-start;
+}
+
+.screen-settings .panel .lede {
+  margin: 0;
+}
+
+.screen-settings .sfx-toggle {
+  align-self: flex-start;
+}
+
+.settings-keys {
+  width: 100%;
+  margin: 0;
+  padding: 0.55rem 0.7rem;
+  list-style: none;
+  border-radius: 10px;
+  background: rgba(5, 12, 22, 0.55);
+  border: 1px solid rgba(61, 224, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.settings-keys li {
+  font-size: 0.78rem;
+  color: rgba(163, 190, 220, 0.9);
+  line-height: 1.35;
+  word-break: break-all;
+}
+
+.settings-keys code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: rgba(120, 232, 255, 0.92);
+}
+
+.settings-empty {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: rgba(154, 173, 200, 0.82);
+}
+
+/* 清除進度：第一次撳只係問，唔會清 */
+.settings-clear-btn {
+  width: 100%;
+  min-height: 48px;
+}
+
+.settings-clear-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.settings-confirm {
+  width: 100%;
+  padding: 0.8rem 0.85rem;
+  border-radius: 12px;
+  background: rgba(120, 20, 20, 0.3);
+  border: 1px solid rgba(255, 107, 90, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  animation: settings-warn-in 0.22s ease-out both;
+}
+
+@keyframes settings-warn-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.settings-confirm-title {
+  margin: 0;
+  font-size: 0.94rem;
+  font-weight: 700;
+  color: #ffcec7;
+  line-height: 1.4;
+}
+
+.settings-confirm-body {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: rgba(255, 216, 210, 0.88);
+}
+
+.settings-confirm-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.settings-confirm-actions .btn {
+  width: 100%;
+  min-height: 48px;
+}
+
+.settings-result {
+  width: 100%;
+  margin: 0;
+  padding: 0.5rem 0.7rem;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: rgba(190, 240, 220, 0.92);
+  background: rgba(24, 60, 44, 0.42);
+  border: 1px solid rgba(90, 220, 170, 0.32);
 }
 
 /* —— Map —— */
