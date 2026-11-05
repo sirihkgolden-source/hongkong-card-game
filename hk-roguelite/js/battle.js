@@ -43,6 +43,8 @@ export function createBattle(run, enemyDef) {
     enemyName: enemyDef.name,
     enemyArt: enemyDef.art,
     enemyFlavor: enemyDef.flavor,
+    /** Boss 戰後一句（區 Boss／最終 Boss 先有） */
+    afterword: enemyDef.afterword || "",
     enemyMaxHp: enemyDef.hp,
     enemyHp: enemyDef.hp,
     enemyBlock: 0,
