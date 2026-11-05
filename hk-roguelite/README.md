@@ -381,12 +381,41 @@ return `${y}-${m}-${day}`;
 2. 敵人頭上寫住今回合想打幾多——睇清楚先決定擋定打。
 3. 冇牌打就撳「結束回合」，敵人出手，之後重新抽牌回滿⚡。
 
+### 戰鬥手牌一屏（390）
+
+**問題**：改之前 390×844 下 `docH = 981`（要拉 137px 才見到「結束回合」），手牌區竟然佔 **390px** —— 因為 `.hand` 用 `grid auto-fill minmax(118px)`，5 張牌在 376 寬下只能放 3 張，換行變 2 行。
+
+**四項改動**：
+
+| 問題 | 改法 | 效果 |
+|---|---|---|
+| 手牌換行撐高 | `.hand` 改 `flex` + `nowrap` + `overflow-x: auto` | 單行橫滑，390→**162px** |
+| 卡面過高 | `.card-face` 固定 `flex: 0 0 118px`、移除 `min-height: 168px` | 卡高 204→**153px** |
+| 卡圖佔位 | `.card-art` `aspect-ratio: 1` → `4 / 3` | 省 30px |
+| blurb 佔空間 | 手牌上 `.hand .card-blurb { display: none }` | 省 32px（長按詳情仍睇得到） |
+
+**另外兩個真 bug（順手修）**：
+
+1. **牌組掣佔一整行 48px** → 併入牌堆列做第 4 格（`⿴牌庫 5 ｜ 棄牌 0 ｜ 手牌 5 ｜ 牌組 10`），四格各 44px 高、逼一行唔折行。
+2. **`.screen` 在 390 下爆到 430px**（`max-width: min(430px, 100%)` 嘅 `100%` 跟父容器 `.app` 內容寬，而 padding 唔計入）→ 改用 `calc(100vw - 0.9rem)`。**呢個係橫向被裁 40px 嘅真因**。
+
+**改前後實測**：
+
+| 指標 | 改前 | 改後 |
+|---|---|---|
+| `docH` | 981（要拉 137px） | **844 = 視口** |
+| 手牌區高 | 390 | **162** |
+| 卡高 | 204 | **153** |
+| 結束回合 bottom | 881（**屏外**） | **614（屏內）** |
+| `.screen` 闊度 | 430（爆邊） | **376** |
+| 橫滑 | 無 | `scrollWidth 612 > client 376`，實測 `scrollLeft 0 → 236.8` |
+
 
 ## 自測
 
 ```bash
 cd hk-roguelite
-node js/smoke-act2.mjs   # Act1–2 流程、事件池、商店、選牌加權＋音效＋設定頁＋教學＋暫停＋存檔＋每日鉤＋牌組預覽＋長按詳情
+node js/smoke-act2.mjs   # Act1–2 流程、事件池、商店、選牌加權＋音效＋設定頁＋教學＋暫停＋存檔＋每日鉤＋牌組預覽＋長按詳情＋手牌一屏
 node js/smoke-act3.mjs   # 四角色×三區全程 → 最終 Boss → 結算資料
 node js/smoke-full.mjs   # 封測包：四角／分支／店／遺物／near-miss／再開一局
 node js/probe-act3.mjs   # 最終 Boss 勝率／超時（平衡下限參考）
@@ -472,6 +501,16 @@ node js/probe-act3.mjs   # 最終 Boss 勝率／超時（平衡下限參考）
 - 冇數值效果嘅牌都要有一句人話
 - `null`／`undefined` 降級而唔 throw
 - 「幾時用」要按牌型分流，唔可以全部一樣
+
+**「戰鬥手牌一屏」**（Node 冇 DOM，所以驗 CSS 原文有冇關鍵規則，防止日後被誤刪）
+
+- `.hand` 必須係 `display: flex` + `flex-wrap: nowrap` + `overflow-x: auto`，而且**冇** `grid-template-columns`（會換行撐高）
+- `.card-face` 要有固定 `flex: 0 0 Npx` 同 `width`，而且**冇** `min-height: 168px`
+- `.card-art` 要用 `aspect-ratio: 4 / 3`
+- `.hand .card-blurb` 要 `display: none`
+- `.pile-row` 要 `flex-wrap: nowrap`
+- **手機 media query 唔可以用 `100%`**：要 `calc(100vw - padding)`，否則 390 下爆到 430
+- `.pile-deck-btn` 要 `min-height: 44px`
 
 ### 封測包（`smoke-full.mjs`）
 
