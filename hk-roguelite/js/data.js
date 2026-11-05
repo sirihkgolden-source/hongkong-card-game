@@ -171,7 +171,7 @@ export const CARDS = {
     name: "菠蘿油盾",
     type: "skill",
     cost: 2,
-    block: 14,
+    block: 11,
     heal: 3,
     blurb: "厚盾兼暖胃。",
     art: "assets/skills/S56.png",
@@ -369,7 +369,7 @@ export const CARDS = {
     name: "跳掣",
     type: "attack",
     cost: 1,
-    dmg: 4,
+    dmg: 6,
     mark: 4,
     blurb: "掣一跳，半條街停電——下回合再痛 4 點。",
     art: "assets/skills/S16.png",
@@ -518,7 +518,7 @@ export const CHARACTERS = {
     route: "守住・擋回",
     initial: "珊",
     portrait: "assets/art/portraits/ashan.jpg",
-    maxHp: 80,
+    maxHp: 78,
     energy: 3,
     passive: {
       id: "dangkou",
@@ -560,7 +560,7 @@ export const CHARACTERS = {
     route: "節奏・抽牌",
     initial: "九",
     portrait: "assets/art/portraits/kauko.jpg",
-    maxHp: 65,
+    maxHp: 72,
     energy: 3,
     passive: {
       id: "zhaopaiyan",
@@ -580,7 +580,7 @@ export const CHARACTERS = {
     starterDeck: [
       "S01",
       "S16",
-      "S16",
+      "S21",
       "S14",
       "S72",
       "S02",
@@ -601,12 +601,12 @@ export const CHARACTERS = {
     playstyle: "邊打邊醫——每場第一次出技能牌就回血，愈拖愈唔死。",
     route: "回復・續戰",
     initial: "勝",
-    maxHp: 58,
+    maxHp: 54,
     energy: 3,
     passive: {
       id: "seotong",
       name: "跌打",
-      desc: "每場戰鬥首次打出技能牌，即刻回 5 HP。",
+      desc: "每場戰鬥首次打出技能牌，即刻回 4 HP。",
     },
     /** 「再開一局」鉤 */
     rerunHook: {
@@ -622,12 +622,12 @@ export const CHARACTERS = {
       "S01",
       "S01",
       "S21",
-      "S21",
       "S09",
       "S47",
       "S25",
       "S11",
       "S22",
+      "S15",
       "S89",
     ],
     /** 選牌傾向：純回血型（一眼認得係勝仔） */
@@ -718,8 +718,8 @@ export const ENEMIES = {
     flavor: "三個企喺燈箱底，一眼關七——「行過嘅，都要留低個名。」",
     afterword: "三個人散開，燈箱仲喺度閃。你行過，冇人再攔。",
     intents: [
-      { kind: "attack", value: 9, label: "夾擊 9" },
-      { kind: "attack", value: 12, label: "圍埋 12" },
+      { kind: "attack", value: 11, label: "夾擊 11" },
+      { kind: "attack", value: 14, label: "圍埋 14" },
       { kind: "block", value: 6, label: "人牆 6" },
     ],
   },
@@ -731,9 +731,9 @@ export const ENEMIES = {
     flavor: "電鋸聲響——呢條街嘅字，今晚拆完。",
     afterword: "電鋸停咗。招牌吊喺半空，仲未跌。",
     intents: [
-      { kind: "attack", value: 10, label: "鋸字 10" },
+      { kind: "attack", value: 12, label: "鋸字 12" },
       { kind: "weaken", value: 2, label: "火花：你下擊−2" },
-      { kind: "attack", value: 13, label: "拆招牌 13" },
+      { kind: "attack", value: 15, label: "拆招牌 15" },
     ],
   },
   E05: {
@@ -763,8 +763,8 @@ export const ENEMIES = {
     flavor: "鐵枝一紥，天台都震。你行入嚟，就當你係工地雜物。",
     afterword: "鐵枝散落一地。天台靜返，只剩風聲。",
     intents: [
-      { kind: "attack", value: 11, label: "紥鐵 11" },
-      { kind: "attack", value: 8, label: "鐵枝橫掃 8" },
+      { kind: "attack", value: 13, label: "紥鐵 13" },
+      { kind: "attack", value: 10, label: "鐵枝橫掃 10" },
       { kind: "buff_attack", value: 2, label: "上螺絲＋2攻" },
     ],
   },
@@ -791,9 +791,9 @@ export const ENEMIES = {
     flavor: "籠邊個個都落過注。佢唔落注——佢落手。",
     afterword: "佢縮返入人群。籠邊繼續有人落注。",
     intents: [
-      { kind: "attack", value: 9, label: "偷位 9" },
+      { kind: "attack", value: 11, label: "偷位 11" },
       { kind: "weaken", value: 2, label: "撩腳：你下擊−2" },
-      { kind: "attack", value: 12, label: "補拳 12" },
+      { kind: "attack", value: 14, label: "補拳 14" },
     ],
   },
   /** Act3 精英：地盤清場隊 */
@@ -806,10 +806,10 @@ export const ENEMIES = {
     afterword: "「收工就收工。」佢地執嘢走，你企喺原地。",
     isElite: true,
     intents: [
-      { kind: "attack", value: 12, label: "清場 12" },
-      { kind: "attack", value: 9, label: "撬棍 9" },
+      { kind: "attack", value: 14, label: "清場 14" },
+      { kind: "attack", value: 11, label: "撬棍 11" },
       { kind: "block", value: 9, label: "人牆擋 9" },
-      { kind: "attack", value: 15, label: "收工埋數 15" },
+      { kind: "attack", value: 17, label: "收工埋數 17" },
     ],
   },
   /** Act3 最終 Boss：籠門之王 */
@@ -1532,6 +1532,130 @@ export const EVENTS = {
       },
     ],
   },
+
+  /* ===== 內容加厚：每區再補一個短事件（全部必改局） ===== */
+
+  /** Act1-D：街市尾檔 */
+  ev_market_stall: {
+    id: "ev_market_stall",
+    title: "街市尾檔",
+    art: "assets/events/ev-dai-pai-dong.jpg",
+    body: "街市收市，尾檔阿婆仲擺住幾把菜。見你行過，塞你一袋：「拎去啦，唔好嘥。」",
+    choices: [
+      {
+        id: "take_veg",
+        label: "多謝阿婆",
+        effectText: "回 7 HP；牌組加入「最緊要開心」",
+        apply: (run) => {
+          run.hp = Math.min(run.maxHp, run.hp + 7);
+          run.deck.push("S09");
+          return "一袋菜、一句保重——人都暖返。";
+        },
+      },
+      {
+        id: "pay_her",
+        label: "照價畀錢",
+        effectText: "失去 5 金；最大生命 +5",
+        apply: (run) => {
+          run.gold = Math.max(0, run.gold - 5);
+          run.maxHp += 5;
+          run.hp = Math.min(run.maxHp, run.hp + 5);
+          return "阿婆唔肯收，你塞落佢袋——自己反而覺得身子實淨咗。";
+        },
+      },
+      {
+        id: "help_close",
+        label: "幫手收檔",
+        effectText: "失去 4 HP；牌組加入「鐵皮硬遮」",
+        apply: (run) => {
+          run.hp = Math.max(1, run.hp - 4);
+          run.deck.push("S46");
+          return "抬完幾箱菜，膊頭痠——但學識點樣擋。";
+        },
+      },
+    ],
+  },
+
+  /** Act2-D：茶記落閘 */
+  ev_cha_closing: {
+    id: "ev_cha_closing",
+    title: "茶記落閘",
+    art: "assets/events/ev-cha-chaan.jpg",
+    body: "茶記落緊半閘，伙記見你一身傷，探頭出嚟：「仲未收爐，坐低先。」",
+    choices: [
+      {
+        id: "sit_down",
+        label: "坐低食個包",
+        effectText: "回 9 HP；牌組加入「加底唔該」",
+        apply: (run) => {
+          run.hp = Math.min(run.maxHp, run.hp + 9);
+          run.deck.push("S25");
+          return "熱奶茶落肚，傷口都冇咁痛——多咗張回血抽牌。";
+        },
+      },
+      {
+        id: "ask_news",
+        label: "打聽街口風聲",
+        effectText: "最大生命 +3；下戰開場 +1 能量",
+        apply: (run) => {
+          run.maxHp += 3;
+          run.hp = Math.min(run.maxHp, run.hp + 3);
+          run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
+          return "伙記講咗好多內幕——下一場你會快人一步。";
+        },
+      },
+      {
+        id: "buy_takeaway",
+        label: "包走兩盒飯",
+        effectText: "失去 6 金；牌組加入「芝麻糊暖」",
+        apply: (run) => {
+          run.gold = Math.max(0, run.gold - 6);
+          run.deck.push("S47");
+          return "兩盒飯孭上身，行遠啲都唔怕——多咗張擋加回血。";
+        },
+      },
+    ],
+  },
+
+  /** Act3-D：樓梯轉角 */
+  ev_stair_corner: {
+    id: "ev_stair_corner",
+    title: "樓梯轉角",
+    art: "assets/events/ev-mtr-platform.jpg",
+    body: "上到最後一段樓梯，有人坐喺轉角食煙。見你上嚟，佢讓開半邊身：「上去呀？上面今晚好多人。」",
+    choices: [
+      {
+        id: "rest_here",
+        label: "坐低抖一陣",
+        effectText: "回 8 HP；最大生命 +3",
+        apply: (run) => {
+          run.maxHp += 3;
+          run.hp = Math.min(run.maxHp, run.hp + 8);
+          return "坐咗幾分鐘，腳都唔軟——上去有力啲。";
+        },
+      },
+      {
+        id: "ask_who",
+        label: "問上面係咩人",
+        effectText: "下戰開場 +1 能量；牌組加入「舊帳對數」",
+        apply: (run) => {
+          run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
+          run.deck.push("S72");
+          return "佢講咗幾個名——你記住咗，下一場識避。";
+        },
+      },
+      {
+        id: "trade_smoke",
+        label: "同佢交換一支煙",
+        effectText: "失去 5 HP；牌組加入「打邊爐氣」",
+        apply: (run) => {
+          run.hp = Math.max(1, run.hp - 5);
+          run.deck.push("S64");
+          return "煙換煙，咳到眼水都出——但袋多咗張搏命牌。";
+        },
+      },
+    ],
+  },
 };
 
 /** 依 run.act 取當前地圖 */
@@ -1545,9 +1669,9 @@ export function mapForAct(act) {
  * 每 Act 至少 3 個短事件（1 個固定 + 2 個加厚）
  */
 export const EVENT_POOLS = {
-  1: ["ev_gate_whisper", "ev_herbal_tea", "ev_dai_pai_dong", "ev_stair_auntie"],
-  2: ["ev_neon_hustle", "ev_mtr_squeeze", "ev_neon_sign", "ev_taxi_run"],
-  3: ["ev_rooftop_cage", "ev_rooftop_laundry", "ev_last_cigarette", "ev_water_tank"],
+  1: ["ev_gate_whisper", "ev_herbal_tea", "ev_dai_pai_dong", "ev_stair_auntie", "ev_market_stall"],
+  2: ["ev_neon_hustle", "ev_mtr_squeeze", "ev_neon_sign", "ev_taxi_run", "ev_cha_closing"],
+  3: ["ev_rooftop_cage", "ev_rooftop_laundry", "ev_last_cigarette", "ev_water_tank", "ev_stair_corner"],
 };
 
 /** 抽一個該 Act 的事件 id（可傳 rng 方便自測） */
