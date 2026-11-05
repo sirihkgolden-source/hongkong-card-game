@@ -2078,6 +2078,97 @@ body {
     gap: 0.4rem;
   }
 
+  /*
+   * 手機字級：390 寬下太細嘅字統一放大
+   * （原本 map-type 9.6px、card-blurb 10.4px、playstyle 11.84px 太細睇唔清）
+   */
+  .map-type {
+    font-size: 0.72rem; /* 11.5px */
+    padding: 0.06rem 0.42rem;
+  }
+
+  .map-sub {
+    font-size: 0.78rem; /* 12.5px */
+  }
+
+  .map-title {
+    font-size: 1rem; /* 16px */
+  }
+
+  .map-cta {
+    font-size: 0.86rem; /* 13.8px */
+  }
+
+  .char-desc {
+    font-size: 0.86rem; /* 13.8px */
+  }
+
+  .char-playstyle {
+    font-size: 0.82rem; /* 13.1px */
+    line-height: 1.5;
+  }
+
+  .char-route {
+    font-size: 0.74rem;
+  }
+
+  .char-passive-tag {
+    font-size: 0.78rem;
+  }
+
+  .passive-box {
+    font-size: 0.9rem; /* 14.4px */
+  }
+
+  .card-name {
+    font-size: 0.9rem; /* 14.4px */
+    line-height: 1.35;
+  }
+
+  .card-stats {
+    font-size: 0.78rem; /* 12.5px */
+    line-height: 1.4;
+  }
+
+  .card-type {
+    font-size: 0.72rem; /* 11.5px */
+  }
+
+  .card-blurb {
+    font-size: 0.72rem; /* 11.5px */
+    line-height: 1.4;
+    -webkit-line-clamp: 3;
+  }
+
+  .battle-log {
+    font-size: 0.8rem; /* 12.8px */
+  }
+
+  .turn-line {
+    font-size: 0.82rem;
+  }
+
+  .foot-note {
+    font-size: 0.76rem; /* 12.2px */
+  }
+
+  .opening-line {
+    font-size: 0.9rem;
+  }
+
+  .opening-passive {
+    font-size: 0.78rem;
+  }
+
+  .relic-chip {
+    font-size: 0.8rem;
+  }
+
+  .status,
+  .status-map {
+    font-size: 0.9rem;
+  }
+
   .enc-list,
   .deck-list {
     max-height: none;
