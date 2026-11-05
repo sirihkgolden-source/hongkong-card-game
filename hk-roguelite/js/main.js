@@ -1325,6 +1325,11 @@ function onClick(event) {
 app?.addEventListener("click", onClick);
 render();
 
+// 通知 index.html 的兜底腳本：引擎已成功啟動（唔會再誤報載入失敗）
+if (typeof window !== "undefined" && typeof window.__HK_BOOTED__ === "function") {
+  window.__HK_BOOTED__();
+}
+
 /** 自測／截圖用：不改玩法，只暴露只讀狀態與跳關 */
 if (typeof window !== "undefined") {
   window.__HK = {
