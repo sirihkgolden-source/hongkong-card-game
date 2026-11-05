@@ -26,6 +26,9 @@ import {
   pickShopRelics,
   START_GOLD,
   ACT_TRANSITIONS,
+  REWARD_POOL,
+  classifyRewardCard,
+  EXPECTED_REWARD_ROUTE,
 } from "./data.js";
 import { readdirSync, readFileSync } from "node:fs";
 import { createBattle, playCard, endTurn, startPlayerTurn } from "./battle.js";
@@ -289,28 +292,28 @@ function simulateChar(charId) {
     assert(pool.length >= 5, `Act${act} 事件池少於 5 個，密度唔夠`);
   }
 
-  // ① 選牌傾向：四角色各自要明顯偏一類（唔可以揀邊個都一樣）
+  // ① 選牌傾向：四角色各自要明顯偏一類，且對應預期路線（含勝仔回血）
   {
-    const classify = (id) => {
-      const c = CARDS[id];
-      if (!c) return "?";
-      if (c.owner) return "專屬";
-      if (c.dmg && !c.block && !c.heal && !c.draw) return "攻擊";
-      // 擋為主 → 守；回血為主 → 回血（睇邊個數值大）
-      if ((c.block || c.heal) && !c.draw) {
-        return (c.heal || 0) > (c.block || 0) ? "回血" : "守";
+    // rewardBias 衛生：每張要麼係自己專屬，要麼喺共用池
+    for (const cid of ["oil", "asan", "kauko", "sing"]) {
+      const c = CHARACTERS[cid];
+      const sigs = new Set(SIGNATURE_CARDS[cid] || []);
+      for (const id of c.rewardBias || []) {
+        assert(CARDS[id], `${cid} rewardBias 缺牌 ${id}`);
+        assert(
+          sigs.has(id) || REWARD_POOL.includes(id),
+          `${cid} rewardBias ${id} 唔喺專屬／REWARD_POOL（死偏置）`
+        );
       }
-      if (c.draw) return "抽牌";
-      return "攻擊+";
-    };
+    }
     const dominant = {};
+    const shares = {};
     for (const cid of ["oil", "asan", "kauko", "sing"]) {
       const tally = {};
-      // 樣本由 200 提到 900：原本 200 次會偶爾因隨機波動踩線（實測 5 次有 1 次誤報），
-      // 唔關遊戲事，純粹係抽樣變異。提高樣本次數令結果穩定。
+      // 樣本 900：降低隨機誤報
       for (let i = 0; i < 900; i += 1) {
         for (const id of pickRewardChoices(3, [], cid)) {
-          const k = classify(id);
+          const k = classifyRewardCard(id);
           tally[k] = (tally[k] || 0) + 1;
         }
       }
@@ -318,19 +321,30 @@ function simulateChar(charId) {
       const [topKind, topN] = Object.entries(tally).sort((a, b) => b[1] - a[1])[0];
       const share = topN / total;
       // 主路線要明顯。角色愈多，共用池分薄愈厲害，門檻隨之調低：
-      // 三角色時 ≥35%；四角色時 ≥26%（共用池只有 18 張，四角分薄後 27-31% 已算明顯）
+      // 三角色時 ≥35%；四角色時 ≥28%（勝仔／阿珊補強後應穩過舊 26% 線）
       const charCount = Object.keys(CHARACTERS).length;
-      const minShare = charCount >= 4 ? 0.26 : 0.35;
+      const minShare = charCount >= 4 ? 0.28 : 0.35;
       assert(
         share >= minShare,
         `${cid} 主路線 ${topKind} 只佔 ${(share * 100) | 0}%，辨識度不足（需 ≥${(minShare * 100) | 0}%）`
       );
       // 專屬牌唔可以蓋過主路線
       assert(topKind !== "專屬", `${cid} 選牌被專屬牌主導，角色路線被稀釋`);
+      const expected = EXPECTED_REWARD_ROUTE[cid];
+      assert(
+        topKind === expected,
+        `${cid} 主路線應為「${expected}」，實際「${topKind}」（${JSON.stringify(tally)}）`
+      );
       dominant[cid] = topKind;
+      shares[cid] = share;
     }
-    // 三個角色主路線要唔同
+    // 四角色主路線要唔同
     assert(new Set(Object.values(dominant)).size === 4, `四角色主路線重複：${JSON.stringify(dominant)}`);
+    // 勝仔回血佔比唔可以明顯低過阿珊守（构筑辨識對稱）
+    assert(
+      shares.sing + 0.02 >= Math.min(shares.asan, 0.3),
+      `勝仔回血佔比 ${(shares.sing * 100) | 0}% 相對太弱（asan=${(shares.asan * 100) | 0}%）`
+    );
   }
 
   // ② 士多各項都要有價、有貨（唔好空白過場）
