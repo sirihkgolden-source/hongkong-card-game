@@ -45,6 +45,7 @@ import {
 } from "./battle.js";
 import { sfx, isMuted, toggleMuted } from "./sfx.js";
 import { listKeys, progressKeys, hasProgress, clearProgress } from "./storage.js";
+import { hasSeenTutorial, markTutorialSeen } from "./tutorial.js";
 import {
   wait,
   pressCard,
@@ -350,9 +351,79 @@ function renderSfxToggle() {
     </button>`;
 }
 
+/**
+ * 新手教學：一頁講清「出牌／擋／結束回合」三件事。
+ * 只喺首局出現（見 `to-select` 判斷），睇完或跳過都會寫入 `hk_tutorial_seen`。
+ *
+ * 設計：唔用長文，用三張「牌」講三件事，每張一句港味 + 一句實際操作。
+ * 全部內容同戰鬥頁真實 UI 對得上（能量／擋／結束回合），唔會教錯。
+ */
+function renderTutorial() {
+  const steps = [
+    {
+      icon: "🃏",
+      key: "出牌",
+      title: "揀張牌，撳落去",
+      body: "手牌喺最底。撳一張就會打出——攻擊牌打過去，技能牌留俾自己。",
+      note: "每張牌左上角係費用，你要有咁多⚡先打得。",
+    },
+    {
+      icon: "🛡",
+      key: "擋",
+      title: "擋住先，唔急",
+      body: "有啲牌會畀你「擋」。擋喺敵人回合幫你食傷，捱完就清。",
+      note: "敵人頭上面會寫住今回合想打幾多——睇清楚再決定。",
+    },
+    {
+      icon: "🔚",
+      key: "結束回合",
+      title: "冇牌打就收手",
+      body: "撳「結束回合」，敵人就會出手。捱完之後你會重新抽牌、回滿⚡。",
+      note: "唔夠費用嘅牌打唔出，唔好死撳——留返下一回合。",
+    },
+  ];
+
+  const cards = steps
+    .map(
+      (s, i) => `
+      <li class="tut-step">
+        <span class="tut-num" aria-hidden="true">${i + 1}</span>
+        <div class="tut-body">
+          <p class="tut-head">
+            <span class="tut-icon" aria-hidden="true">${s.icon}</span>
+            <strong class="tut-title">${escapeHtml(s.title)}</strong>
+            <span class="tut-key">${escapeHtml(s.key)}</span>
+          </p>
+          <p class="tut-text">${escapeHtml(s.body)}</p>
+          <p class="tut-note">${escapeHtml(s.note)}</p>
+        </div>
+      </li>`
+    )
+    .join("");
+
+  return `
+    <main class="screen screen-tutorial" aria-label="教學">
+      <header class="brand-block brand-compact">
+        <h1 class="brand">點玩？</h1>
+        <p class="tagline">三件事識咗，就打得</p>
+      </header>
+
+      <section class="panel tut-panel">
+        <p class="lede">呢條街唔會等人。不過學識呢三樣，你就唔會白死。</p>
+        <ol class="tut-list">${cards}</ol>
+      </section>
+
+      <div class="actions">
+        <button type="button" class="btn btn-primary btn-pressable" data-action="finish-tutorial">明白，開始</button>
+        <button type="button" class="btn btn-ghost btn-pressable" data-action="finish-tutorial">跳過教學</button>
+      </div>
+      <p class="foot-note">之後想再睇：設定頁清除本機進度</p>
+    </main>
+  `;
+}
+
 function renderSelect() {
-  const selected = characterById(state.selectedCharId);
-  const list = [CHARACTERS.oil, CHARACTERS.asan, CHARACTERS.kauko, CHARACTERS.sing]
+  const selected = characterById(state.selectedCharId);  const list = [CHARACTERS.oil, CHARACTERS.asan, CHARACTERS.kauko, CHARACTERS.sing]
     .map((c) => {
       const on = c.id === state.selectedCharId;
       // 立繪：有圖就用，onerror 就 fallback 字首漸層（唔會留破圖）
@@ -1541,6 +1612,9 @@ function render() {
     case "settings":
       html = renderSettings();
       break;
+    case "tutorial":
+      html = renderTutorial();
+      break;
     default:
       html = renderTitle();
   }
@@ -2254,6 +2328,12 @@ function onClick(event) {
   const action = t.getAttribute("data-action");
   switch (action) {
     case "to-select":
+      // 首局先教一次：睇過就直接入選角
+      state.screen = hasSeenTutorial() ? "select" : "tutorial";
+      break;
+    case "finish-tutorial":
+      // 睇完或跳過都係同一條路：記住 + 入選角
+      markTutorialSeen();
       state.screen = "select";
       break;
     case "toggle-sfx": {

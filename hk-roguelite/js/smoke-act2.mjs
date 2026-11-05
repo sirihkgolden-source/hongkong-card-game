@@ -862,4 +862,66 @@ const results = ["oil", "asan", "kauko", "sing"].map(simulateChar);
   delete globalThis.localStorage;
 }
 
+/* ---------- 新手教學：首局先彈，之後唔再彈 ---------- */
+{
+  const store = new Map();
+  globalThis.localStorage = {
+    get length() {
+      return store.size;
+    },
+    key: (i) => Array.from(store.keys())[i] ?? null,
+    getItem: (k) => (store.has(k) ? store.get(k) : null),
+    setItem: (k, v) => void store.set(k, String(v)),
+    removeItem: (k) => void store.delete(k),
+  };
+
+  const { TUTORIAL_KEY, hasSeenTutorial, markTutorialSeen, resetTutorial } = await import(
+    "./tutorial.js"
+  );
+
+  // ① 全新機：未睇過 → 首局會彈
+  assert(hasSeenTutorial() === false, "全新機應該未睇過教學");
+
+  // ② 標記睇過 → 之後唔再彈
+  assert(markTutorialSeen() === true, "markTutorialSeen 應成功");
+  assert(localStorage.getItem(TUTORIAL_KEY) === "1", "教學記憶應寫入 localStorage");
+  assert(hasSeenTutorial() === true, "標記後應該當睇過");
+
+  // ③ 重複標記唔會出錯，值仍然係 "1"
+  markTutorialSeen();
+  assert(localStorage.getItem(TUTORIAL_KEY) === "1", "重複標記唔應該變成其他值");
+
+  // ④ 重開瀏覽器（＝重新讀同一個 localStorage）仍然記得
+  assert(hasSeenTutorial() === true, "重開後應該仍然記得睇過");
+
+  // ⑤ 只有精確 "1" 才算睇過（其他怪值都當未睇，寧願教多一次）
+  localStorage.setItem(TUTORIAL_KEY, "true");
+  assert(hasSeenTutorial() === false, "非 '1' 嘅值應視為未睇過");
+  localStorage.setItem(TUTORIAL_KEY, "0");
+  assert(hasSeenTutorial() === false, "'0' 應視為未睇過");
+
+  // ⑥ reset 之後會再彈
+  localStorage.setItem(TUTORIAL_KEY, "1");
+  assert(resetTutorial() === true, "resetTutorial 應成功");
+  assert(hasSeenTutorial() === false, "reset 後應該再彈");
+
+  // ⑦ 教學記憶屬「進度」類：清除本機進度會連帶清走（清完＝重新開始）
+  const { clearProgress, SETTING_KEYS } = await import("./storage.js");
+  assert(!SETTING_KEYS.includes(TUTORIAL_KEY), "教學記憶唔應該當成設定（清進度要清得走）");
+  localStorage.setItem(TUTORIAL_KEY, "1");
+  localStorage.setItem(SETTING_KEYS[0], "1");
+  const res = clearProgress();
+  assert(res.ok === true, "clearProgress 應成功");
+  assert(hasSeenTutorial() === false, "清進度後教學應該會再彈");
+  assert(localStorage.getItem(SETTING_KEYS[0]) === "1", "清進度唔可以清走音效設定");
+
+  // ⑧ 無 localStorage 環境唔應該 throw
+  delete globalThis.localStorage;
+  assert(hasSeenTutorial() === false, "無 localStorage 應回 false");
+  assert(markTutorialSeen() === false, "無 localStorage 標記應回 false");
+  assert(resetTutorial() === false, "無 localStorage reset 應回 false");
+
+  console.log("  ✓ 新手教學記憶（首局彈／跳過／之後唔再彈／清進度重置）");
+}
+
 console.log(JSON.stringify({ ok: true, act1: actDisplayName(1), act2: actDisplayName(2), results }, null, 2));
