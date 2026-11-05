@@ -6,11 +6,14 @@
   <meta name="theme-color" content="#050810" />
   <meta name="description" content="香江小風波——香港霓虹街頭卡牌 Rogue-lite（垂直切片）" />
   <title>香江小風波</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/main.css?v=17" />
-  <link rel="stylesheet" href="css/main.css?v=16" />
+  <!--
+    字體：刻意唔用 Google Fonts（外部 CDN）。
+    原因：① 部署到 GitHub Pages 要離線可開；② 唔想玩家一入場等外部字體；
+          ③ 內地／公司網絡經常擋 fonts.googleapis.com，會閃 FOUT。
+    改用系統中文字體堆疊（見 css/main.css 嘅 --font-display／--font-body），
+    中英文都夠睇，載入零延遲。
+  -->
+  <link rel="stylesheet" href="css/main.css?v=18" />
 </head>
 <body>
   <div id="app" class="app" aria-live="polite">
@@ -59,7 +62,6 @@
       }, 4000);
     })();
   </script>
-  <script type="module" src="js/main.js?v=17"></script>
-  <script type="module" src="js/main.js?v=16"></script>
+  <script type="module" src="js/main.js?v=18"></script>
 </body>
 </html>

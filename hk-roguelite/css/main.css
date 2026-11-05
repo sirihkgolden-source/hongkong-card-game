@@ -13,8 +13,15 @@
   --panel: rgba(8, 16, 32, 0.78);
   --line: rgba(61, 224, 255, 0.28);
   --radius: 14px;
-  --font-display: "Zen Maru Gothic", "Noto Sans TC", sans-serif;
-  --font-body: "Noto Sans TC", sans-serif;
+  /* 字體：全部用系統字體（零外部請求 → 離線可開、Pages 可靠、無 FOUT）。
+     優先次序按「香港／台灣玩家實際會有嘅中文字體」排：
+       Mac：PingFang HK（港字形）→ 儷黑 → 蘋方
+       Windows：微軟正黑體 → 思源黑體 → 新細明體
+       Android：Noto Sans CJK（系統內置，唔使下載） */
+  --font-display: "PingFang HK", "PingFang TC", "Microsoft JhengHei", "Noto Sans CJK TC",
+    "Noto Sans TC", "Heiti TC", "LiHei Pro", system-ui, sans-serif;
+  --font-body: "PingFang HK", "PingFang TC", "Microsoft JhengHei", "Noto Sans CJK TC",
+    "Noto Sans TC", "Heiti TC", system-ui, sans-serif;
 }
 
 *,
