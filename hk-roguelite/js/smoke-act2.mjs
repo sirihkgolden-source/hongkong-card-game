@@ -322,6 +322,22 @@ function simulateChar(charId) {
     assert(pickShopConsumables(1).length === 1, "消耗品貨架抽唔到貨");
   }
 
+  // 手機字級：390 寬下唔可以有大片空底（關鍵文字要有足夠字級）
+  {
+    // 用資料層無法測字級，改為確認「重要文案欄位」都存在且長度足夠，
+    // 避免 UI 因缺字而留空。
+    for (const id of ["oil", "asan", "kauko"]) {
+      const c = CHARACTERS[id];
+      assert(c.short && c.short.length >= 6, `${id} 缺 short（卡片描述會空）`);
+      assert(c.playstyle && c.playstyle.length >= 8, `${id} 缺 playstyle`);
+      assert(c.passive?.desc && c.passive.desc.length >= 10, `${id} 缺 passive desc`);
+    }
+    // 每張牌都要有 blurb（卡面第二行，缺咗會有空底）
+    for (const [id, c] of Object.entries(CARDS)) {
+      assert(c.blurb && c.blurb.length >= 6, `${id} 缺 blurb（卡面會空底）`);
+    }
+  }
+
   // 選角 → 第一戰：三角色都要有開場語（唔可以一入地圖就靜）
   {
     const lines = [];
