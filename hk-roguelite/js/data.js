@@ -597,6 +597,8 @@ export const CHARACTERS = {
     id: "sing",
     name: "勝仔・跌打館學徒",
     short: "捱得痛、識自救；血薄但有得回",
+    /** 選角立繪：跌打館學徒（白頭巾、手纏繃帶、藥櫃「正骨推拿」） */
+    portrait: "assets/art/portraits/shingzai.webp",
     /** 一句講清點玩：回復流，同快手／檔口／招牌眼完全唔同 */
     playstyle: "邊打邊醫——每場第一次出技能牌就回血，愈拖愈唔死。",
     route: "回復・續戰",

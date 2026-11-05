@@ -27,6 +27,7 @@ import {
   START_GOLD,
   ACT_TRANSITIONS,
 } from "./data.js";
+import { readdirSync } from "node:fs";
 import { createBattle, playCard, endTurn, startPlayerTurn } from "./battle.js";
 
 function assert(cond, msg) {
@@ -136,6 +137,41 @@ function simulateChar(charId) {
     }
     assert(new Set(routes).size === 4, `四角色 route 重複：${routes.join("/")}`);
     assert(new Set(styles).size === 4, "四角色 playstyle 重複");
+  }
+
+  // ①b 立繪：四角都要有圖，而且檔案真係存在
+  //     （曾經出過事：sing 冇 portrait 欄 → 選角靜靜 fallback 成個「勝」字塊，
+  //      而 smoke 照樣全綠。所以呢度一定要讀實際檔案系統驗。）
+  {
+    const portraitDir = new URL("../assets/art/portraits/", import.meta.url);
+    let files = [];
+    try {
+      files = readdirSync(portraitDir).filter((f) => /\.(webp|png|jpg|jpeg)$/i.test(f));
+    } catch {
+      files = [];
+    }
+    assert(files.length > 0, "搵唔到 assets/art/portraits/ 目錄");
+
+    const seenPaths = [];
+    for (const id of ["oil", "asan", "kauko", "sing"]) {
+      const c = CHARACTERS[id];
+      assert(typeof c.portrait === "string" && c.portrait.length > 0, `${id} 冇 portrait（會顯示字首色塊）`);
+      assert(
+        /^assets\/art\/portraits\/[\w.-]+\.(webp|png|jpg|jpeg)$/i.test(c.portrait),
+        `${id} portrait 路徑格式唔對：${c.portrait}`
+      );
+      const filename = c.portrait.split("/").pop();
+      assert(files.includes(filename), `${id} 立繪檔案唔存在：${c.portrait}`);
+      seenPaths.push(c.portrait);
+    }
+    // 四角立繪唔可以重用同一張
+    assert(new Set(seenPaths).size === 4, `四角立繪重複：${seenPaths.join(" / ")}`);
+    // 特別守住勝仔（今次修復嘅主角）
+    assert(
+      CHARACTERS.sing.portrait === "assets/art/portraits/shingzai.webp",
+      `勝仔立繪應為 shingzai.webp，實際 ${CHARACTERS.sing.portrait}`
+    );
+    assert(files.includes("shingzai.webp"), "缺少 shingzai.webp（勝仔會退回字塊）");
   }
 
   // ② 失敗頁建議要有料：四角色 route／playstyle／passive 三者齊，

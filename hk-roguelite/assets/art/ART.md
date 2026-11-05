@@ -11,6 +11,7 @@
 | `portraits/ayau.webp` | 選角立繪 | `oil` | 阿油・後巷經紀 | **男**：綠外套＋花恤＋waist pouch，手遞卡片；透明底 |
 | `portraits/ashan.jpg` | 選角立繪 | `asan` | 阿珊・茶記夜更 | 茶記圍裙＋鉛筆咬嘴（禁維港遊客女） |
 | `portraits/kauko.jpg` | 選角立繪 | `kauko` | 九哥・招牌工 | 工圍裙＋工具枱＋啤牌（唔叫霓虹工） |
+| `portraits/shingzai.webp` | 選角立繪 | `sing` | 勝仔・跌打館學徒 | 半身、手纏繃帶、白頭巾；藥櫃「正骨推拿」＋右下菠蘿包奶茶 |
 
 ## 區背景（3 Act）
 
@@ -34,10 +35,20 @@
 
 ## 副檔名與降級
 
-- 立繪：`ayau.webp`（透明底 RGBA）、`ashan.jpg`、`kauko.jpg`。
+- 立繪：`ayau.webp`（透明底 RGBA）、`ashan.jpg`、`kauko.jpg`、`shingzai.webp`。
 - 背景：三張均為 `.jpg`。
 - 若日後換格式，只需同名改副檔名，`js/data.js` 嘅 `portrait` / `ACT_BG` 改一處即可。
-- **缺圖降級**：`<img onerror>` 會加 `is-fallback` class，顯示字首漸層（油／珊／九）；背景用 `--act-bg`，缺檔時自動落回內建霓虹漸層，唔會爆 layout。
+- **缺圖降級**：`<img onerror>` 會加 `is-fallback` class，顯示字首漸層（油／珊／九／勝）；背景用 `--act-bg`，缺檔時自動落回內建霓虹漸層，唔會爆 layout。
+- **降級係無聲嘅**：所以 `smoke-act2.mjs` 有斷言直接讀 `assets/art/portraits/` 目錄，確認四角 `portrait` 指向嘅檔真係存在（見下）。
+
+## 勝仔立繪（曾缺檔，已修）
+
+- **2026-11-06 事故**：`sing` 在 `js/data.js` **完全冇 `portrait` 欄位**，`shingzai.webp` 亦唔存在 → 選角靜靜 fallback 成純色「勝」字塊，而 smoke 照樣全綠（因為只測資料欄位、冇測檔案存在）。
+- **修正**：
+  1. 由總導演提供嘅 `1970s-hk-dit-da-apprentice….jpg`（768×1024）本機轉存為 `assets/art/portraits/shingzai.webp`（q88，242KB）
+  2. `js/data.js` 加 `sing.portrait = "assets/art/portraits/shingzai.webp"`
+  3. `smoke-act2.mjs` 加 4 條斷言：四角都要有 `portrait`、路徑格式合規、**檔案真係存在**、四角唔可以重用同一張
+- **驗收**：390 下 `.char-portrait` `naturalWidth = 768`、`.avatar-fallback` `display: none`、`overlap`／溢出皆零。
 
 ## 阿油立繪（曾出錯，已修）
 
