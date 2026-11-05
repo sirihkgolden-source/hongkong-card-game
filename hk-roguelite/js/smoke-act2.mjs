@@ -7,6 +7,7 @@ import {
   ACT1_MAP,
   ACT2_MAP,
   EVENTS,
+  EVENT_POOLS,
   pickEventId,
   eventById,
   SHOP,
@@ -117,6 +118,33 @@ function simulateChar(charId) {
   assert(act1BossNode?.title === "巷口鐵閘・睇場", "Act1 Boss 節點名");
   for (const bad of ["離場", "看場"]) {
     assert(!act1BossNode.title.includes(bad), `節點名禁${bad}`);
+  }
+
+  // ① 三角色都要有「再開一局」鉤（選角／通關／敗北各一句）
+  for (const id of ["oil", "asan", "kauko"]) {
+    const h = CHARACTERS[id].rerunHook;
+    assert(h, `${id} 缺 rerunHook`);
+    for (const k of ["select", "clear", "defeat"]) {
+      assert(typeof h[k] === "string" && h[k].trim().length >= 6, `${id} rerunHook.${k} 太短`);
+    }
+  }
+  // 三角色鉤唔可以完全一樣（角色辨識度）
+  assert(new Set(["oil", "asan", "kauko"].map((id) => CHARACTERS[id].rerunHook.select)).size === 3, "選角鉤重複");
+
+  // ② 三區事件抽查：每個選項都要即時可見改局（HP／最大生命／牌組），且唔改金幣
+  for (const act of [1, 2, 3]) {
+    for (const evId of EVENT_POOLS[act]) {
+      const ev = EVENTS[evId];
+      assert(ev, `Act${act} 事件缺 ${evId}`);
+      for (const ch of ev.choices) {
+        const probe = { hp: 50, maxHp: 60, gold: 30, deck: ["S01"], relics: [], flags: {} };
+        ch.apply(probe);
+        const visible =
+          probe.hp !== 50 || probe.maxHp !== 60 || probe.deck.length !== 1;
+        assert(visible, `${ev.title}/${ch.id} 揀完即時不可見`);
+        assert(probe.gold === 30, `${ev.title}/${ch.id} 唔應該改金幣`);
+      }
+    }
   }
 
   for (const node of ACT1_MAP) {

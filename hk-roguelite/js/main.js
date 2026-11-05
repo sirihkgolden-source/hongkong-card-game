@@ -252,6 +252,11 @@ function renderSelect() {
           <strong>被動・${escapeHtml(selected.passive.name)}</strong><br />
           ${escapeHtml(selected.passive.desc)}
         </p>
+        ${
+          selected.rerunHook?.select
+            ? `<p class="rerun-hook">「${escapeHtml(selected.rerunHook.select)}」</p>`
+            : ""
+        }
       </section>
       <div class="actions">
         <button type="button" class="btn btn-primary btn-pressable" data-action="confirm-char">以${escapeHtml(selected.name)}開局</button>
@@ -639,12 +644,18 @@ function renderVictory() {
         <p class="tagline result-sub">通關 · 三區打穿</p>
       </header>
       <section class="panel clear-hero">
+        <p class="clear-badge">★ 通關 CLEAR ★</p>
         <p class="eyebrow">Act3・${escapeHtml(META.act3Name)}</p>
         <h2>天台無燈，你仲企得住</h2>
         <p class="lede">
           ${escapeHtml(char.name)}喺「籠門之王」籠邊站到最後。<br />
           被動「${escapeHtml(char.passive.name)}」由後巷一路帶到天台。
         </p>
+        ${
+          char.rerunHook?.clear
+            ? `<p class="rerun-hook">「${escapeHtml(char.rerunHook.clear)}」</p>`
+            : ""
+        }
         <ul class="clear-stats">
           <li><span>剩餘 HP</span><strong>${run.hp}/${run.maxHp}</strong></li>
           <li><span>金幣</span><strong>${run.gold}</strong></li>
@@ -683,8 +694,11 @@ function renderVictory() {
           <span class="stub-note">分享名片功能下一版先開；呢格留位。</span>
         </p>
       </section>
-      <div class="actions">
-        <button type="button" class="btn btn-primary btn-pressable" data-action="again">再來一局</button>
+      <div class="actions result-actions">
+        <button type="button" class="btn btn-primary btn-pressable btn-rerun" data-action="again">
+          <span class="btn-rerun-main">再來一局</span>
+          <span class="btn-rerun-sub">換角色・換牌路・再闖三區</span>
+        </button>
         <button type="button" class="btn btn-ghost" data-action="back-title">返回標題</button>
       </div>
     </main>
@@ -712,9 +726,17 @@ function renderDefeat() {
           死亡＝本局結束。下一局可再試「${escapeHtml(char.passive.name)}」，或換角色換嘴感。<br />
           Act${act}「${escapeHtml(actDisplayName(act))}」走到節點 ${Math.min(state.run?.mapIndex + 1 || 1, map.length)}／${map.length}。
         </p>
+        ${
+          char.rerunHook?.defeat
+            ? `<p class="rerun-hook">「${escapeHtml(char.rerunHook.defeat)}」</p>`
+            : ""
+        }
       </section>
-      <div class="actions">
-        <button type="button" class="btn btn-primary btn-pressable" data-action="again">再來一局</button>
+      <div class="actions result-actions">
+        <button type="button" class="btn btn-primary btn-pressable btn-rerun" data-action="again">
+          <span class="btn-rerun-main">再來一局</span>
+          <span class="btn-rerun-sub">同一條後巷，唔同嘅打法</span>
+        </button>
         <button type="button" class="btn btn-ghost" data-action="back-title">返回標題</button>
       </div>
     </main>

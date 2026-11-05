@@ -417,6 +417,12 @@ export const CHARACTERS = {
       name: "快手",
       desc: "每打出第 3 張攻擊牌，下一張攻擊平一費（最低 0）兼額外 +3 傷害。",
     },
+    /** 「再開一局」鉤：選角／結算各用一句港味（純文案，唔影響數值） */
+    rerunHook: {
+      select: "手快有手慢冇——呢條巷，你仲想再快一次？",
+      clear: "一鋪清袋唔夠喉？下一鋪，快手更快。",
+      defeat: "輸咗唔緊要，快手嘅人，翻本最快。",
+    },
     starterDeck: [
       "S01",
       "S01",
@@ -443,6 +449,12 @@ export const CHARACTERS = {
       id: "dangkou",
       name: "檔口",
       desc: "每場戰鬥首次捱打之後，即刻加 8 擋。",
+    },
+    /** 「再開一局」鉤：選角／結算各用一句港味（純文案，唔影響數值） */
+    rerunHook: {
+      select: "檔口一日未收爐，你都仲有得打。",
+      clear: "收爐都要熄燈——但爐邊嗰份火氣，留返下一局。",
+      defeat: "檔口執咗可以再開；呢口氣，唔會就咁散。",
     },
     starterDeck: [
       "S15",
@@ -471,6 +483,12 @@ export const CHARACTERS = {
       id: "zhaopaiyan",
       name: "招牌眼",
       desc: "每場戰鬥首次打出技能牌，即刻多抽 1 張。",
+    },
+    /** 「再開一局」鉤：選角／結算各用一句港味（純文案，唔影響數值） */
+    rerunHook: {
+      select: "招牌睇得穿，牌底都睇得穿——再嚟一局？",
+      clear: "霓虹熄一格，你眼利一分。下一鋪，睇得更穿。",
+      defeat: "招牌跌落嚟唔怕，識睇嘅人，識得再掛返上去。",
     },
     starterDeck: [
       "S01",
@@ -843,11 +861,13 @@ export const EVENTS = {
       {
         id: "bluff",
         label: "吹水話自己熟路",
-        effectText: "下戰開場 +1 能量；入場帶 6 擋",
+        effectText: "最大生命 +3 並回 3；下戰開場 +1 能量；入場帶 6 擋",
         apply: (run) => {
+          run.maxHp += 3;
+          run.hp = Math.min(run.maxHp, run.hp + 3);
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
           run.nextBattleBlock = (run.nextBattleBlock || 0) + 6;
-          return "吹得掂——下一場開局多 1 能量，兼帶 6 擋入場。";
+          return "吹得掂——底氣壯咗，下一場開局多 1 能量，兼帶 6 擋入場。";
         },
       },
       {
@@ -883,11 +903,12 @@ export const EVENTS = {
       {
         id: "slip",
         label: "跣足溜走",
-        effectText: "下戰開場 −1 能量；入場帶 8 擋",
+        effectText: "回 6 HP；下戰開場 −1 能量；入場帶 8 擋",
         apply: (run) => {
+          run.hp = Math.min(run.maxHp, run.hp + 6);
           run.nextBattleEnergyPenalty = (run.nextBattleEnergyPenalty || 0) + 1;
           run.nextBattleBlock = (run.nextBattleBlock || 0) + 8;
-          return "走得快，下一場慢半拍，不過有擋傍身。";
+          return "走得快，喘返順氣（回 6 HP）；下一場慢半拍，不過有 8 擋傍身。";
         },
       },
       {

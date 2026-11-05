@@ -400,6 +400,19 @@ body {
   color: var(--neon-cyan);
 }
 
+/* 「再開一局」鉤：港味一句，唔搶被動主體 */
+.rerun-hook {
+  margin: 0.7rem 0 0;
+  padding: 0.55rem 0.7rem;
+  border-left: 3px solid var(--neon-magenta);
+  border-radius: 0 8px 8px 0;
+  background: rgba(255, 45, 149, 0.08);
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--ink);
+  font-style: italic;
+}
+
 .actions {
   display: flex;
   flex-direction: column;
@@ -1466,9 +1479,55 @@ body {
 }
 
 /* —— 通關結算（Act3 打完） —— */
+.clear-badge {
+  margin: 0 0 0.5rem;
+  padding: 0.35rem 0.8rem;
+  display: inline-block;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 0.82rem;
+  letter-spacing: 0.18em;
+  color: #1a1200;
+  background: linear-gradient(135deg, var(--neon-amber), #ffd98a);
+  box-shadow: 0 0 18px rgba(255, 193, 74, 0.45);
+}
+
 .clear-hero h2 {
   font-size: 1.15rem;
   color: var(--ok);
+}
+
+/* 「再來一局」大掣：通關／敗北共用，窄屏都易點 */
+.result-actions {
+  margin-top: 0.2rem;
+}
+
+.btn-rerun {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.18rem;
+  min-height: 64px;
+  padding: 0.9rem 1.1rem;
+  border-radius: 16px;
+}
+
+.btn-rerun-main {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+}
+
+.btn-rerun-sub {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  opacity: 0.82;
+  line-height: 1.3;
 }
 
 .clear-stats {
