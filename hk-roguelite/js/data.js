@@ -435,7 +435,8 @@ export const CHARACTERS = {
       "S14",
       "S80",
     ],
-    rewardBias: ["S07", "S12", "S14", "S40", "S64", "S81", "S82", "S80"],
+    /** 選牌傾向：搏命型（純攻擊為主，一眼認得係阿油） */
+    rewardBias: ["S07", "S40", "S14", "S16", "S15", "S72", "S81", "S82", "S80"],
   },
   asan: {
     id: "asan",
@@ -469,7 +470,8 @@ export const CHARACTERS = {
       "S21",
       "S83",
     ],
-    rewardBias: ["S46", "S56", "S31", "S40", "S47", "S21", "S11", "S07", "S84", "S85"],
+    /** 選牌傾向：守住型（擋／回血為主，一眼認得係阿珊） */
+    rewardBias: ["S46", "S56", "S31", "S21", "S09", "S47", "S11", "S83", "S84", "S85"],
   },
   kauko: {
     id: "kauko",
@@ -503,7 +505,8 @@ export const CHARACTERS = {
       "S40",
       "S86",
     ],
-    rewardBias: ["S06", "S16", "S72", "S22", "S25", "S12", "S87", "S88"],
+    /** 選牌傾向：抽牌／節奏型（一眼認得係九哥） */
+    rewardBias: ["S06", "S12", "S02", "S22", "S25", "S16", "S86", "S87", "S88"],
   },
 };
 
@@ -1388,6 +1391,76 @@ export const SHOP = {
 };
 
 /**
+ * 消耗品（士多貨架一定有 1 件）
+ * 買完即用，唔會入遺物欄，所以叫「消耗」。
+ * @type {Record<string, {
+ *   id: string, name: string, desc: string, flavor: string,
+ *   price: number,
+ *   apply: (run: object) => string
+ * }>}
+ */
+export const CONSUMABLES = {
+  cs_painkiller: {
+    id: "cs_painkiller",
+    name: "必理痛",
+    desc: "即刻回 18 HP。",
+    flavor: "一板四粒，痛就食兩粒——剩返兩粒留返下次。",
+    price: 7,
+    apply: (run) => {
+      const before = run.hp;
+      run.hp = Math.min(run.maxHp, run.hp + 18);
+      const healed = run.hp - before;
+      return healed > 0 ? `食咗兩粒，回咗 ${healed} HP。` : "已經滿血，食咗都冇用。";
+    },
+  },
+  cs_bandage: {
+    id: "cs_bandage",
+    name: "藥水膠布",
+    desc: "即刻最大生命 +5，並回 5。",
+    flavor: "貼住傷口，行路都冇咁痛。",
+    price: 9,
+    apply: (run) => {
+      run.maxHp += 5;
+      run.hp = Math.min(run.maxHp, run.hp + 5);
+      return "貼好膠布——最大生命 +5，順手回 5 HP。";
+    },
+  },
+  cs_energy_drink: {
+    id: "cs_energy_drink",
+    name: "提神能量飲品",
+    desc: "下一場戰鬥開場 +1 能量。",
+    flavor: "味道似藥水，但真係頂得一陣。",
+    price: 8,
+    apply: (run) => {
+      run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
+      return "飲完心跳快咗——下一場開局多 1 能量。";
+    },
+  },
+  cs_lucky_charm: {
+    id: "cs_lucky_charm",
+    name: "黃大仙靈符",
+    desc: "牌組加入一張「椒鹽補刀」。",
+    flavor: "求個心安，順手多張平價補刀。",
+    price: 6,
+    apply: (run) => {
+      run.deck.push("S02");
+      return "靈符入袋——牌組多咗張「椒鹽補刀」。";
+    },
+  },
+};
+
+/** 抽 n 件消耗品做貨架（每局洗一次） */
+export function pickShopConsumables(n = 1, rng = Math.random) {
+  const ids = Object.keys(CONSUMABLES);
+  const shuffled = [...ids].sort(() => rng() - 0.5);
+  return shuffled.slice(0, Math.min(n, shuffled.length));
+}
+
+export function consumableById(id) {
+  return CONSUMABLES[id];
+}
+
+/**
  * 遺物（每件都真係改局；effect 會累加）
  * effect 欄位：
  *   startEnergy  每場戰鬥開場 +能量上限
@@ -1631,8 +1704,10 @@ export function pickRewardChoices(count = 3, exclude = [], characterId = null) {
   const weight = new Map();
   const add = (id, w) => weight.set(id, Math.max(weight.get(id) || 0, w));
   shared.forEach((id) => add(id, 1));
-  biased.forEach((id) => add(id, 2));
-  signatures.forEach((id) => add(id, 5));
+  // 角色傾向 ×4：令「揀邊個角色」一眼睇得出牌路唔同
+  biased.forEach((id) => add(id, 4));
+  // 專屬牌 ×3（略低於傾向，避免專屬蓋過角色路線特色）
+  signatures.forEach((id) => add(id, 3));
 
   const picked = [];
   while (picked.length < count && weight.size > 0) {
