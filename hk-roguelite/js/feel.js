@@ -133,8 +133,46 @@ export function syncHpBars(b) {
     playerFill.style.width = `${Math.max(0, (b.playerHp / b.playerMaxHp) * 100)}%`;
   }
   if (playerText) {
-    playerText.textContent = `${b.playerHp}/${b.playerMaxHp}${b.playerBlock ? ` · 盾 ${b.playerBlock}` : ""}`;
+    playerText.textContent = `${b.playerHp}/${b.playerMaxHp}`;
   }
+  syncEnergyBlock(b);
+}
+
+/**
+ * 能量／擋就地更新（唔重繪整頁），變動時彈一下。
+ * 令 HUD 大數字同實際數值即時同步。
+ */
+export function syncEnergyBlock(b) {
+  if (!b) return;
+  const energyEl = document.getElementById("player-energy");
+  const blockEl = document.getElementById("player-block");
+
+  if (energyEl) {
+    const num = energyEl.querySelector(".stat-num");
+    const prev = num ? Number(num.textContent) : NaN;
+    if (num) num.textContent = String(b.energy);
+    energyEl.classList.toggle("is-empty", b.energy === 0);
+    if (!Number.isNaN(prev) && prev !== b.energy) bump(energyEl);
+  }
+
+  if (blockEl) {
+    const num = blockEl.querySelector(".stat-num");
+    const prev = num ? Number(num.textContent) : NaN;
+    const block = b.playerBlock || 0;
+    if (num) num.textContent = String(block);
+    blockEl.classList.toggle("is-on", block > 0);
+    blockEl.classList.toggle("is-off", block <= 0);
+    if (!Number.isNaN(prev) && prev !== block) bump(blockEl);
+  }
+}
+
+/** 數字變動時彈一下 */
+function bump(el) {
+  if (!el) return;
+  el.classList.remove("is-bump");
+  void el.offsetWidth;
+  el.classList.add("is-bump");
+  setTimeout(() => el.classList.remove("is-bump"), 460);
 }
 
 /**

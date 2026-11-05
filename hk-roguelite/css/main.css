@@ -954,11 +954,117 @@ body {
   background: linear-gradient(90deg, var(--neon-cyan), var(--ok));
 }
 
-.hp-text,
-.intent,
-.energy {
-  font-size: 0.8rem;
+.hp-text {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+
+.intent {
+  font-size: 0.84rem;
   color: var(--ink-dim);
+}
+
+/* 唔夠費出牌：卡面左右震，明確話你知點唔到 */
+.card-face.is-shake-no {
+  animation: shake-no 0.4s ease-in-out;
+  border-color: rgba(255, 70, 80, 0.7) !important;
+}
+
+@keyframes shake-no {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+
+.fx-float--low-energy {
+  color: #ff8c9a;
+  font-size: 1.1rem;
+  text-shadow: 0 0 14px rgba(255, 70, 80, 0.9), 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+/* —— 能量／擋：一眼睇到嘅大數字 —— */
+.stat-row {
+  display: flex;
+  gap: 0.4rem;
+  margin: 0.15rem 0 0.1rem;
+  flex-wrap: wrap;
+}
+
+.stat-pill {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.18rem;
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  line-height: 1.3;
+}
+
+.stat-icon {
+  font-size: 0.76rem;
+  opacity: 0.9;
+}
+
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+}
+
+.stat-max {
+  font-size: 0.68rem;
+  color: var(--ink-dim);
+}
+
+/* 能量：青色；冇費時轉紅提示 */
+.stat-energy {
+  border-color: rgba(61, 224, 255, 0.36);
+  background: rgba(61, 224, 255, 0.1);
+  color: var(--neon-cyan);
+}
+
+.stat-energy.is-empty {
+  border-color: rgba(255, 70, 80, 0.55);
+  background: rgba(255, 70, 80, 0.14);
+  color: #ff8c9a;
+}
+
+/* 擋：有擋先亮綠；冇擋灰住 */
+.stat-block.is-on {
+  border-color: rgba(93, 255, 176, 0.55);
+  background: rgba(93, 255, 176, 0.14);
+  color: var(--ok);
+}
+
+.stat-block.is-off {
+  opacity: 0.42;
+}
+
+.stat-block.is-off .stat-num {
+  color: var(--ink-dim);
+}
+
+/* 狀態數字變動：彈一下 */
+.stat-pill.is-bump {
+  animation: stat-bump 0.42s ease-out;
+}
+
+@keyframes stat-bump {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+
+.energy-hint {
+  font-size: 0.68rem;
+  color: var(--neon-amber);
+  letter-spacing: 0.04em;
 }
 
 .intent {
