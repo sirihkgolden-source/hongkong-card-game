@@ -806,6 +806,41 @@ function renderVictory() {
   `;
 }
 
+/**
+ * 下一鋪建議：按呢局死因，講清可以點換角／換构筑。
+ * 港味 + 具體（唔係空泛「再試一次」）。
+ */
+function nextRunAdvice(near) {
+  const run = state.run || {};
+  const char = activeChar();
+  const others = ["oil", "asan", "kauko"].filter((id) => id !== char.id);
+  // 推薦一個對應死因嘅角色
+  const suggestByKind = {
+    hp: "asan", // 血唔夠 → 換守得硬淨嘅
+    energy: "kauko", // 唔夠能量 → 換抽牌鋪路嘅
+    deck: "kauko", // 牌太少 → 換抽牌多嘅
+    relic: "asan", // 冇遺物 → 守得穩、唔靠貨
+    boss: others[0],
+  };
+  const targetId = suggestByKind[near.kind] || others[0];
+  const target = CHARACTERS[targetId] || CHARACTERS.oil;
+
+  const buildHint = {
+    hp: "下次早啲入士多補血，或者揀多幾張擋牌。",
+    energy: "下次入士多買「提神能量飲品」，或者揀多幾張 0 費牌。",
+    deck: "下次戰後唔好跳過選牌，牌組夠厚先撐到尾。",
+    relic: "下次記得行士多——遺物係白賺嘅。",
+    boss: "下次見 Boss 之前，留返一兩張爆發牌。",
+  };
+
+  return {
+    targetId,
+    targetName: target.name,
+    targetRoute: target.route || "",
+    line: buildHint[near.kind] || "下次換個打法試吓。",
+  };
+}
+
 function renderDefeat() {
   const char = activeChar();
   const map = currentMap();
@@ -816,6 +851,7 @@ function renderDefeat() {
     3: "天台吞沒你",
   };
   const near = nearMissInfo();
+  const advice = nextRunAdvice(near);
   return `
     <main class="screen screen-result is-lose" aria-label="敗北">
       <header class="brand-block">
@@ -829,9 +865,16 @@ function renderDefeat() {
           <span>${escapeHtml(near.text)}</span>
         </p>
         <p class="lede">
-          死亡＝本局結束。下一局可再試「${escapeHtml(char.passive.name)}」，或換角色換嘴感。<br />
-          Act${act}「${escapeHtml(actDisplayName(act))}」走到節點 ${Math.min(state.run?.mapIndex + 1 || 1, map.length)}／${map.length}。
+          死亡＝本局結束。Act${act}「${escapeHtml(actDisplayName(act))}」走到節點 ${Math.min(state.run?.mapIndex + 1 || 1, map.length)}／${map.length}。
         </p>
+        <div class="next-run">
+          <p class="next-run-title">下一鋪可以咁試</p>
+          <ul class="next-run-list">
+            <li><strong>換构筑：</strong>${escapeHtml(advice.line)}</li>
+            <li><strong>換角色：</strong>試吓「${escapeHtml(advice.targetName)}」——${escapeHtml(advice.targetRoute)}，${escapeHtml(CHARACTERS[advice.targetId]?.playstyle || "")}</li>
+            <li><strong>唔換都得：</strong>用返「${escapeHtml(char.passive.name)}」，今次行遠啲。</li>
+          </ul>
+        </div>
         ${
           char.rerunHook?.defeat
             ? `<p class="rerun-hook">「${escapeHtml(char.rerunHook.defeat)}」</p>`

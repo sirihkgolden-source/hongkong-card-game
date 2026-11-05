@@ -1778,6 +1778,44 @@ body {
   animation: rise-in 0.4s ease-out both;
 }
 
+/* 下一鋪建議：換构筑／換角色／唔換都得 */
+.next-run {
+  margin: 0.85rem 0 0;
+  padding: 0.7rem 0.85rem;
+  border-radius: 10px;
+  background: rgba(61, 224, 255, 0.07);
+  border: 1px solid rgba(61, 224, 255, 0.2);
+}
+
+.next-run-title {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: var(--neon-cyan);
+}
+
+.next-run-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.32rem;
+}
+
+.next-run-list li {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--ink-dim);
+}
+
+.next-run-list strong {
+  color: var(--ink);
+  font-weight: 700;
+}
+
 /* 「差一點」診斷：失敗頁最搶眼嘅一句 */
 .near-miss {
   margin: 0.75rem 0 0.9rem;

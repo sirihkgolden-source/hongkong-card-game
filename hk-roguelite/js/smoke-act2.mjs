@@ -133,6 +133,22 @@ function simulateChar(charId) {
     assert(new Set(styles).size === 3, "三角色 playstyle 重複");
   }
 
+  // ② 失敗頁建議要有料：三角色 route／playstyle／passive 三者齊，
+  //    否則「換角色」建議會顯示空白
+  {
+    for (const id of ["oil", "asan", "kauko"]) {
+      const c = CHARACTERS[id];
+      assert(c.route && c.playstyle, `${id} 缺 route／playstyle（失敗頁建議會空白）`);
+      assert(c.passive?.name, `${id} 缺被動名`);
+    }
+    const passiveNames = ["oil", "asan", "kauko"].map((id) => CHARACTERS[id].passive.name);
+    assert(new Set(passiveNames).size === 3, `被動名重複：${passiveNames.join("/")}`);
+    // 失敗頁 rerunHook.defeat 亦要存在（否則失敗頁少一句）
+    for (const id of ["oil", "asan", "kauko"]) {
+      assert(CHARACTERS[id].rerunHook?.defeat, `${id} 缺 rerunHook.defeat`);
+    }
+  }
+
   // ③ starter／專屬牌名唔撞
   {
     const sigNames = [];
