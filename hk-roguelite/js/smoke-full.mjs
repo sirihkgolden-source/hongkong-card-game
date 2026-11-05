@@ -25,6 +25,7 @@ import {
   START_GOLD,
   SIGNATURE_CARDS,
   ACT_TRANSITIONS,
+  REST_SHOP_BY_ACT,
   mapForAct,
   actDisplayName,
   enemyById,
@@ -36,6 +37,8 @@ import {
   branchOptionById,
   battleGoldReward,
   pickEventId,
+  restShopForAct,
+  shopCardIdForAct,
 } from "./data.js";
 import { createBattle, playCard, endTurn, startPlayerTurn } from "./battle.js";
 
@@ -149,7 +152,7 @@ section("Act 內分支（三區各一，兩路都試）", () => {
 });
 
 /* ---------- 3. 便利店 ---------- */
-section("便利店（金幣出口／遺物／消耗品）", () => {
+section("便利店（金幣出口／遺物／消耗品／Act 差異）", () => {
   assert(SHOP.healCost > 0 && SHOP.healAmt > 0, "治療價／量唔合法");
   assert(SHOP.cardCost > 0, "執牌價唔合法");
   assert(SHOP.relicCost > 0, "遺物價唔合法");
@@ -159,6 +162,17 @@ section("便利店（金幣出口／遺物／消耗品）", () => {
   // 開局金幣買得起最便宜嘅嘢
   const cheapest = Math.min(SHOP.healCost, SHOP.cardCost, SHOP.rerollCost);
   assert(START_GOLD >= cheapest, `開局金幣買唔到任何東西（最便宜 ${cheapest}）`);
+
+  // Act 差異化：三區副標／執牌貨／休息升級牌都唔可以一樣
+  const cards = [1, 2, 3].map((a) => shopCardIdForAct(a));
+  assert(new Set(cards).size === 3, `三區執牌貨應互異，實際 ${cards.join(",")}`);
+  const upgrades = [1, 2, 3].map((a) => restShopForAct(a).restUpgradeCardId);
+  assert(new Set(upgrades).size === 3, `三區磨刀牌應互異，實際 ${upgrades.join(",")}`);
+  const subs = [1, 2, 3].map((a) => restShopForAct(a).subtitle);
+  assert(new Set(subs).size === 3, "三區便利店副標重複");
+  const healLabels = [1, 2, 3].map((a) => restShopForAct(a).shopHealLabel);
+  assert(new Set(healLabels).size === 3, "三區回血標籤重複");
+  assert(Object.keys(REST_SHOP_BY_ACT).length >= 3, "REST_SHOP_BY_ACT 缺區");
 
   // 遺物貨架每次都抽夠
   const run = { characterId: "oil", relics: [] };
@@ -171,9 +185,16 @@ section("便利店（金幣出口／遺物／消耗品）", () => {
       assert(!owner || owner === "oil", `貨架出現別角專屬 ${rid}`);
     }
   }
-  // 消耗品
+  // 消耗品（含 Act 專屬）
+  assert(Object.keys(CONSUMABLES).length >= 7, "消耗品應 ≥7（含三區專屬）");
+  for (const act of [1, 2, 3]) {
+    const exclusive = Object.values(CONSUMABLES).filter(
+      (c) => Array.isArray(c.acts) && c.acts.length === 1 && c.acts[0] === act
+    );
+    assert(exclusive.length >= 1, `Act${act} 缺專屬消耗品`);
+  }
   for (let i = 0; i < 20; i++) {
-    const cs = pickShopConsumables(1);
+    const cs = pickShopConsumables(1, Math.random, (i % 3) + 1);
     assert(cs.length === 1, "消耗品貨架抽唔到");
     assert(CONSUMABLES[cs[0]], `消耗品 ${cs[0]} 冇定義`);
   }
@@ -249,24 +270,43 @@ section("Act 銜接（兩段過場）", () => {
   }
 });
 
-/* ---------- 8. 事件池（每區 ≥4，全部必改局） ---------- */
-section("事件池（每區 ≥4，全部必改局）", () => {
+/* ---------- 8. 事件池（每區 ≥5，全部必改局；可見 HP／牌／金／能量／擋） ---------- */
+section("事件池（每區 ≥5，全部必改局）", () => {
+  const titles = new Set();
   for (const act of [1, 2, 3]) {
     const pool = EVENT_POOLS[act];
-    assert(pool.length >= 4, `Act${act} 事件池只有 ${pool.length} 個`);
+    assert(pool.length >= 5, `Act${act} 事件池只有 ${pool.length} 個`);
     for (const evId of pool) {
       const ev = EVENTS[evId];
       assert(ev, `缺事件 ${evId}`);
+      assert(ev.title && ev.title.length >= 2, `${evId} 缺標題`);
+      assert(!titles.has(ev.title), `事件標題重複：${ev.title}`);
+      titles.add(ev.title);
+      assert(ev.choices?.length === 3, `${evId} 要三選一`);
       for (const ch of ev.choices) {
-        const probe = { hp: 50, maxHp: 60, gold: 30, deck: ["S01"], relics: [] };
+        const probe = {
+          hp: 50,
+          maxHp: 60,
+          gold: 30,
+          deck: ["S01"],
+          relics: [],
+          nextBattleEnergyBonus: 0,
+          nextBattleEnergyPenalty: 0,
+          nextBattleBlock: 0,
+        };
         ch.apply(probe);
         const visible =
           probe.hp !== 50 ||
           probe.maxHp !== 60 ||
           probe.gold !== 30 ||
           probe.deck.length !== 1 ||
-          (probe.nextBattleEnergyBonus || 0) > 0;
-        assert(visible, `${ev.title}/${ch.id} 揀完即時不可見`);
+          (probe.nextBattleEnergyBonus || 0) > 0 ||
+          (probe.nextBattleEnergyPenalty || 0) > 0 ||
+          (probe.nextBattleBlock || 0) > 0;
+        assert(visible, `${ev.title}/${ch.id} 揀完即時不可見（HP／牌／金／能量／擋）`);
+        // 唔發死金（可花錢）
+        assert(probe.gold <= 30, `${ev.title}/${ch.id} 唔應該發金幣`);
+        assert(typeof ch.effectText === "string" && ch.effectText.length >= 4, `${evId}/${ch.id} 缺 effectText`);
       }
     }
   }

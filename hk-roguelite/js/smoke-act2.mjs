@@ -243,7 +243,7 @@ function simulateChar(charId) {
   // 四角色鉤唔可以完全一樣（角色辨識度）
   assert(new Set(["oil", "asan", "kauko", "sing"].map((id) => CHARACTERS[id].rerunHook.select)).size === 4, "選角鉤重複");
 
-  // ② 三區事件抽取：每個選項都要即時可見改局（HP／最大生命／牌組），且唔改金幣
+  // ② 三區事件抽取：每個選項都要即時可見改局（HP／最大生命／牌組／金／能量／擋），且唔發死金
   for (const act of [1, 2, 3]) {
     const pool = EVENT_POOLS[act];
     assert(Array.isArray(pool) && pool.length >= 1, `Act${act} 事件池空`);
@@ -253,10 +253,26 @@ function simulateChar(charId) {
       assert(ev, `Act${act} 事件缺 ${evId}`);
       let thisEventAllVisible = true;
       for (const ch of ev.choices) {
-        const probe = { hp: 50, maxHp: 60, gold: 30, deck: ["S01"], relics: [], flags: {} };
+        const probe = {
+          hp: 50,
+          maxHp: 60,
+          gold: 30,
+          deck: ["S01"],
+          relics: [],
+          flags: {},
+          nextBattleEnergyBonus: 0,
+          nextBattleEnergyPenalty: 0,
+          nextBattleBlock: 0,
+        };
         ch.apply(probe);
         const visible =
-          probe.hp !== 50 || probe.maxHp !== 60 || probe.deck.length !== 1;
+          probe.hp !== 50 ||
+          probe.maxHp !== 60 ||
+          probe.deck.length !== 1 ||
+          probe.gold !== 30 ||
+          (probe.nextBattleEnergyBonus || 0) > 0 ||
+          (probe.nextBattleEnergyPenalty || 0) > 0 ||
+          (probe.nextBattleBlock || 0) > 0;
         assert(visible, `${ev.title}/${ch.id} 揀完即時不可見`);
         // 事件唔可以「發死金」（白送金幣），但可以花錢換其他回報
         assert(
@@ -269,8 +285,8 @@ function simulateChar(charId) {
     }
     // 每區至少 1 個事件，全部選項都即時可見（唔可以淨係跳下一格）
     assert(fullyVisible >= 1, `Act${act} 冇任何事件做到全選項即時可見`);
-    // 每區池要 ≥2 個，否則每局抽 2 個會抽到同一個
-    assert(pool.length >= 2, `Act${act} 事件池少於 2 個，每局唔會唔同`);
+    // 每區池要 ≥5 個（內容密度）
+    assert(pool.length >= 5, `Act${act} 事件池少於 5 個，密度唔夠`);
   }
 
   // ① 選牌傾向：四角色各自要明顯偏一類（唔可以揀邊個都一樣）
@@ -742,7 +758,7 @@ function simulateChar(charId) {
     } else if (node.type === "event") {
       const goldBefore = run.gold;
       eventById(node.eventId || pickEventId(2)).choices[0].apply(run);
-      assert(run.gold === goldBefore, "A2 事件唔發死金");
+      assert(run.gold <= goldBefore, "A2 事件唔發死金");
       notes.push("A2 event ok");
     } else if (node.type === "rest") {
       const spent = applyShopSink(run);

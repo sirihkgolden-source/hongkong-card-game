@@ -34,6 +34,8 @@ import {
   CONSUMABLES,
   pickShopConsumables,
   consumableById,
+  restShopForAct,
+  shopCardIdForAct,
 } from "./data.js";
 import {
   createBattle,
@@ -1294,16 +1296,21 @@ function renderEvent() {
 function renderRest() {
   const healAmt = Math.floor(state.run.maxHp * 0.3);
   const has = (n) => state.run.gold >= n;
+  const act = state.run.act || 1;
+  const flavor = restShopForAct(act);
+  const cardId = shopCardIdForAct(act);
   const canHealBuy = has(SHOP.healCost);
   const canCardBuy = has(SHOP.cardCost);
   const canRelicBuy = has(SHOP.relicCost) && state.shopRelics.length > 0;
   const canPackBuy = has(SHOP.packCost);
   const canReroll = has(SHOP.rerollCost) && state.shopRelics.length > 0;
-  const shopCard = cardById(SHOP.cardId);
+  const shopCard = cardById(cardId);
   const node = currentNode();
-  const isAct3 = (state.run.act || 1) === 3;
-  const restTitle = node?.title || (isAct3 ? "天台搭棚歇腳" : "簷篷底歇腳");
-  const restSub = isAct3 ? "鐵皮滴水 · 樓下士多仲未關門" : "雨聲滴鐵皮 · 便利店燈仲亮";
+  const restTitle =
+    node?.title ||
+    (act === 3 ? "天台搭棚歇腳" : act === 2 ? "通宵便利店" : "簷篷底歇腳");
+  const restSub = flavor.subtitle;
+  const penalty = state.run.nextBattleEnergyPenalty || 0;
   const ownedRelics = (state.run.relics || [])
     .map((id) => RELICS[id])
     .filter(Boolean);
@@ -1362,35 +1369,33 @@ function renderRest() {
         <p class="tagline">${escapeHtml(restSub)}</p>
       </header>
       <section class="panel">
-        <p class="lede">現時 HP ${state.run.hp}/${state.run.maxHp} · 金幣 ${state.run.gold}。揀一項：</p>
+        <p class="lede">現時 HP ${state.run.hp}/${state.run.maxHp} · 金幣 ${state.run.gold} · 牌組 ${state.run.deck.length}。揀一項：</p>
         <div class="event-choices">
           <button type="button" class="event-choice" data-action="rest-heal">
-            <strong>眯一陣</strong>
-            <span>回復 ${healAmt} HP（約三成）</span>
+            <strong>${escapeHtml(flavor.restHealLabel)}</strong>
+            <span>${escapeHtml(flavor.restHealDesc(healAmt))}</span>
           </button>
           <button type="button" class="event-choice" data-action="rest-upgrade">
-            <strong>磨刀（寶箱感）</strong>
-            <span>牌組加入「廊燈直拳」；回復 4 HP</span>
+            <strong>${escapeHtml(flavor.restUpgradeLabel)}</strong>
+            <span>${escapeHtml(flavor.restUpgradeDesc)}</span>
           </button>
           <button type="button" class="event-choice" data-action="rest-cleanse">
-            <strong>沖個涼（清狀態）</strong>
-            <span>${
-              (state.run.nextBattleEnergyPenalty || 0) > 0
-                ? `清走「下戰 −${state.run.nextBattleEnergyPenalty} 能量」；回復 6 HP`
-                : "冇負面狀態；純粹回復 6 HP"
-            }</span>
+            <strong>${escapeHtml(flavor.restCleanseLabel)}</strong>
+            <span>${escapeHtml(
+              penalty > 0 ? flavor.restCleanseClear(penalty) : flavor.restCleansePlain
+            )}</span>
           </button>
           <button type="button" class="event-choice${canHealBuy ? "" : " is-disabled"}" data-action="shop-heal" ${canHealBuy ? "" : "disabled"}>
-            <strong>便利店・回血</strong>
-            <span>花 ${SHOP.healCost} 金幣回復 ${SHOP.healAmt} HP${canHealBuy ? "" : "（金幣不足）"}</span>
+            <strong>${escapeHtml(flavor.shopHealLabel)}</strong>
+            <span>${escapeHtml(flavor.shopHealDesc)}${canHealBuy ? "" : "（金幣不足）"}</span>
           </button>
           <button type="button" class="event-choice${canCardBuy ? "" : " is-disabled"}" data-action="shop-card" ${canCardBuy ? "" : "disabled"}>
-            <strong>便利店・執牌</strong>
-            <span>花 ${SHOP.cardCost} 金幣入手「${escapeHtml(shopCard?.name ?? SHOP.cardId)}」${canCardBuy ? "" : "（金幣不足）"}</span>
+            <strong>${escapeHtml(flavor.shopCardLabel)}</strong>
+            <span>花 ${SHOP.cardCost} 金幣入手「${escapeHtml(shopCard?.name ?? cardId)}」${canCardBuy ? "" : "（金幣不足）"}</span>
           </button>
           <button type="button" class="event-choice${canPackBuy ? "" : " is-disabled"}" data-action="shop-pack" ${canPackBuy ? "" : "disabled"}>
-            <strong>便利店・抽卡包</strong>
-            <span>花 ${SHOP.packCost} 金幣抽一張稀有／專屬牌${canPackBuy ? "" : "（金幣不足）"}</span>
+            <strong>${escapeHtml(flavor.shopPackLabel)}</strong>
+            <span>${escapeHtml(flavor.shopPackDesc)}${canPackBuy ? "" : "（金幣不足）"}</span>
           </button>
         </div>
         ${state.shopMsg ? `<p class="status" role="status">${escapeHtml(state.shopMsg)}</p>` : ""}
@@ -1399,7 +1404,7 @@ function renderRest() {
       ${
         consumableStock
           ? `<section class="panel panel-shop">
-        <h2>士多・消耗品</h2>
+        <h2>${escapeHtml(flavor.consumableTitle)}</h2>
         <div class="event-choices">${consumableStock}</div>
       </section>`
           : ""
@@ -1408,13 +1413,13 @@ function renderRest() {
       ${
         relicStock || ownedRelics.length
           ? `<section class="panel panel-shop">
-        <h2>士多・遺物</h2>
-        <div class="event-choices">${relicStock || '<p class="lede">今晚冇新貨。</p>'}</div>
+        <h2>${escapeHtml(flavor.relicTitle)}</h2>
+        <div class="event-choices">${relicStock || `<p class="lede">${escapeHtml(flavor.shopRerollEmpty)}</p>`}</div>
         ${
           state.shopRelics.length
             ? `<button type="button" class="event-choice is-sell${canReroll ? "" : " is-disabled"}" data-action="shop-reroll" ${canReroll ? "" : "disabled"}>
-            <strong>換貨</strong>
-            <span>花 ${SHOP.rerollCost} 金幣叫老闆換過批貨${canReroll ? "" : "（金幣不足）"}</span>
+            <strong>${escapeHtml(flavor.shopRerollLabel)}</strong>
+            <span>${escapeHtml(flavor.shopRerollDesc)}${canReroll ? "" : "（金幣不足）"}</span>
           </button>`
             : ""
         }
@@ -1430,14 +1435,14 @@ function renderRest() {
       ${
         sellableCards
           ? `<section class="panel panel-shop">
-        <h2>變賣牌組</h2>
+        <h2>${escapeHtml(flavor.sellTitle)}</h2>
         <div class="event-choices">${sellableCards}</div>
       </section>`
           : ""
       }
 
       <div class="actions">
-        <button type="button" class="btn btn-primary btn-pressable" data-action="leave-shop">離開（繼續地圖）</button>
+        <button type="button" class="btn btn-primary btn-pressable" data-action="leave-shop">${escapeHtml(flavor.leaveLabel)}</button>
       </div>
     </main>
   `;
@@ -2606,9 +2611,9 @@ function enterNode() {
     state.screen = "event";
   } else if (node.type === "rest") {
     state.shopMsg = "";
-    // 每局入店洗一次貨：1 件消耗品 + 2 件遺物
+    // 每局入店洗一次貨：1 件消耗品 + 2 件遺物（消耗品跟 Act 偏重）
     if (!state.shopConsumables?.length) {
-      state.shopConsumables = pickShopConsumables(1);
+      state.shopConsumables = pickShopConsumables(1, Math.random, state.run.act || 1);
     }
     if (!state.shopRelics?.length) {
       state.shopRelics = pickShopRelics(state.run, 2);
@@ -2981,31 +2986,37 @@ function onClick(event) {
       advanceMap();
       break;
     case "rest-heal": {
+      const flavor = restShopForAct(state.run.act || 1);
       const healAmt = Math.floor(state.run.maxHp * 0.3);
       const before = runSnapshot();
       state.run.hp = Math.min(state.run.maxHp, state.run.hp + healAmt);
-      state.pendingRestMsg = `眯咗一陣，回咗 ${healAmt} HP。`;
+      state.pendingRestMsg = flavor.restHealMsg(healAmt);
       showRunDeltas(before);
       advanceMap();
       break;
     }
     case "rest-upgrade": {
+      const flavor = restShopForAct(state.run.act || 1);
       const before = runSnapshot();
-      state.run.deck.push("S15");
-      state.run.hp = Math.min(state.run.maxHp, state.run.hp + 4);
-      state.pendingRestMsg = "磨好把刀——牌組加入「廊燈直拳」，順手回 4 HP。";
+      state.run.deck.push(flavor.restUpgradeCardId);
+      state.run.hp = Math.min(
+        state.run.maxHp,
+        state.run.hp + (flavor.restUpgradeHeal || 4)
+      );
+      state.pendingRestMsg = flavor.restUpgradeMsg;
       showRunDeltas(before);
       advanceMap();
       break;
     }
     case "rest-cleanse": {
+      const flavor = restShopForAct(state.run.act || 1);
       const before = runSnapshot();
       const hadPenalty = state.run.nextBattleEnergyPenalty || 0;
       state.run.nextBattleEnergyPenalty = 0;
       state.run.hp = Math.min(state.run.maxHp, state.run.hp + 6);
       state.pendingRestMsg = hadPenalty
-        ? `沖走一身晦氣——清咗下戰 −${hadPenalty} 能量，兼回 6 HP。`
-        : "沖個涼，人都醒神——回 6 HP。";
+        ? flavor.restCleanseMsgClear(hadPenalty)
+        : flavor.restCleanseMsgPlain;
       showRunDeltas(before);
       // 清狀態要自己補一個跳字（energy 由負變 0 唔會入 delta）
       if (hadPenalty) {
@@ -3017,10 +3028,11 @@ function onClick(event) {
     }
     case "shop-heal":
       if (state.run.gold >= SHOP.healCost) {
+        const flavor = restShopForAct(state.run.act || 1);
         const before = runSnapshot();
         state.run.gold -= SHOP.healCost;
         state.run.hp = Math.min(state.run.maxHp, state.run.hp + SHOP.healAmt);
-        state.shopMsg = `阿姐遞過嚟一碗熱嘢——回咗 ${SHOP.healAmt} HP，人都醒神。`;
+        state.shopMsg = flavor.shopHealMsg(SHOP.healAmt);
         showRunDeltas(before);
       } else {
         state.shopMsg = "金幣不足";
@@ -3028,34 +3040,38 @@ function onClick(event) {
       break;
     case "shop-card":
       if (state.run.gold >= SHOP.cardCost) {
+        const flavor = restShopForAct(state.run.act || 1);
+        const cardId = shopCardIdForAct(state.run.act || 1);
         const before = runSnapshot();
         state.run.gold -= SHOP.cardCost;
-        state.run.deck.push(SHOP.cardId);
-        state.shopMsg = `執咗張「${cardById(SHOP.cardId)?.name ?? SHOP.cardId}」入袋——用得着嘅。`;
+        state.run.deck.push(cardId);
+        state.shopMsg = flavor.shopCardMsg(cardById(cardId)?.name ?? cardId);
         showRunDeltas(before);
       } else {
         state.shopMsg = "金幣不足";
       }
       break;
     case "shop-pack": {
+      const flavor = restShopForAct(state.run.act || 1);
       if (state.run.gold < SHOP.packCost) {
         state.shopMsg = "金幣不足";
         break;
       }
       const packCardId = pickPackCard(state.run.characterId);
       if (!packCardId) {
-        state.shopMsg = "今晚卡包賣晒。";
+        state.shopMsg = flavor.shopRerollEmpty;
         break;
       }
       const before = runSnapshot();
       state.run.gold -= SHOP.packCost;
       state.run.deck.push(packCardId);
       const pc = cardById(packCardId);
-      state.shopMsg = `拆開卡包——「${pc?.name ?? packCardId}」，${pc?.rarity ?? ""}牌，手氣唔錯。`;
+      state.shopMsg = flavor.shopPackMsg(pc?.name ?? packCardId, pc?.rarity ?? "");
       showRunDeltas(before);
       break;
     }
     case "shop-reroll": {
+      const flavor = restShopForAct(state.run.act || 1);
       if (state.run.gold < SHOP.rerollCost) {
         state.shopMsg = "金幣不足";
         break;
@@ -3063,10 +3079,16 @@ function onClick(event) {
       const before = runSnapshot();
       state.run.gold -= SHOP.rerollCost;
       state.shopRelics = pickShopRelics(state.run, 2);
-      state.shopConsumables = pickShopConsumables(1);
+      state.shopConsumables = pickShopConsumables(
+        1,
+        Math.random,
+        state.run.act || 1
+      );
       state.shopMsg = state.shopRelics.length
-        ? `老闆換咗批貨：${state.shopRelics.map((id) => relicById(id)?.name ?? id).join("、")}。`
-        : "老闆話今晚冇新貨喇。";
+        ? flavor.shopRerollMsg(
+            state.shopRelics.map((id) => relicById(id)?.name ?? id).join("、")
+          )
+        : flavor.shopRerollEmpty;
       showRunDeltas(before);
       break;
     }
