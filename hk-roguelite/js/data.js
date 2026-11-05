@@ -9,6 +9,144 @@
  */
 export const START_GOLD = 12;
 
+/**
+ * 永久成長薄層（meta）：通關／失敗後三揀一，存入 localStorage。
+ * 全部係「薄」加成，唔會破壞單局平衡。
+ * kind:
+ *   unlock  解鎖一句結算台詞（純收藏，唔影響數值）
+ *   card    名片角（結算畫面顯示專屬稱號）
+ *   buff    下局小加成（只影響開局，每局最多疊 1 層）
+ * @type {Record<string, {id:string, kind:"unlock"|"card"|"buff", name:string, desc:string, flavor:string, effect?:Record<string,number>, requires?:string}>}
+ */
+export const META_REWARDS = {
+  /* ── 解鎖類（收藏，純文字） ── */
+  meta_clear_oil: {
+    id: "meta_clear_oil",
+    kind: "unlock",
+    name: "後巷傳說",
+    desc: "用阿油打穿三區——記入名冊。",
+    flavor: "「快手」兩個字，以後街坊講起都會諗起你。",
+    requires: "oil",
+  },
+  meta_clear_asan: {
+    id: "meta_clear_asan",
+    kind: "unlock",
+    name: "收爐都唔熄",
+    desc: "用阿珊打穿三區——記入名冊。",
+    flavor: "檔口收咗爐，但你把火冇熄過。",
+    requires: "asan",
+  },
+  meta_clear_kauko: {
+    id: "meta_clear_kauko",
+    kind: "unlock",
+    name: "招牌最亮嗰盞",
+    desc: "用九哥打穿三區——記入名冊。",
+    flavor: "成條街嘅招牌都熄晒，淨返你嗰盞。",
+    requires: "kauko",
+  },
+  meta_clear_sing: {
+    id: "meta_clear_sing",
+    kind: "unlock",
+    name: "跌打館之光",
+    desc: "用勝仔打穿三區——記入名冊。",
+    flavor: "一身瘀傷行落天台，你仲識笑。",
+    requires: "sing",
+  },
+
+  /* ── 名片角（結算畫面稱號） ── */
+  meta_card_gate: {
+    id: "meta_card_gate",
+    kind: "card",
+    name: "名片角・過閘",
+    desc: "結算名片加一個「過閘」印記。",
+    flavor: "鐵閘升起嗰一刻，你就唔再係生面孔。",
+  },
+  meta_card_neon: {
+    id: "meta_card_neon",
+    kind: "card",
+    name: "名片角・霓虹",
+    desc: "結算名片加一個「霓虹」印記。",
+    flavor: "旺角啲燈牌記得你行過。",
+  },
+  meta_card_cage: {
+    id: "meta_card_cage",
+    kind: "card",
+    name: "名片角・籠門",
+    desc: "結算名片加一個「籠門」印記。",
+    flavor: "籠門開過一次，就唔會再關返。",
+  },
+
+  /* ── 下局小加成（只影響開局，薄） ── */
+  meta_buff_gold: {
+    id: "meta_buff_gold",
+    kind: "buff",
+    name: "街坊關照",
+    desc: "下一局開局多 4 金。",
+    flavor: "有人記得你幫過手。",
+    effect: { startGold: 4 },
+  },
+  meta_buff_hp: {
+    id: "meta_buff_hp",
+    kind: "buff",
+    name: "跌打底子",
+    desc: "下一局開局最大生命 +4。",
+    flavor: "捱過一次，骨頭都硬淨啲。",
+    effect: { startMaxHp: 4 },
+  },
+  meta_buff_draw: {
+    id: "meta_buff_draw",
+    kind: "buff",
+    name: "熟路",
+    desc: "下一局首場戰鬥多抽 1 張。",
+    flavor: "行過一次，第二次就知邊度有彎。",
+    effect: { startDraw: 1 },
+  },
+};
+
+/** 抽 n 個 meta 獎勵（未擁有優先，其次可重複嘅 buff）
+ *  opts.charId：只保留「對應角色」嘅解鎖台詞（避免阿珊抽到「用阿油打穿三區」）
+ */
+export function pickMetaRewards(owned, n = 3, rng = Math.random, opts = {}) {
+  const set = new Set(owned || []);
+  const charId = opts && opts.charId;
+  const allowUnlock = !opts || opts.allowUnlock !== false;
+  const ids = Object.keys(META_REWARDS).filter((id) => {
+    const r = META_REWARDS[id];
+    // 解鎖台詞寫明「打穿三區」：失敗結算唔應該派，亦唔應該派別角嘅
+    if (r.kind === "unlock") {
+      if (!allowUnlock) return false;
+      if (charId && r.requires && r.requires !== charId) return false;
+    }
+    return true;
+  });
+  const fresh = ids.filter((id) => !set.has(id));
+  const buffs = ids.filter((id) => META_REWARDS[id].kind === "buff");
+  // 未擁有嘅優先；唔夠就補 buff（buff 可以再攞）
+  const pool = [...fresh, ...buffs.filter((id) => set.has(id))];
+  const seen = new Set();
+  const picked = [];
+  const shuffled = [...pool].sort(() => rng() - 0.5);
+  for (const id of shuffled) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    picked.push(id);
+    if (picked.length >= n) break;
+  }
+  return picked;
+}
+
+/** meta buff 加成（套落開局） */
+export function metaBonuses(metaBuffId) {
+  const out = { startGold: 0, startMaxHp: 0, startDraw: 0 };
+  if (!metaBuffId) return out;
+  const r = META_REWARDS[metaBuffId];
+  if (!r || r.kind !== "buff") return out;
+  for (const [k, v] of Object.entries(r.effect || {})) {
+    if (k in out) out[k] += v;
+  }
+  return out;
+}
+
 export const META = {
   title: "香江小風波",
   act1Name: "後巷・夜醒",

@@ -998,6 +998,170 @@ body {
   background: rgba(255, 193, 74, 0.1);
 }
 
+/* ── meta 三揀一 ── */
+.meta-panel .lede {
+  margin-bottom: 0.6rem;
+}
+
+.meta-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.meta-choice {
+  appearance: none;
+  font: inherit;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.22rem;
+  min-height: 72px;
+  padding: 0.75rem 0.8rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  color: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.meta-choice:hover {
+  border-color: var(--neon-cyan);
+  background: rgba(61, 224, 255, 0.08);
+}
+
+/* 三種 meta 各有色系 */
+.meta-choice--unlock {
+  border-left: 3px solid var(--neon-magenta);
+}
+.meta-choice--card {
+  border-left: 3px solid var(--neon-amber);
+}
+.meta-choice--buff {
+  border-left: 3px solid var(--ok);
+}
+
+.meta-kind {
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  font-weight: 800;
+  color: var(--ink-dim);
+}
+
+.meta-name {
+  font-size: 0.94rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.meta-desc {
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--ink-dim);
+}
+
+.meta-flavor {
+  font-size: 0.72rem;
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--neon-cyan);
+  opacity: 0.85;
+}
+
+/* ── 名片 ── */
+.name-card-stats {
+  margin: 0.6rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+}
+
+.name-card-stats li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--ink-dim);
+}
+
+.name-card-stats strong {
+  color: var(--neon-amber);
+}
+
+.name-card-marks {
+  margin: 0.6rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.name-mark {
+  font-size: 0.68rem;
+  padding: 0.1rem 0.42rem;
+  border-radius: 999px;
+  background: rgba(255, 45, 149, 0.16);
+  color: #ffb0d8;
+  border: 1px solid rgba(255, 45, 149, 0.35);
+}
+
+/* ── 圖鑑 ── */
+.codex-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.codex-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+  min-height: 40px;
+  padding: 0.35rem 0.55rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  font-size: 0.8rem;
+}
+
+.codex-row.is-unknown {
+  opacity: 0.42;
+}
+
+.codex-row.is-cleared {
+  border-color: rgba(93, 255, 176, 0.35);
+}
+
+.codex-tag {
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  padding: 0.04rem 0.3rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--ink-dim);
+}
+
+.codex-name {
+  font-weight: 700;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.codex-row.is-cleared .codex-name {
+  color: var(--ok);
+}
+
+.codex-meta {
+  font-size: 0.7rem;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
 /* Act 內分支：二揀一 */
 .branch-list {
   display: flex;
@@ -2771,18 +2935,6 @@ body {
 .deck-n {
   color: var(--neon-cyan);
   font-weight: 700;
-}
-
-.stub-card {
-  border-style: dashed;
-  border-color: rgba(255, 193, 74, 0.35);
-}
-
-.stub-note {
-  display: inline-block;
-  margin-top: 0.4rem;
-  font-size: 0.74rem;
-  color: rgba(154, 173, 200, 0.8);
 }
 
 .screen-result.is-clear .result-sub {

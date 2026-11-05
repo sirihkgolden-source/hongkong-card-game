@@ -36,8 +36,21 @@ import {
   branchOptionById,
   battleGoldReward,
   pickEventId,
+  META_REWARDS,
+  pickMetaRewards,
+  metaBonuses,
 } from "./data.js";
 import { createBattle, playCard, endTurn, startPlayerTurn } from "./battle.js";
+import {
+  loadMeta,
+  saveMeta,
+  resetMeta,
+  markSeen,
+  markCleared,
+  markOwned,
+  setBuff,
+  consumeBuff,
+} from "./meta.js";
 
 let checks = 0;
 const failures = [];
@@ -328,6 +341,110 @@ section("選牌加權（四角路線唔同）", () => {
   }
   const vals = Object.values(dominant);
   assert(new Set(vals).size === 4, `四角主路線有重複：${JSON.stringify(dominant)}`);
+});
+
+/* ---------- 12. meta 存讀 ---------- */
+section("meta 存讀（localStorage 模擬）", () => {
+  // 用一個記憶體版 localStorage 模擬（Node 冇 localStorage）
+  const store = new Map();
+  globalThis.localStorage = {
+    getItem: (k) => (store.has(k) ? store.get(k) : null),
+    setItem: (k, v) => void store.set(k, String(v)),
+    removeItem: (k) => void store.delete(k),
+  };
+
+  // 清空 → 讀空
+  resetMeta();
+  const empty = loadMeta();
+  assert(empty.owned.length === 0, "清空後 owned 應為空");
+  assert(empty.buff === null, "清空後 buff 應為 null");
+  assert(empty.seen.length === 0, "清空後 seen 應為空");
+  assert(empty.cleared.length === 0, "清空後 cleared 應為空");
+
+  // 寫入 → 讀回
+  const m = loadMeta();
+  markSeen(m, "E01");
+  markSeen(m, "E01"); // 重複唔應該加兩次
+  markSeen(m, "E04");
+  markCleared(m, "oil");
+  markOwned(m, "meta_clear_oil");
+  markOwned(m, "meta_clear_oil"); // 重複
+  setBuff(m, "meta_buff_gold");
+  assert(saveMeta(m), "saveMeta 應該成功");
+
+  const back = loadMeta();
+  assert(back.seen.length === 2, `seen 應為 2，實際 ${back.seen.length}`);
+  assert(back.cleared.length === 1, `cleared 應為 1，實際 ${back.cleared.length}`);
+  assert(back.owned.length === 1, `owned 應為 1，實際 ${back.owned.length}`);
+  assert(back.buff === "meta_buff_gold", "buff 讀回唔對");
+
+  // consumeBuff 讀完即清
+  const used = consumeBuff(back);
+  assert(used === "meta_buff_gold", "consumeBuff 回傳唔對");
+  assert(loadMeta().buff === null, "consumeBuff 後 buff 應該清空");
+
+  // 壞資料唔會 throw
+  localStorage.setItem("hk_meta_v1", "{{{壞掉的 json");
+  const broken = loadMeta();
+  assert(broken.owned.length === 0, "壞資料應回空值");
+  assert(broken.buff === null, "壞資料 buff 應為 null");
+
+  // metaBonuses 只認 buff 類
+  const g = metaBonuses("meta_buff_gold");
+  assert(g.startGold === 4, `startGold 應為 4，實際 ${g.startGold}`);
+  const h = metaBonuses("meta_buff_hp");
+  assert(h.startMaxHp === 4, `startMaxHp 應為 4，實際 ${h.startMaxHp}`);
+  const d = metaBonuses("meta_buff_draw");
+  assert(d.startDraw === 1, `startDraw 應為 1，實際 ${d.startDraw}`);
+  // 非 buff 類回 0
+  const none = metaBonuses("meta_clear_oil");
+  assert(none.startGold === 0 && none.startMaxHp === 0, "非 buff 類唔應該有加成");
+
+  // pickMetaRewards 未擁有優先
+  const picks = pickMetaRewards([], 3);
+  assert(picks.length === 3, "抽 3 個應該得 3 個");
+  assert(new Set(picks).size === 3, "抽 3 個唔可以重複");
+  for (const id of picks) assert(META_REWARDS[id], `抽到未知 ${id}`);
+
+  // 解鎖台詞唔可以派別角嘅（阿珊唔應該見到「用阿油打穿三區」）
+  // 用固定種子，令檢查數穩定（唔會每次浮動）
+  let seed = 20261105;
+  const rng = () => {
+    seed = (seed * 1103515245 + 12345) % 2147483648;
+    return seed / 2147483648;
+  };
+  for (let i = 0; i < 10; i++) {
+    for (const id of pickMetaRewards([], 3, rng, { charId: "asan", allowUnlock: true })) {
+      const r = META_REWARDS[id];
+      if (r.kind === "unlock") assert(r.requires === "asan", `阿珊抽到別角解鎖 ${id}`);
+    }
+  }
+  // 失敗結算唔派解鎖台詞（寫明「打穿三區」，失敗派就名不符實）
+  for (let i = 0; i < 10; i++) {
+    for (const id of pickMetaRewards([], 3, rng, { charId: "oil", allowUnlock: false })) {
+      assert(META_REWARDS[id].kind !== "unlock", `失敗結算唔應該派解鎖 ${id}`);
+    }
+  }
+  // 全部擁有時都要抽到 3 個（靠可重複嘅 buff 補）
+  const allOwned = Object.keys(META_REWARDS).filter((id) => META_REWARDS[id].kind !== "buff");
+  const refill = pickMetaRewards(allOwned, 3, rng);
+  assert(refill.length === 3, `全解鎖後仍應抽到 3 個，實際 ${refill.length}`);
+  assert(
+    refill.every((id) => META_REWARDS[id].kind === "buff"),
+    "全解鎖後應該淨返 buff 類"
+  );
+  // 三種 buff 冚唪唥有效果定義，圖鑑／結算文案對得上
+  const buffIds = Object.keys(META_REWARDS).filter((id) => META_REWARDS[id].kind === "buff");
+  assert(buffIds.length === 3, `buff 應該 3 個，實際 ${buffIds.length}`);
+  for (const id of buffIds) {
+    const r = META_REWARDS[id];
+    assert(Object.keys(r.effect || {}).length > 0, `${id} 缺 effect`);
+    assert(r.desc.includes("下一局"), `${id} 文案應講明「下一局」`);
+  }
+
+  // 清空收工（避免污染真實 localStorage）
+  resetMeta();
+  delete globalThis.localStorage;
 });
 
 /* ---------- 結果 ---------- */
