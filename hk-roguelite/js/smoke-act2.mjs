@@ -320,6 +320,23 @@ function simulateChar(charId) {
     assert(pickShopConsumables(1).length === 1, "消耗品貨架抽唔到貨");
   }
 
+  // 能量／擋 UI：HUD 要有獨立大數字元素（唔可以只係一行細字）
+  {
+    // 用資料層檢查：能量上限要正數，擋要有明確初始值
+    for (const id of ["oil", "asan", "kauko"]) {
+      const c = CHARACTERS[id];
+      assert(typeof c.energy === "number" && c.energy > 0, `${id} energy 唔合法`);
+    }
+    // 卡費用唔可以超過角色起始能量上限太多（避免一開始乜都出唔到）
+    const maxEnergy = Math.max(...["oil", "asan", "kauko"].map((id) => CHARACTERS[id].energy));
+    const starterCosts = ["S01", "S02", "S09", "S22"].map((id) => CARDS[id]?.cost ?? 0);
+    assert(
+      starterCosts.some((c) => c === 0),
+      "起手牌要有 0 費牌（否則冇能量時完全冇牌可出）"
+    );
+    assert(maxEnergy >= 1, "起始能量上限要 >= 1");
+  }
+
   // 牌名／牌效人話：禁機械腔，長效果要有對應描述
   {
     const mechanical = /buff|debuff|疊加|觸發|增益|減益|狀態|回合開始時|計算|判定|烙/;

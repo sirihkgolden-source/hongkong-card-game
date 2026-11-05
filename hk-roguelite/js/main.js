@@ -560,8 +560,20 @@ function renderBattle() {
             <span class="battle-route">${escapeHtml(char.route || "")}</span>
             ${passiveChip}
             <div class="hp-bar player"><span id="player-hp-fill" style="width:${Math.max(0, (b.playerHp / b.playerMaxHp) * 100)}%"></span></div>
-            <span class="hp-text" id="player-hp-text">${b.playerHp}/${b.playerMaxHp}${b.playerBlock ? ` · 盾 ${b.playerBlock}` : ""}</span>
-            <span class="energy">⚡ ${b.energy}/${b.maxEnergy}${readyHint}</span>
+            <span class="hp-text" id="player-hp-text">${b.playerHp}/${b.playerMaxHp}</span>
+            <div class="stat-row">
+              <span class="stat-pill stat-energy${b.energy === 0 ? " is-empty" : ""}" id="player-energy">
+                <span class="stat-icon" aria-hidden="true">⚡</span>
+                <strong class="stat-num">${b.energy}</strong>
+                <span class="stat-max">/${b.maxEnergy}</span>
+              </span>
+              <span class="stat-pill stat-block${b.playerBlock > 0 ? " is-on" : " is-off"}" id="player-block">
+                <span class="stat-icon" aria-hidden="true">🛡</span>
+                <strong class="stat-num">${b.playerBlock}</strong>
+                <span class="stat-max">擋</span>
+              </span>
+            </div>
+            ${readyHint ? `<span class="energy-hint">${escapeHtml(readyHint.replace(/^ · /, ""))}</span>` : ""}
           </div>
         </div>
       </header>
@@ -1434,7 +1446,25 @@ async function playCardWithFeel(handIndex, cardEl) {
   if (!card) return;
   const cost = effectiveCost(b, cardId);
   if (b.energy < cost) {
-    state.statusMsg = "能量不足";
+    // 唔夠費：卡面震一下 + 跳字 + 能量欄閃紅，唔好靜靜點唔到
+    state.statusMsg = `唔夠能量——要 ${cost}，得 ${b.energy}`;
+    if (cardEl) {
+      cardEl.classList.remove("is-shake-no");
+      void cardEl.offsetWidth;
+      cardEl.classList.add("is-shake-no");
+      setTimeout(() => cardEl.classList.remove("is-shake-no"), 420);
+      floatText(cardEl, `要 ${cost} 能量`, "low-energy");
+    }
+    const energyEl = document.getElementById("player-energy");
+    if (energyEl) {
+      energyEl.classList.remove("is-bump");
+      void energyEl.offsetWidth;
+      energyEl.classList.add("is-bump");
+      setTimeout(() => energyEl.classList.remove("is-bump"), 460);
+    }
+    state.pendingTurnLine = `能量唔夠——呢張要 ${cost}，你仲有 ${b.energy}。`;
+    flushTurnLine();
+    sfx.click();
     return;
   }
 
