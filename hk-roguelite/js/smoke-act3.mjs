@@ -161,6 +161,32 @@ function walkAct(run, map, actNo, notes) {
       const spent = applyShopSink(run);
       assert(spent !== 0, `A${actNo} 便利店必須有金流（買或賣）`);
       notes.push(`A${actNo}-${i + 1} 便利店金流 ${spent > 0 ? "花" : "賺"} ${Math.abs(spent)} 金`);
+    } else if (node.type === "branch") {
+      // Act 內分支：兩邊都要有可見回報（金／血），並走其中一條
+      assert(Array.isArray(node.options) && node.options.length >= 2, `${node.id} 分支要有 ≥2 選項`);
+      for (const opt of node.options) {
+        const visible = (opt.bonusGold || 0) > 0 || (opt.bonusHp || 0) > 0;
+        assert(visible, `${node.id}/${opt.id} 分支選項冇可見回報`);
+        assert(opt.kind === "battle" || opt.kind === "event", `${node.id}/${opt.id} kind 唔合法`);
+        if (opt.kind === "battle") {
+          assert(
+            opt.enemyId || (opt.enemyPool && opt.enemyPool.length > 0),
+            `${node.id}/${opt.id} 戰鬥分支缺 enemyId／enemyPool`
+          );
+        }
+        if (opt.kind === "event") assert(opt.eventId, `${node.id}/${opt.id} 事件分支缺 eventId`);
+      }
+      // 模擬揀第一個選項
+      const pick = node.options[0];
+      if (pick.bonusGold) run.gold += pick.bonusGold;
+      if (pick.bonusHp) run.hp = Math.min(run.maxHp, run.hp + pick.bonusHp);
+      if (pick.kind === "battle") {
+        const eid = pick.enemyId || pickNodeEnemyId(pick);
+        assert(eid, `${node.id}/${pick.id} 抽唔到敵人`);
+        fightOnce(run, eid);
+        run.deck.push("S12"); // 模擬戰後選牌
+      }
+      notes.push(`A${actNo}-${i + 1} 分支「${pick.label}」`);
     } else {
       throw new Error(`未知節點類型：${node.type}`);
     }
@@ -204,17 +230,26 @@ function simulateChar(charId) {
   assert(ACT3_MAP[0].type === "battle", "Act3 開頭戰鬥");
   assert(ACT3_MAP[1].type === "reward", "Act3 第 2 格選牌");
   assert(ACT3_MAP[2].type === "event", "Act3 第 3 格事件");
-  assert(ACT3_MAP[3].type === "battle", "Act3 第 4 格戰／精英");
+  assert(ACT3_MAP[3].type === "branch", "Act3 第 4 格分支");
   assert(ACT3_MAP[4].type === "rest", "Act3 第 5 格休息／便利店");
   assert(ACT3_MAP[5].type === "boss", "Act3 第 6 格最終 Boss");
-  assert(ACT3_MAP[3].enemyPool?.includes("E08"), "精英池可抽 E08 地盤清場隊");
+  // 分支的戰鬥選項要覆蓋精英池（E08 仍可遇到）
+  {
+    const hardOpt = ACT3_MAP[3].options.find((o) => o.kind === "battle");
+    assert(hardOpt, "Act3 分支要有戰鬥選項");
+    const pool = hardOpt.enemyPool || [hardOpt.enemyId];
+    assert(pool.includes("E08"), "分支戰鬥選項要包含精英 E08");
+  }
   assert(mapForAct(3) === ACT3_MAP, "mapForAct(3)");
   assert(["E09", "E10", "E11", "E12", "E08"].every((id) => !!enemyById(id)), "Act3 敵表齊");
   assert(enemyById("E08").isElite, "E08 標精英");
-  // enemyPool 抽樣 200 次，三個都要出現
-  const seen = new Set();
-  for (let i = 0; i < 200; i++) seen.add(pickNodeEnemyId(ACT3_MAP[3]));
-  assert(seen.has("E08") && seen.has("E10") && seen.has("E11"), "精英池抽樣不齊");
+  // 分支戰鬥選項的 enemyPool 抽樣 200 次，三個都要出現
+  {
+    const hardOpt = ACT3_MAP[3].options.find((o) => o.kind === "battle");
+    const seen = new Set();
+    for (let i = 0; i < 200; i++) seen.add(pickNodeEnemyId(hardOpt));
+    assert(seen.has("E08") && seen.has("E10") && seen.has("E11"), "分支精英池抽樣不齊");
+  }
 
   // —— 事件池：每 Act 至少 3 個短事件，全部三選一、全部改局、唔發死金 ——
   for (const actNo of [1, 2, 3]) {
@@ -265,9 +300,13 @@ function simulateChar(charId) {
     }
   }
 
-  // —— 每角 3 張專屬牌（共 9）＋starter 至少帶 1 ——
+  // —— 每角 3 張專屬牌＋starter 至少帶 1 ——
   const sigOwners = Object.keys(SIGNATURE_CARDS);
-  assert(sigOwners.length === 3, "要有三個角色專屬池");
+  // 角色數由 CHARACTERS 推導，唔好寫死（新增角色時自動擴展）
+  assert(
+    sigOwners.length === Object.keys(CHARACTERS).length,
+    `專屬池數量（${sigOwners.length}）要等於角色數（${Object.keys(CHARACTERS).length}）`
+  );
   let sigTotal = 0;
   for (const owner of sigOwners) {
     const ids = SIGNATURE_CARDS[owner];
@@ -285,7 +324,10 @@ function simulateChar(charId) {
       `${owner} starter 至少要帶 1 張專屬牌`
     );
   }
-  assert(sigTotal === 9, "專屬牌總數要 9 張");
+  assert(
+    sigTotal === sigOwners.length * 3,
+    `專屬牌總數應該係 ${sigOwners.length * 3} 張（每角 3），實際 ${sigTotal}`
+  );
 
   // 選牌池分角：唔會抽到別角專屬牌
   for (const owner of sigOwners) {
@@ -338,6 +380,7 @@ function simulateChar(charId) {
       (eff.drawPerTurn && b.drawPerTurn > 0) ||
       (eff.attackPerCard && b.attackPerCard > 0) ||
       (eff.healOnWinBonus && b.healOnWinBonus > 0) ||
+      (eff.healBonusFirst && b.healBonusFirst > 0) ||
       (eff.firstTurnEnergy && b.firstTurnEnergy > 0) ||
       !!eff.instantMaxHp ||
       !!eff.instantGold;
