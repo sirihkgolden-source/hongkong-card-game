@@ -81,6 +81,8 @@ export function createBattle(run, enemyDef) {
     zhaopaiyanUsed: false,
     playerWeaken: 0,
     enemyMark: 0,
+    /** 上次抽牌洗牌回收咗幾多張（0 = 冇洗過） */
+    lastReshuffle: 0,
 
     log: [],
     turn: 1,
@@ -102,16 +104,22 @@ function pushLog(b, text) {
 }
 
 function drawCards(b, n) {
+  let reshuffled = 0;
   for (let i = 0; i < n; i++) {
     if (b.drawPile.length === 0) {
       if (b.discard.length === 0) break;
+      const recycled = b.discard.length;
       b.drawPile = shuffle(b.discard);
       b.discard = [];
+      reshuffled = recycled;
       pushLog(b, "洗牌……");
     }
     const id = b.drawPile.shift();
     if (id) b.hand.push(id);
   }
+  // 畀上層知道有冇洗過牌（用嚟出「洗牌」提示）
+  b.lastReshuffle = reshuffled;
+  return reshuffled;
 }
 
 export function startPlayerTurn(b) {

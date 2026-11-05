@@ -322,6 +322,41 @@ function simulateChar(charId) {
     assert(pickShopConsumables(1).length === 1, "消耗品貨架抽唔到貨");
   }
 
+  // 抽／棄／洗牌：牌堆要有計數、洗牌要能被偵測
+  {
+    // 用真戰鬥物件驗：起手抽牌後 drawPile + hand 總數應等於牌組數
+    const c = CHARACTERS.oil;
+    const run = {
+      characterId: "oil",
+      hp: c.maxHp,
+      maxHp: c.maxHp,
+      energy: 3,
+      deck: [...c.starterDeck],
+      relics: [],
+      nextBattleEnergyPenalty: 0,
+      nextBattleEnergyBonus: 0,
+      nextBattleBlock: 0,
+    };
+    const b = createBattle(run, enemyById("E01"));
+    startPlayerTurn(b);
+    const total = b.drawPile.length + b.hand.length + b.discard.length;
+    assert(total === c.starterDeck.length, `牌堆總數唔對：${total} vs ${c.starterDeck.length}`);
+    assert(b.hand.length > 0, "起手冇手牌");
+    assert(typeof b.lastReshuffle === "number", "缺 lastReshuffle 欄位");
+
+    // 把牌庫清空再抽，驗洗牌會發生並記錄
+    b.drawPile = [];
+    b.discard = ["S01", "S02", "S15", "S11", "S14"];
+    const handBefore = b.hand.length;
+    // 用 endTurn 觸發 startPlayerTurn → drawCards
+    endTurn(b);
+    assert(b.lastReshuffle > 0, "棄牌回收時冇記錄洗牌張數");
+    assert(
+      b.drawPile.length + b.hand.length + b.discard.length === c.starterDeck.length,
+      "洗牌後牌堆總數唔對"
+    );
+  }
+
   // 手機字級：390 寬下唔可以有大片空底（關鍵文字要有足夠字級）
   {
     // 用資料層無法測字級，改為確認「重要文案欄位」都存在且長度足夠，

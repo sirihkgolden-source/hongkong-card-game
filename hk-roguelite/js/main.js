@@ -53,6 +53,8 @@ import {
   telegraphIntent,
   showPassiveBanner,
   syncHpBars,
+  syncPileCounts,
+  flashShuffle,
   clearFx,
   floatGold,
   floatRunDeltas,
@@ -639,6 +641,23 @@ function renderBattle() {
       </header>
       ${overBanner}
       ${bossAfterword}
+      <div class="pile-row" role="group" aria-label="牌堆">
+        <span class="pile-pill pile-draw" id="pile-draw">
+          <span class="pile-icon" aria-hidden="true">🂠</span>
+          <span class="pile-label">牌庫</span>
+          <strong class="pile-num">${b.drawPile.length}</strong>
+        </span>
+        <span class="pile-pill pile-discard" id="pile-discard">
+          <span class="pile-icon" aria-hidden="true">♻</span>
+          <span class="pile-label">棄牌</span>
+          <strong class="pile-num">${b.discard.length}</strong>
+        </span>
+        <span class="pile-pill pile-hand">
+          <span class="pile-icon" aria-hidden="true">✋</span>
+          <span class="pile-label">手牌</span>
+          <strong class="pile-num">${b.hand.length}</strong>
+        </span>
+      </div>
       <div class="hand" role="list">${hand || '<p class="empty-hand">沒有手牌</p>'}</div>
       <div class="battle-actions">
         ${
@@ -1644,6 +1663,13 @@ async function endTurnWithFeel() {
   const result = endTurn(state.battle);
   syncRunHpFromBattle();
   syncHpBars(state.battle);
+
+  // 洗牌提示：棄牌堆回收時明確講一聲
+  if (state.battle?.lastReshuffle > 0) {
+    flashShuffle(state.battle, state.battle.lastReshuffle);
+    state.battle.lastReshuffle = 0;
+    await wait(180);
+  }
 
   if (result?.kind === "attack") {
     const player = document.getElementById("fighter-player");
