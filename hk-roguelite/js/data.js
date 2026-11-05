@@ -455,6 +455,8 @@ export const REWARD_POOL = [
   "S31",
   "S47",
   "S72",
+  /** 阿珊守向偏置：萬年船（純擋） */
+  "S11",
 ];
 
 /**
@@ -633,7 +635,8 @@ export const CHARACTERS = {
       "S89",
     ],
     /** 選牌傾向：純回血型（一眼認得係勝仔） */
-    rewardBias: ["S21", "S09", "S90", "S89", "S91", "S47"],
+    // 共用回血向：S21／S09／S47／S25（加底＝回血兼抽，歸類回血）＋三張專屬
+    rewardBias: ["S21", "S09", "S47", "S25", "S90", "S89", "S91"],
   },
 };
 
@@ -647,8 +650,36 @@ export function characterById(id) {
 }
 
 export function listCharacters() {
-  return [CHARACTERS.oil, CHARACTERS.asan, CHARACTERS.kauko];
+  return [CHARACTERS.oil, CHARACTERS.asan, CHARACTERS.kauko, CHARACTERS.sing];
 }
+
+/**
+ * 選牌路線分類（自測／UI 共用）：攻擊／守／抽牌／回血／專屬
+ * 回血兼抽（如「加底唔該」）歸回血——強化勝仔；純擋兼抽（如「掛波小心」）仍歸抽牌——保九哥。
+ */
+export function classifyRewardCard(id) {
+  const c = CARDS[id];
+  if (!c) return "?";
+  if (c.owner) return "專屬";
+  if (c.dmg && !c.block && !c.heal && !c.draw) return "攻擊";
+  // 回血為主（heal ≥ block；可兼抽）——勝仔線
+  if (c.heal && (c.heal || 0) >= (c.block || 0)) return "回血";
+  // 擋／回且唔抽：heal 大→回血，否則守
+  if ((c.block || c.heal) && !c.draw) {
+    return (c.heal || 0) > (c.block || 0) ? "回血" : "守";
+  }
+  // 有抽牌（含擋兼抽）→ 抽牌線（九哥）
+  if (c.draw) return "抽牌";
+  return "攻擊+";
+}
+
+/** 四角色預期主路線（選牌池加權自測用） */
+export const EXPECTED_REWARD_ROUTE = {
+  oil: "攻擊",
+  asan: "守",
+  kauko: "抽牌",
+  sing: "回血",
+};
 
 /**
  * 敵人（新專案重表；圖從舊作複製）
@@ -2401,8 +2432,8 @@ const ALL_SIGNATURE_IDS = Object.values(SIGNATURE_CARDS).flat();
  * 按角色加權抽三選一。
  * 規則：
  * - 共用池 = REWARD_POOL 減去所有專屬牌（專屬牌只經自己條線入）
- * - 自己 3 張專屬牌入池，權重最高（signatureWeight）
- * - rewardBias 次之
+ * - rewardBias ×4（角色路線主信號）
+ * - 自己專屬 ×3（略低於傾向，避免專屬蓋過路線）
  * - 其他角色專屬牌永遠唔會出現
  */
 export function pickRewardChoices(count = 3, exclude = [], characterId = null) {
