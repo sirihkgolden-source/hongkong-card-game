@@ -78,6 +78,8 @@ const state = {
   battle: null,
   rewardChoices: [],
   eventResult: null,
+  eventChoiceLabel: "",
+  eventChoiceText: "",
   statusMsg: "",
   busy: false,
   pendingBossId: null,
@@ -137,6 +139,13 @@ function currentNode() {
 }
 
 /** 打完區 Boss：同一局自動進下一 Act，保留牌組／HP／金幣 */
+/** 清事件狀態（連「你揀咗」記憶一齊清，避免上一件事嘅選擇殘留） */
+function clearEventState() {
+  state.eventResult = null;
+  state.eventChoiceLabel = "";
+  state.eventChoiceText = "";
+}
+
 function enterAct(nextAct) {
   const run = state.run;
   run.act = nextAct;
@@ -146,7 +155,7 @@ function enterAct(nextAct) {
   run.nodeEvents = {};
   run.nodeEventQueue = {};
   state.battle = null;
-  state.eventResult = null;
+  clearEventState();
   state.rewardChoices = [];
   state.statusMsg = "";
   state.shopMsg = "";
@@ -602,6 +611,11 @@ function renderEvent() {
           ${hasNext ? `<p class="tagline">仲有一件事喺前面</p>` : ""}
         </header>
         <section class="panel">
+          ${
+            state.eventChoiceLabel
+              ? `<p class="event-picked"><span>你揀咗</span><strong>${escapeHtml(state.eventChoiceLabel)}</strong></p>`
+              : ""
+          }
           <p class="lede">${escapeHtml(state.eventResult)}</p>
           <p class="run-inline">HP ${state.run.hp}/${state.run.maxHp} · 牌組 ${state.run.deck.length} · 金幣 ${state.run.gold}</p>
         </section>
@@ -1560,6 +1574,8 @@ function advanceEventQueue() {
   if (idx >= 0 && idx < queue.length - 1) {
     state.run.nodeEvents[node.id] = queue[idx + 1];
     state.eventResult = null;
+    state.eventChoiceLabel = "";
+    state.eventChoiceText = "";
     return true;
   }
   return false;
@@ -1580,7 +1596,7 @@ function advanceMap(opts = {}) {
   }
   state.run.mapIndex += 1;
   state.battle = null;
-  state.eventResult = null;
+  clearEventState();
   state.rewardChoices = [];
   state.statusMsg = "";
   state.shopMsg = "";
@@ -1620,6 +1636,8 @@ function enterNode() {
   } else if (node.type === "event") {
     nodeEventId(node); // 入場先抽定，之後重繪／結果頁都用同一個
     state.eventResult = null;
+    state.eventChoiceLabel = "";
+    state.eventChoiceText = "";
     state.screen = "event";
   } else if (node.type === "rest") {
     state.shopMsg = "";
@@ -1678,12 +1696,27 @@ function onClick(event) {
 
   const evChoice = t.getAttribute("data-event-choice");
   if (evChoice) {
+    if (state.busy) return;
     const ev = currentNodeEvent();
     const choice = ev?.choices.find((c) => c.id === evChoice);
     if (choice) {
+      state.busy = true;
       const before = runSnapshot();
-      state.eventResult = choice.apply(state.run);
-      showRunDeltas(before);
+      const choiceEl = t.closest(".event-choice") || t;
+      // 過程感：選項先亮一下、跳字跟住出，之後才轉結果頁
+      choiceEl.classList.add("is-chosen");
+      sfx.click();
+      floatText(choiceEl, "揀咗", "kuaisou");
+      setTimeout(() => {
+        state.eventResult = choice.apply(state.run);
+        // 記住揀咗邊個選項，結果頁顯示「你揀咗…」
+        state.eventChoiceLabel = choice.label;
+        state.eventChoiceText = choice.effectText;
+        showRunDeltas(before);
+        state.busy = false;
+        render();
+      }, 220);
+      return;
     }
     render();
     return;

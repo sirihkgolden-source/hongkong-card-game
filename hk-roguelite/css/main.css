@@ -1182,7 +1182,38 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+
+/* 事件結果頁：顯示「你揀咗…」，令過程完整 */
+.event-picked {
+  margin: 0 0 0.6rem;
+  padding: 0.45rem 0.7rem;
+  border-radius: 8px;
+  background: rgba(255, 193, 74, 0.1);
+  border-left: 3px solid var(--neon-amber);
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.event-picked span {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-dim);
+}
+
+.event-picked strong {
+  font-size: 0.86rem;
+  color: var(--neon-amber);
+}
+
+/* 事件選項揀中：先亮一下，之後才轉結果頁（過程感） */
+.event-choice.is-chosen {
+  border-color: var(--neon-amber);
+  background: rgba(255, 193, 74, 0.16);
+  transform: scale(1.02);
+  box-shadow: 0 0 0 2px rgba(255, 193, 74, 0.4);
 }
 
 .event-choice:hover {
