@@ -131,11 +131,15 @@ function simulateChar(charId) {
   // 三角色鉤唔可以完全一樣（角色辨識度）
   assert(new Set(["oil", "asan", "kauko"].map((id) => CHARACTERS[id].rerunHook.select)).size === 3, "選角鉤重複");
 
-  // ② 三區事件抽查：每個選項都要即時可見改局（HP／最大生命／牌組），且唔改金幣
+  // ② 三區事件抽取：每個選項都要即時可見改局（HP／最大生命／牌組），且唔改金幣
   for (const act of [1, 2, 3]) {
-    for (const evId of EVENT_POOLS[act]) {
+    const pool = EVENT_POOLS[act];
+    assert(Array.isArray(pool) && pool.length >= 1, `Act${act} 事件池空`);
+    let fullyVisible = 0;
+    for (const evId of pool) {
       const ev = EVENTS[evId];
       assert(ev, `Act${act} 事件缺 ${evId}`);
+      let thisEventAllVisible = true;
       for (const ch of ev.choices) {
         const probe = { hp: 50, maxHp: 60, gold: 30, deck: ["S01"], relics: [], flags: {} };
         ch.apply(probe);
@@ -143,8 +147,12 @@ function simulateChar(charId) {
           probe.hp !== 50 || probe.maxHp !== 60 || probe.deck.length !== 1;
         assert(visible, `${ev.title}/${ch.id} 揀完即時不可見`);
         assert(probe.gold === 30, `${ev.title}/${ch.id} 唔應該改金幣`);
+        if (!visible) thisEventAllVisible = false;
       }
+      if (thisEventAllVisible) fullyVisible += 1;
     }
+    // 每區至少 1 個事件，全部選項都即時可見（唔可以淨係跳下一格）
+    assert(fullyVisible >= 1, `Act${act} 冇任何事件做到全選項即時可見`);
   }
 
   for (const node of ACT1_MAP) {
