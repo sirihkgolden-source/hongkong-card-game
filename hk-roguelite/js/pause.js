@@ -60,9 +60,14 @@ export function pauseSummary(run, opts = {}) {
 
 /**
  * 一句總結（按鈕上面嗰句），港味但唔含糊。
+ *
+ * 注意：第八輪加咗存檔之後，「返標題」**唔再等於報銷**——
+ * 局會留在存檔，下次撳「繼續」返得嚟。文案必須跟住改，
+ * 否則會呃玩家（上一輪寫死「冇得續」）。
+ *
  * @param {ReturnType<typeof pauseSummary>} s
  */
 export function pauseLossLine(s) {
   if (!s || !s.ok) return "而家未有進行中嘅一局。";
-  return `返標題＝呢一局即刻報銷。Act${s.act} 行到第 ${Math.min(s.done + 1, s.total)}／${s.total} 格，全部冇得續。`;
+  return `返標題會幫你存起呢一局（Act${s.act} 第 ${Math.min(s.done + 1, s.total)}／${s.total} 格），下次撳「繼續」返得嚟。`;
 }
