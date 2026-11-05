@@ -1963,6 +1963,39 @@ body {
   font-weight: 700;
 }
 
+/* Act 銜接過場：一句港味，交代由邊行到邊 */
+.act-trans-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  border-left: 3px solid var(--neon-magenta);
+}
+
+.act-trans-from {
+  margin: 0;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+}
+
+.act-trans-line {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.act-trans-note {
+  margin: 0;
+  padding: 0.35rem 0.5rem;
+  border-radius: 8px;
+  background: rgba(255, 45, 149, 0.1);
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--neon-magenta);
+}
+
 /* 「差一點」診斷：失敗頁最搶眼嘅一句 */
 .near-miss {
   margin: 0.75rem 0 0.9rem;

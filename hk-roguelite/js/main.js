@@ -7,6 +7,7 @@
 import {
   META,
   START_GOLD,
+  ACT_TRANSITIONS,
   CHARACTERS,
   EVENTS,
   SHOP,
@@ -90,6 +91,7 @@ const state = {
   pendingDeltas: /** @type {object|null} */ (null),
   pendingRestMsg: "",
   pendingTurnLine: "",
+  actTransition: /** @type {object|null} */ (null),
 };
 
 const app = document.getElementById("app");
@@ -161,7 +163,15 @@ function enterAct(nextAct) {
   state.statusMsg = "";
   state.shopMsg = "";
   state.pendingBossId = null;
-  state.screen = "map";
+  // Act 銜接過場：入新區前講一句，唔好斷戲
+  const trans = ACT_TRANSITIONS[nextAct];
+  if (trans) {
+    state.actTransition = trans;
+    state.screen = "act-transition";
+  } else {
+    state.actTransition = null;
+    state.screen = "map";
+  }
   sfx.win();
 }
 
@@ -314,6 +324,32 @@ function nodeTypeMeta(node) {
     return { key: "elite", icon: "★", label: "精英", cls: "node-elite" };
   }
   return { key: "battle", icon: "⚔", label: "戰鬥", cls: "" };
+}
+
+/** Act 銜接過場：打完本區 Boss，行去下一區之前嘅一句 */
+function renderActTransition() {
+  const t = state.actTransition;
+  const act = state.run?.act || 2;
+  const actName = actDisplayName(act);
+  const char = activeChar();
+  if (!t) return renderMap();
+  return `
+    <main class="screen screen-act-transition" aria-label="過場">
+      <header class="brand-block brand-compact">
+        <p class="eyebrow">Act${act}・${escapeHtml(actName)}</p>
+        <h1 class="section-title">${escapeHtml(t.to)}</h1>
+      </header>
+      <section class="panel act-trans-panel">
+        <p class="act-trans-from">由${escapeHtml(t.from)}行過嚟</p>
+        <p class="act-trans-line">${escapeHtml(t.line)}</p>
+        <p class="act-trans-note">「${escapeHtml(t.note)}」</p>
+        <p class="run-inline">${escapeHtml(char.name)} · HP ${state.run.hp}/${state.run.maxHp} · 牌組 ${state.run.deck.length} · 金幣 ${state.run.gold}</p>
+      </section>
+      <div class="actions">
+        <button type="button" class="btn btn-primary btn-pressable" data-action="continue-act">行入${escapeHtml(t.to)}</button>
+      </div>
+    </main>
+  `;
 }
 
 function renderMap() {
@@ -1161,6 +1197,9 @@ function render() {
     case "map":
       html = renderMap();
       break;
+    case "act-transition":
+      html = renderActTransition();
+      break;
     case "boss-gate":
       html = renderBossGate();
       break;
@@ -1802,6 +1841,10 @@ function onClick(event) {
     }
     case "confirm-char":
       state.run = createRun(state.selectedCharId);
+      state.screen = "map";
+      break;
+    case "continue-act":
+      state.actTransition = null;
       state.screen = "map";
       break;
     case "enter-node":

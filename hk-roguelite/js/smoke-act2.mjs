@@ -22,6 +22,7 @@ import {
   pickShopConsumables,
   pickShopRelics,
   START_GOLD,
+  ACT_TRANSITIONS,
 } from "./data.js";
 import { createBattle, playCard, endTurn, startPlayerTurn } from "./battle.js";
 
@@ -316,6 +317,23 @@ function simulateChar(charId) {
     }
     // 每次洗貨都要抽到 ≥1 件
     assert(pickShopConsumables(1).length === 1, "消耗品貨架抽唔到貨");
+  }
+
+  // Act 銜接過場：入 Act2／Act3 之前各要有一句港味
+  {
+    for (const act of [2, 3]) {
+      const t = ACT_TRANSITIONS[act];
+      assert(t, `缺 Act${act} 過場`);
+      assert(t.line && t.line.length >= 10, `Act${act} 過場句太短`);
+      assert(t.note && t.note.length >= 4, `Act${act} 過場註腳太短`);
+      assert(t.from && t.to, `Act${act} 過場缺 from／to`);
+      assert(t.to === actDisplayName(act), `Act${act} 過場 to 同區名唔一致`);
+    }
+    // 兩句唔可以一樣
+    assert(
+      ACT_TRANSITIONS[2].line !== ACT_TRANSITIONS[3].line,
+      "兩段過場句重複"
+    );
   }
 
   for (const node of ACT1_MAP) {
