@@ -209,6 +209,14 @@ function simulateChar(charId) {
         probe.deck.length !== 1 ||
         (probe.nextBattleEnergyBonus || 0) > 0;
       assert(visible, `${id} 買完冇任何可見效果`);
+      // 必須至少一項可以跳字（血／擋／抽／傷／能量），否則玩家睇唔到回饋
+      const floatable =
+        probe.hp !== 30 ||
+        probe.maxHp !== 60 ||
+        probe.deck.length !== 1 ||
+        (probe.nextBattleBlock || 0) > 0 ||
+        (probe.nextBattleEnergyBonus || 0) > 0;
+      assert(floatable, `${id} 冇任何可跳字嘅改動`);
       assert(typeof msg === "string" && msg.length > 0, `${id} 冇回饋文案`);
     }
     // 每次洗貨都要抽到 ≥1 件
