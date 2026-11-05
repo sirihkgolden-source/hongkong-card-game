@@ -481,6 +481,70 @@ return `${y}-${m}-${day}`;
 | `.screen` 闊度 | 430（爆邊） | **376** |
 | 橫滑 | 無 | `scrollWidth 612 > client 376`，實測 `scrollLeft 0 → 236.8` |
 
+### 手機置中（根容器）
+
+**症狀**：390 直版下整體偏右、右邊被裁。
+
+**根因（三個疊埋）**：
+
+1. **`.app` 用 `place-items: center`**
+
+   grid 子項預設 `min-width: auto`。手牌橫滑容器 `.hand` 的 min-content 寬度是「所有卡加起來」（8 張 ≈ 983px），grid 就會用呢個寬度撐大軌道 → 整行被推寬，畫面偏右。
+
+2. **`.screen` 冇 `min-width: 0`**
+
+   同理，grid／flex 子項都預設唔收縮。
+
+3. **`.hand` 冇 `min-width: 0` + 有重複 `overflow-x: auto`**
+
+   之前兩輪合併留下重複宣告，而且缺 `min-width: 0` 令卡片真的撐爆容器。
+
+**修法**：
+
+```css
+body { overflow-x: clip; overflow-x: hidden; }   /* 禁水平捲動 */
+
+.app {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);  /* 軌道唔可以被內容撐闊 */
+  align-items: start;
+  justify-items: center;                  /* 項目喺軌道內置中 */
+  justify-content: center;                /* 軌道喺容器內置中（寬螢幕靠呢個） */
+  width: 100%;
+  max-width: 100%;
+}
+
+.screen, .screen-wide, .screen-battle {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.hand {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;   /* 只准一個 */
+}
+```
+
+**實測（CDP + 像素分析）**：
+
+| 寬度 | 左右邊距 | 水平溢出 |
+|---|---|---|
+| 320 | 7 / 7 | 無 |
+| 360 | 7 / 7 | 無 |
+| 390（8 張手牌） | 7 / 7 | 無 |
+| 414 | 7 / 7 | 無 |
+| 1920（桌面） | 745 / 745 | 無 |
+
+**像素級覆核**（CDP 截圖 780×1688 @2x，掃描每行最左／最右非暗像素）：
+
+```
+左邊界 CSS 7.5px ｜ 右邊界 CSS 382（右邊距 8px）｜ 視口 390
+→ 左右差 0.5px（抗鋸齒），實質對稱
+```
+
+11 個頁面（title／select／map／event／reward／rest／settings／tutorial／pause／victory／defeat）全部 7/7 對稱、零水平溢出。
+
 
 ## 自測
 
@@ -491,7 +555,7 @@ node js/smoke-act2.mjs   # Act1–2 流程、事件池、商店、選牌加權�
 node js/smoke-act3.mjs   # 四角色×三區全程 → 最終 Boss → 結算資料
 node js/smoke-full.mjs   # 封測包：四角／分支／店／遺物／near-miss／再開一局
 node js/probe-act3.mjs   # 最終 Boss 勝率／超時（平衡下限參考）
-node js/smoke-deploy.mjs # 部署自檢：相對路徑／無外部依賴／assets 存在（257 項）
+node js/smoke-deploy.mjs # 部署自檢＋窄屏置中：相對路徑／無外部依賴／assets／CSS 置中規則（272 項）
 ```
 
 `smoke-act2.mjs` 尾段有兩組唔需要瀏覽器嘅檢查：
@@ -592,6 +656,18 @@ node js/smoke-deploy.mjs # 部署自檢：相對路徑／無外部依賴／asset
 - `.pile-row` 要 `flex-wrap: nowrap`
 - **手機 media query 唔可以用 `100%`**：要 `calc(100vw - padding)`，否則 390 下爆到 430
 - `.pile-deck-btn` 要 `min-height: 44px`
+
+**「窄屏置中」**（喺 `smoke-deploy.mjs`，驗 CSS 原文）
+
+- `.app` 要 `grid-template-columns: minmax(0, 1fr)`（防內容撐闊）
+- `.app` 要 `justify-items: center`（項目置中）
+- `.app` **唔可以**用 `place-items: center`（會連垂直一齊置中，長內容會偏）
+- `.screen*` 要有 `min-width: 0`
+- `body` 要 `overflow-x: hidden` 或 `clip`
+- `.hand` 要 `min-width: 0` + `max-width: 100%` + `overflow-x: auto`
+- `.hand` **唔可以有重複 `overflow-x`**（合併事故遺留）
+- `.battle-top` 要有 `minmax(0,1fr)` 或 `min-width: 0`
+
 
 ### 封測包（`smoke-full.mjs`）
 

@@ -114,6 +114,65 @@ for (const need of ["index.html", "css/main.css", "js/main.js", "js/data.js", "j
   assert(existsSync(join(ROOT, need)), `缺少必要檔案：${need}`);
 }
 
+/* ---------- 7. 窄屏置中（390 / 320 唔可以偏右、唔可以出水平捲軸） ---------- */
+
+/*
+ * 曾經出事：手牌橫滑容器（.hand）用 flex 但冇 min-width:0，
+ * 卡片 min-content 撐爆 grid 行，令整個畫面被推右、右邊被裁。
+ * 呢度驗 CSS 有冇嗰幾條關鍵規則（Node 冇 DOM，只能驗規則存在）。
+ */
+{
+  // 根容器：grid 單欄 minmax(0,1fr) + justify-items:center（唔可以只用 place-items）
+  const appBlock = /^\.app\s*\{([^}]*)\}/m.exec(css);
+  assert(appBlock, "搵唔到 .app 規則");
+  const appCss = appBlock[1];
+  assert(
+    /grid-template-columns:\s*minmax\(0,\s*1fr\)/.test(appCss),
+    ".app 要用 grid-template-columns: minmax(0, 1fr)（否則子項內容會撐闊整行、畫面偏右）"
+  );
+  assert(
+    /justify-items:\s*center/.test(appCss),
+    ".app 要 justify-items: center（水平置中）"
+  );
+  assert(
+    !/place-items:\s*center/.test(appCss),
+    ".app 唔應該用 place-items: center（會同時置中垂直，長內容會偏）"
+  );
+
+  // 所有 screen 都要 min-width:0（grid／flex 子項預設 min-width:auto 會撐爆）
+  const screenBlocks = [...css.matchAll(/\.screen(?:-wide|-battle)?\s*\{([^}]*)\}/g)].map((m) => m[1]);
+  assert(screenBlocks.length >= 2, "應該搵到多個 screen 規則");
+  const anyWithMinWidthZero = screenBlocks.some((b) => /min-width:\s*0/.test(b));
+  assert(anyWithMinWidthZero, "screen 規則要包含 min-width: 0（防內容撐闊）");
+
+  // body 要禁水平捲動（注意：CSS 有 `html, body` 同獨立 `body` 兩段，要搵有 overflow-x 嗰段）
+  const bodyBlocks = [...css.matchAll(/(?:^|\n)\s*(?:html,\s*)?body\s*\{([^}]*)\}/g)].map((m) => m[1]);
+  assert(bodyBlocks.length > 0, "搵唔到 body 規則");
+  assert(
+    bodyBlocks.some((b) => /overflow-x:\s*(hidden|clip)/.test(b)),
+    "body 要 overflow-x: hidden 或 clip（禁水平捲動）"
+  );
+
+  // 手牌容器：min-width:0 + overflow-x:auto（橫滑，但唔撐爆外層）
+  const handBlock2 = /^\.hand\s*\{([^}]*)\}/m.exec(css);
+  assert(handBlock2, "搵唔到 .hand 規則");
+  const handCss2 = handBlock2[1];
+  assert(/min-width:\s*0/.test(handCss2), ".hand 要 min-width: 0（否則卡片撐爆容器）");
+  assert(/max-width:\s*100%/.test(handCss2), ".hand 要 max-width: 100%");
+  assert(/overflow-x:\s*auto/.test(handCss2), ".hand 要 overflow-x: auto（橫滑）");
+  // 唔可以有重複宣告（曾經出現兩個 overflow-x: auto）
+  const overflowXCount = (handCss2.match(/overflow-x:/g) || []).length;
+  assert(overflowXCount === 1, `.hand 唔應該有重複 overflow-x（實際 ${overflowXCount} 次）`);
+
+  // 戰鬥頂部 HUD 都要 minmax(0,1fr)
+  const battleTop = /^\.battle-top\s*\{([^}]*)\}/m.exec(css);
+  assert(battleTop, "搵唔到 .battle-top 規則");
+  assert(
+    /grid-template-columns:\s*minmax\(0,\s*1fr\)/.test(battleTop[1]) || /min-width:\s*0/.test(battleTop[1]),
+    ".battle-top 要有 minmax(0,1fr) 或 min-width: 0（防敵人卡撐闊）"
+  );
+}
+
 /* ---------- 結果 ---------- */
 
 if (failures.length) {
