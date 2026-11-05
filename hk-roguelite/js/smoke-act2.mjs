@@ -21,6 +21,7 @@ import {
   CONSUMABLES,
   pickShopConsumables,
   pickShopRelics,
+  START_GOLD,
 } from "./data.js";
 import { createBattle, playCard, endTurn, startPlayerTurn } from "./battle.js";
 
@@ -270,6 +271,21 @@ function simulateChar(charId) {
     assert(typeof SHOP.rerollCost === "number" && SHOP.rerollCost > 0, "SHOP.rerollCost 唔合法");
     // 遺物貨架每次都要抽到貨
     assert(pickShopRelics({ characterId: "oil", relics: [] }, 2).length === 2, "遺物貨架抽唔夠 2 件");
+  }
+
+  // 開局金幣唔可以係死局：至少買到一件最便宜消耗品
+  {
+    assert(typeof START_GOLD === "number" && START_GOLD > 0, "開局金幣要 > 0");
+    const cheapest = Math.min(...Object.values(CONSUMABLES).map((c) => c.price));
+    assert(
+      START_GOLD >= cheapest,
+      `開局 ${START_GOLD} 金買唔到最便宜消耗品（${cheapest} 金）→ 死局`
+    );
+    // 第一格戰後一定要有金（唔可以 0）
+    for (let i = 0; i < 20; i += 1) {
+      const g = battleGoldReward(false);
+      assert(g > 0, "第一格戰後金幣要 > 0");
+    }
   }
 
   // ③ 消耗品：每件都要有價、有說明、apply 真係改局
