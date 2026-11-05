@@ -924,4 +924,64 @@ const results = ["oil", "asan", "kauko", "sing"].map(simulateChar);
   console.log("  ✓ 新手教學記憶（首局彈／跳過／之後唔再彈／清進度重置）");
 }
 
+/* ---------- 暫停／返回標題：丟失咩要講得準 ---------- */
+{
+  const { pauseSummary, pauseLossLine, hasRunToLose } = await import("./pause.js");
+
+  // ① 冇 run：唔應該當有嘢丟
+  assert(hasRunToLose(null) === false, "null 唔應該當有局");
+  assert(hasRunToLose(undefined) === false, "undefined 唔應該當有局");
+  const empty = pauseSummary(null);
+  assert(empty.ok === false, "冇 run 時 ok 應為 false");
+  assert(empty.items.length === 0, "冇 run 時唔應該列任何嘢");
+  assert(pauseLossLine(empty).length > 0, "冇 run 都要有句人話");
+
+  // ② 真 run：數值要逐項對得上（唔可以講錯）
+  const run = {
+    act: 2,
+    completed: ["n1", "n2", "n3"],
+    hp: 41,
+    maxHp: 68,
+    gold: 23,
+    deck: ["S01", "S02", "S03", "S04", "S05"],
+    relics: ["rl_kuban", "rl_hat"],
+  };
+  const s = pauseSummary(run, { totalNodes: 6 });
+  assert(s.ok === true, "有 run 時 ok 應為 true");
+  assert(s.act === 2, `act 應為 2，實際 ${s.act}`);
+  assert(s.done === 3, `done 應為 3，實際 ${s.done}`);
+  assert(s.total === 6, `total 應為 6，實際 ${s.total}`);
+  assert(s.hp === 41 && s.maxHp === 68, "HP 數字要對得上");
+  assert(s.gold === 23, "金幣要對得上");
+  assert(s.deck === 5, "牌組張數要對得上");
+  assert(s.relics === 2, "遺物件數要對得上");
+
+  // ③ 清單要含「打到第幾格」（done+1，因為而家正正卡喺下一格）
+  const joined = s.items.join("｜");
+  assert(joined.includes("第 4／6 格"), `應講「第 4／6 格」，實際：${joined}`);
+  assert(joined.includes("41／68"), "應講 HP 41／68");
+  assert(joined.includes("23 個大洋"), "應講 23 個大洋");
+  assert(joined.includes("5 張牌"), "應講 5 張牌");
+  assert(joined.includes("2 件遺物"), "應講 2 件遺物");
+
+  // ④ 冇遺物時唔應該提「0 件遺物」（免得列表灌水）
+  const noRelic = pauseSummary({ ...run, relics: [] }, { totalNodes: 6 });
+  assert(!noRelic.items.join("｜").includes("遺物"), "冇遺物時唔應該提遺物");
+
+  // ⑤ 一句總結要講明「冇得續」，唔可以含混
+  const line = pauseLossLine(s);
+  assert(line.includes("報銷") || line.includes("冇得續"), `總結要講清後果：${line}`);
+  assert(line.includes("Act2"), `總結要提 Act：${line}`);
+
+  // ⑥ 缺欄位／怪值都要降級而唔 throw
+  const weird = pauseSummary({ act: "3", completed: null, hp: undefined, deck: null });
+  assert(weird.ok === true, "有 object 就算有局");
+  assert(weird.act === 1, "act 非數字應落回 1");
+  assert(weird.done === 0, "completed 唔係陣列應當 0");
+  assert(weird.hp === 0 && weird.deck === 0, "怪值應落回 0");
+  assert(pauseLossLine(weird).length > 0, "怪值都要有句人話");
+
+  console.log("  ✓ 暫停／返標題（丟失清單逐項對得上真實數值）");
+}
+
 console.log(JSON.stringify({ ok: true, act1: actDisplayName(1), act2: actDisplayName(2), results }, null, 2));
