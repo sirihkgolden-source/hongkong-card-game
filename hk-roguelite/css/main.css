@@ -41,6 +41,9 @@ body {
 
 body {
   min-height: 100dvh;
+  /* 禁絕水平捲動：任何子元素溢出都唔可以撐開頁面再推歪置中 */
+  overflow-x: clip;
+  /* 舊瀏覽器唔識 clip 就落返 hidden（兩者都唔會生水平捲軸） */
   overflow-x: hidden;
 }
 
@@ -49,11 +52,24 @@ body {
   text-align: center;
 }
 
+/* 根容器：一定要水平置中、左右對稱、唔可以被內容撐闊。
+   曾經出事：grid + place-items:center 之下，如果子元素有 min-content 比容器闊
+   （例如手牌橫滑容器），grid 會用「最大內容寬」撐大整行，令畫面整體偏右。
+   解法：
+     1. grid-template-columns: minmax(0,1fr) —— 軌道唔可以被內容撐闊
+     2. justify-items: center —— 項目喺軌道內水平置中
+     3. justify-content: center —— 軌道本身喺容器內置中（寬螢幕靠呢個，
+        否則 min(430px,100%) 會貼左邊） */
 .app {
   position: relative;
   min-height: 100dvh;
   display: grid;
-  place-items: center;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  justify-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
   padding: clamp(0.75rem, 2.5vw, 1.75rem);
   isolation: isolate;
 }
@@ -105,6 +121,10 @@ body {
 
 .screen {
   width: min(var(--app-max-w), 100%);
+  /* grid 子元素預設 min-width:auto，內容闊過容器就唔會收縮、會撐爆整行。
+     一定要 min-width:0 先可以真係貼住容器寬。 */
+  min-width: 0;
+  max-width: 100%;
   margin-inline: auto;
   display: flex;
   flex-direction: column;
@@ -115,6 +135,8 @@ body {
 .screen-wide,
 .screen-battle {
   width: min(var(--app-max-w), 100%);
+  min-width: 0;
+  max-width: 100%;
   margin-inline: auto;
 }
 
@@ -1774,7 +1796,10 @@ body {
 /* —— Battle —— */
 .battle-top {
   display: grid;
+  /* 單欄 minmax(0,1fr)：子項（敵人卡／玩家卡）唔可以用內容寬撐爆 */
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.85rem;
+  min-width: 0;
 }
 
 .fighter {
@@ -2283,10 +2308,13 @@ body {
 .hand {
   display: flex;
   flex-wrap: nowrap;
-  overflow-x: auto;
-  gap: 0.45rem;
+  /* 關鍵：flex 子項預設 min-width:auto，卡片 min-content 會撐爆容器。
+     min-width:0 + max-width:100% 令容器真正受限於父寬，多出嚟嘅卡就靠橫滑。 */
+  min-width: 0;
+  max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
+  gap: 0.45rem;
   /* 滑動時唔好俾瀏覽器當成「上一頁／下一頁」手勢 */
   overscroll-behavior-x: contain;
   scroll-snap-type: x proximity;
