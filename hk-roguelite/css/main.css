@@ -670,7 +670,108 @@ body {
 }
 
 .map-node.is-done {
-  opacity: 0.55;
+  opacity: 0.72;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+/* 行過節點：內容淡，但「行過」標記保持清晰 */
+.map-node.is-done .map-body {
+  opacity: 0.7;
+}
+
+.map-node.is-done .map-done {
+  opacity: 1;
+}
+
+/* 行過節點：唔止變灰，仲有「已行過」字樣 + 左側綠色完成線 */
+.map-node.is-done .map-done {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--ok);
+  white-space: nowrap;
+}
+
+/* —— 節點類型色系：一眼分到戰／事件／休息／店／Boss —— */
+.map-type {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 0.02rem 0.34rem;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+  color: var(--ink-dim);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.map-idx {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+/* 戰鬥：紅 */
+.map-node:not(.node-boss):not(.node-event):not(.node-shop):not(.node-reward):not(.node-elite) {
+  border-left: 3px solid rgba(255, 90, 108, 0.55);
+}
+.map-node:not(.node-boss):not(.node-event):not(.node-shop):not(.node-reward):not(.node-elite) .map-type {
+  color: #ff8c9a;
+  background: rgba(255, 90, 108, 0.12);
+  border-color: rgba(255, 90, 108, 0.3);
+}
+
+/* 事件：青 */
+.map-node.node-event {
+  border-left: 3px solid rgba(61, 224, 255, 0.55);
+}
+.map-node.node-event .map-type {
+  color: var(--neon-cyan);
+  background: rgba(61, 224, 255, 0.12);
+  border-color: rgba(61, 224, 255, 0.32);
+}
+
+/* 休息／店：綠 */
+.map-node.node-shop {
+  border-left: 3px solid rgba(93, 255, 176, 0.55);
+}
+.map-node.node-shop .map-type {
+  color: var(--ok);
+  background: rgba(93, 255, 176, 0.12);
+  border-color: rgba(93, 255, 176, 0.32);
+}
+
+/* 選牌：紫 */
+.map-node.node-reward {
+  border-left: 3px solid rgba(178, 128, 255, 0.6);
+}
+.map-node.node-reward .map-type {
+  color: #c9a6ff;
+  background: rgba(178, 128, 255, 0.12);
+  border-color: rgba(178, 128, 255, 0.32);
+}
+
+/* 精英：橙 */
+.map-node.node-elite {
+  border-left: 3px solid rgba(255, 140, 60, 0.6);
+}
+.map-node.node-elite .map-type {
+  color: #ffb070;
+  background: rgba(255, 140, 60, 0.12);
+  border-color: rgba(255, 140, 60, 0.34);
+}
+
+/* Boss：金（加粗邊） */
+.map-node.node-boss {
+  border-left: 4px solid var(--neon-amber);
+}
+.map-node.node-boss .map-type {
+  color: var(--neon-amber);
+  background: rgba(255, 193, 74, 0.16);
+  border-color: rgba(255, 193, 74, 0.4);
 }
 
 .map-node.is-locked {

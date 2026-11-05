@@ -312,6 +312,25 @@ function simulateChar(charId) {
   assert(enemyById("E05").flavor === "月光底落數。散水定散骨，你揀。", "Boss 停句");
   assert(run.deck.length === snap.deck && run.hp === snap.hp && run.gold === snap.gold, "保留局況");
 
+  // ① 地圖節點類型：每區六格要有 battle/event/rest/boss 四種齊全
+  {
+    for (const [act, map] of [
+      [1, ACT1_MAP],
+      [2, ACT2_MAP],
+      [3, mapForAct(3)],
+    ]) {
+      const types = new Set(map.map((n) => n.type));
+      for (const need of ["battle", "event", "rest", "boss"]) {
+        assert(types.has(need), `Act${act} 缺 ${need} 節點`);
+      }
+      // 每個節點都要有 title（唔可以空白）
+      for (const n of map) {
+        assert(n.title && n.title.length >= 2, `Act${act} 節點 ${n.id} 冇標題`);
+        assert(n.type, `Act${act} 節點 ${n.id} 冇類型`);
+      }
+    }
+  }
+
   for (const node of ACT2_MAP) {
     if (node.type === "battle" || node.type === "boss") {
       const r = fightOnce(run, node.enemyId);
