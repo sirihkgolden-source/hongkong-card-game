@@ -781,6 +781,98 @@ body {
   color: var(--neon-amber);
 }
 
+/* —— 牌組預覽（選角 / 戰鬥共用） —— */
+.deck-toggle {
+  width: 100%;
+  min-height: 48px;
+}
+
+/* 戰鬥中：夾喺牌堆列同手牌之間，靠左但唔搶眼 */
+.deck-toggle--battle {
+  margin-top: -0.35rem;
+  font-size: 0.84rem;
+}
+
+.deck-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.deck-panel h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.deck-overview {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: rgba(190, 212, 236, 0.86);
+}
+
+.deck-list-preview {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.34rem;
+}
+
+/* 每行：費用圓章 + 名 + 類型 + ×N（390 下 grid 唔會擠爆） */
+.deck-row {
+  display: grid;
+  grid-template-columns: 1.55rem 1fr auto auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 9px;
+  background: rgba(6, 14, 26, 0.55);
+  border: 1px solid rgba(61, 224, 255, 0.1);
+}
+
+.deck-cost {
+  width: 1.55rem;
+  height: 1.55rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #04121c;
+  background: linear-gradient(140deg, var(--neon-cyan), #8ef0ff);
+}
+
+.deck-name {
+  font-size: 0.84rem;
+  line-height: 1.35;
+  color: var(--ink);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.deck-type {
+  font-size: 0.7rem;
+  color: rgba(154, 173, 200, 0.82);
+  white-space: nowrap;
+}
+
+/* ×N：重複牌一眼見到（玩家最關心呢個） */
+.deck-count {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--neon-amber);
+  white-space: nowrap;
+}
+
+.deck-empty {
+  margin: 0;
+  font-size: 0.84rem;
+  color: rgba(154, 173, 200, 0.82);
+}
+
 /* —— 設定頁 —— */
 .screen-settings .panel {
   display: flex;
