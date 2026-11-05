@@ -20,6 +20,8 @@ import {
   pickRewardChoices,
   SIGNATURE_CARDS,
   CONSUMABLES,
+  RELICS,
+  relicBonuses,
   pickShopConsumables,
   pickShopRelics,
   START_GOLD,
@@ -318,6 +320,33 @@ function simulateChar(charId) {
     }
     // 每次洗貨都要抽到 ≥1 件
     assert(pickShopConsumables(1).length === 1, "消耗品貨架抽唔到貨");
+  }
+
+  // 遺物欄一眼識：專屬標示要同角色對應，別角專屬要有「唔適用」機制
+  {
+    const owned = ["rl_oil_flask", "rl_asan_apron", "rl_kauko_signboard"];
+    for (const id of owned) {
+      const r = RELICS[id];
+      assert(r, `${id} 缺定義`);
+      assert(r.owner, `${id} 應該有 owner`);
+      assert(r.rarity === "專屬", `${id} rarity 應為專屬`);
+    }
+    // 別角專屬唔可以入貨架（已於其他斷言驗過，這裡再確認效果層）
+    for (const cid of ["oil", "asan", "kauko"]) {
+      for (const id of owned) {
+        const r = RELICS[id];
+        if (r.owner === cid) continue;
+        const b = relicBonuses({ characterId: cid, relics: [id] });
+        const anyEffect = Object.entries(b).some(([, v]) => v > 0);
+        assert(!anyEffect, `${cid} 帶別角專屬 ${id} 竟然有生效`);
+      }
+    }
+    // 每件遺物都要有可講嘅效果（relicPlainText 靠 effect 欄位分派）
+    for (const [id, r] of Object.entries(RELICS)) {
+      const eff = r.effect || {};
+      assert(Object.keys(eff).length > 0, `${id} 冇 effect 欄位`);
+      assert(r.name && r.name.length >= 2, `${id} 缺名`);
+    }
   }
 
   // 能量／擋 UI：HUD 要有獨立大數字元素（唔可以只係一行細字）

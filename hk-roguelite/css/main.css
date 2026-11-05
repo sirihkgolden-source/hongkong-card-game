@@ -966,6 +966,90 @@ body {
   color: var(--ink-dim);
 }
 
+/* 地圖 HUD 遺物列：每件一粒 chip，點一下講效果 */
+.relic-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 0.15rem 0 0;
+}
+
+.relic-chip {
+  appearance: none;
+  font: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  /* 觸控目標 ≥44px（WCAG / iOS HIG） */
+  min-height: 44px;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 193, 74, 0.35);
+  background: rgba(255, 193, 74, 0.1);
+  color: var(--neon-amber);
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.relic-chip:hover {
+  border-color: rgba(255, 193, 74, 0.7);
+  background: rgba(255, 193, 74, 0.18);
+}
+
+.relic-chip.is-owner {
+  border-color: rgba(255, 45, 149, 0.45);
+  background: rgba(255, 45, 149, 0.1);
+  color: var(--neon-magenta);
+}
+
+.relic-chip-tag {
+  font-size: 0.58rem;
+  padding: 0.02rem 0.28rem;
+  border-radius: 999px;
+  background: rgba(255, 45, 149, 0.22);
+  color: #ffb0d8;
+  letter-spacing: 0.04em;
+}
+
+/* 別角專屬：灰化 + 「唔適用」，一眼知冇效果 */
+.relic-chip.is-other {
+  opacity: 0.5;
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ink-dim);
+}
+
+.relic-chip-tag.is-other {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--ink-dim);
+}
+
+/* 結算頁遺物：名 + 一句人話 + 專屬標 */
+.relic-owner-tag {
+  display: inline-block;
+  margin-left: 0.35rem;
+  padding: 0.02rem 0.34rem;
+  border-radius: 999px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #ffb0d8;
+  background: rgba(255, 45, 149, 0.2);
+}
+
+.relic-owner-tag.is-other {
+  color: var(--ink-dim);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.relic-plain {
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: var(--ink-dim);
+}
+
 /* 唔夠費出牌：卡面左右震，明確話你知點唔到 */
 .card-face.is-shake-no {
   animation: shake-no 0.4s ease-in-out;
