@@ -46,6 +46,7 @@ import {
 import { sfx, isMuted, toggleMuted } from "./sfx.js";
 import { listKeys, progressKeys, hasProgress, clearProgress } from "./storage.js";
 import { hasSeenTutorial, markTutorialSeen } from "./tutorial.js";
+import { pauseSummary, pauseLossLine, hasRunToLose } from "./pause.js";
 import {
   wait,
   pressCard,
@@ -102,6 +103,14 @@ const state = {
   clearConfirm: "idle",
   /** 設定頁：上次操作結果一句（清除後回饋） */
   settingsMsg: "",
+  /** 暫停頁：返標題二次確認狀態（"idle" → "confirm"） */
+  pauseConfirm: "idle",
+  /** 暫停頁由邊度入（"battle" 或 "map"），純為文案 */
+  pauseFrom: "map",
+  /** 繼續時要返去邊個畫面 */
+  pauseResumeTo: "map",
+  /** 設定頁由邊度入（"pause" 就返暫停，唔好誤跳標題） */
+  settingsReturnTo: null,
 };
 
 const app = document.getElementById("app");
@@ -331,7 +340,9 @@ function renderSettings() {
       </section>
 
       <div class="actions">
-        <button type="button" class="btn btn-primary btn-pressable" data-action="back-title">返標題</button>
+        <button type="button" class="btn btn-primary btn-pressable" data-action="back-title">${
+          state.settingsReturnTo === "pause" ? "返暫停" : "返標題"
+        }</button>
       </div>
     </main>
   `;
@@ -418,6 +429,64 @@ function renderTutorial() {
         <button type="button" class="btn btn-ghost btn-pressable" data-action="finish-tutorial">跳過教學</button>
       </div>
       <p class="foot-note">之後想再睇：設定頁清除本機進度</p>
+    </main>
+  `;
+}
+
+/**
+ * 暫停頁：戰中／地圖共用。
+ *
+ * 兩件事要講清：
+ *   1. **繼續**（返去原本畫面，乜都唔變）
+ *   2. **返回標題**（呢一局即刻報銷）—— 所以要二次確認，並列出會丟失咩
+ *
+ * 刻意唔提供「自動續局」：本作冇存檔機制，講「可以續」就係呃人。
+ * 所以文案直接寫「冇得續」，玩家自己決定走唔走。
+ */
+function renderPause() {
+  const run = state.run;
+  const s = pauseSummary(run, { totalNodes: currentMap().length });
+  const confirming = state.pauseConfirm === "confirm";
+  const fromBattle = state.pauseFrom === "battle";
+
+  const items = s.ok
+    ? `<ul class="pause-losses">${s.items.map((t) => `<li>${escapeHtml(t)}</li>`).join("")}</ul>`
+    : "";
+
+  const confirmBlock = confirming
+    ? `
+      <div class="pause-confirm" role="alert">
+        <p class="pause-confirm-title">真係唔打？呢一局冇得續。</p>
+        <p class="pause-confirm-body">你嘅牌組、遺物、金幣、HP 會全部清走，下次要由選角重新開始。</p>
+        <div class="pause-confirm-actions">
+          <button type="button" class="btn btn-danger btn-pressable" data-action="confirm-quit">係，返標題</button>
+          <button type="button" class="btn btn-ghost btn-pressable" data-action="cancel-quit">唔好，繼續打</button>
+        </div>
+      </div>`
+    : `
+      <button type="button" class="btn btn-ghost btn-pressable pause-quit-btn" data-action="ask-quit"
+        ${s.ok ? "" : "disabled"}>
+        返回標題${s.ok ? "" : "（未有進行中嘅一局）"}
+      </button>`;
+
+  return `
+    <main class="screen screen-pause" aria-label="暫停">
+      <header class="brand-block brand-compact">
+        <h1 class="brand">暫停</h1>
+        <p class="tagline">${fromBattle ? "戰鬥中 · 停一停" : "路上 · 停一停"}</p>
+      </header>
+
+      <section class="panel pause-panel">
+        <h2>而家嘅一局</h2>
+        ${s.ok ? items : `<p class="lede">未有進行中嘅一局。</p>`}
+        <p class="pause-warn">${escapeHtml(pauseLossLine(s))}</p>
+      </section>
+
+      <div class="actions">
+        <button type="button" class="btn btn-primary btn-pressable" data-action="resume">繼續</button>
+        ${confirmBlock}
+        <button type="button" class="btn btn-ghost btn-pressable" data-action="to-settings">設定</button>
+      </div>
     </main>
   `;
 }
@@ -672,6 +741,7 @@ function renderMap() {
           <p class="eyebrow">Act${run.act}・${escapeHtml(actName)}</p>
           <h1 class="run-title">${escapeHtml(char.name)}</h1>
         </div>
+        <button type="button" class="pause-btn" data-action="to-pause" aria-label="暫停">暫停<span class="pause-btn-icon" aria-hidden="true">❚❚</span></button>
         <div class="run-stats" role="group" aria-label="狀態">
           <span>HP ${run.hp}/${run.maxHp}</span>
           <span>金幣 ${run.gold}</span>
@@ -913,6 +983,7 @@ function renderBattle() {
               ? `<button type="button" class="btn btn-primary btn-pressable" data-action="to-defeat">結算</button>`
               : `<button type="button" class="btn btn-ghost" data-action="end-turn" ${state.busy ? "disabled" : ""}>結束回合</button>`
         }
+        <button type="button" class="pause-btn pause-btn--battle" data-action="to-pause" aria-label="暫停">暫停<span class="pause-btn-icon" aria-hidden="true">❚❚</span></button>
       </div>
       <ul class="battle-log" aria-live="polite">
         ${b.log.map((l) => `<li>${escapeHtml(l)}</li>`).join("")}
@@ -1614,6 +1685,9 @@ function render() {
       break;
     case "tutorial":
       html = renderTutorial();
+      break;
+    case "pause":
+      html = renderPause();
       break;
     default:
       html = renderTitle();
@@ -2327,6 +2401,38 @@ function onClick(event) {
 
   const action = t.getAttribute("data-action");
   switch (action) {
+    case "to-pause":
+      // 記住由邊度入，繼續時返原位（戰鬥保持戰鬥、地圖保持地圖）
+      state.pauseFrom = state.screen === "battle" ? "battle" : "map";
+      state.pauseConfirm = "idle";
+      state.pauseResumeTo = state.screen;
+      state.screen = "pause";
+      break;
+    case "resume":
+      // 乜都唔重算，原畫面原狀態返去
+      state.pauseConfirm = "idle";
+      state.screen = state.pauseResumeTo || "map";
+      break;
+    case "ask-quit":
+      if (!hasRunToLose(state.run)) {
+        state.screen = "pause";
+        break;
+      }
+      state.pauseConfirm = "confirm";
+      sfx.click();
+      break;
+    case "cancel-quit":
+      state.pauseConfirm = "idle";
+      break;
+    case "confirm-quit":
+      // 真係走：清走本局所有狀態，返標題
+      state.pauseConfirm = "idle";
+      state.run = null;
+      state.battle = null;
+      state.pendingBossId = null;
+      state.pauseResumeTo = "map";
+      state.screen = "title";
+      break;
     case "to-select":
       // 首局先教一次：睇過就直接入選角
       state.screen = hasSeenTutorial() ? "select" : "tutorial";
@@ -2344,6 +2450,8 @@ function onClick(event) {
       break;
     }
     case "to-settings":
+      // 由暫停頁入設定：記住要返去暫停，唔好一跳就變咗標題
+      state.settingsReturnTo = state.screen === "pause" ? "pause" : null;
       state.screen = "settings";
       // 每次入嚟都由「未確認」開始，唔會殘留上一次嘅紅色確認狀態
       state.clearConfirm = "idle";
@@ -2375,6 +2483,14 @@ function onClick(event) {
       break;
     }
     case "back-title":
+      // 由暫停頁入設定 → 「返暫停」，唔會唔覺意丟局
+      if (state.settingsReturnTo === "pause") {
+        state.settingsReturnTo = null;
+        state.screen = "pause";
+        state.clearConfirm = "idle";
+        state.settingsMsg = "";
+        break;
+      }
       state.screen = "title";
       state.run = null;
       state.battle = null;
