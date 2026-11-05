@@ -76,6 +76,8 @@ export function createBattle(run, enemyDef) {
     relicAttackPerCard: relics.attackPerCard,
     /** 遺物：每場首次回血額外加成（跌打藥箱） */
     relicHealBonusFirst: relics.healBonusFirst,
+    /** 遺物：首回合額外能量（叮叮車票） */
+    relicFirstTurnEnergy: relics.firstTurnEnergy || 0,
     /** 標記本場是否已用過首次回血加成 */
     healBonusUsed: false,
 
@@ -132,7 +134,10 @@ export function startPlayerTurn(b) {
   if (b.turn > 1) b.playerBlock = 0;
   b.energy = Math.max(
     0,
-    b.maxEnergy - (b.turn === 1 ? b.energyPenalty : 0) + (b.turn === 1 ? b.energyBonus : 0)
+    b.maxEnergy -
+      (b.turn === 1 ? b.energyPenalty : 0) +
+      (b.turn === 1 ? b.energyBonus : 0) +
+      (b.turn === 1 ? b.relicFirstTurnEnergy || 0 : 0)
   );
   b.discard.push(...b.hand);
   b.hand = [];
