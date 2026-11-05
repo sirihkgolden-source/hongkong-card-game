@@ -395,7 +395,7 @@ function simulateChar(charId) {
   for (const id of relicIds) {
     const r = RELICS[id];
     if (!r.owner) continue;
-    const otherId = ["oil", "asan", "kauko"].find((c) => c !== r.owner);
+    const otherId = ["oil", "asan", "kauko", "sing"].find((c) => c !== r.owner);
     const b = relicBonuses({
       characterId: otherId,
       hp: 40,

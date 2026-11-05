@@ -1600,14 +1600,14 @@ function renderVictory() {
 function nextRunAdvice(near) {
   const run = state.run || {};
   const char = activeChar();
-  const others = ["oil", "asan", "kauko"].filter((id) => id !== char.id);
-  // 推薦一個對應死因嘅角色
+  const others = ["oil", "asan", "kauko", "sing"].filter((id) => id !== char.id);
+  // 推薦一個對應死因嘅角色（含勝仔回血線）
   const suggestByKind = {
-    hp: "asan", // 血唔夠 → 換守得硬淨嘅
+    hp: char.id === "asan" ? "sing" : "asan", // 血唔夠 → 守／回血
     energy: "kauko", // 唔夠能量 → 換抽牌鋪路嘅
     deck: "kauko", // 牌太少 → 換抽牌多嘅
     relic: "asan", // 冇遺物 → 守得穩、唔靠貨
-    boss: others[0],
+    boss: others.includes("sing") && near.kind === "boss" ? "sing" : others[0],
   };
   const targetId = suggestByKind[near.kind] || others[0];
   const target = CHARACTERS[targetId] || CHARACTERS.oil;
