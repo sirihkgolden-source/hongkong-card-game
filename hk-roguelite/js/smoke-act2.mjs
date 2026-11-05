@@ -322,6 +322,30 @@ function simulateChar(charId) {
     assert(pickShopConsumables(1).length === 1, "消耗品貨架抽唔到貨");
   }
 
+  // 敵人意圖：四種 kind 都要有標籤，唔可以空白
+  {
+    const knownKinds = new Set(["attack", "block", "buff_attack", "buff", "weaken"]);
+    let sawKinds = new Set();
+    for (const [id, e] of Object.entries(ENEMIES)) {
+      assert(Array.isArray(e.intents) && e.intents.length > 0, `${id} 冇意圖`);
+      for (const it of e.intents) {
+        assert(knownKinds.has(it.kind), `${id} 意圖 kind 未知：${it.kind}`);
+        assert(
+          typeof it.label === "string" && it.label.length >= 2,
+          `${id} 意圖 label 空白或太短`
+        );
+        // 攻擊類要有數值
+        if (it.kind === "attack" || it.kind === "block") {
+          assert(typeof it.value === "number" && it.value > 0, `${id} ${it.kind} 冇數值`);
+        }
+        sawKinds.add(it.kind);
+      }
+    }
+    // 遊戲要有齊攻擊／防守兩種（否則意圖 UI 只用得一半）
+    assert(sawKinds.has("attack"), "冇任何攻擊意圖");
+    assert(sawKinds.has("block"), "冇任何防守意圖");
+  }
+
   // 抽／棄／洗牌：牌堆要有計數、洗牌要能被偵測
   {
     // 用真戰鬥物件驗：起手抽牌後 drawPile + hand 總數應等於牌組數
