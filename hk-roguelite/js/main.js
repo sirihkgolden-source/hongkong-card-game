@@ -54,6 +54,7 @@ import {
   isClaimedToday,
   dailyStatusLine,
 } from "./daily.js";
+import { summarizeDeck, deckOverviewLine, battleDeckIds } from "./deckview.js";
 import {
   wait,
   pressCard,
@@ -124,6 +125,10 @@ const state = {
   overwriteConfirm: "idle",
   /** 今次結算領到嘅每日獎勵（null = 今日已領過） */
   dailyReward: /** @type {object|null} */ (null),
+  /** 選角頁：邊個角色嘅 starter 預覽展開咗（null = 全收起） */
+  starterOpen: /** @type {string|null} */ (null),
+  /** 戰鬥中：牌組預覽開關 */
+  deckOpen: false,
 };
 
 /** 現存角色 id（用嚟擋「角色已移除」嘅舊存檔） */
@@ -326,6 +331,59 @@ function renderCardFace(cardId, opts = {}) {
 }
 
 /* ---------- screens ---------- */
+
+/**
+ * 牌組預覽：共用元件（選角頁 / 戰鬥頁都用）。
+ *
+ * 用 <ul> 列，每行：費用圓章 + 名 + 類型 + ×N。
+ * 唔用卡面圖（太多張會 load 一堆圖、又會撐爆 390 版面），
+ * 改為「一眼睇數」嘅清單 —— 呢個係預覽，唔係揀牌。
+ *
+ * @param {string[]} ids 牌 id
+ * @param {{heading?:string, limit?:number}} [opts]
+ */
+function renderDeckPreview(ids, opts = {}) {
+  const s = summarizeDeck(ids, CARDS);
+  if (s.total === 0) {
+    return `<p class="deck-empty">牌組未有牌。</p>`;
+  }
+  const rows = s.rows
+    .map(
+      (r) => `
+      <li class="deck-row">
+        <span class="deck-cost" aria-label="費用">${r.cost}</span>
+        <span class="deck-name">${escapeHtml(r.name)}</span>
+        <span class="deck-type">${r.type === "attack" ? "攻擊" : r.type === "skill" ? "技能" : "—"}</span>
+        <span class="deck-count">×${r.count}</span>
+      </li>`
+    )
+    .join("");
+  return `
+    <p class="deck-overview">${escapeHtml(deckOverviewLine(s))}</p>
+    <ul class="deck-list-preview">${rows}</ul>`;
+}
+
+/**
+ * 選角頁：starter 牌組（開局前就知自己玩咩）。
+ * 可摺疊：預設收起，撳「睇 starter」展開 —— 唔想睇嘅玩家唔會被長列表擋住。
+ */
+function renderStarterPreview(c) {
+  const open = state.starterOpen === c.id;
+  if (!open) {
+    return `
+      <button type="button" class="btn btn-ghost btn-pressable deck-toggle" data-action="toggle-starter" data-char="${escapeHtml(c.id)}">
+        睇 starter 牌組<span class="btn-sub">${c.starterDeck.length} 張</span>
+      </button>`;
+  }
+  return `
+    <section class="panel deck-panel">
+      <h2>${escapeHtml(c.name)} 嘅 starter</h2>
+      ${renderDeckPreview(c.starterDeck)}
+      <button type="button" class="btn btn-ghost btn-pressable deck-toggle" data-action="toggle-starter" data-char="${escapeHtml(c.id)}">
+        收起
+      </button>
+    </section>`;
+}
 
 function renderTitle() {
   // 每次畫標題都同 localStorage 對一次，避免 state.savedRun 變 stale
@@ -643,6 +701,7 @@ function renderSelect() {
             : ""
         }
       </section>
+      ${renderStarterPreview(selected)}
       <div class="actions">
         <button type="button" class="btn btn-primary btn-pressable" data-action="confirm-char">以${escapeHtml(selected.name)}開局</button>
         <button type="button" class="btn btn-ghost" data-action="back-title">返回標題</button>
@@ -1079,6 +1138,18 @@ function renderBattle() {
           <strong class="pile-num">${b.hand.length}</strong>
         </span>
       </div>
+      <button type="button" class="btn btn-ghost btn-pressable deck-toggle deck-toggle--battle"
+        data-action="toggle-deck" aria-expanded="${state.deckOpen ? "true" : "false"}">
+        ${state.deckOpen ? "收起牌組" : "睇成副牌組"}<span class="btn-sub">${battleDeckIds(b).length} 張</span>
+      </button>
+      ${
+        state.deckOpen
+          ? `<section class="panel deck-panel deck-panel--battle">
+              <h2>成副牌組</h2>
+              ${renderDeckPreview(battleDeckIds(b))}
+            </section>`
+          : ""
+      }
       <div class="hand" role="list">${hand || '<p class="empty-hand">沒有手牌</p>'}</div>
       <div class="battle-actions">
         ${
@@ -2657,9 +2728,23 @@ function onClick(event) {
       break;
     case "pick-char": {
       const id = t.getAttribute("data-char");
-      if (id && CHARACTERS[id]) state.selectedCharId = id;
+      if (id && CHARACTERS[id]) {
+        // 換角色就收起上一個嘅 starter 預覽，唔好殘留
+        if (state.starterOpen !== id) state.starterOpen = null;
+        state.selectedCharId = id;
+      }
       break;
     }
+    case "toggle-starter": {
+      const id = t.getAttribute("data-char") || state.selectedCharId;
+      state.starterOpen = state.starterOpen === id ? null : id;
+      sfx.click();
+      break;
+    }
+    case "toggle-deck":
+      state.deckOpen = !state.deckOpen;
+      sfx.click();
+      break;
     case "confirm-char":
       state.run = createRun(state.selectedCharId);
       state.screen = "map";
@@ -2954,6 +3039,8 @@ function onClick(event) {
       state.pendingBossId = null;
       // 開新局：清走上一局嘅每日獎勵提示，唔會殘留到今次結算
       state.dailyReward = null;
+      // 牌組預覽亦收起，避免一入戰鬥就展開
+      state.deckOpen = false;
       state.screen = "select";
       break;
     default:

@@ -1057,6 +1057,132 @@ const results = ["oil", "asan", "kauko", "sing"].map(simulateChar);
   console.log("  ✓ 每日一局鉤（本機日期／每日只派一次／金幣與名片句／降級安全）");
 }
 
+/* ---------- 牌組預覽：分組／排序／計數要準 ---------- */
+{
+  const { summarizeDeck, deckOverviewLine, battleDeckIds } = await import("./deckview.js");
+
+  // ① 空牌組要安全
+  const empty = summarizeDeck([], CARDS);
+  assert(empty.total === 0, "空牌組 total 應為 0");
+  assert(empty.rows.length === 0, "空牌組唔應該有行");
+  assert(empty.attacks === 0 && empty.skills === 0, "空牌組攻／技應為 0");
+  assert(deckOverviewLine(empty).length > 0, "空牌組都要有句人話");
+  assert(summarizeDeck(null, CARDS).total === 0, "null 要當空");
+  assert(summarizeDeck(undefined, CARDS).total === 0, "undefined 要當空");
+
+  // ② 四角 starter 都要整理得到，而且總數對得上
+  for (const cid of ["oil", "asan", "kauko", "sing"]) {
+    const c = CHARACTERS[cid];
+    const s = summarizeDeck(c.starterDeck, CARDS);
+    assert(s.total === c.starterDeck.length, `${cid} starter 總數應為 ${c.starterDeck.length}，實際 ${s.total}`);
+    assert(s.rows.length > 0, `${cid} starter 應該有行`);
+    // 每行 count 加起來要等於總數（唔可以漏牌／重複計）
+    const sum = s.rows.reduce((a, r) => a + r.count, 0);
+    assert(sum === s.total, `${cid} 行 count 總和 ${sum} ≠ total ${s.total}`);
+    // 攻擊 + 技能 = 總數
+    assert(s.attacks + s.skills === s.total, `${cid} 攻擊+技能 ≠ 總數`);
+    // 已知嘅牌都要有名（唔可以漏做 id）
+    for (const r of s.rows) {
+      assert(CARDS[r.id], `${cid} starter 有未知牌 ${r.id}`);
+      assert(r.name !== r.id, `${cid} 牌 ${r.id} 冇名（顯示會變 id）`);
+    }
+  }
+
+  // ③ 重複牌要合成一行，count 對
+  const dupDeck = ["S01", "S01", "S01", "S15"];
+  const dup = summarizeDeck(dupDeck, CARDS);
+  assert(dup.total === 4, "重複牌組總數應為 4");
+  assert(dup.rows.length === 2, `重複牌應合成 2 行，實際 ${dup.rows.length}`);
+  const s01 = dup.rows.find((r) => r.id === "S01");
+  assert(s01 && s01.count === 3, `S01 應該 ×3，實際 ${s01 && s01.count}`);
+
+  // ④ 排序：攻擊排先，同類按費用升序
+  const mixed = summarizeDeck(
+    [
+      "S01", // attack
+      "S15", // attack
+      "S12", // 睇實際 type
+      "S16",
+    ],
+    CARDS
+  );
+  const types = mixed.rows.map((r) => r.type);
+  const firstSkillIdx = types.indexOf("skill");
+  const lastAttackIdx = types.lastIndexOf("attack");
+  if (firstSkillIdx >= 0 && lastAttackIdx >= 0) {
+    assert(lastAttackIdx < firstSkillIdx, "攻擊應該排喺技能之前");
+  }
+  // 同 type 內費用要非遞減
+  for (let i = 1; i < mixed.rows.length; i++) {
+    const prev = mixed.rows[i - 1];
+    const cur = mixed.rows[i];
+    if (prev.type === cur.type) {
+      assert(prev.cost <= cur.cost, `同類內費用應升序（${prev.name} ${prev.cost} → ${cur.name} ${cur.cost}）`);
+    }
+  }
+
+  // ⑤ 平均費用計法（按張數加權，唔係按行）
+  const weighted = summarizeDeck(["S01", "S01", "S15"], CARDS);
+  const c1 = CARDS.S01.cost;
+  const c2 = CARDS.S15.cost;
+  const expect = ((c1 * 2 + c2) / 3).toFixed(1);
+  assert(weighted.avgCost === expect, `平均費應為 ${expect}（按張數加權），實際 ${weighted.avgCost}`);
+
+  // ⑥ 概覽句要含總數／攻擊／技能／平均
+  const line = deckOverviewLine(summarizeDeck(CHARACTERS.oil.starterDeck, CARDS));
+  assert(line.includes("共"), `概覽要講總數：${line}`);
+  assert(line.includes("攻擊"), `概覽要講攻擊：${line}`);
+  assert(line.includes("技能"), `概覽要講技能：${line}`);
+  assert(line.includes("平均"), `概覽要講平均費：${line}`);
+
+  // ⑦ 未知牌 id 要降級而唔 explode
+  const unknown = summarizeDeck(["__nope__"], CARDS);
+  assert(unknown.total === 1, "未知牌都要計入總數");
+  assert(unknown.rows[0].name === "__nope__", "未知牌應該用 id 做名");
+  assert(unknown.rows[0].cost === 0, "未知牌費用應落回 0");
+
+  // ⑧ battleDeckIds：抽牌堆 + 手牌 + 棄牌堆要全部計埋
+  const fakeBattle = {
+    drawPile: ["S01", "S02"],
+    hand: ["S03"],
+    discard: ["S04", "S05"],
+  };
+  const ids = battleDeckIds(fakeBattle);
+  assert(ids.length === 5, `battleDeckIds 應回 5 張，實際 ${ids.length}`);
+  assert(ids.includes("S03"), "手牌要計入");
+  assert(ids.includes("S05"), "棄牌要計入");
+  // 缺欄位／null 要安全
+  assert(battleDeckIds(null).length === 0, "null 應回空");
+  assert(battleDeckIds({}).length === 0, "空 object 應回空");
+  assert(battleDeckIds({ hand: ["S01"] }).length === 1, "只有手牌都應該計到");
+
+  // ⑨ 實戰驗證：真打一場，戰鬥中牌組總數要等於 run.deck 長度
+  {
+    const c = CHARACTERS.kauko;
+    const run = { characterId: "kauko", deck: [...c.starterDeck], maxHp: c.maxHp, hp: c.maxHp, relics: [] };
+    const b = createBattle(run, enemyById("E01"));
+    startPlayerTurn(b);
+    const live = battleDeckIds(b);
+    assert(
+      live.length === run.deck.length,
+      `戰鬥中牌組總數 ${live.length} 應等於 run.deck ${run.deck.length}（抽+手+棄要守恆）`
+    );
+    // 打完一張之後仍然守恆
+    const before = live.length;
+    for (let i = 0; i < b.hand.length; i++) {
+      const card = CARDS[b.hand[i]];
+      if (card && b.energy >= card.cost) {
+        playCard(b, i);
+        break;
+      }
+    }
+    const after = battleDeckIds(b).length;
+    assert(after === before, `出牌後牌組總數應不變（${before} → ${after}）`);
+  }
+
+  console.log("  ✓ 牌組預覽（分組／排序／重複計數／戰鬥守恆）");
+}
+
 /* ---------- 新手教學：首局先彈，之後唔再彈 ---------- */
 {
   const store = new Map();

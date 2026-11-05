@@ -40,6 +40,7 @@ hk-roguelite/          ← 目錄暫名；產品名《香江小風波》
 │   ├── pause.js       ← 暫停／返標題（丟失清單計算，純函式）
 │   ├── save.js        ← 存檔續玩（單份存檔、版本驗證）
 │   ├── daily.js       ← 每日一局鉤（本機日期、每日只派一次）
+│   ├── deckview.js    ← 牌組預覽（分組／排序／戰鬥守恆，純函式）
 │   ├── data.js        ← 角色／牌／敵／Act1–3 地圖／事件
 │   ├── smoke-full.mjs ← 封測包（四角／分支／店／遺物／near-miss／再開一局）
 │   ├── smoke-act2.mjs ← Act1–2 流程自測
@@ -306,12 +307,45 @@ return `${y}-${m}-${day}`;
 
 實測：`pendingGold 6` → 開新局 `gold 18`（12+6）、`run.dailyBonusGold 6`、`pendingGold` 變 0。
 
+### 牌組預覽（選角 / 戰鬥）
+
+`js/deckview.js` 係純函式（唔讀 DOM／localStorage），smoke 可以直接測。
+
+**兩個入口**：
+
+| 位置 | 掣 | 展開後 |
+|---|---|---|
+| 選角頁 | 「睇 starter 牌組 N 張」 | 該角色 starter 清單（預設收起） |
+| 戰鬥中 | 「睇成副牌組 N 張」 | 抽牌堆 + 手牌 + 棄牌堆全部計 |
+
+**點解唔用卡面圖**：10 幾張卡面圖喺 390 會撐爆版面、又要 load 一堆圖。預覽改用「一眼睇數」清單：`費用圓章 ｜ 名 ｜ 類型 ｜ ×N`。
+
+**排序規則**（刻意固定，唔靠 Object 插入序）：
+
+1. 攻擊 → 技能（同類聚埋，一眼睇比例）
+2. 同類內按費用升序
+3. 同費按牌名（`localeCompare("zh-Hant")`）
+
+**重複牌合成一行 ×N**，例如阿油 starter 10 張 → 6 行：
+
+```
+共 10 張 · 攻擊 9 張 · 技能 1 張 · 平均 0.4 費
+0  後巷抹油   攻擊  ×3
+0  追落街     攻擊  ×1
+0  椒鹽補刀   攻擊  ×2
+1  油星飛濺   攻擊  ×1
+1  廊燈直拳   攻擊  ×2
+1  萬年船     技能  ×1
+```
+
+**戰鬥中點解要計晒三個堆**：只計 `drawPile` 嘅話，抽咗牌個數就會跌，玩家會以為牌組縮水。`battleDeckIds()` 加埋 hand + discard，smoke 有守恆斷言（出牌前後總數不變）。
+
 
 ## 自測
 
 ```bash
 cd hk-roguelite
-node js/smoke-act2.mjs   # Act1–2 流程、事件池、商店、選牌加權＋音效＋設定頁＋教學＋暫停＋存檔＋每日鉤
+node js/smoke-act2.mjs   # Act1–2 流程、事件池、商店、選牌加權＋音效＋設定頁＋教學＋暫停＋存檔＋每日鉤＋牌組預覽
 node js/smoke-act3.mjs   # 四角色×三區全程 → 最終 Boss → 結算資料
 node js/smoke-full.mjs   # 封測包：四角／分支／店／遺物／near-miss／再開一局
 node js/probe-act3.mjs   # 最終 Boss 勝率／超時（平衡下限參考）
@@ -374,6 +408,19 @@ node js/probe-act3.mjs   # 最終 Boss 勝率／超時（平衡下限參考）
 - 名片句獎勵：唔會加 `pendingGold`，會存入 `text`
 - 壞 JSON／舊版本 → 回空、當未領
 - 無 localStorage → 回空／false／0，但 `dateKey()` 唔受影響（純函式）
+
+**「牌組預覽」**
+
+- 空牌組／`null`／`undefined` 都要安全回空，唔 throw
+- 四角 starter 都要整理得到：`total === starterDeck.length`、行 count 總和 === total、攻擊 + 技能 === total
+- 每個 starter 牌都要有名（唔可以漏做，否則顯示會變 id）
+- **重複牌合成一行**：`["S01","S01","S01","S15"]` → 2 行，`S01` 嘅 count === 3
+- **排序**：攻擊排喺技能之前；同 type 內費用非遞減
+- **平均費用按張數加權**（唔係按行平均）
+- 概覽句要含「共／攻擊／技能／平均」
+- 未知牌 id 降級：用 id 做名、費用落回 0
+- `battleDeckIds()`：抽牌堆 + 手牌 + 棄牌堆全部要計；缺欄位／`null` 安全
+- **實戰守恆**：真開一場戰鬥，`battleDeckIds(b).length === run.deck.length`；出一張牌之後仍然一樣
 
 ### 封測包（`smoke-full.mjs`）
 
