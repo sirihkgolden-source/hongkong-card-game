@@ -39,6 +39,7 @@ hk-roguelite/          ← 目錄暫名；產品名《香江小風波》
 │   ├── tutorial.js    ← 新手教學記憶（首局彈一次）
 │   ├── pause.js       ← 暫停／返標題（丟失清單計算，純函式）
 │   ├── save.js        ← 存檔續玩（單份存檔、版本驗證）
+│   ├── daily.js       ← 每日一局鉤（本機日期、每日只派一次）
 │   ├── data.js        ← 角色／牌／敵／Act1–3 地圖／事件
 │   ├── smoke-full.mjs ← 封測包（四角／分支／店／遺物／near-miss／再開一局）
 │   ├── smoke-act2.mjs ← Act1–2 流程自測
@@ -271,12 +272,46 @@ HP 68／68
 
 > `autoSave()` 對 `victory`／`defeat` 有 guard，否則結算頁一 render 就會把已完嘅局寫返存檔。
 
+### 每日一局鉤（本機日期）
+
+key `hk_daily_v1`。規則好薄：
+
+- 每日**第一次完局**（通關或失敗都算）派 **1 個**獎勵
+- 同日再完局**唔會**再派（結算頁連 panel 都唔出，唔會日日彈同一個）
+- 獎勵輪換兩種：
+  - **金幣**：下一局開局 +6／+8／+10（實測 6 金 → 開局 12 → **18**）
+  - **名片句**：一句港味短句（收藏性質，唔影響數值）
+- 邊個獎勵由**日期字串 hash** 決定 —— 同一天永遠同一個，唔會重開就變
+
+**日期用本機時間**，唔用 `toISOString()`：
+
+```js
+const y = d.getFullYear();
+const m = String(d.getMonth() + 1).padStart(2, "0");
+const day = String(d.getDate()).padStart(2, "0");
+return `${y}-${m}-${day}`;
+```
+
+> 呢個唔係小事：`toISOString().slice(0,10)` 係 **UTC**，香港玩家凌晨 00:30 打機會被算成**前一日**。smoke 有斷言守住（用 `new Date(2026,10,6,0,30)` 測，UTC 版會變 `2026-11-05`）。
+
+**標題頁狀態**（`.daily-line`，44px 高）：
+
+| 狀態 | 文案 | 色系 |
+|---|---|---|
+| 今日未領 | 今日未領——打一局（贏輸都計）就有。 | 琥珀 |
+| 今日已領（金） | 今日已領：下局 +N 金。 | 灰綠 |
+| 今日已領（句） | 今日已領：一句名片句。 | 灰綠 |
+
+**金幣發放時機**：結算時只寫入 `pendingGold`，真正加落去係**下一局開局**（`createRun()` 讀 `consumePendingGold()`，攞完即清）。因為結算時局已經完，加落去冇意思；亦避免重複派。
+
+實測：`pendingGold 6` → 開新局 `gold 18`（12+6）、`run.dailyBonusGold 6`、`pendingGold` 變 0。
+
 
 ## 自測
 
 ```bash
 cd hk-roguelite
-node js/smoke-act2.mjs   # Act1–2 流程、事件池、商店、選牌加權＋音效＋設定頁＋教學＋暫停＋存檔
+node js/smoke-act2.mjs   # Act1–2 流程、事件池、商店、選牌加權＋音效＋設定頁＋教學＋暫停＋存檔＋每日鉤
 node js/smoke-act3.mjs   # 四角色×三區全程 → 最終 Boss → 結算資料
 node js/smoke-full.mjs   # 封測包：四角／分支／店／遺物／near-miss／再開一局
 node js/probe-act3.mjs   # 最終 Boss 勝率／超時（平衡下限參考）
@@ -326,6 +361,19 @@ node js/probe-act3.mjs   # 最終 Boss 勝率／超時（平衡下限參考）
 - `clearRun()` 要**真係刪走個 key**（唔可以只回 true）
 - 再存一次會覆蓋，localStorage 只可以有一份存檔
 - 無 localStorage 環境下四個函式都降級，唔 throw
+
+**「每日一局鉤」**
+
+- `dateKey()` 用**本機時間**：`new Date(2026,10,6,0,30)` 必須得 `2026-11-06`（UTC 版會變 `2026-11-05`）
+- 同一天 `rewardForDate()` 必須**穩定**（唔可以用 `Math.random`）；30 日內至少要有 2 種獎勵
+- 獎勵池兩類都要有；金幣獎勵要「薄」（1–20）
+- 全新 → 未領；第一次 `claimDaily()` `claimed === true`
+- **同日再領** `claimed === false` 而且 `pendingGold` 唔會加
+- 第二日可以再領
+- 金幣獎勵：寫入 `pendingGold` → `consumePendingGold()` 攞走 → 清 0 → 再攞係 0（唔會重複派）
+- 名片句獎勵：唔會加 `pendingGold`，會存入 `text`
+- 壞 JSON／舊版本 → 回空、當未領
+- 無 localStorage → 回空／false／0，但 `dateKey()` 唔受影響（純函式）
 
 ### 封測包（`smoke-full.mjs`）
 

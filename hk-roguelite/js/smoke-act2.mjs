@@ -898,6 +898,165 @@ const results = ["oil", "asan", "kauko", "sing"].map(simulateChar);
   delete globalThis.localStorage;
 }
 
+/* ---------- 每日一局鉤：本機日期、每日只派一次 ---------- */
+{
+  const store = new Map();
+  globalThis.localStorage = {
+    get length() {
+      return store.size;
+    },
+    key: (i) => Array.from(store.keys())[i] ?? null,
+    getItem: (k) => (store.has(k) ? store.get(k) : null),
+    setItem: (k, v) => void store.set(k, String(v)),
+    removeItem: (k) => void store.delete(k),
+  };
+
+  const {
+    DAILY_KEY,
+    DAILY_VERSION,
+    DAILY_POOL,
+    DAILY_GOLD,
+    DAILY_LINES,
+    dateKey,
+    rewardForDate,
+    loadDaily,
+    saveDaily,
+    isClaimedToday,
+    claimDaily,
+    consumePendingGold,
+    resetDaily,
+    dailyStatusLine,
+  } = await import("./daily.js");
+
+  // ① 日期用本機時間（唔可以用 UTC，香港差 8 個鐘）
+  const localD = new Date(2026, 10, 6, 0, 30, 0); // 2026-11-06 00:30 本機
+  assert(dateKey(localD) === "2026-11-06", `dateKey 應為 2026-11-06，實際 ${dateKey(localD)}`);
+  // 午夜之後、朝早之前都要算同一日（本地）
+  const lateNight = new Date(2026, 10, 6, 23, 59, 59);
+  assert(dateKey(lateNight) === "2026-11-06", "深夜都應該係同一日");
+  // 補零
+  const jan = new Date(2026, 0, 5);
+  assert(dateKey(jan) === "2026-01-05", `補零唔對：${dateKey(jan)}`);
+
+  // ② 同一天永遠派同一個獎勵（唔可以用 Math.random，否則重開就變）
+  const a1 = rewardForDate("2026-11-06");
+  const a2 = rewardForDate("2026-11-06");
+  assert(a1 === a2, "同一天獎勵必須穩定");
+  assert(DAILY_POOL.includes(a1), "獎勵要喺池入面");
+  // 不同日子應該有變化（抽 30 日至少見到 2 種）
+  const kinds = new Set();
+  for (let i = 1; i <= 30; i++) {
+    kinds.add(rewardForDate(`2026-11-${String(i).padStart(2, "0")}`).kind);
+  }
+  assert(kinds.size >= 2, `30 日內應該有變化，實際只有 ${[...kinds]}`);
+
+  // ③ 獎勵池要兩類都有（金幣 + 名片句）
+  assert(DAILY_GOLD.length >= 1, "要有金幣獎勵");
+  assert(DAILY_LINES.length >= 1, "要有名片句獎勵");
+  for (const g of DAILY_GOLD) {
+    assert(g.value > 0 && g.value <= 20, `金幣獎勵要薄（1–20），實際 ${g.value}`);
+  }
+  for (const l of DAILY_LINES) {
+    assert(typeof l.text === "string" && l.text.length > 5, "名片句要有料");
+  }
+
+  // ④ 全新：今日未領
+  assert(isClaimedToday(localD) === false, "全新應該未領");
+  assert(loadDaily().date === "", "全新 date 應為空");
+  assert(dailyStatusLine(localD).includes("未領"), `未領狀態句唔對：${dailyStatusLine(localD)}`);
+
+  // ⑤ 第一次領：真係領到
+  const first = claimDaily(localD);
+  assert(first.claimed === true, "第一次應該領到");
+  assert(first.ok === true, "第一次 ok 應為 true");
+  assert(isClaimedToday(localD) === true, "領完應該係已領");
+  assert(loadDaily().date === "2026-11-06", "date 應寫入今日");
+  assert(loadDaily().v === DAILY_VERSION, "版本要寫入");
+
+  // ⑥ 同一天再領：唔會再派（claimed=false），亦唔會加 pendingGold
+  const pendingBefore = loadDaily().pendingGold;
+  const second = claimDaily(localD);
+  assert(second.claimed === false, "同一天再領 claimed 應為 false");
+  assert(loadDaily().pendingGold === pendingBefore, "同一天再領唔應該再加金");
+  assert(
+    dailyStatusLine(localD).includes("已領"),
+    `已領狀態句唔對：${dailyStatusLine(localD)}`
+  );
+
+  // ⑦ 第二日：可以再領
+  const nextDay = new Date(2026, 10, 7, 9, 0, 0);
+  assert(isClaimedToday(nextDay) === false, "第二日應該未領");
+  const third = claimDaily(nextDay);
+  assert(third.claimed === true, "第二日應該可以再領");
+  assert(loadDaily().date === "2026-11-07", "date 應更新");
+
+  // ⑧ 金幣獎勵：累積到 pendingGold，開局一次過攞走即清
+  resetDaily();
+  // 用一個必定抽到金幣嘅日期（逐日搵）
+  let goldDay = null;
+  for (let i = 1; i <= 60; i++) {
+    const k = `2027-01-${String(Math.min(i, 28)).padStart(2, "0")}`;
+    const r = rewardForDate(k);
+    if (r.kind === "gold") {
+      goldDay = { key: k, reward: r };
+      break;
+    }
+  }
+  assert(goldDay, "60 日內應該抽到至少一次金幣獎勵");
+  const [yy, mm, dd] = goldDay.key.split("-").map(Number);
+  const goldDate = new Date(yy, mm - 1, dd, 12, 0, 0);
+  const goldClaim = claimDaily(goldDate);
+  assert(goldClaim.claimed === true, "金幣日應該領到");
+  assert(goldClaim.reward.kind === "gold", "應該係金幣獎勵");
+  assert(
+    loadDaily().pendingGold === goldClaim.reward.value,
+    `pendingGold 應為 ${goldClaim.reward.value}，實際 ${loadDaily().pendingGold}`
+  );
+  // 攞走 → 清空
+  const taken = consumePendingGold();
+  assert(taken === goldClaim.reward.value, `consumePendingGold 應回 ${goldClaim.reward.value}`);
+  assert(loadDaily().pendingGold === 0, "攞走後 pendingGold 應清 0");
+  // 再攞冇嘢
+  assert(consumePendingGold() === 0, "再攞應該係 0（唔會重複派）");
+
+  // ⑨ 名片句獎勵：唔應該加 pendingGold
+  let lineDay = null;
+  for (let i = 1; i <= 60; i++) {
+    const k = `2027-02-${String(Math.min(i, 28)).padStart(2, "0")}`;
+    const r = rewardForDate(k);
+    if (r.kind === "line") {
+      lineDay = { key: k, reward: r };
+      break;
+    }
+  }
+  assert(lineDay, "60 日內應該抽到至少一次名片句");
+  resetDaily();
+  const [ly, lm, ld] = lineDay.key.split("-").map(Number);
+  const lineClaim = claimDaily(new Date(ly, lm - 1, ld, 12, 0, 0));
+  assert(lineClaim.claimed === true, "名片句日應該領到");
+  assert(lineClaim.reward.kind === "line", "應該係名片句");
+  assert(loadDaily().pendingGold === 0, "名片句唔應該加 pendingGold");
+  assert(loadDaily().text === lineDay.reward.text, "名片句要存入 text");
+
+  // ⑩ 壞資料／舊版本 → 回空、唔 throw
+  localStorage.setItem(DAILY_KEY, "{{壞");
+  assert(loadDaily().date === "", "壞 JSON 應回空");
+  assert(isClaimedToday(localD) === false, "壞資料應該當未領");
+  localStorage.setItem(DAILY_KEY, JSON.stringify({ v: 0, date: "2026-11-06" }));
+  assert(loadDaily().date === "", "舊版本應回空");
+
+  // ⑪ 無 localStorage 環境唔應該 throw
+  delete globalThis.localStorage;
+  assert(loadDaily().date === "", "無 localStorage 應回空");
+  assert(isClaimedToday(localD) === false, "無 localStorage 應回未領");
+  assert(saveDaily({ date: "2026-11-06" }) === false, "無 localStorage 存檔應回 false");
+  assert(consumePendingGold() === 0, "無 localStorage consume 應回 0");
+  // 純函式唔受影響
+  assert(dateKey(localD) === "2026-11-06", "dateKey 唔應該依賴 localStorage");
+
+  console.log("  ✓ 每日一局鉤（本機日期／每日只派一次／金幣與名片句／降級安全）");
+}
+
 /* ---------- 新手教學：首局先彈，之後唔再彈 ---------- */
 {
   const store = new Map();
