@@ -92,6 +92,7 @@ const state = {
   pendingRestMsg: "",
   pendingTurnLine: "",
   actTransition: /** @type {object|null} */ (null),
+  openingHint: "",
 };
 
 const app = document.getElementById("app");
@@ -161,6 +162,7 @@ function enterAct(nextAct) {
   clearEventState();
   state.rewardChoices = [];
   state.statusMsg = "";
+  state.openingHint = "";
   state.shopMsg = "";
   state.pendingBossId = null;
   // Act 銜接過場：入新區前講一句，唔好斷戲
@@ -479,9 +481,14 @@ function renderMap() {
       ${relicBar(run)}
       <ol class="act-strip" aria-label="三區進度">${actStrip}</ol>
       ${
-        state.statusMsg
-          ? `<p class="status status-map" role="status">${escapeHtml(state.statusMsg)}</p>`
-          : ""
+        state.openingHint
+          ? `<div class="opening-block">
+        <p class="opening-line">${escapeHtml(state.statusMsg || "")}</p>
+        <p class="opening-passive">${escapeHtml(state.openingHint)}</p>
+      </div>`
+          : state.statusMsg
+            ? `<p class="status status-map" role="status">${escapeHtml(state.statusMsg)}</p>`
+            : ""
       }
       <section class="panel map-panel">
         <h2>節點路線</h2>
@@ -1830,6 +1837,7 @@ function advanceMap(opts = {}) {
   clearEventState();
   state.rewardChoices = [];
   state.statusMsg = "";
+  state.openingHint = "";
   state.shopMsg = "";
   state.shopRelics = [];
   state.shopConsumables = [];
@@ -1860,6 +1868,8 @@ function openReward() {
 function enterNode() {
   const node = currentNode();
   if (!node) return;
+  // 開場提示只在第一格之前顯示，入咗節點就收走
+  state.openingHint = "";
   if (node.type === "battle" || node.type === "boss") {
     beginBattle(nodeEnemyId(node));
   } else if (node.type === "reward") {
@@ -1972,6 +1982,12 @@ function onClick(event) {
     case "confirm-char":
       state.run = createRun(state.selectedCharId);
       state.screen = "map";
+      // 選角 → 第一戰唔好斷戲：講一句開場，同時提醒被動
+      {
+        const c = characterById(state.selectedCharId);
+        state.statusMsg = c.openLine || "";
+        state.openingHint = `被動「${c.passive.name}」——${c.passive.desc}`;
+      }
       break;
     case "relic-info": {
       const id = t.getAttribute("data-relic");
