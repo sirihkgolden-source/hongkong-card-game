@@ -17,6 +17,7 @@ import {
   battleGoldReward,
   enemyById,
   pickRewardChoices,
+  SIGNATURE_CARDS,
   CONSUMABLES,
   pickShopConsumables,
 } from "./data.js";
@@ -115,6 +116,41 @@ function simulateChar(charId) {
   assert(enemyById("E04").name === "巷口鐵閘・睇場", "Act1 Boss 睇場");
   assert(!enemyById("E04").name.includes("看場"), "禁看場");
   assert(!enemyById("E04").name.includes("離場"), "禁離場");
+
+  // ① 三角色都要有 route（主路線標籤）同 playstyle（一句講清點玩）
+  {
+    const routes = [];
+    const styles = [];
+    for (const id of ["oil", "asan", "kauko"]) {
+      const c = CHARACTERS[id];
+      assert(typeof c.route === "string" && c.route.length >= 3, `${id} 缺 route`);
+      assert(typeof c.playstyle === "string" && c.playstyle.length >= 8, `${id} 缺 playstyle`);
+      routes.push(c.route);
+      styles.push(c.playstyle);
+    }
+    assert(new Set(routes).size === 3, `三角色 route 重複：${routes.join("/")}`);
+    assert(new Set(styles).size === 3, "三角色 playstyle 重複");
+  }
+
+  // ③ starter／專屬牌名唔撞
+  {
+    const sigNames = [];
+    for (const id of ["oil", "asan", "kauko"]) {
+      for (const cardId of SIGNATURE_CARDS[id] || []) {
+        const nm = CARDS[cardId]?.name;
+        assert(nm, `${id} 專屬牌 ${cardId} 冇名`);
+        sigNames.push(nm);
+      }
+    }
+    assert(new Set(sigNames).size === sigNames.length, `專屬牌名有撞：${sigNames.join("/")}`);
+    // starter 唔可以含別角專屬
+    for (const id of ["oil", "asan", "kauko"]) {
+      for (const cardId of CHARACTERS[id].starterDeck) {
+        const owner = CARDS[cardId]?.owner;
+        assert(!owner || owner === id, `${id} starter 含別角專屬 ${cardId}`);
+      }
+    }
+  }
 
   // 地圖節點文案同 Boss 卡都要用「睇場」
   const act1BossNode = ACT1_MAP.find((n) => n.type === "boss");

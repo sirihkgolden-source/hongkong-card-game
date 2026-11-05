@@ -443,6 +443,44 @@ body {
   color: var(--ink-dim);
 }
 
+/* 戰鬥 HUD：當前角色主路線（一眼見到） */
+.battle-route {
+  display: inline-block;
+  align-self: flex-start;
+  margin: 0.05rem 0 0.15rem;
+  padding: 0.04rem 0.4rem;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--neon-amber);
+  background: rgba(255, 193, 74, 0.14);
+  border: 1px solid rgba(255, 193, 74, 0.38);
+}
+
+/* 角色主路線標籤：選角一眼分到三種玩法 */
+.char-route {
+  display: inline-block;
+  align-self: flex-start;
+  margin-top: 0.1rem;
+  padding: 0.05rem 0.42rem;
+  border-radius: 999px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--neon-amber);
+  background: rgba(255, 193, 74, 0.13);
+  border: 1px solid rgba(255, 193, 74, 0.35);
+}
+
+/* 一句講清點玩 */
+.char-playstyle {
+  font-size: 0.74rem;
+  line-height: 1.45;
+  color: var(--ink);
+  opacity: 0.9;
+}
+
 .char-passive-tag {
   font-size: 0.72rem;
   color: var(--neon-amber);

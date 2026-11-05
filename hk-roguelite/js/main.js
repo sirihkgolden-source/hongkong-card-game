@@ -245,6 +245,8 @@ function renderSelect() {
             <span class="char-meta">
               <span class="char-name">${escapeHtml(c.name)}</span>
               <span class="char-desc">${escapeHtml(c.short)}</span>
+              <span class="char-route">${escapeHtml(c.route || "")}</span>
+              <span class="char-playstyle">${escapeHtml(c.playstyle || "")}</span>
               <span class="char-passive-tag">被動・${escapeHtml(c.passive.name)}</span>
             </span>
           </button>
@@ -431,6 +433,7 @@ function renderBattle() {
         <div class="fighter player" id="fighter-player">
           <div class="fighter-meta">
             <strong id="player-anchor">${escapeHtml(char.name)}</strong>
+            <span class="battle-route">${escapeHtml(char.route || "")}</span>
             <div class="hp-bar player"><span id="player-hp-fill" style="width:${Math.max(0, (b.playerHp / b.playerMaxHp) * 100)}%"></span></div>
             <span class="hp-text" id="player-hp-text">${b.playerHp}/${b.playerMaxHp}${b.playerBlock ? ` · 盾 ${b.playerBlock}` : ""}</span>
             <span class="energy">⚡ ${b.energy}/${b.maxEnergy}${readyHint}</span>
