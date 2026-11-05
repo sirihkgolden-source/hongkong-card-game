@@ -1118,6 +1118,25 @@ body {
   margin-top: 0.25rem;
 }
 
+/* 回合結束短回饋：最頂一行，金色，淡入 */
+.battle-log .turn-line {
+  margin: 0 0 0.3rem;
+  padding: 0.3rem 0.45rem;
+  border-radius: 7px;
+  border-left: 2px solid var(--neon-amber);
+  background: rgba(255, 193, 74, 0.12);
+  color: var(--neon-amber);
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1.4;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.battle-log .turn-line.is-on {
+  opacity: 1;
+}
+
 /* —— Reward / Event —— */
 .reward-grid {
   display: grid;
