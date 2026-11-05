@@ -11,6 +11,7 @@
 | `portraits/ayau.webp` | 選角立繪 | `oil` | 阿油・後巷經紀 | **男**：綠外套＋花恤＋waist pouch，手遞卡片；透明底 |
 | `portraits/ashan.jpg` | 選角立繪 | `asan` | 阿珊・茶記夜更 | 茶記圍裙＋鉛筆咬嘴（禁維港遊客女） |
 | `portraits/kauko.jpg` | 選角立繪 | `kauko` | 九哥・招牌工 | 工圍裙＋工具枱＋啤牌（唔叫霓虹工） |
+| `portraits/shingzai.webp` | 選角立繪 | `sing` | 勝仔・跌打館學徒 | 白頭巾＋手纏繃帶＋藥櫃「正骨推拿」；右下菠蘿包＋奶茶 |
 
 ## 區背景（3 Act）
 
@@ -34,10 +35,10 @@
 
 ## 副檔名與降級
 
-- 立繪：`ayau.webp`（透明底 RGBA）、`ashan.jpg`、`kauko.jpg`。
+- 立繪：`ayau.webp`（透明底 RGBA）、`ashan.jpg`、`kauko.jpg`、`shingzai.webp`。
 - 背景：三張均為 `.jpg`。
 - 若日後換格式，只需同名改副檔名，`js/data.js` 嘅 `portrait` / `ACT_BG` 改一處即可。
-- **缺圖降級**：`<img onerror>` 會加 `is-fallback` class，顯示字首漸層（油／珊／九）；背景用 `--act-bg`，缺檔時自動落回內建霓虹漸層，唔會爆 layout。
+- **缺圖降級**：`<img onerror>` 會加 `is-fallback` class，顯示字首漸層（油／珊／九／勝）；背景用 `--act-bg`，缺檔時自動落回內建霓虹漸層，唔會爆 layout。
 
 ## 阿油立繪（曾出錯，已修）
 
