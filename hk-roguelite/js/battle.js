@@ -277,12 +277,12 @@ export function playCard(b, handIndex) {
     pushLog(b, "【招牌眼】首次技能・抽 1！");
   }
 
-  // 跌打：每場首次打技能牌即刻回 5 HP
+  // 跌打：每場首次打技能牌即刻回 4 HP
   let seotongHealed = 0;
   if (b.passiveId === "seotong" && card.type === "skill" && !b.seotongUsed) {
     b.seotongUsed = true;
     const before = b.playerHp;
-    b.playerHp = Math.min(b.playerMaxHp, b.playerHp + 5);
+    b.playerHp = Math.min(b.playerMaxHp, b.playerHp + 4);
     seotongHealed = b.playerHp - before;
     pushLog(b, `【跌打】首次技能・回 ${seotongHealed} HP！`);
   }
