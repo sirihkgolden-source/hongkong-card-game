@@ -613,6 +613,14 @@ function renderRest() {
             <strong>磨刀（寶箱感）</strong>
             <span>牌組加入「廊燈直拳」；回復 4 HP</span>
           </button>
+          <button type="button" class="event-choice" data-action="rest-cleanse">
+            <strong>沖個涼（清狀態）</strong>
+            <span>${
+              (state.run.nextBattleEnergyPenalty || 0) > 0
+                ? `清走「下戰 −${state.run.nextBattleEnergyPenalty} 能量」；回復 6 HP`
+                : "冇負面狀態；純粹回復 6 HP"
+            }</span>
+          </button>
           <button type="button" class="event-choice${canHealBuy ? "" : " is-disabled"}" data-action="shop-heal" ${canHealBuy ? "" : "disabled"}>
             <strong>便利店・回血</strong>
             <span>花 ${SHOP.healCost} 金幣回復 ${SHOP.healAmt} HP${canHealBuy ? "" : "（金幣不足）"}</span>
@@ -952,6 +960,31 @@ function flushRunDeltas() {
   requestAnimationFrame(() => {
     requestAnimationFrame(() => floatRunDeltas(deltas));
   });
+}
+
+/** 離開士多時嘅一句（唔好空白過場） */
+function shopLeaveLine() {
+  const run = state.run || {};
+  const hp = run.hp || 0;
+  const maxHp = run.maxHp || 1;
+  const ratio = hp / maxHp;
+  const relicCount = (run.relics || []).length;
+  const gold = run.gold || 0;
+
+  // 血少：提醒下次要補
+  if (ratio <= 0.35) {
+    return `你行出士多，風一吹先發覺——得返 ${hp}/${maxHp}。下次記住補血。`;
+  }
+  // 有遺物：講返件貨
+  if (relicCount > 0) {
+    return `袋住 ${relicCount} 件貨行出去，老闆喺後面嗌：「記得返嚟呀。」`;
+  }
+  // 金多：講錢
+  if (gold >= 30) {
+    return `袋住 ${gold} 個大洋走——呢條街，有錢就有底氣。`;
+  }
+  // 兜底
+  return "兩手空空行出去，但至少抖順咗一口氣。";
 }
 
 function render() {
@@ -1592,12 +1625,29 @@ function onClick(event) {
       advanceMap();
       break;
     }
+    case "rest-cleanse": {
+      const before = runSnapshot();
+      const hadPenalty = state.run.nextBattleEnergyPenalty || 0;
+      state.run.nextBattleEnergyPenalty = 0;
+      state.run.hp = Math.min(state.run.maxHp, state.run.hp + 6);
+      state.pendingRestMsg = hadPenalty
+        ? `沖走一身晦氣——清咗下戰 −${hadPenalty} 能量，兼回 6 HP。`
+        : "沖個涼，人都醒神——回 6 HP。";
+      showRunDeltas(before);
+      // 清狀態要自己補一個跳字（energy 由負變 0 唔會入 delta）
+      if (hadPenalty) {
+        state.pendingDeltas = state.pendingDeltas || {};
+        state.pendingDeltas.energy = hadPenalty;
+      }
+      advanceMap();
+      break;
+    }
     case "shop-heal":
       if (state.run.gold >= SHOP.healCost) {
         const before = runSnapshot();
         state.run.gold -= SHOP.healCost;
         state.run.hp = Math.min(state.run.maxHp, state.run.hp + SHOP.healAmt);
-        state.shopMsg = `回咗 ${SHOP.healAmt} HP。`;
+        state.shopMsg = `阿姐遞過嚟一碗熱嘢——回咗 ${SHOP.healAmt} HP，人都醒神。`;
         showRunDeltas(before);
       } else {
         state.shopMsg = "金幣不足";
@@ -1608,7 +1658,7 @@ function onClick(event) {
         const before = runSnapshot();
         state.run.gold -= SHOP.cardCost;
         state.run.deck.push(SHOP.cardId);
-        state.shopMsg = `入手「${cardById(SHOP.cardId)?.name ?? SHOP.cardId}」。`;
+        state.shopMsg = `執咗張「${cardById(SHOP.cardId)?.name ?? SHOP.cardId}」入袋——用得着嘅。`;
         showRunDeltas(before);
       } else {
         state.shopMsg = "金幣不足";
@@ -1628,7 +1678,7 @@ function onClick(event) {
       state.run.gold -= SHOP.packCost;
       state.run.deck.push(packCardId);
       const pc = cardById(packCardId);
-      state.shopMsg = `抽到「${pc?.name ?? packCardId}」——${pc?.rarity ?? ""}牌。`;
+      state.shopMsg = `拆開卡包——「${pc?.name ?? packCardId}」，${pc?.rarity ?? ""}牌，手氣唔錯。`;
       showRunDeltas(before);
       break;
     }
@@ -1660,7 +1710,7 @@ function onClick(event) {
       const msg = cs.apply(state.run);
       // 買完即用，貨架移走該件
       state.shopConsumables = (state.shopConsumables || []).filter((id) => id !== csId);
-      state.shopMsg = `「${cs.name}」——${msg}`;
+      state.shopMsg = `老闆遞過嚟「${cs.name}」——${msg}`;
       showRunDeltas(before);
       break;
     }
@@ -1688,7 +1738,7 @@ function onClick(event) {
         state.run.hp = Math.min(state.run.maxHp, state.run.hp + eff.instantMaxHp);
       }
       if (eff.instantGold) state.run.gold += eff.instantGold;
-      state.shopMsg = `買咗「${relic.name}」——${relic.desc}`;
+      state.shopMsg = `老闆娘包起「${relic.name}」遞你——${relic.desc}`;
       showRunDeltas(before);
       break;
     }
@@ -1705,7 +1755,7 @@ function onClick(event) {
         state.run.maxHp = Math.max(1, state.run.maxHp - eff.instantMaxHp);
         state.run.hp = Math.max(1, Math.min(state.run.hp, state.run.maxHp));
       }
-      state.shopMsg = `賣咗「${relic.name}」，+${SHOP.sellRelicGain} 金幣。`;
+      state.shopMsg = `放手「${relic.name}」，袋返 +${SHOP.sellRelicGain} 金幣。`;
       showRunDeltas(before);
       break;
     }
@@ -1716,11 +1766,13 @@ function onClick(event) {
       const before = runSnapshot();
       state.run.deck.splice(idx, 1);
       state.run.gold += SHOP.sellCardGain;
-      state.shopMsg = `賣咗「${cardById(cardId)?.name ?? cardId}」，+${SHOP.sellCardGain} 金幣。`;
+      state.shopMsg = `放手「${cardById(cardId)?.name ?? cardId}」，袋返 +${SHOP.sellCardGain} 金幣。`;
       showRunDeltas(before);
       break;
     }
     case "leave-shop":
+      // 唔好空白過場：走之前講一句，連埋呢次買賣嘅總結
+      state.pendingRestMsg = shopLeaveLine();
       advanceMap();
       break;
     case "again":

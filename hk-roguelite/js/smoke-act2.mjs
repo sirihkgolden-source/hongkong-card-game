@@ -20,6 +20,7 @@ import {
   SIGNATURE_CARDS,
   CONSUMABLES,
   pickShopConsumables,
+  pickShopRelics,
 } from "./data.js";
 import { createBattle, playCard, endTurn, startPlayerTurn } from "./battle.js";
 
@@ -242,6 +243,17 @@ function simulateChar(charId) {
     }
     // 三個角色主路線要唔同
     assert(new Set(Object.values(dominant)).size === 3, `三角色主路線重複：${JSON.stringify(dominant)}`);
+  }
+
+  // ② 士多各項都要有價、有貨（唔好空白過場）
+  {
+    assert(typeof SHOP.healCost === "number" && SHOP.healCost > 0, "SHOP.healCost 唔合法");
+    assert(typeof SHOP.cardCost === "number" && SHOP.cardCost > 0, "SHOP.cardCost 唔合法");
+    assert(typeof SHOP.relicCost === "number" && SHOP.relicCost > 0, "SHOP.relicCost 唔合法");
+    assert(typeof SHOP.packCost === "number" && SHOP.packCost > 0, "SHOP.packCost 唔合法");
+    assert(typeof SHOP.rerollCost === "number" && SHOP.rerollCost > 0, "SHOP.rerollCost 唔合法");
+    // 遺物貨架每次都要抽到貨
+    assert(pickShopRelics({ characterId: "oil", relics: [] }, 2).length === 2, "遺物貨架抽唔夠 2 件");
   }
 
   // ③ 消耗品：每件都要有價、有說明、apply 真係改局
