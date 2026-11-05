@@ -187,3 +187,33 @@ export function clearFx() {
   const root = document.getElementById("fx-root");
   if (root) root.replaceChildren();
 }
+
+/**
+ * 金幣變動跳字：+N 金色上彈、−N 淡紅。
+ * 錨定順序：跑圖狀態列金幣 span → 畫面中央偏上（fallback）。
+ * @param {number} delta 正數賺、負數花
+ */
+export function floatGold(delta) {
+  if (!delta) return;
+  const goldEl = findGoldAnchor();
+  const text = delta > 0 ? `+${delta} 金幣` : `${delta} 金幣`;
+  floatText(goldEl, text, delta > 0 ? "gold" : "gold-spend");
+}
+
+/** 搵「金幣」所在嘅狀態列 span，搵唔到就用畫面中央 */
+function findGoldAnchor() {
+  const selectors = [
+    ".run-stats span",
+    ".run-inline",
+    ".panel .tagline",
+    ".panel .lede",
+    ".panel h2 + p",
+  ];
+  for (const sel of selectors) {
+    for (const el of document.querySelectorAll(sel)) {
+      if (el.textContent && el.textContent.includes("金幣")) return el;
+    }
+  }
+  // 選牌／事件畫面冇顯示金幣：錨定頂部面板標題，視線自然落點
+  return document.querySelector(".panel h2") || document.querySelector(".brand");
+}

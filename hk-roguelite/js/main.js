@@ -47,6 +47,7 @@ import {
   showPassiveBanner,
   syncHpBars,
   clearFx,
+  floatGold,
 } from "./feel.js";
 
 /** @type {{
@@ -60,6 +61,7 @@ import {
  *  busy: boolean,
  *  pendingBossId: string|null,
  *  shopMsg: string,
+ *  pendingGoldFloat: number,
  * }} */
 const state = {
   screen: "title",
@@ -73,6 +75,7 @@ const state = {
   pendingBossId: null,
   shopMsg: "",
   shopRelics: /** @type {string[]} */ ([]),
+  pendingGoldFloat: 0,
 };
 
 const app = document.getElementById("app");
@@ -780,6 +783,36 @@ function render() {
   }
   app.innerHTML = html;
   applyActBackdrop();
+  flushGoldFloat();
+}
+
+/**
+ * 畫面 render 完之後才播金幣跳字（此時金幣顯示元素已存在）。
+ * 用 rAF 等 layout 穩定，避免錨點位置係 0。
+ */
+function flushGoldFloat() {
+  const pending = state.pendingGoldFloat;
+  if (!pending) return;
+  state.pendingGoldFloat = 0;
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      floatGold(pending);
+      pulseGoldStat(pending > 0 ? "up" : "down");
+    });
+  });
+}
+
+/** 地圖／選牌狀態列的金幣數字彈一下（配合跳字） */
+function pulseGoldStat(dir) {
+  for (const el of document.querySelectorAll(".run-stats span")) {
+    if (el.textContent.includes("金幣")) {
+      el.classList.remove("is-gold-up", "is-gold-down");
+      void el.offsetWidth;
+      el.classList.add(dir === "up" ? "is-gold-up" : "is-gold-down");
+      setTimeout(() => el.classList.remove("is-gold-up", "is-gold-down"), 620);
+      return;
+    }
+  }
 }
 
 /** 當前節點背景；冇節點（選角／結算）就用 run.act 或 Act1 */
@@ -1151,7 +1184,11 @@ function onClick(event) {
       const baseGold = battleGoldReward(isBossFight);
       // 遺物：小怪勝場額外金
       const gold = baseGold > 0 ? baseGold + (bonuses.goldBonus || 0) : 0;
-      if (gold > 0) state.run.gold += gold;
+      if (gold > 0) {
+        state.run.gold += gold;
+        // 等新畫面（選牌／地圖）render 完，錨定金幣顯示位置再跳字
+        state.pendingGoldFloat = gold;
+      }
       // 遺物：勝場回血
       if (bonuses.healOnWin > 0) {
         state.run.hp = Math.min(state.run.maxHp, state.run.hp + bonuses.healOnWin);
@@ -1202,6 +1239,7 @@ function onClick(event) {
         state.run.gold -= SHOP.healCost;
         state.run.hp = Math.min(state.run.maxHp, state.run.hp + SHOP.healAmt);
         state.shopMsg = `回咗 ${SHOP.healAmt} HP。`;
+        state.pendingGoldFloat = -SHOP.healCost;
       } else {
         state.shopMsg = "金幣不足";
       }
@@ -1211,6 +1249,7 @@ function onClick(event) {
         state.run.gold -= SHOP.cardCost;
         state.run.deck.push(SHOP.cardId);
         state.shopMsg = `入手「${cardById(SHOP.cardId)?.name ?? SHOP.cardId}」。`;
+        state.pendingGoldFloat = -SHOP.cardCost;
       } else {
         state.shopMsg = "金幣不足";
       }
@@ -1239,6 +1278,7 @@ function onClick(event) {
       }
       if (eff.instantGold) state.run.gold += eff.instantGold;
       state.shopMsg = `買咗「${relic.name}」——${relic.desc}`;
+      state.pendingGoldFloat = -(SHOP.relicCost - (eff.instantGold || 0));
       break;
     }
     case "sell-relic": {
@@ -1254,6 +1294,7 @@ function onClick(event) {
         state.run.hp = Math.max(1, Math.min(state.run.hp, state.run.maxHp));
       }
       state.shopMsg = `賣咗「${relic.name}」，+${SHOP.sellRelicGain} 金幣。`;
+      state.pendingGoldFloat = SHOP.sellRelicGain;
       break;
     }
     case "sell-card": {
@@ -1263,6 +1304,7 @@ function onClick(event) {
       state.run.deck.splice(idx, 1);
       state.run.gold += SHOP.sellCardGain;
       state.shopMsg = `賣咗「${cardById(cardId)?.name ?? cardId}」，+${SHOP.sellCardGain} 金幣。`;
+      state.pendingGoldFloat = SHOP.sellCardGain;
       break;
     }
     case "leave-shop":
