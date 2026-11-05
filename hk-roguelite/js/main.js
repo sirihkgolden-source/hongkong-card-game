@@ -240,13 +240,13 @@ function renderTitle() {
       <header class="brand-block">
         <h1 class="brand">${escapeHtml(META.title)}</h1>
         <p class="tagline">香港霓虹街頭卡牌 Rogue-lite</p>
-        <span class="badge">完整三區 · 後巷 → 旺角 → 城寨天台 · 三角色</span>
+        <span class="badge">完整三區 · 後巷 → 旺角 → 城寨天台 · 四角色</span>
       </header>
       <section class="panel panel-hero-copy">
         <h2>一鋪一個傳奇</h2>
         <p class="lede">
           揀角色、組牌闖三區。短、上癮、想再來一局。<br />
-          三角色開局 → 後巷・夜醒 → 旺角霓虹 → 城寨・天台 → 籠門之王 → 通關結算。
+          四角色開局 → 後巷・夜醒 → 旺角霓虹 → 城寨・天台 → 籠門之王 → 通關結算。
         </p>
       </section>
       <div class="actions">
@@ -290,7 +290,7 @@ function renderSelect() {
     <main class="screen" aria-label="選角">
       <header class="brand-block brand-compact">
         <h1 class="brand">${escapeHtml(META.title)}</h1>
-        <p class="tagline">開局三揀一 · 同一條後巷</p>
+        <p class="tagline">開局四揀一 · 同一條後巷</p>
       </header>
       <section class="panel">
         <h2>選擇角色</h2>
