@@ -288,7 +288,11 @@ function simulateChar(charId) {
         const probe = { ...base, deck: [...base.deck] };
         const msg = ch.apply(probe);
         assert(typeof msg === "string" && msg.length > 0, `${evId}/${ch.id} 要回一句`);
-        assert(probe.gold === base.gold, `${evId}/${ch.id} 唔應該改金幣`);
+        // 事件唔可以「發死金」，但可以花錢換其他回報
+        assert(
+          probe.gold <= base.gold,
+          `${evId}/${ch.id} 唔應該發金幣（實際 ${probe.gold} > ${base.gold}）`
+        );
         const changed =
           probe.hp !== base.hp ||
           probe.maxHp !== base.maxHp ||
@@ -513,7 +517,7 @@ function simulateChar(charId) {
   };
 }
 
-const results = ["oil", "asan", "kauko"].map(simulateChar);
+const results = ["oil", "asan", "kauko", "sing"].map(simulateChar);
 console.log(
   JSON.stringify(
     {
