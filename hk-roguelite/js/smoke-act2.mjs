@@ -319,6 +319,21 @@ function simulateChar(charId) {
     assert(pickShopConsumables(1).length === 1, "消耗品貨架抽唔到貨");
   }
 
+  // 通關總結：三角色各自要有一句（唔可以空白／重複）
+  {
+    const summaries = [];
+    for (const id of ["oil", "asan", "kauko"]) {
+      const s = CHARACTERS[id].clearSummary;
+      assert(typeof s === "string" && s.length >= 10, `${id} 缺 clearSummary`);
+      summaries.push(s);
+    }
+    assert(new Set(summaries).size === 3, "三角色 clearSummary 重複");
+    // route 要有（結算「主路線」欄用）
+    for (const id of ["oil", "asan", "kauko"]) {
+      assert(CHARACTERS[id].route, `${id} 缺 route（結算主路線會空白）`);
+    }
+  }
+
   // Act 銜接過場：入 Act2／Act3 之前各要有一句港味
   {
     for (const act of [2, 3]) {
