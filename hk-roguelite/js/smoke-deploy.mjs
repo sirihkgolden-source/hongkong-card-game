@@ -259,9 +259,58 @@ for (const need of ["index.html", "css/main.css", "js/main.js", "js/data.js", "j
   // ⑧ 直版唔受影響：landscape.css 唔可以改到 portrait
   assert(
     !/@media\s*\(orientation:\s*portrait\)/.test(land),
-    "landscape.css 唔應該有 portrait 媒體查詢（直版由 main.css 負責）"
+    "landscape.css 唔應該有 portrait 查詢（直版由 main.css 負責）"
   );
 }
+
+/* ---------- 9. 橫屏驗收（模擬量度邏輯，確保規則真係可以一屏） ---------- */
+
+/*
+ * 上一節只驗「規則存在」。呢節驗「規則計出嚟嘅高度真係入得落 390」。
+ * 做法：由 CSS 抽關鍵數值（gap、padding、min-height），砌一個高度預算，
+ * 睇下最壞情況（戰鬥頁 4 行 + 手牌）夠唔夠位。呢個係靜態估算，
+ * 但可以捉到「有人把 gap 改大 3 倍」之類嘅回歸。
+ */
+{
+  const land = readFileSync(join(ROOT, "css", "landscape.css"), "utf8");
+
+  // 抽 .screen-battle 的 gap（第一個值係 row-gap）
+  const sbBlock = /\.screen-battle\s*\{([^}]*)\}/.exec(land)[1];
+  const gapMatch = /gap:\s*([\d.]+)rem\s+([\d.]+)rem/.exec(sbBlock);
+  assert(gapMatch, "橫屏 .screen-battle 應該有明確 gap（row column）");
+  const rowGap = parseFloat(gapMatch[1]) * 16; // rem → px（16px 基準）
+  assert(rowGap <= 8, `橫屏 row-gap 應 ≤8px（一屏高度緊），實際 ${rowGap}px`);
+
+  // .app padding 上下
+  const appBlock = /\.app\s*\{([^}]*)\}/.exec(land);
+  assert(appBlock, "landscape.css 應該有 .app 規則");
+  const padMatch = /padding:\s*([\d.]+)rem/.exec(appBlock[1]);
+  assert(padMatch, "橫屏 .app 應該有明確 padding");
+  const padY = parseFloat(padMatch[1]) * 16 * 2; // 上下各一次
+  assert(padY <= 16, `橫屏 .app 上下 padding 合計應 ≤16px，實際 ${padY}px`);
+
+  // 高度預算：390 視口
+  // app padding(2×4.8) + 4 行 gap(3×4.8) + top(~110) + piles(26) + hand(~150) + log(~42)
+  const VIEWPORT = 390;
+  const budget = padY + rowGap * 3 + 110 + 26 + 150 + 42;
+  assert(
+    budget <= VIEWPORT,
+    `橫屏高度預算 ${Math.round(budget)}px 超出 390 視口（要麼縮 gap、要麼縮元件）`
+  );
+
+  // 手牌卡片高度：橫屏 96 闊 + 3:2 圖 => 圖 64 + 文字約 48 = 112
+  const cardBlock = /\.hand \.card-face,\s*\.card-face\s*\{([^}]*)\}/.exec(land);
+  assert(cardBlock, "搵唔到橫屏卡片規則");
+  const cw = /width:\s*(\d+)px/.exec(cardBlock[1]);
+  const cardWidth = cw ? Number(cw[1]) : 118;
+  assert(
+    cardWidth >= 80 && cardWidth <= 110,
+    `橫屏卡片闊度應 80–110px（太窄睇唔清、太闊一屏放唔到），實際 ${cardWidth}px`
+  );
+
+  console.log("  ✓ 橫屏高度預算（gap／padding／卡片闊度喺 390 內）");
+}
+
 
 /* ---------- 結果 ---------- */
 
