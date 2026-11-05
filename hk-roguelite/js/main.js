@@ -22,11 +22,15 @@ import {
   pickNodeEnemyId,
   enemyTag,
   pickEventId,
+  EVENT_POOLS,
   eventById,
   relicBonuses,
   pickShopRelics,
   pickPackCard,
   relicById,
+  CONSUMABLES,
+  pickShopConsumables,
+  consumableById,
 } from "./data.js";
 import {
   createBattle,
@@ -76,6 +80,7 @@ const state = {
   pendingBossId: null,
   shopMsg: "",
   shopRelics: /** @type {string[]} */ ([]),
+  shopConsumables: /** @type {string[]} */ ([]),
   pendingGoldFloat: 0,
 };
 
@@ -132,6 +137,7 @@ function enterAct(nextAct) {
   run.completed = [];
   run.nodeEnemies = {};
   run.nodeEvents = {};
+  run.nodeEventQueue = {};
   state.battle = null;
   state.eventResult = null;
   state.rewardChoices = [];
@@ -463,17 +469,21 @@ function renderReward() {
 function renderEvent() {
   const ev = currentNodeEvent();
   if (state.eventResult) {
+    const queue = eventQueueOf(currentNode());
+    const idx = queue.indexOf(state.run.nodeEvents?.[currentNode()?.id]);
+    const hasNext = idx >= 0 && idx < queue.length - 1;
     return `
       <main class="screen" aria-label="事件結果">
         <header class="brand-block brand-compact">
           <h1 class="section-title">${escapeHtml(ev.title)}</h1>
+          ${hasNext ? `<p class="tagline">仲有一件事喺前面</p>` : ""}
         </header>
         <section class="panel">
           <p class="lede">${escapeHtml(state.eventResult)}</p>
           <p class="run-inline">HP ${state.run.hp}/${state.run.maxHp} · 牌組 ${state.run.deck.length} · 金幣 ${state.run.gold}</p>
         </section>
         <div class="actions">
-          <button type="button" class="btn btn-primary btn-pressable" data-action="finish-event">繼續地圖</button>
+          <button type="button" class="btn btn-primary btn-pressable" data-action="finish-event">${hasNext ? "行埋下一件" : "繼續地圖"}</button>
         </div>
       </main>
     `;
@@ -531,6 +541,19 @@ function renderRest() {
         </button>`
     )
     .join("");
+  // 消耗品貨架（每局洗一次，一定有 1 件）
+  const consumableStock = (state.shopConsumables || [])
+    .map((id) => CONSUMABLES[id])
+    .filter(Boolean)
+    .map((c) => {
+      const affordable = has(c.price);
+      return `
+        <button type="button" class="event-choice${affordable ? "" : " is-disabled"}" data-action="buy-consumable" data-consumable="${escapeHtml(c.id)}" ${affordable ? "" : "disabled"}>
+          <strong>${escapeHtml(c.name)}<span class="relic-rarity">消耗</span></strong>
+          <span>花 ${c.price} 金幣 · ${escapeHtml(c.desc)}${affordable ? "" : "（金幣不足）"}</span>
+        </button>`;
+    })
+    .join("");
   const relicSell = ownedRelics
     .map(
       (r) => `
@@ -587,6 +610,15 @@ function renderRest() {
         </div>
         ${state.shopMsg ? `<p class="status" role="status">${escapeHtml(state.shopMsg)}</p>` : ""}
       </section>
+
+      ${
+        consumableStock
+          ? `<section class="panel panel-shop">
+        <h2>士多・消耗品</h2>
+        <div class="event-choices">${consumableStock}</div>
+      </section>`
+          : ""
+      }
 
       ${
         relicStock || ownedRelics.length
@@ -1218,9 +1250,37 @@ function nodeEventId(node) {
   const run = state.run;
   run.nodeEvents = run.nodeEvents || {};
   if (!run.nodeEvents[node.id]) {
-    run.nodeEvents[node.id] = node.eventId || pickEventId(run.act || 1);
+    const act = run.act || 1;
+    const pool = EVENT_POOLS[act] || EVENT_POOLS[1];
+    // 每局抽 2 個（唔重複），令同一格都有機會走唔同路線
+    const shuffled = [...pool].sort(() => Math.random() - 0.5);
+    const picks = node.eventId ? [node.eventId] : shuffled.slice(0, Math.min(2, pool.length));
+    run.nodeEvents[node.id] = picks[0] || pool[0];
+    run.nodeEventQueue = run.nodeEventQueue || {};
+    run.nodeEventQueue[node.id] = picks;
   }
   return run.nodeEvents[node.id];
+}
+
+/** 該事件節點仲有幾多個未行嘅事件（每局抽 2 個） */
+function eventQueueOf(node) {
+  const run = state.run;
+  if (!run?.nodeEventQueue || !node) return [];
+  return run.nodeEventQueue[node.id] || [];
+}
+
+/** 事件節點前進到下一個事件；冇下一個就返 false */
+function advanceEventQueue() {
+  const node = currentNode();
+  if (!node) return false;
+  const queue = eventQueueOf(node);
+  const idx = queue.indexOf(state.run.nodeEvents[node.id]);
+  if (idx >= 0 && idx < queue.length - 1) {
+    state.run.nodeEvents[node.id] = queue[idx + 1];
+    state.eventResult = null;
+    return true;
+  }
+  return false;
 }
 
 /** 目前事件節點對應嘅事件定義 */
@@ -1243,6 +1303,7 @@ function advanceMap(opts = {}) {
   state.statusMsg = "";
   state.shopMsg = "";
   state.shopRelics = [];
+  state.shopConsumables = [];
   state.pendingBossId = null;
   if (state.run.mapIndex >= currentMap().length) {
     if (state.run.act === 1) {
@@ -1280,8 +1341,13 @@ function enterNode() {
     state.screen = "event";
   } else if (node.type === "rest") {
     state.shopMsg = "";
-    // 每次入店重新抽貨（未擁有遺物）
-    state.shopRelics = pickShopRelics(state.run, 2);
+    // 每局入店洗一次貨：1 件消耗品 + 2 件遺物
+    if (!state.shopConsumables?.length) {
+      state.shopConsumables = pickShopConsumables(1);
+    }
+    if (!state.shopRelics?.length) {
+      state.shopRelics = pickShopRelics(state.run, 2);
+    }
     state.screen = "rest";
   }
 }
@@ -1400,6 +1466,11 @@ function onClick(event) {
       advanceMap();
       break;
     case "finish-event":
+      // 每局事件節點抽 2 個：行完第一個接第二個，行完先返地圖
+      if (advanceEventQueue()) {
+        render();
+        return;
+      }
       advanceMap();
       break;
     case "rest-heal": {
@@ -1457,10 +1528,27 @@ function onClick(event) {
       }
       state.run.gold -= SHOP.rerollCost;
       state.shopRelics = pickShopRelics(state.run, 2);
+      state.shopConsumables = pickShopConsumables(1);
       state.shopMsg = state.shopRelics.length
         ? `老闆換咗批貨：${state.shopRelics.map((id) => relicById(id)?.name ?? id).join("、")}。`
         : "老闆話今晚冇新貨喇。";
       state.pendingGoldFloat = -SHOP.rerollCost;
+      break;
+    }
+    case "buy-consumable": {
+      const csId = t.getAttribute("data-consumable");
+      const cs = CONSUMABLES[csId];
+      if (!cs) break;
+      if (state.run.gold < cs.price) {
+        state.shopMsg = "金幣不足";
+        break;
+      }
+      state.run.gold -= cs.price;
+      const msg = cs.apply(state.run);
+      // 買完即用，貨架移走該件
+      state.shopConsumables = (state.shopConsumables || []).filter((id) => id !== csId);
+      state.shopMsg = `「${cs.name}」——${msg}`;
+      state.pendingGoldFloat = -cs.price;
       break;
     }
     case "shop-relic": {

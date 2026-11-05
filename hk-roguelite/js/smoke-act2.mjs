@@ -16,6 +16,9 @@ import {
   actDisplayName,
   battleGoldReward,
   enemyById,
+  pickRewardChoices,
+  CONSUMABLES,
+  pickShopConsumables,
 } from "./data.js";
 import { createBattle, playCard, endTurn, startPlayerTurn } from "./battle.js";
 
@@ -153,6 +156,63 @@ function simulateChar(charId) {
     }
     // 每區至少 1 個事件，全部選項都即時可見（唔可以淨係跳下一格）
     assert(fullyVisible >= 1, `Act${act} 冇任何事件做到全選項即時可見`);
+    // 每區池要 ≥2 個，否則每局抽 2 個會抽到同一個
+    assert(pool.length >= 2, `Act${act} 事件池少於 2 個，每局唔會唔同`);
+  }
+
+  // ① 選牌傾向：三角色各自要明顯偏一類（唔可以揀邊個都一樣）
+  {
+    const classify = (id) => {
+      const c = CARDS[id];
+      if (!c) return "?";
+      if (c.owner) return "專屬";
+      if (c.dmg && !c.block && !c.heal && !c.draw) return "攻擊";
+      if ((c.block || c.heal) && !c.draw) return "守";
+      if (c.draw) return "抽牌";
+      return "攻擊+";
+    };
+    const dominant = {};
+    for (const cid of ["oil", "asan", "kauko"]) {
+      const tally = {};
+      for (let i = 0; i < 200; i += 1) {
+        for (const id of pickRewardChoices(3, [], cid)) {
+          const k = classify(id);
+          tally[k] = (tally[k] || 0) + 1;
+        }
+      }
+      const total = Object.values(tally).reduce((a, b) => a + b, 0);
+      const [topKind, topN] = Object.entries(tally).sort((a, b) => b[1] - a[1])[0];
+      const share = topN / total;
+      // 主路線要明顯（≥35%），否則「一眼分唔到」
+      assert(share >= 0.35, `${cid} 主路線 ${topKind} 只佔 ${(share * 100) | 0}%，辨識度不足`);
+      // 專屬牌唔可以蓋過主路線
+      assert(topKind !== "專屬", `${cid} 選牌被專屬牌主導，角色路線被稀釋`);
+      dominant[cid] = topKind;
+    }
+    // 三個角色主路線要唔同
+    assert(new Set(Object.values(dominant)).size === 3, `三角色主路線重複：${JSON.stringify(dominant)}`);
+  }
+
+  // ③ 消耗品：每件都要有價、有說明、apply 真係改局
+  {
+    const csIds = Object.keys(CONSUMABLES);
+    assert(csIds.length >= 1, "冇消耗品");
+    for (const id of csIds) {
+      const c = CONSUMABLES[id];
+      assert(c.name && c.desc && c.flavor, `${id} 缺名／說明／風味`);
+      assert(typeof c.price === "number" && c.price > 0, `${id} 價錢唔合法`);
+      const probe = { hp: 30, maxHp: 60, gold: 0, deck: ["S01"], relics: [] };
+      const msg = c.apply(probe);
+      const visible =
+        probe.hp !== 30 ||
+        probe.maxHp !== 60 ||
+        probe.deck.length !== 1 ||
+        (probe.nextBattleEnergyBonus || 0) > 0;
+      assert(visible, `${id} 買完冇任何可見效果`);
+      assert(typeof msg === "string" && msg.length > 0, `${id} 冇回饋文案`);
+    }
+    // 每次洗貨都要抽到 ≥1 件
+    assert(pickShopConsumables(1).length === 1, "消耗品貨架抽唔到貨");
   }
 
   for (const node of ACT1_MAP) {
