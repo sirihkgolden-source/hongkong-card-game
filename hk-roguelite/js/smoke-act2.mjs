@@ -322,6 +322,53 @@ function simulateChar(charId) {
     assert(pickShopConsumables(1).length === 1, "消耗品貨架抽唔到貨");
   }
 
+  // 結束回合：敵人行動後血量／擋要有變化，唔可以靜跳
+  {
+    const c = CHARACTERS.oil;
+    const mkRun = () => ({
+      characterId: "oil",
+      hp: c.maxHp,
+      maxHp: c.maxHp,
+      energy: 3,
+      deck: [...c.starterDeck],
+      relics: [],
+      nextBattleEnergyPenalty: 0,
+      nextBattleEnergyBonus: 0,
+      nextBattleBlock: 0,
+    });
+    // 攻擊意圖：結束回合後玩家血量應該減少（或擋被消耗）
+    {
+      const b = createBattle(mkRun(), enemyById("E01"));
+      startPlayerTurn(b);
+      b.intents = [{ kind: "attack", value: 7, label: "偷襲 7" }];
+      b.intentIndex = 0;
+      const hpBefore = b.playerHp;
+      const blockBefore = b.playerBlock;
+      endTurn(b);
+      assert(
+        b.playerHp < hpBefore || b.playerBlock < blockBefore,
+        "結束回合後血量／擋冇變化（靜跳）"
+      );
+    }
+    // 防守意圖：敵人擋要增加
+    {
+      const b = createBattle(mkRun(), enemyById("E01"));
+      startPlayerTurn(b);
+      b.intents = [{ kind: "block", value: 5, label: "隱影擋 5" }];
+      b.intentIndex = 0;
+      const blockBefore = b.enemyBlock;
+      endTurn(b);
+      assert(b.enemyBlock > blockBefore, "防守意圖冇加擋");
+    }
+    // 每次結束回合都要有返回結果（唔可以 null，否則 UI 冇嘢顯示）
+    {
+      const b = createBattle(mkRun(), enemyById("E01"));
+      startPlayerTurn(b);
+      const r = endTurn(b);
+      assert(r && typeof r.kind === "string", "endTurn 要回傳 kind 畀 UI 用");
+    }
+  }
+
   // 敵人意圖：四種 kind 都要有標籤，唔可以空白
   {
     const knownKinds = new Set(["attack", "block", "buff_attack", "buff", "weaken"]);

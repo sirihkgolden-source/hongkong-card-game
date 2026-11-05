@@ -1687,16 +1687,49 @@ async function playCardWithFeel(handIndex, cardEl) {
   render();
 }
 
+/** 敵行動結果：喺敵人名牌旁出一個短標記，令「意圖 → 執行」順序可見 */
+function flashEnemyAct(result, kind) {
+  const meta = document.querySelector(".fighter.enemy .fighter-meta");
+  if (!meta || !result) return;
+  const label =
+    kind === "attack"
+      ? result.dealt > 0
+        ? `出手 ${result.dealt}`
+        : "全擋"
+      : kind === "block"
+        ? "加擋"
+        : kind === "buff_attack"
+          ? "蓄勢"
+          : kind === "weaken"
+            ? "陰招"
+            : "行動";
+  meta.classList.remove("is-acting");
+  void meta.offsetWidth;
+  meta.classList.add("is-acting");
+  meta.setAttribute("data-act", label);
+  setTimeout(() => {
+    meta.classList.remove("is-acting");
+    meta.removeAttribute("data-act");
+  }, 900);
+}
+
 async function endTurnWithFeel() {
   if (state.busy || !state.battle || state.battle.over) return;
   state.busy = true;
+  // 按下即有回饋：掣轉文字 + 禁用，唔好靜過
+  const btnEl = document.querySelector('[data-action="end-turn"]');
+  if (btnEl) {
+    btnEl.disabled = true;
+    btnEl.classList.add("is-pending");
+    btnEl.innerHTML = `<span class="end-turn-pending">對面行動中…</span>`;
+  }
+  sfx.click();
+
   const preview = getIntent(state.battle);
   const intentEl = document.getElementById("enemy-intent");
 
-  // 只有即將出手攻擊先預示 0.2–0.3s
-  if (preview?.kind === "attack") {
-    await telegraphIntent(intentEl, 240);
-  }
+  // 敵行動預示：所有 kind 都閃一下，唔止攻擊
+  await telegraphIntent(intentEl, preview?.kind === "attack" ? 240 : 180);
 
   const result = endTurn(state.battle);
   syncRunHpFromBattle();
@@ -1711,6 +1744,8 @@ async function endTurnWithFeel() {
 
   if (result?.kind === "attack") {
     const player = document.getElementById("fighter-player");
+    // 敵行動結果：喺敵人欄出「出手」標記，順序一目了然
+    flashEnemyAct(result, "attack");
     if (result.blocked) {
       sfx.block();
       floatText(player, `擋 ${result.blocked}`, "block");
@@ -1733,6 +1768,20 @@ async function endTurnWithFeel() {
       flashPassiveChip();
       await wait(140);
     }
+  } else if (result) {
+    // 非攻擊意圖（block／buff／weaken）：都要有可見行動，唔好靜跳
+    flashEnemyAct(result, result.kind);
+    const enemy = document.getElementById("enemy-portrait");
+    if (result.kind === "block") {
+      floatText(enemy, `擋 +${result.intent?.value ?? ""}`, "block");
+    } else if (result.kind === "buff_attack" || result.kind === "buff") {
+      floatText(enemy, "蓄勢", "kuaisou");
+    } else if (result.kind === "weaken") {
+      floatText(enemy, "陰招", "dangkou");
+    } else {
+      floatText(enemy, "行動", "block");
+    }
+    await wait(220);
   } else {
     await wait(60);
   }
@@ -1740,7 +1789,6 @@ async function endTurnWithFeel() {
   // 回合結束回饋：唔好靜過——講一句短港味 + 顯示關鍵數字
   const b = state.battle;
   if (b && !b.over) {
-    const enemy = document.getElementById("enemy-portrait");
     if (result?.kind === "attack") {
       const dealt = result.dealt || 0;
       const blocked = result.blocked || 0;
@@ -1754,10 +1802,8 @@ async function endTurnWithFeel() {
         state.pendingTurnLine = "捱過咗一下。";
       }
     } else if (result?.kind === "block") {
-      floatText(enemy, `擋 +${b.enemyBlock}`, "block");
       state.pendingTurnLine = "對面守緊——下回合要撞穿佢。";
     } else if (result?.kind === "buff_attack" || result?.kind === "buff") {
-      floatText(enemy, "蓄勢", "dmg");
       state.pendingTurnLine = "對面喺度蓄勢，下擊會更痛。";
     } else if (result?.kind === "weaken") {
       state.pendingTurnLine = "被踩一腳——下張攻擊會鈍啲。";
