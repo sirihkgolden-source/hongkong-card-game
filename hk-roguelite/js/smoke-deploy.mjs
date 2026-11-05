@@ -173,6 +173,96 @@ for (const need of ["index.html", "css/main.css", "js/main.js", "js/data.js", "j
   );
 }
 
+/* ---------- 8. 手機橫屏（主驗收尺寸） ---------- */
+
+/*
+ * 橫屏高度只有 360–430px，垂直堆疊一定唔夠位。
+ * 所以另開 css/landscape.css 喺 `(orientation: landscape) and (max-height: 500px)`
+ * 之下改三欄佈局。呢度驗：
+ *   ① 檔案存在、有被 index.html 引入
+ *   ② 有正確嘅 media query（唔會誤中桌面）
+ *   ③ 戰鬥頁真係三欄 grid
+ *   ④ 手牌同操作欄各自有 grid-area（唔會疊埋）
+ */
+{
+  const landscapePath = join(ROOT, "css", "landscape.css");
+  assert(existsSync(landscapePath), "缺少 css/landscape.css（橫屏佈局）");
+  assert(
+    /css\/landscape\.css/.test(html),
+    "index.html 未引入 css/landscape.css"
+  );
+
+  const land = readFileSync(landscapePath, "utf8");
+
+  // ① media query：一定要 landscape + 高度上限（防桌面誤中）
+  assert(
+    /@media\s*\(orientation:\s*landscape\)\s*and\s*\(max-height:\s*\d+px\)/.test(land),
+    "landscape.css 要用 (orientation: landscape) and (max-height: Npx)，否則桌面都會中"
+  );
+  const heightCap = /max-height:\s*(\d+)px/.exec(land);
+  assert(
+    heightCap && Number(heightCap[1]) <= 520,
+    `橫屏高度上限應 ≤520px（實測手機橫屏 360–430），實際 ${heightCap && heightCap[1]}`
+  );
+
+  // ② 戰鬥頁：三欄 grid
+  const battleLand = /\.screen-battle\s*\{([^}]*)\}/.exec(land);
+  assert(battleLand, "landscape.css 應該有 .screen-battle 規則");
+  const bl = battleLand[1];
+  assert(/display:\s*grid/.test(bl), "橫屏 .screen-battle 要用 grid");
+  assert(
+    /grid-template-columns:\s*minmax\(0,\s*1fr\)\s+minmax\(0,\s*1\.\d+fr\)\s+minmax\(0,\s*0?\.?\d+fr\)/.test(bl) ||
+      /grid-template-columns:[^;]*minmax\(0,\s*1fr\)[^;]*minmax\(0,\s*1fr\)[^;]*minmax\(0,\s*1fr\)/.test(bl),
+    "橫屏 .screen-battle 應該係三欄（左 HUD / 中手牌 / 右操作）"
+  );
+  assert(/grid-template-areas/.test(bl), "橫屏 .screen-battle 應該用 grid-template-areas 排位");
+  assert(/max-height/.test(bl), "橫屏 .screen-battle 要限高（否則一定溢出）");
+
+  // ③ 手牌同操作欄各有 grid-area，唔會疊
+  assert(/\.hand\s*\{[^}]*grid-area:\s*hand/.test(land), "橫屏 .hand 要 grid-area: hand");
+  assert(
+    /\.battle-actions\s*\{[^}]*grid-area:\s*act/.test(land),
+    "橫屏 .battle-actions 要 grid-area: act（即結束回合掣固定喺右欄）"
+  );
+
+  // ④ 橫屏卡片要縮細（一屏見到多幾張）
+  const cardLand = /\.hand \.card-face,\s*\.card-face\s*\{([^}]*)\}/.exec(land);
+  assert(cardLand, "landscape.css 應該有卡片縮細規則");
+  const cardW = /width:\s*(\d+)px/.exec(cardLand[1]);
+  assert(
+    cardW && Number(cardW[1]) <= 110,
+    `橫屏卡片闊度應 ≤110px（直版 118），實際 ${cardW && cardW[1]}`
+  );
+
+  // ⑤ 地圖要三欄（6 格 → 2 行）
+  assert(
+    /\.map-list\s*\{[^}]*grid-template-columns:\s*repeat\(3,/.test(land),
+    "橫屏 .map-list 應該係 3 欄（6 格 → 2 行）"
+  );
+
+  // ⑥ 事件選項要橫排三欄
+  assert(
+    /\.event-choices\s*\{[^}]*grid-template-columns:\s*repeat\(3,/.test(land),
+    "橫屏 .event-choices 應該係 3 欄（三選一橫排）"
+  );
+
+  // ⑦ 結算底欄：橫向並排，並收起副標（省高度）
+  assert(
+    /\.result-bar\s*\{[^}]*flex-direction:\s*row/.test(land),
+    "橫屏 .result-bar 應該 flex-direction: row（兩粒掣並排，省高度）"
+  );
+  assert(
+    /\.result-bar \.btn-rerun-sub\s*\{[^}]*display:\s*none/.test(land),
+    "橫屏應該收起 .btn-rerun-sub（副標題佔高度）"
+  );
+
+  // ⑧ 直版唔受影響：landscape.css 唔可以改到 portrait
+  assert(
+    !/@media\s*\(orientation:\s*portrait\)/.test(land),
+    "landscape.css 唔應該有 portrait 媒體查詢（直版由 main.css 負責）"
+  );
+}
+
 /* ---------- 結果 ---------- */
 
 if (failures.length) {
