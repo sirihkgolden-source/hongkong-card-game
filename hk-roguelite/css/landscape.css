@@ -15,20 +15,44 @@
 
    判斷式：orientation: landscape + max-height: 500px
    （手機橫屏高 320–430；桌面橫屏通常 >600，唔會誤中）
+
+   真機要點：
+   - 用 100dvh（保留 100vh 兜底）——手機瀏覽器 chrome 會令 100vh
+     大於可見區，再加 overflow:hidden 就會「手牌裁底／睇唔到結束回合」
+   - 操作欄 flex-shrink:0，結束回合／暫停永遠喺屏內
+   - 手牌卡 max-height:100%，跟行高縮，唔好撑出嚟被裁
    ═══════════════════════════════════════════════════════════ */
 
 @media (orientation: landscape) and (max-height: 500px) {
-  /* ── 全域：壓縮垂直間距，禁水平捲動 ── */
+  /* ── 全域：壓縮垂直間距，禁水平捲動／偏右 ── */
   html,
   body {
     overflow-x: hidden;
+    overflow-y: hidden;
     max-width: 100vw;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
   }
 
   .app {
-    min-height: auto;
+    min-height: 0;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
     padding: 0.28rem 0.4rem;
+    padding-top: max(0.2rem, env(safe-area-inset-top, 0px));
+    padding-right: max(0.35rem, env(safe-area-inset-right, 0px));
+    padding-bottom: max(0.2rem, env(safe-area-inset-bottom, 0px));
+    padding-left: max(0.35rem, env(safe-area-inset-left, 0px));
     align-items: stretch;
+    justify-items: stretch;
+    justify-content: center;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    width: 100%;
+    max-width: 100%;
   }
 
   .screen,
@@ -39,6 +63,7 @@
     min-width: 0;
     min-height: 0;
     gap: 0.25rem;
+    margin-inline: auto;
   }
 
   /* ════════════════════════════════════════════
@@ -55,8 +80,11 @@
       "hand  hand   act";
     column-gap: 0.35rem;
     row-gap: 0.22rem;
+    /* 100vh 兜底（舊機）→ 100dvh 對齊可見視口（防裁底） */
     height: calc(100vh - 0.56rem);
+    height: calc(100dvh - 0.56rem);
     max-height: calc(100vh - 0.56rem);
+    max-height: calc(100dvh - 0.56rem);
     overflow: hidden;
   }
 
@@ -228,7 +256,7 @@
     font-size: 0.56rem;
   }
 
-  /* ── 左下：手牌（一排橫滑，唔換行） ── */
+  /* ── 左下：手牌（一排橫滑，唔換行；卡高跟內容，硬上限＝行高） ── */
   .hand {
     grid-area: hand;
     display: flex;
@@ -239,7 +267,8 @@
     min-width: 0;
     min-height: 0;
     max-height: 100%;
-    padding: 0.05rem 0 0.12rem;
+    height: 100%;
+    padding: 0.05rem 0 0.08rem;
     overflow-x: auto;
     overflow-y: hidden;
     overscroll-behavior-x: contain;
@@ -251,15 +280,25 @@
   .card-face {
     flex: 0 0 92px;
     width: 92px;
-    padding: 0.24rem 0.26rem 0.28rem;
-    gap: 0.1rem;
+    max-width: 92px;
+    /* 硬上限：唔可以高過手牌行，否則 overflow:hidden 會裁底 */
+    max-height: calc(100% - 2px);
+    height: auto;
+    padding: 0.2rem 0.22rem 0.22rem;
+    gap: 0.06rem;
     border-radius: 8px;
     min-height: 0;
+    overflow: hidden;
   }
 
+  .hand .card-art,
   .card-art {
     aspect-ratio: 16 / 10;
+    max-height: 3rem;
+    width: 100%;
+    object-fit: cover;
     border-radius: 5px;
+    flex: 0 1 auto;
   }
 
   .card-name {
@@ -290,29 +329,36 @@
     display: none;
   }
 
-  /* ── 右下：操作（結束回合 + 暫停，永遠可見） ── */
+  /* ── 右下：操作（結束回合 + 暫停，永遠可見，唔畀壓縮） ── */
   .battle-actions {
     grid-area: act;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     align-items: stretch;
-    gap: 0.26rem;
+    gap: 0.22rem;
     min-height: 0;
+    height: 100%;
+    max-height: 100%;
     padding-bottom: 0.05rem;
+    flex-shrink: 0;
+    overflow: visible;
+    z-index: 6;
   }
 
   .battle-actions .btn {
-    min-height: 46px;
-    font-size: 0.84rem;
+    min-height: 42px;
+    font-size: 0.8rem;
     width: 100%;
-    padding: 0.4rem 0.5rem;
+    padding: 0.32rem 0.45rem;
+    flex: 0 0 auto;
   }
 
   .pause-btn--battle {
-    min-height: 38px;
-    font-size: 0.72rem;
+    min-height: 34px;
+    font-size: 0.7rem;
     width: 100%;
+    flex: 0 0 auto;
   }
 
   /* 音效掣喺戰鬥頁收起（設定頁有） */
@@ -385,7 +431,9 @@
       "foot";
     gap: 0.24rem;
     height: calc(100vh - 0.56rem);
+    height: calc(100dvh - 0.56rem);
     max-height: calc(100vh - 0.56rem);
+    max-height: calc(100dvh - 0.56rem);
     overflow: hidden;
   }
 
@@ -480,9 +528,11 @@
 
   .map-cta,
   .map-done {
-    font-size: 0.54rem;
-    padding: 0.02rem 0.24rem;
-    min-height: 0;
+    font-size: 0.58rem;
+    padding: 0.12rem 0.36rem;
+    /* 橫屏都要掂得到：唔可以再 min-height:0 壓到 15px */
+    min-height: 28px;
+    min-width: 52px;
   }
 
   .foot-note {
@@ -501,50 +551,138 @@
   }
 
   /* ════════════════════════════════════════════
-     ③ 事件頁：三選項橫排
+     ③ 事件頁：三選項橫排；整頁鎖高，大掣可見
      ════════════════════════════════════════════ */
+  .screen:has(.event-choices) {
+    height: calc(100vh - 0.56rem);
+    height: calc(100dvh - 0.56rem);
+    max-height: calc(100vh - 0.56rem);
+    max-height: calc(100dvh - 0.56rem);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    gap: 0.2rem;
+  }
+
+  .screen:has(.event-choices) .brand-block {
+    margin: 0;
+  }
+
+  .screen:has(.event-choices) .panel {
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .screen:has(.event-choices) .panel > .lede {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 0.62rem;
+    line-height: 1.3;
+    margin: 0;
+  }
+
+  .screen:has(.event-choices) .actions {
+    flex-shrink: 0;
+  }
+
   .event-choices {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.3rem;
+    min-height: 0;
+    flex: 1 1 auto;
+  }
+
+  /* 選項多過 3（士多／休息）：改兩欄，內部自己滾，底欄離開掣固定 */
+  .event-choices:has(> :nth-child(4)) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    max-height: none;
   }
 
   .event-choice {
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    gap: 0.12rem;
-    padding: 0.36rem 0.42rem;
-    font-size: 0.66rem;
-    line-height: 1.32;
+    gap: 0.1rem;
+    padding: 0.28rem 0.36rem;
+    font-size: 0.64rem;
+    line-height: 1.28;
     min-height: 0;
     text-align: left;
   }
 
   .event-choice .choice-label {
-    font-size: 0.68rem;
-    line-height: 1.25;
+    font-size: 0.66rem;
+    line-height: 1.2;
   }
 
   .event-choice .choice-effect {
-    font-size: 0.58rem;
-    line-height: 1.3;
+    font-size: 0.56rem;
+    line-height: 1.25;
   }
 
   .event-art {
-    max-height: 3.4rem;
+    max-height: 2.8rem;
     object-fit: cover;
     border-radius: 7px;
   }
 
+  .event-art img {
+    max-height: 2.8rem;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  /* 休息／士多：長列表唔好逼成頁 scroll；內容區滾、離開掣鎖底 */
+  .screen:has(.panel-shop),
+  .screen:has([data-action="leave-shop"]) {
+    height: calc(100vh - 0.56rem);
+    height: calc(100dvh - 0.56rem);
+    max-height: calc(100vh - 0.56rem);
+    max-height: calc(100dvh - 0.56rem);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 0.18rem;
+  }
+
+  .screen:has(.panel-shop) > .panel,
+  .screen:has(.panel-shop) > .panel-shop,
+  .screen:has([data-action="leave-shop"]) > .panel,
+  .screen:has([data-action="leave-shop"]) > .panel-shop {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    flex: 1 1 auto;
+  }
+
+  .screen:has([data-action="leave-shop"]) > .actions {
+    flex: 0 0 auto;
+    margin-top: 0;
+  }
+
+  .screen:has([data-action="leave-shop"]) > .actions .btn {
+    min-height: 36px;
+  }
+
   /* ════════════════════════════════════════════
-     ④ 戰果頁：兩欄 + 固定底欄
+     ④ 戰果頁：兩欄 + 固定底欄（全寬，唔鎖 430）
      ════════════════════════════════════════════ */
   .screen-result {
     /* 底欄高 47px（padding 0.2rem×2 + btn 40）→ 預留 3.1rem 夠，唔好留太多 */
     padding-bottom: 3.1rem;
     gap: 0.2rem;
     max-height: calc(100vh - 0.56rem);
+    max-height: calc(100dvh - 0.56rem);
+    height: calc(100vh - 0.56rem);
+    height: calc(100dvh - 0.56rem);
     min-height: 0;
     overflow: hidden;
   }
@@ -666,13 +804,18 @@
     font-size: 0.66rem;
   }
 
-  /* 底欄：兩粒掣並排貼底 */
+  /* 底欄：兩粒掣並排貼底；橫屏用滿寬（唔再 min(430px)） */
   .result-bar {
     padding: 0.2rem 0.4rem;
+    padding-bottom: max(0.2rem, env(safe-area-inset-bottom, 0px));
     gap: 0.3rem;
     flex-direction: row;
     align-items: center;
     min-height: 0;
+    width: min(100%, calc(100vw - 0.7rem));
+    max-width: 100%;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .result-bar .btn {
@@ -1004,5 +1147,77 @@
   .foot-note {
     font-size: 0.5rem;
     margin: 0;
+  }
+
+  /* ════════════════════════════════════════════
+     ⑨ 極矮橫屏（≤360）：再削一層，保住結束回合／暫停
+     ════════════════════════════════════════════ */
+  @media (max-height: 360px) {
+    .app {
+      padding: 0.16rem 0.3rem;
+    }
+
+    .screen-battle {
+      row-gap: 0.14rem;
+      column-gap: 0.28rem;
+      height: calc(100vh - 0.32rem);
+      height: calc(100dvh - 0.32rem);
+      max-height: calc(100vh - 0.32rem);
+      max-height: calc(100dvh - 0.32rem);
+    }
+
+    .screen-wide,
+    .screen-result,
+    .screen:has(.event-choices),
+    .screen:has([data-action="leave-shop"]) {
+      height: calc(100vh - 0.32rem);
+      height: calc(100dvh - 0.32rem);
+      max-height: calc(100vh - 0.32rem);
+      max-height: calc(100dvh - 0.32rem);
+    }
+
+    #enemy-portrait {
+      max-height: 38%;
+    }
+
+    .battle-log {
+      font-size: 0.56rem;
+      padding: 0.18rem 0.3rem;
+    }
+
+    .hand .card-face,
+    .card-face {
+      flex: 0 0 78px;
+      width: 78px;
+      max-width: 78px;
+      padding: 0.14rem 0.16rem;
+    }
+
+    .card-name {
+      font-size: 0.6rem;
+      -webkit-line-clamp: 1;
+    }
+
+    .card-type,
+    .card-stats {
+      font-size: 0.5rem;
+    }
+
+    .battle-actions .btn {
+      min-height: 36px;
+      font-size: 0.74rem;
+      padding: 0.22rem 0.35rem;
+    }
+
+    .pause-btn--battle {
+      min-height: 28px;
+      font-size: 0.64rem;
+    }
+
+    .result-bar .btn,
+    .result-bar .btn-rerun {
+      min-height: 34px;
+      font-size: 0.72rem;
+    }
   }
 }

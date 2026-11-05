@@ -306,11 +306,15 @@ for (const need of ["index.html", "css/main.css", "js/main.js", "js/data.js", "j
   const rowGap = parseFloat(gapMatch[1]) * 16;
   assert(rowGap <= 6, `橫屏 row-gap 應 ≤6px（三列佈局高度緊），實際 ${rowGap}px`);
 
-  // height 用 calc(100vh - Nrem)
+  // height 用 calc(100vh - Nrem)；允許後面再加 100dvh（真機可見視口）
   const hMatch = /height:\s*calc\(100vh\s*-\s*([\d.]+)rem\)/.exec(land);
   assert(hMatch, "橫屏 .screen-battle 高度要用 calc(100vh - Nrem)");
   const hOffset = parseFloat(hMatch[1]) * 16;
   assert(hOffset <= 12, `橫屏 100vh 減少量應 ≤12px，實際 ${hOffset}px`);
+  assert(
+    /height:\s*calc\(100dvh\s*-\s*[\d.]+rem\)/.test(land),
+    "橫屏應該同時提供 100dvh（防手機瀏覽器 chrome 裁底）"
+  );
 
   // app 上下 padding（搵第一個 .app 區塊）
   const appMatch = /\.app\s*\{([\s\S]*?)\}/.exec(land);
