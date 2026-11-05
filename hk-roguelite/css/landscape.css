@@ -1,0 +1,539 @@
+/* ═══════════════════════════════════════════════════════════
+   手機橫屏（主驗收尺寸）：844×390、780×360、667×375 等
+   ───────────────────────────────────────────────────────────
+   橫屏高度只有 360–430px，垂直堆疊一定唔夠位。
+   所以戰鬥頁改成三欄（左：敵我 HUD｜中：手牌｜右：牌堆＋操作），
+   地圖／事件／戰果改成兩欄，全部一屏、唔使上下拉。
+
+   判斷式用 orientation + 高度上限，唔用固定闊度：
+   橫屏手機高度多數 ≤ 500px，桌面橫屏通常高過 600px，唔會誤中。
+   ═══════════════════════════════════════════════════════════ */
+
+@media (orientation: landscape) and (max-height: 500px) {
+  /* ── 全域：壓縮所有垂直間距 ── */
+  html,
+  body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  .app {
+    min-height: auto;
+    padding: 0.3rem 0.4rem;
+    align-items: start;
+  }
+
+  /* ── 戰鬥頁：三欄 ── */
+  .screen-battle {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr) minmax(0, 0.95fr);
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "top   top   top"
+      "piles piles piles"
+      "hand  hand  act"
+      "log   log   log";
+    gap: 0.3rem 0.45rem;
+    width: 100%;
+    max-width: 100%;
+    height: calc(100vh - 0.6rem);
+    max-height: calc(100vh - 0.6rem);
+    min-height: 0;
+    align-content: stretch;
+  }
+
+  /* 敵人／玩家：左右並排喺頂部（原本已係 grid） */
+  .battle-top {
+    grid-area: top;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+    min-height: 0;
+  }
+
+  /* 兩張 fighter 卡都縮細 */
+  .fighter {
+    padding: 0.32rem 0.4rem;
+    border-radius: 9px;
+    grid-template-columns: 54px 1fr;
+    gap: 0.4rem;
+  }
+
+  .fighter img,
+  #enemy-portrait {
+    width: 54px;
+    height: 54px;
+    object-fit: cover;
+    border-radius: 7px;
+  }
+
+  .fighter-meta {
+    gap: 0.1rem;
+  }
+
+  .fighter-meta strong {
+    font-size: 0.76rem;
+    line-height: 1.2;
+  }
+
+  .hp-bar {
+    height: 7px;
+  }
+
+  .hp-text {
+    font-size: 0.66rem;
+    line-height: 1.2;
+  }
+
+  /* 意圖／被動：再細一級，唔好食高度 */
+  .intent {
+    font-size: 0.64rem;
+    padding: 0.1rem 0.3rem;
+    gap: 0.2rem;
+  }
+
+  .passive-chip {
+    font-size: 0.62rem;
+    padding: 0.08rem 0.3rem;
+  }
+
+  .stat-row {
+    gap: 0.25rem;
+  }
+
+  .stat-pill {
+    padding: 0.08rem 0.32rem;
+    font-size: 0.66rem;
+  }
+
+  .stat-pill .stat-num {
+    font-size: 0.78rem;
+  }
+
+  .battle-route,
+  .energy-hint {
+    font-size: 0.6rem;
+  }
+
+  /* 牌堆列：貼頂第二行，橫排四格 */
+  .pile-row {
+    grid-area: piles;
+    margin: 0;
+    gap: 0.25rem;
+  }
+
+  .pile-row > * {
+    min-height: 26px;
+    padding-block: 0.05rem;
+    font-size: 0.64rem;
+  }
+
+  .pile-icon {
+    font-size: 0.6rem;
+  }
+
+  /* 手牌：佔中左，橫滑 */
+  .hand {
+    grid-area: hand;
+    align-self: stretch;
+    align-content: start;
+    align-items: start;
+    padding: 0.1rem 0 0.15rem;
+    gap: 0.35rem;
+    min-height: 0;
+    max-height: 100%;
+  }
+
+  /* 卡片縮細，令一屏見到多幾張 */
+  .hand .card-face,
+  .card-face {
+    flex: 0 0 96px;
+    width: 96px;
+    padding: 0.28rem 0.3rem 0.32rem;
+    gap: 0.12rem;
+    border-radius: 9px;
+  }
+
+  .card-art {
+    aspect-ratio: 3 / 2;
+    border-radius: 6px;
+  }
+
+  .card-name {
+    font-size: 0.72rem;
+    line-height: 1.25;
+  }
+
+  .card-type,
+  .card-stats {
+    font-size: 0.6rem;
+    line-height: 1.25;
+  }
+
+  .card-cost {
+    width: 18px;
+    height: 18px;
+    font-size: 0.62rem;
+    top: 3px;
+    left: 3px;
+  }
+
+  /* 操作欄：右邊直排（結束回合 + 暫停 + 音效） */
+  .battle-actions {
+    grid-area: act;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: stretch;
+    gap: 0.3rem;
+    min-height: 0;
+  }
+
+  .battle-actions .btn {
+    min-height: 42px;
+    font-size: 0.82rem;
+  }
+
+  .pause-btn--battle {
+    min-height: 38px;
+    font-size: 0.72rem;
+  }
+
+  /* 音效掣：橫屏唔顯示（設定頁有） */
+  .screen-battle .sfx-toggle {
+    display: none;
+  }
+
+  /* 戰鬥 log：最底一行，限高可滾 */
+  .battle-log {
+    grid-area: log;
+    max-height: 2.6rem;
+    overflow-y: auto;
+    font-size: 0.64rem;
+    padding: 0.2rem 0.4rem;
+    margin: 0;
+  }
+
+  /* 勝／敗 banner 唔好撐高 */
+  .battle-banner {
+    font-size: 0.9rem;
+    padding: 0.15rem 0.6rem;
+    position: absolute;
+    top: 0.3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9;
+  }
+
+  .boss-afterword {
+    display: none;
+  }
+
+  /* 牌組預覽展開時：唔好撐爆，內部自己滾 */
+  .deck-panel--battle {
+    grid-area: hand;
+    max-height: 100%;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0.4rem 0.5rem;
+  }
+
+  .deck-panel--battle .deck-row {
+    padding: 0.18rem 0.35rem;
+    font-size: 0.68rem;
+  }
+
+  /* ── 地圖頁：兩欄 ── */
+  .screen-wide {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "bar   bar"
+      "strip strip"
+      "list  list"
+      "foot  foot";
+    gap: 0.3rem 0.5rem;
+    width: 100%;
+    max-width: 100%;
+    height: calc(100vh - 0.6rem);
+    max-height: calc(100vh - 0.6rem);
+  }
+
+  .run-bar {
+    grid-area: bar;
+    padding: 0;
+    margin: 0;
+    align-items: center;
+  }
+
+  .run-bar .run-title {
+    font-size: 0.86rem;
+  }
+
+  .run-bar .eyebrow {
+    font-size: 0.62rem;
+  }
+
+  .run-stats {
+    font-size: 0.66rem;
+    gap: 0.3rem;
+  }
+
+  .act-strip {
+    grid-area: strip;
+    margin: 0;
+  }
+
+  .act-strip li {
+    padding: 0.15rem 0.35rem;
+    font-size: 0.62rem;
+  }
+
+  .map-panel {
+    grid-area: list;
+    min-height: 0;
+    margin: 0;
+    padding: 0.4rem 0.5rem;
+    overflow: hidden;
+  }
+
+  .map-panel h2 {
+    font-size: 0.8rem;
+    margin: 0 0 0.25rem;
+  }
+
+  /* 六格改三欄 × 兩行，全部入一屏 */
+  .map-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.3rem;
+    height: 100%;
+    align-content: start;
+  }
+
+  .map-node {
+    padding: 0.28rem 0.34rem;
+    gap: 0.12rem 0.28rem;
+    border-radius: 8px;
+  }
+
+  .map-idx {
+    width: 1.15rem;
+    height: 1.15rem;
+    font-size: 0.62rem;
+  }
+
+  .map-type {
+    font-size: 0.56rem;
+  }
+
+  .map-sub,
+  .map-title {
+    font-size: 0.62rem;
+    line-height: 1.2;
+  }
+
+  .map-cta,
+  .map-done {
+    font-size: 0.58rem;
+    padding: 0.02rem 0.26rem;
+  }
+
+  .foot-note {
+    grid-area: foot;
+    font-size: 0.56rem;
+    margin: 0;
+  }
+
+  /* ── 事件頁：選項橫排三欄 ── */
+  /* 橫屏有 844 闊，唔應該再鎖 430；放寬令三張選項卡排得落 */
+  .screen,
+  .screen:not(.screen-battle):not(.screen-wide) {
+    width: min(840px, 100%);
+    max-width: 100%;
+    max-height: calc(100vh - 0.6rem);
+  }
+
+  .event-choices {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.35rem;
+  }
+
+  .event-choice {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.4rem 0.45rem;
+    font-size: 0.7rem;
+    line-height: 1.35;
+    gap: 0.15rem;
+    min-height: 0;
+  }
+
+  .event-choice .choice-label {
+    font-size: 0.72rem;
+  }
+
+  .event-choice .choice-effect {
+    font-size: 0.62rem;
+  }
+
+  .brand-block {
+    gap: 0.1rem;
+  }
+
+  .brand,
+  .section-title {
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+
+  .tagline,
+  .lede {
+    font-size: 0.68rem;
+    line-height: 1.4;
+  }
+
+  .panel {
+    padding: 0.4rem 0.5rem;
+    border-radius: 10px;
+  }
+
+  .panel h2 {
+    font-size: 0.82rem;
+    margin: 0 0 0.2rem;
+  }
+
+  /* 事件插圖縮細，唔好食成半屏 */
+  .event-art {
+    max-height: 4.2rem;
+    object-fit: cover;
+  }
+
+  /* ── 戰果頁：兩欄 + 細節收起（已預設收起） ── */
+  .screen-result {
+    padding-bottom: 0;
+  }
+
+  .screen-result .brand-block {
+    padding: 0;
+  }
+
+  .screen-result .brand {
+    font-size: 1.1rem;
+  }
+
+  .clear-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.3rem 0.6rem;
+    align-items: start;
+  }
+
+  .clear-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.2rem 0.4rem;
+    font-size: 0.66rem;
+  }
+
+  .clear-keys {
+    grid-column: 1 / -1;
+    font-size: 0.66rem;
+  }
+
+  .result-details {
+    margin: 0;
+  }
+
+  .result-details-summary {
+    min-height: 34px;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.72rem;
+  }
+
+  /* 底欄喺橫屏貼底但矮啲（橫排兩粒掣，唔好疊） */
+  .result-bar {
+    padding: 0.2rem 0.4rem;
+    gap: 0.35rem;
+    flex-direction: row;
+    align-items: center;
+    min-height: 0;
+  }
+
+  .result-bar .btn {
+    min-height: 38px;
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 10px;
+  }
+
+  /* 主掣同次要掣並排：主掣食大部分寬度，唔好再用兩行 */
+  .result-bar .btn-rerun {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    min-height: 40px;
+    flex-direction: row;
+    gap: 0.4rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 10px;
+  }
+
+  .result-bar .btn-rerun-sub {
+    display: none;
+  }
+
+  .result-bar .btn-ghost {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 96px;
+    padding-inline: 0.7rem;
+  }
+
+  .btn-rerun-main {
+    font-size: 0.86rem;
+  }
+
+  .btn-rerun-sub {
+    font-size: 0.62rem;
+  }
+
+  /* ── 選角／設定／其他頁：整體壓縮，一屏見到主掣 ── */
+  .char-list {
+    gap: 0.3rem;
+  }
+
+  .char-card {
+    padding: 0.3rem 0.4rem;
+    gap: 0.35rem;
+  }
+
+  .avatar-portrait {
+    width: 48px;
+    height: 48px;
+  }
+
+  .char-name {
+    font-size: 0.76rem;
+  }
+
+  .char-desc,
+  .char-playstyle,
+  .char-route,
+  .char-passive-tag {
+    font-size: 0.6rem;
+    line-height: 1.25;
+  }
+
+  .actions .btn {
+    min-height: 40px;
+    font-size: 0.82rem;
+  }
+
+  /* 減少所有 gap（呢個係橫屏最有效嘅一步） */
+  .screen,
+  .screen-wide,
+  .screen-battle {
+    gap: 0.35rem;
+  }
+}

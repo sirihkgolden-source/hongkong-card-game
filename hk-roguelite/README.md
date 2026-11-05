@@ -69,13 +69,14 @@ node js/smoke-deploy.mjs
 ```
 hk-roguelite/          ← 目錄暫名；產品名《香江小風波》
 ├── index.html         ← 新專案入口
-├── css/main.css
+├── css/
+│   ├── main.css       ← 主樣式（直版優先）
+│   └── landscape.css  ← 手機橫屏專用（三欄戰鬥／三欄地圖／橫排事件）
 ├── js/
 │   ├── main.js        ← 畫面流程＋手感序列＋Act 銜接＋通關結算
 │   ├── battle.js      ← 戰鬥（四角色被動）
 │   ├── feel.js        ← 飛軌／飄字／震／色閃／被動橫幅
-│   ├── sfx.js         ← 音效薄層（WebAudio 合成、靜音掣、無音檔）
-│   ├── storage.js     ← 本機存儲層（列出／清除進度，保留設定 key）
+│   ├── sfx.js         ← 音效薄層（WebAudio 合成、靜音掣、無音檔）│   ├── storage.js     ← 本機存儲層（列出／清除進度，保留設定 key）
 │   ├── tutorial.js    ← 新手教學記憶（首局彈一次）
 │   ├── pause.js       ← 暫停／返標題（丟失清單計算，純函式）
 │   ├── save.js        ← 存檔續玩（單份存檔、版本驗證）
@@ -545,17 +546,62 @@ body { overflow-x: clip; overflow-x: hidden; }   /* 禁水平捲動 */
 
 11 個頁面（title／select／map／event／reward／rest／settings／tutorial／pause／victory／defeat）全部 7/7 對稱、零水平溢出。
 
+### 手機橫屏（主驗收尺寸）
+
+**橫屏高度只有 360–430px**，直版嘅垂直堆疊一定唔夠位（實測 844×390 下 `docH = 751`，要拉 **361px** 才見到結束回合）。
+
+另開 `css/landscape.css`，喺 `(orientation: landscape) and (max-height: 500px)` 之下換版面：
+
+| 頁 | 直版 | 橫屏 |
+|---|---|---|
+| **戰鬥** | 單欄垂直堆疊 | **三欄**：左 HUD｜中手牌｜右操作（結束回合 + 暫停） |
+| **地圖** | 兩欄（3 行） | **三欄**（6 格 → 2 行） |
+| **事件** | 選項縱排 | 選項**橫排三欄** |
+| **戰果** | 底欄縱排 | 底欄**橫排並排**、副標收起 |
+
+**判斷式用 `orientation` + 高度上限**，唔用固定闊度 —— 手機橫屏高度 360–430，桌面橫屏通常 >600，唔會誤中。
+
+**戰鬥頁三欄 grid**：
+
+```css
+.screen-battle {
+  grid-template-columns: minmax(0,1fr) minmax(0,1.15fr) minmax(0,0.95fr);
+  grid-template-areas:
+    "top   top   top"
+    "piles piles piles"
+    "hand  hand  act"
+    "log   log   log";
+  height: calc(100vh - 0.6rem);
+}
+.hand          { grid-area: hand; }
+.battle-actions{ grid-area: act; }   /* 結束回合固定右欄 */
+```
+
+卡片縮到 **96px 闊**（直版 118），5 張一屏放得晒。
+
+**橫屏實測（CDP 量 DOM 佈局）**：
+
+| 尺寸 | 一屏 | 左右對稱 | 手牌可見 | 結束回合可見 |
+|---|---|---|---|---|
+| **844×390**（iPhone 14 橫） | ✅ `over: 0` | ✅ 6/6 | ✅ | ✅ |
+| **780×360** | ✅ `over: 0` | ✅ | ✅ | ✅ |
+| **667×375**（iPhone SE 橫） | ✅ `over: 0` | ✅ | ✅ | ✅ |
+
+**戰果頁底欄**：由 184px 壓到 **47px**（兩粒掣並排：主掣 316×40、返回 96px），兩粒都喺屏內。
+
+**直版回歸**：390×844 下 `gridTemplateColumns: none`（冇套用三欄）、一屏、對稱 —— 完全冇受影響。
+
+> ⚠️ 用截圖核對時要小心：截圖工具會用自己嘅裝置尺寸（實測影到 2208×1331），同 CDP `Emulation.setDeviceMetricsOverride` 設定嘅 844×390 唔一致。**以 `getBoundingClientRect()` 量到嘅數值為準**。
 
 ## 自測
 
 ```bash
 cd hk-roguelite
-node js/smoke-act2.mjs   # Act1–2 流程、事件池、商店、選牌加權＋音效＋設定頁＋教學＋暫停＋存檔＋每日鉤＋牌組預覽＋長按詳情＋三頁一屏
-node js/smoke-act2.mjs   # Act1–2 流程、事件池、商店、選牌加權＋音效＋設定頁＋教學＋暫停＋存檔＋每日鉤＋牌組預覽＋長按詳情＋手牌一屏
+node js/smoke-act2.mjs   # Act1–2 流程＋音效＋設定頁＋教學＋暫停＋存檔＋每日鉤＋牌組預覽＋長按詳情＋手牌一屏
 node js/smoke-act3.mjs   # 四角色×三區全程 → 最終 Boss → 結算資料
 node js/smoke-full.mjs   # 封測包：四角／分支／店／遺物／near-miss／再開一局
 node js/probe-act3.mjs   # 最終 Boss 勝率／超時（平衡下限參考）
-node js/smoke-deploy.mjs # 部署自檢＋窄屏置中：相對路徑／無外部依賴／assets／CSS 置中規則（272 項）
+node js/smoke-deploy.mjs # 部署＋窄屏置中＋手機橫屏：相對路徑／無外部依賴／assets／CSS 規則（292 項）
 ```
 
 `smoke-act2.mjs` 尾段有兩組唔需要瀏覽器嘅檢查：
@@ -694,7 +740,7 @@ cd hk-roguelite
 python -m http.server 8766
 ```
 
-瀏覽器開 <http://127.0.0.1:8766/>，建議用 DevTools 手機模式 390×844。
+瀏覽器開 <http://127.0.0.1:8766/>，建議用 DevTools 手機模式 **橫屏 844×390**（主驗收尺寸）或直版 390×844。
 
 ### 已知問題（3 條內）
 
