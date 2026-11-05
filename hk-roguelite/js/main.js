@@ -206,11 +206,14 @@ function renderCardFace(cardId, opts = {}) {
   const tag = opts.asButton !== false ? "button" : "div";
   const typeLabel = card.type === "attack" ? "攻擊" : "技能";
   const bits = [];
-  if (card.dmg) bits.push(`傷 ${card.dmg}${card.dmgBonusOnLowHp ? "+" : ""}`);
+  if (card.dmg) bits.push(`傷 ${card.dmg}`);
   if (card.block) bits.push(`盾 ${card.block}`);
   if (card.heal) bits.push(`回 ${card.heal}`);
   if (card.draw) bits.push(`抽 ${card.draw}`);
-  if (card.mark) bits.push(`烙 ${card.mark}`);
+  // 「烙」對玩家唔直觀，改用「下回合再痛 N」講清楚
+  if (card.mark) bits.push(`下回合再痛 ${card.mark}`);
+  // 低血加成：卡面直接寫出幾多，唔好只寫個「+」
+  if (card.dmgBonusOnLowHp) bits.push(`半血以下 +${card.dmgBonusOnLowHp} 傷`);
 
   return `
     <${tag} type="button" class="card-face${disabled}${kuai}"${idxAttr}${pickAttr}>

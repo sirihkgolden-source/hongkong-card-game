@@ -1079,6 +1079,10 @@ body {
 .card-stats {
   font-size: 0.68rem;
   color: var(--ink-dim);
+  /* 效果字串可能較長（如「傷 8／下回合再痛 2／半血以下 +6 傷」），
+     容許換行避免裁字或撐爆卡面 */
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
 .card-stats {

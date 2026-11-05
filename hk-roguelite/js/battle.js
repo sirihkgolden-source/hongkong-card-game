@@ -128,7 +128,7 @@ export function startPlayerTurn(b) {
   if (b.enemyMark > 0) {
     const markDmg = b.enemyMark;
     b.enemyHp = Math.max(0, b.enemyHp - markDmg);
-    pushLog(b, `跳電烙住造成 ${markDmg} 傷害`);
+    pushLog(b, `跳電發作，造成 ${markDmg} 傷害`);
     b.enemyMark = 0;
     if (b.enemyHp <= 0) {
       b.over = "win";
@@ -234,7 +234,7 @@ export function playCard(b, handIndex) {
   }
   if (card.mark) {
     b.enemyMark += card.mark;
-    pushLog(b, `烙住跳電 ${card.mark}`);
+    pushLog(b, `電留住咗 ${card.mark} 點，下回合發作`);
   }
 
   let kuaisouArmed = false;

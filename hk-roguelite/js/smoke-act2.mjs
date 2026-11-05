@@ -320,6 +320,34 @@ function simulateChar(charId) {
     assert(pickShopConsumables(1).length === 1, "消耗品貨架抽唔到貨");
   }
 
+  // 牌名／牌效人話：禁機械腔，長效果要有對應描述
+  {
+    const mechanical = /buff|debuff|疊加|觸發|增益|減益|狀態|回合開始時|計算|判定|烙/;
+    for (const [id, c] of Object.entries(CARDS)) {
+      assert(c.name && c.name.length >= 2, `${id} 缺牌名`);
+      assert(c.blurb && c.blurb.length >= 6, `${id} 缺 blurb（效果描述）`);
+      assert(!mechanical.test(c.blurb), `${id} blurb 含機械腔：${c.blurb}`);
+    }
+    // 有隱藏數值嘅牌，blurb 要講得白（低血加成／延後傷害）
+    for (const id of ["S64", "S82"]) {
+      assert(
+        CARDS[id].dmgBonusOnLowHp > 0,
+        `${id} 應該有低血加成`
+      );
+      assert(
+        CARDS[id].blurb.includes("血"),
+        `${id} 有低血加成但 blurb 冇提血`
+      );
+    }
+    for (const id of ["S16", "S72", "S81", "S87"]) {
+      assert(CARDS[id].mark > 0, `${id} 應該有延後傷害`);
+      assert(
+        /下回合|再痛/.test(CARDS[id].blurb),
+        `${id} 有延後傷害但 blurb 冇講清楚`
+      );
+    }
+  }
+
   // 敵名港味：禁止會計腔／生硬直譯
   {
     const forbidden = ["圍標", "到期", "清場沙包", "逼爆潮"];
