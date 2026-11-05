@@ -857,6 +857,30 @@ function encounterList(run) {
 }
 
 /** 通關結算：Act3 最終 Boss 打完 */
+/** 通關結算「本局關鍵」一句：金幣／遺物／主路線，用港味串起 */
+function runKeyLine(run, char) {
+  const gold = run?.gold || 0;
+  const relics = (run?.relics || []).length;
+  const route = char?.route || "";
+  const parts = [];
+
+  // 金幣：分三檔
+  if (gold >= 40) parts.push(`袋住 ${gold} 個大洋`);
+  else if (gold >= 15) parts.push(`剩 ${gold} 個大洋`);
+  else parts.push(`金幣使剩 ${gold}`);
+
+  // 遺物
+  if (relics >= 5) parts.push(`孭住 ${relics} 件貨`);
+  else if (relics >= 2) parts.push(`${relics} 件遺物傍身`);
+  else if (relics === 1) parts.push("只得一件遺物");
+  else parts.push("一件遺物都冇攞");
+
+  // 主路線
+  if (route) parts.push(`行${route}條路`);
+
+  return `${parts.join("，")}——三區都行晒。`;
+}
+
 function renderVictory() {
   const run = state.run || { deck: [], hp: 0, maxHp: 0, gold: 0, encounters: [] };
   const char = activeChar();
@@ -884,6 +908,11 @@ function renderVictory() {
           被動「${escapeHtml(char.passive.name)}」由後巷一路帶到天台。
         </p>
         ${
+          char.clearSummary
+            ? `<p class="clear-summary">「${escapeHtml(char.clearSummary)}」</p>`
+            : ""
+        }
+        ${
           char.rerunHook?.clear
             ? `<p class="rerun-hook">「${escapeHtml(char.rerunHook.clear)}」</p>`
             : ""
@@ -894,7 +923,12 @@ function renderVictory() {
           <li><span>牌組</span><strong>${run.deck.length} 張</strong></li>
           <li><span>遺物</span><strong>${(run.relics || []).length} 件</strong></li>
           <li><span>勝場</span><strong>${run.victories || 0}</strong></li>
+          <li><span>主路線</span><strong>${escapeHtml(char.route || "—")}</strong></li>
         </ul>
+        <p class="clear-keys">
+          <span class="clear-keys-label">本局關鍵</span>
+          <span class="clear-keys-line">${escapeHtml(runKeyLine(run, char))}</span>
+        </p>
       </section>
       ${
         (run.relics || []).length
