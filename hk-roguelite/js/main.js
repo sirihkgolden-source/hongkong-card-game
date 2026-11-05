@@ -412,6 +412,16 @@ function renderBossGate() {
   `;
 }
 
+/** 被動觸發時，HUD 短標閃一下（配合跳字／banner） */
+function flashPassiveChip() {
+  const chip = document.querySelector(".passive-chip");
+  if (!chip) return;
+  chip.classList.remove("is-flash");
+  void chip.offsetWidth;
+  chip.classList.add("is-flash");
+  setTimeout(() => chip.classList.remove("is-flash"), 600);
+}
+
 function renderBattle() {
   const b = state.battle;
   const char = activeChar();
@@ -453,6 +463,36 @@ function renderBattle() {
             : " · 招牌眼待命"
           : "";
 
+  // HUD 被動短標：一眼見到自己被動叫咩、狀態係待命／就緒／用過
+  const passiveChip = (() => {
+    const name = b.passiveName || "";
+    if (!name) return "";
+    let state = "idle";
+    let stateText = "待命";
+    if (b.passiveId === "kuaisou") {
+      if (b.kuaisouReady) {
+        state = "ready";
+        stateText = "就緒";
+      } else {
+        stateText = `${b.attacksPlayed % 3}/3`;
+      }
+    } else if (b.passiveId === "dangkou") {
+      if (b.dangkouUsed) {
+        state = "used";
+        stateText = "用過";
+      }
+    } else if (b.passiveId === "zhaopaiyan") {
+      if (b.zhaopaiyanUsed) {
+        state = "used";
+        stateText = "已亮";
+      }
+    }
+    return `<span class="passive-chip passive-chip--${b.passiveId} is-${state}">
+      <span class="passive-chip-name">${escapeHtml(name)}</span>
+      <span class="passive-chip-state">${escapeHtml(stateText)}</span>
+    </span>`;
+  })();
+
   return `
     <main class="screen screen-battle${state.busy ? " is-busy" : ""}" aria-label="戰鬥">
       <header class="battle-top">
@@ -469,6 +509,7 @@ function renderBattle() {
           <div class="fighter-meta">
             <strong id="player-anchor">${escapeHtml(char.name)}</strong>
             <span class="battle-route">${escapeHtml(char.route || "")}</span>
+            ${passiveChip}
             <div class="hp-bar player"><span id="player-hp-fill" style="width:${Math.max(0, (b.playerHp / b.playerMaxHp) * 100)}%"></span></div>
             <span class="hp-text" id="player-hp-text">${b.playerHp}/${b.playerMaxHp}${b.playerBlock ? ` · 盾 ${b.playerBlock}` : ""}</span>
             <span class="energy">⚡ ${b.energy}/${b.maxEnergy}${readyHint}</span>
@@ -1346,6 +1387,7 @@ async function playCardWithFeel(handIndex, cardEl) {
       floatText(document.getElementById("player-anchor"), "費用−1", "kuaisou");
       floatText(portrait, "+3 傷", "kuaisou");
       showPassiveBanner("快手！", "kuaisou");
+      flashPassiveChip();
       sfx.kuaisou();
     }
     await impactTarget(portrait, {
@@ -1369,12 +1411,14 @@ async function playCardWithFeel(handIndex, cardEl) {
     showPassiveBanner("快手！", "kuaisou");
     sfx.kuaisou();
     floatText(document.getElementById("player-anchor"), "快手！−1／+3", "kuaisou");
+    flashPassiveChip();
     await wait(120);
   }
 
   if (result.zhaopaiyanDrew) {
     showPassiveBanner("招牌眼 抽 1", "zhaopaiyan");
     sfx.kuaisou();
+    flashPassiveChip();
     floatText(document.getElementById("player-anchor"), "招牌眼 抽 1", "zhaopaiyan");
     await wait(120);
   }
@@ -1421,6 +1465,7 @@ async function endTurnWithFeel() {
       showPassiveBanner(`檔口 +${result.dangkou.block} 擋`, "dangkou");
       sfx.block();
       floatText(player, `檔口 +${result.dangkou.block} 擋`, "dangkou");
+      flashPassiveChip();
       await wait(140);
     }
   } else {
