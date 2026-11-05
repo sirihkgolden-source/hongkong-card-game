@@ -21,6 +21,7 @@ import {
   ACT3_MAP,
   EVENT_POOLS,
   EVENTS,
+  ENEMIES,
   SHOP,
   START_GOLD,
   SIGNATURE_CARDS,
@@ -292,14 +293,14 @@ section("遺物（效果／錯角無效／專屬標示／缺項）", () => {
 /* ---------- 5. near-miss（敗北診斷） ---------- */
 section("near-miss（四種情況都有文案）", () => {
   // UI 層嘅 nearMissInfo 喺 main.js，呢度驗資料層保證：
-  // 每個 Boss 都有 nearMiss 專屬台詞
-  for (const id of ["E04", "E05", "E12"]) {
+  // 每個 Boss／精英都有 nearMiss 專屬台詞
+  for (const id of ["E04", "E05", "E12", "E08"]) {
     const e = enemyById(id);
     assert(e.nearMiss && e.nearMiss.length >= 8, `${id} 缺 nearMiss 台詞`);
   }
-  // 三句唔可以一樣
-  const lines = ["E04", "E05", "E12"].map((id) => enemyById(id).nearMiss);
-  assert(new Set(lines).size === 3, "Boss nearMiss 台詞重複");
+  // 唔可以一樣（Boss 三句＋精英）
+  const lines = ["E04", "E05", "E12", "E08"].map((id) => enemyById(id).nearMiss);
+  assert(new Set(lines).size === 4, "Boss／精英 nearMiss 台詞重複");
   // 結算提示用嘅標籤字串要喺 main 出現（靜態掃描）
   const mainSrc = readFileSync(new URL("./main.js", import.meta.url), "utf8");
   for (const label of ["差喺 Boss", "差喺血量", "差喺能量", "差喺牌組", "差喺遺物"]) {
@@ -307,6 +308,21 @@ section("near-miss（四種情況都有文案）", () => {
   }
   assert(mainSrc.includes("near-miss-stats"), "敗北頁缺數字統計列");
   assert(mainSrc.includes("再開一局 · 可以咁試"), "敗北頁缺再開一局標題");
+});
+
+/* ---------- 5b. 敵人戰前句／意圖 ---------- */
+section("敵人戰前句／意圖齊全", () => {
+  const ENEMY_IDS = Object.keys(ENEMIES);
+  assert(ENEMY_IDS.length >= 11, `敵人數應 ≥11，實際 ${ENEMY_IDS.length}`);
+  const flavors = [];
+  for (const id of ENEMY_IDS) {
+    const e = ENEMIES[id];
+    assert(e.flavor && e.flavor.length >= 8, `${id} 缺戰前句`);
+    assert(e.afterword && e.afterword.length >= 6, `${id} 缺戰後句`);
+    assert(e.intents?.length >= 3, `${id} 意圖 < 3`);
+    flavors.push(e.flavor);
+  }
+  assert(new Set(flavors).size === flavors.length, "戰前句重複");
 });
 
 /* ---------- 6. 再開一局 ---------- */

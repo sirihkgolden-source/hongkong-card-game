@@ -450,28 +450,49 @@ function simulateChar(charId) {
     }
   }
 
-  // 敵人意圖：四種 kind 都要有標籤，唔可以空白
+  // 敵人意圖：四種 kind 都要有標籤，唔可以空白；每隻敵至少 3 格意圖
   {
     const knownKinds = new Set(["attack", "block", "buff_attack", "buff", "weaken"]);
     let sawKinds = new Set();
+    const flavors = [];
     for (const [id, e] of Object.entries(ENEMIES)) {
-      assert(Array.isArray(e.intents) && e.intents.length > 0, `${id} 冇意圖`);
+      assert(Array.isArray(e.intents) && e.intents.length >= 3, `${id} 意圖少於 3`);
+      const labels = new Set();
       for (const it of e.intents) {
         assert(knownKinds.has(it.kind), `${id} 意圖 kind 未知：${it.kind}`);
         assert(
           typeof it.label === "string" && it.label.length >= 2,
           `${id} 意圖 label 空白或太短`
         );
-        // 攻擊類要有數值
-        if (it.kind === "attack" || it.kind === "block") {
+        assert(!labels.has(it.label), `${id} 意圖 label 重複：${it.label}`);
+        labels.add(it.label);
+        // 攻擊／擋／強化／削弱都要有正數值
+        if (
+          it.kind === "attack" ||
+          it.kind === "block" ||
+          it.kind === "buff_attack" ||
+          it.kind === "weaken"
+        ) {
           assert(typeof it.value === "number" && it.value > 0, `${id} ${it.kind} 冇數值`);
+        }
+        // 攻擊／擋 label 應帶數字，方便一眼讀
+        if (it.kind === "attack" || it.kind === "block") {
+          assert(/\d/.test(it.label), `${id} ${it.kind} label 應帶數字：${it.label}`);
         }
         sawKinds.add(it.kind);
       }
+      assert(e.flavor && e.flavor.length >= 8, `${id} 缺戰前句`);
+      flavors.push(e.flavor);
+      if (e.isBoss || e.isElite) {
+        assert(e.nearMiss && e.nearMiss.length >= 8, `${id} Boss／精英缺 nearMiss`);
+      }
     }
-    // 遊戲要有齊攻擊／防守兩種（否則意圖 UI 只用得一半）
+    assert(new Set(flavors).size === flavors.length, "敵人戰前句有重複");
+    // 遊戲要有齊四種意圖分類（攻／擋／蓄勢／陰招）
     assert(sawKinds.has("attack"), "冇任何攻擊意圖");
     assert(sawKinds.has("block"), "冇任何防守意圖");
+    assert(sawKinds.has("buff_attack") || sawKinds.has("buff"), "冇任何蓄勢意圖");
+    assert(sawKinds.has("weaken"), "冇任何削弱意圖");
   }
 
   // 抽／棄／洗牌：牌堆要有計數、洗牌要能被偵測
