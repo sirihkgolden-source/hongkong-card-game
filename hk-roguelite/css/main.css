@@ -655,6 +655,64 @@ body {
   letter-spacing: 0.02em;
 }
 
+/* —— 音效開關（標題／選角／戰鬥共用） —— */
+.sfx-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  align-self: center;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(61, 224, 255, 0.28);
+  background: rgba(10, 18, 32, 0.6);
+  color: rgba(198, 216, 240, 0.92);
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    color 0.18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sfx-toggle:hover {
+  border-color: rgba(61, 224, 255, 0.5);
+  background: rgba(16, 28, 46, 0.75);
+}
+
+.sfx-toggle:active {
+  transform: scale(0.97);
+}
+
+.sfx-toggle:focus-visible {
+  outline: 2px solid var(--neon-cyan);
+  outline-offset: 2px;
+}
+
+/* 靜音：用「灰 + 斜線感」表達，唔靠顏色單一辨識（色弱都分到） */
+.sfx-toggle.is-muted {
+  border-color: rgba(154, 173, 200, 0.28);
+  background: rgba(10, 18, 32, 0.42);
+  color: rgba(154, 173, 200, 0.78);
+}
+
+.sfx-toggle-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.sfx-toggle-text {
+  white-space: nowrap;
+}
+
 /* —— Map —— */
 .run-bar {
   display: flex;

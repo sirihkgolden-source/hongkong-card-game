@@ -43,7 +43,7 @@ import {
   getIntent,
   effectiveCost,
 } from "./battle.js";
-import { sfx } from "./sfx.js";
+import { sfx, isMuted, toggleMuted } from "./sfx.js";
 import {
   wait,
   pressCard,
@@ -252,9 +252,24 @@ function renderTitle() {
       <div class="actions">
         <button type="button" class="btn btn-primary btn-pressable" data-action="to-select">進入選角</button>
       </div>
+      ${renderSfxToggle()}
       <p class="foot-note">入口：hk-roguelite/index.html · 目錄暫名 hk-roguelite</p>
     </main>
   `;
+}
+
+/**
+ * 靜音掣：全遊戲共用一個樣式，狀態存 localStorage。
+ * 文案講清「而家係開定關」，唔靠顏色分辨（色弱都睇得明）。
+ */
+function renderSfxToggle() {
+  const off = isMuted();
+  return `
+    <button type="button" class="sfx-toggle${off ? " is-muted" : ""}" data-action="toggle-sfx"
+      aria-pressed="${off ? "true" : "false"}" aria-label="${off ? "音效已關，撳一下開啟" : "音效已開，撳一下靜音"}">
+      <span class="sfx-toggle-icon" aria-hidden="true">${off ? "🔇" : "🔊"}</span>
+      <span class="sfx-toggle-text">${off ? "音效：關" : "音效：開"}</span>
+    </button>`;
 }
 
 function renderSelect() {
@@ -309,6 +324,7 @@ function renderSelect() {
         <button type="button" class="btn btn-primary btn-pressable" data-action="confirm-char">以${escapeHtml(selected.name)}開局</button>
         <button type="button" class="btn btn-ghost" data-action="back-title">返回標題</button>
       </div>
+      ${renderSfxToggle()}
     </main>
   `;
 }
@@ -752,6 +768,7 @@ function renderBattle() {
       <ul class="battle-log" aria-live="polite">
         ${b.log.map((l) => `<li>${escapeHtml(l)}</li>`).join("")}
       </ul>
+      ${renderSfxToggle()}
     </main>
   `;
 }
@@ -1554,6 +1571,8 @@ function flushGoldFloat() {
   const pending = state.pendingGoldFloat;
   if (!pending) return;
   state.pendingGoldFloat = 0;
+  // 金幣音：入袋先響（扣錢唔響，免得誤導）
+  if (pending > 0) sfx.coin();
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       floatGold(pending);
@@ -1643,7 +1662,8 @@ async function playCardWithFeel(handIndex, cardEl) {
 
   state.busy = true;
   const from = cardEl.getBoundingClientRect();
-  sfx.click();
+  // 出牌音：同按卡動畫同步（唔等飛軌，令手上一撳就有聲）
+  sfx.card();
   await pressCard(cardEl);
 
   const toEnemy = document.getElementById("enemy-portrait");
@@ -2036,6 +2056,7 @@ function advanceMap(opts = {}) {
     } else {
       // Act3 最終 Boss 勝 → 通關結算
       state.screen = "victory";
+      sfx.clear();
       sfx.win();
     }
   } else if (autoScreen) {
@@ -2154,6 +2175,13 @@ function onClick(event) {
     case "to-select":
       state.screen = "select";
       break;
+    case "toggle-sfx": {
+      const nowMuted = toggleMuted();
+      state.statusMsg = nowMuted ? "音效已關。" : "音效已開。";
+      // 開啟時即刻「叮」一聲，證明真係有聲（靜音時當然唔響）
+      if (!nowMuted) sfx.coin();
+      break;
+    }
     case "back-title":
       state.screen = "title";
       state.run = null;
