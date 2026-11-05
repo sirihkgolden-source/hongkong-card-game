@@ -409,7 +409,7 @@ export const CHARACTERS = {
     name: "阿油・後巷經紀",
     short: "出手快、愛搏；一路削血一路加速",
     initial: "油",
-    portrait: "assets/art/portraits/ayau.jpg",
+    portrait: "assets/art/portraits/ayau.webp",
     maxHp: 68,
     energy: 3,
     passive: {
