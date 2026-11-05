@@ -281,6 +281,27 @@ function renderSelect() {
   `;
 }
 
+/** 節點類型：圖示／標籤／色系（一眼分到戰／事件／休息／店／Boss） */
+function nodeTypeMeta(node) {
+  if (!node) return { key: "battle", icon: "⚔", label: "戰鬥", cls: "" };
+  if (node.type === "boss") {
+    return { key: "boss", icon: "☠", label: node.subtitle || "Boss", cls: "node-boss" };
+  }
+  if (node.type === "event") {
+    return { key: "event", icon: "？", label: "事件", cls: "node-event" };
+  }
+  if (node.type === "rest") {
+    return { key: "shop", icon: "🛒", label: "休息／店", cls: "node-shop" };
+  }
+  if (node.type === "reward") {
+    return { key: "reward", icon: "＋", label: "選牌", cls: "node-reward" };
+  }
+  if (node.enemyPool) {
+    return { key: "elite", icon: "★", label: "精英", cls: "node-elite" };
+  }
+  return { key: "battle", icon: "⚔", label: "戰鬥", cls: "" };
+}
+
 function renderMap() {
   const run = state.run;
   const char = activeChar();
@@ -319,15 +340,19 @@ function renderMap() {
     const subText = subParts.join("・");
     const titleText = knownEventName || node.title;
     if (isEvent) cls += " is-event";
+    // 節點類型：圖示 + 色帶（一眼分到戰／事件／休息／店／Boss）
+    const typeMeta = nodeTypeMeta(node);
+    if (typeMeta.cls) cls += ` ${typeMeta.cls}`;
     return `
       <li class="${cls}"${action} ${current ? 'aria-current="step"' : ""}>
-        <span class="map-idx">${i + 1}</span>
+        <span class="map-idx map-idx--${typeMeta.key}" aria-hidden="true">${typeMeta.icon}</span>
         <span class="map-body">
+          <span class="map-type">${typeMeta.label}</span>
           <span class="map-sub">${escapeHtml(subText)}</span>
           <span class="map-title">${escapeHtml(titleText)}</span>
         </span>
         ${current ? '<span class="map-cta">進入</span>' : ""}
-        ${done ? '<span class="map-done">✓</span>' : ""}
+        ${done ? '<span class="map-done">✓ 行過</span>' : ""}
       </li>
     `;
   }).join("");
