@@ -355,6 +355,58 @@ function renderActTransition() {
   `;
 }
 
+/**
+ * 地圖 HUD 遺物列：每件遺物一粒 chip，點一下講效果人話。
+ * 專屬遺物加「專屬」標，一眼分到。
+ */
+function relicBar(run) {
+  const ids = run?.relics || [];
+  if (!ids.length) return "";
+  const chips = ids
+    .map((id) => {
+      const r = RELICS[id];
+      if (!r) return "";
+      const isOwn = !!r.owner;
+      // 別角專屬：標示「唔適用」，唔好令玩家以為有件貨但冇效果
+      const notApplicable = isOwn && r.owner !== run?.characterId;
+      const cls = notApplicable
+        ? " is-other"
+        : isOwn
+          ? " is-owner"
+          : "";
+      const tag = notApplicable
+        ? '<span class="relic-chip-tag is-other">唔適用</span>'
+        : isOwn
+          ? '<span class="relic-chip-tag">專屬</span>'
+          : "";
+      return `<button type="button" class="relic-chip${cls}"
+        data-action="relic-info" data-relic="${escapeHtml(id)}"
+        aria-label="${escapeHtml(r.name)}：${escapeHtml(relicPlainText(r))}">
+        <span class="relic-chip-name">${escapeHtml(r.name)}</span>
+        ${tag}
+      </button>`;
+    })
+    .join("");
+  return `<div class="relic-bar" role="group" aria-label="持有遺物">${chips}</div>`;
+}
+
+/** 遺物效果一句人話（唔用機械描述） */
+function relicPlainText(r) {
+  if (!r) return "";
+  const e = r.effect || {};
+  if (e.startEnergy) return `每場開波多 ${e.startEnergy} 點能量——出手多一次。`;
+  if (e.startBlock) return `每場開波自動有 ${e.startBlock} 擋——第一下唔怕。`;
+  if (e.startDraw) return `每場開波抽多 ${e.startDraw} 張——起手牌多。`;
+  if (e.drawPerTurn) return `每個回合都抽多 ${e.drawPerTurn} 張——牌唔會斷。`;
+  if (e.attackBonus) return `每張攻擊都痛多 ${e.attackBonus} 點。`;
+  if (e.attackPerCard) return `每張攻擊牌再加 ${e.attackPerCard} 傷害。`;
+  if (e.healOnWin) return `打贏一場回 ${e.healOnWin} HP——唔使成日入士多。`;
+  if (e.goldBonus) return `打贏小怪多 ${e.goldBonus} 金——積少成多。`;
+  if (e.instantMaxHp) return `入手即刻最大生命 +${e.instantMaxHp}。`;
+  if (e.instantGold) return `入手即刻多 ${e.instantGold} 金。`;
+  return r.desc;
+}
+
 function renderMap() {
   const run = state.run;
   const char = activeChar();
@@ -424,6 +476,7 @@ function renderMap() {
           <span>遺物 ${(run.relics || []).length}</span>
         </div>
       </header>
+      ${relicBar(run)}
       <ol class="act-strip" aria-label="三區進度">${actStrip}</ol>
       ${
         state.statusMsg
@@ -953,7 +1006,17 @@ function renderVictory() {
           .map((id) => {
             const r = RELICS[id];
             if (!r) return "";
-            return `<li><span class="relic-name">${escapeHtml(r.name)}</span><span class="relic-desc">${escapeHtml(r.desc)}</span></li>`;
+            const isOwn = !!r.owner;
+            const notApplicable = isOwn && r.owner !== run?.characterId;
+            const tag = notApplicable
+              ? '<span class="relic-owner-tag is-other">唔適用</span>'
+              : isOwn
+                ? '<span class="relic-owner-tag">專屬</span>'
+                : "";
+            return `<li>
+              <span class="relic-name">${escapeHtml(r.name)}${tag}</span>
+              <span class="relic-plain">${escapeHtml(relicPlainText(r))}</span>
+            </li>`;
           })
           .join("")}</ul>
       </section>`
@@ -1910,6 +1973,13 @@ function onClick(event) {
       state.run = createRun(state.selectedCharId);
       state.screen = "map";
       break;
+    case "relic-info": {
+      const id = t.getAttribute("data-relic");
+      const r = RELICS[id];
+      if (!r) return;
+      state.statusMsg = `${r.name}：${relicPlainText(r)}`;
+      break;
+    }
     case "continue-act":
       state.actTransition = null;
       state.screen = "map";
