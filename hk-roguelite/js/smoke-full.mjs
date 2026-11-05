@@ -39,6 +39,9 @@ import {
   pickEventId,
   restShopForAct,
   shopCardIdForAct,
+  REWARD_POOL,
+  classifyRewardCard,
+  EXPECTED_REWARD_ROUTE,
 } from "./data.js";
 import { createBattle, playCard, endTurn, startPlayerTurn } from "./battle.js";
 
@@ -341,30 +344,38 @@ section("經濟（第一格戰後有金）", () => {
   assert(battleGoldReward(true) === 0, "Boss 戰後唔應該畀金（走商店邏輯）");
 });
 
-/* ---------- 11. 選牌加權（四角路線唔同） ---------- */
-section("選牌加權（四角路線唔同）", () => {
-  const classify = (cid) => {
-    const c = CARDS[cid];
-    if (!c) return "?";
-    if (c.owner) return "專屬";
-    if (c.dmg && !c.block && !c.heal && !c.draw) return "攻擊";
-    if ((c.block || c.heal) && !c.draw) {
-      return (c.heal || 0) > (c.block || 0) ? "回血" : "守";
+/* ---------- 11. 選牌加權（四角路線唔同＋預期主線） ---------- */
+section("選牌加權（四角路線唔同＋預期主線）", () => {
+  // bias 衛生：唔可以指向池外死牌
+  for (const id of CHAR_IDS) {
+    const sigs = new Set(SIGNATURE_CARDS[id] || []);
+    for (const bid of CHARACTERS[id].rewardBias || []) {
+      assert(CARDS[bid], `${id} bias 缺牌 ${bid}`);
+      assert(
+        sigs.has(bid) || REWARD_POOL.includes(bid),
+        `${id} bias ${bid} 唔喺專屬／REWARD_POOL`
+      );
     }
-    if (c.draw) return "抽牌";
-    return "攻擊+";
-  };
+  }
   const dominant = {};
   for (const id of CHAR_IDS) {
     const tally = {};
-    for (let i = 0; i < 150; i++) {
+    for (let i = 0; i < 600; i++) {
       for (const cid of pickRewardChoices(3, [], id)) {
-        const k = classify(cid);
+        const k = classifyRewardCard(cid);
         tally[k] = (tally[k] || 0) + 1;
       }
     }
-    const [top] = Object.entries(tally).sort((a, b) => b[1] - a[1])[0];
-    dominant[id] = top[0];
+    const [topKind, topN] = Object.entries(tally).sort((a, b) => b[1] - a[1])[0];
+    const total = Object.values(tally).reduce((a, b) => a + b, 0);
+    const share = topN / total;
+    assert(share >= 0.28, `${id} 主路線 ${topKind} 只佔 ${(share * 100) | 0}%`);
+    assert(topKind !== "專屬", `${id} 被專屬主導`);
+    assert(
+      topKind === EXPECTED_REWARD_ROUTE[id],
+      `${id} 應為「${EXPECTED_REWARD_ROUTE[id]}」，實際「${topKind}」`
+    );
+    dominant[id] = topKind;
   }
   const vals = Object.values(dominant);
   assert(new Set(vals).size === 4, `四角主路線有重複：${JSON.stringify(dominant)}`);
