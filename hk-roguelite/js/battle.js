@@ -69,6 +69,8 @@ export function createBattle(run, enemyDef) {
 
     /** 遺物：開場多抽＋攻擊加成 */
     relicDraw: relics.startDraw,
+    /** meta buff：首場多抽（薄加成） */
+    metaStartDraw: run.metaStartDraw || 0,
     relicAttackBonus: relics.attackBonus,
     /** 遺物：每回合額外抽牌（涼茶碗／招牌眼鏡） */
     relicDrawPerTurn: relics.drawPerTurn,
@@ -136,7 +138,12 @@ export function startPlayerTurn(b) {
   );
   b.discard.push(...b.hand);
   b.hand = [];
-  drawCards(b, 5 + (b.turn === 1 ? b.relicDraw || 0 : 0) + (b.relicDrawPerTurn || 0));
+  drawCards(
+    b,
+    5 +
+      (b.turn === 1 ? (b.relicDraw || 0) + (b.metaStartDraw || 0) : 0) +
+      (b.relicDrawPerTurn || 0)
+  );
 
   if (b.enemyMark > 0) {
     const markDmg = b.enemyMark;

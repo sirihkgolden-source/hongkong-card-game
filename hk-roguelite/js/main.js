@@ -14,6 +14,7 @@ import {
   CARDS,
   RELICS,
   enemyById,
+  ENEMIES,
   cardById,
   characterById,
   pickRewardChoices,
@@ -23,6 +24,9 @@ import {
   actBg,
   pickNodeEnemyId,
   branchOptionById,
+  META_REWARDS,
+  pickMetaRewards,
+  metaBonuses,
   enemyTag,
   pickEventId,
   EVENT_POOLS,
@@ -44,6 +48,15 @@ import {
   effectiveCost,
 } from "./battle.js";
 import { sfx } from "./sfx.js";
+import {
+  loadMeta,
+  saveMeta,
+  markSeen,
+  markCleared,
+  markOwned,
+  setBuff,
+  consumeBuff,
+} from "./meta.js";
 import {
   wait,
   pressCard,
@@ -96,6 +109,10 @@ const state = {
   pendingTurnLine: "",
   actTransition: /** @type {object|null} */ (null),
   openingHint: "",
+  /** 永久成長（localStorage）：owned／buff／seen／cleared */
+  meta: loadMeta(),
+  /** 本次結算抽到嘅 meta 三揀一選項 */
+  metaChoices: /** @type {string[]} */ ([]),
 };
 
 const app = document.getElementById("app");
@@ -112,17 +129,24 @@ function activeChar() {
   return characterById(state.run?.characterId || state.selectedCharId);
 }
 
-function createRun(characterId) {
+function createRun(characterId, metaBuffId) {
   const c = characterById(characterId);
+  // 套用 meta buff（薄加成，每局最多一層，用完即清）
+  // 注意：buff 由 confirm-char 先用 consumeBuff 攞出嚟再傳入，
+  // 所以呢度唔可以再讀 state.meta.buff（嗰時已經係 null）。
+  const mb = metaBonuses(metaBuffId);
+  const startMaxHp = c.maxHp + (mb.startMaxHp || 0);
   return {
     characterId: c.id,
     act: 1,
-    hp: c.maxHp,
-    maxHp: c.maxHp,
+    hp: startMaxHp,
+    maxHp: startMaxHp,
     // 開局畀 12 金：夠買最便宜消耗品（6）兩件，或一件＋找贖，
     // 避免「0 金入第一間士多乜都買唔到」嘅死局。
-    gold: START_GOLD,
+    gold: START_GOLD + (mb.startGold || 0),
     deck: [...c.starterDeck],
+    /** meta：首場戰鬥多抽（由 battle 讀） */
+    metaStartDraw: mb.startDraw || 0,
     mapIndex: 0,
     completed: /** @type {string[]} */ ([]),
     encounters: /** @type {object[]} */ ([]),
@@ -251,8 +275,74 @@ function renderTitle() {
       </section>
       <div class="actions">
         <button type="button" class="btn btn-primary btn-pressable" data-action="to-select">進入選角</button>
+        <button type="button" class="btn btn-ghost" data-action="to-codex">圖鑑・名片</button>
       </div>
       <p class="foot-note">入口：hk-roguelite/index.html · 目錄暫名 hk-roguelite</p>
+    </main>
+  `;
+}
+
+/** 圖鑑・名片：只顯示已遇敵人／已通角色，未遇唔劇透 */
+function renderCodex() {
+  const seen = state.meta.seen || [];
+  const cleared = state.meta.cleared || [];
+  const owned = state.meta.owned || [];
+
+  const enemyRows = Object.values(ENEMIES)
+    .map((e) => {
+      const met = seen.includes(e.id);
+      const tag = e.isFinalBoss ? "最終" : e.isBoss ? "區 Boss" : e.isElite ? "精英" : "小怪";
+      return `<li class="codex-row${met ? "" : " is-unknown"}">
+        <span class="codex-tag">${escapeHtml(tag)}</span>
+        <strong class="codex-name">${met ? escapeHtml(e.name) : "？？？"}</strong>
+        <span class="codex-meta">${met ? `HP ${e.hp}` : "未遇"}</span>
+      </li>`;
+    })
+    .join("");
+
+  const charRows = Object.values(CHARACTERS)
+    .map(
+      (c) => `<li class="codex-row${cleared.includes(c.id) ? " is-cleared" : ""}">
+        <span class="codex-tag">角色</span>
+        <strong class="codex-name">${escapeHtml(c.name)}</strong>
+        <span class="codex-meta">${cleared.includes(c.id) ? "已通關 ✓" : "未通關"}</span>
+      </li>`
+    )
+    .join("");
+
+  const metaRows = Object.values(META_REWARDS)
+    .filter((r) => r.kind !== "buff")
+    .map((r) => {
+      const got = owned.includes(r.id);
+      return `<li class="codex-row${got ? " is-cleared" : " is-unknown"}">
+        <span class="codex-tag">${r.kind === "unlock" ? "台詞" : "名片角"}</span>
+        <strong class="codex-name">${got ? escapeHtml(r.name) : "？？？"}</strong>
+        <span class="codex-meta">${got ? "已解鎖" : "未解鎖"}</span>
+      </li>`;
+    })
+    .join("");
+
+  return `
+    <main class="screen" aria-label="圖鑑">
+      <header class="brand-block brand-compact">
+        <h1 class="section-title">圖鑑・名片</h1>
+        <p class="tagline">遇過嘅先會出現 · 未遇唔劇透</p>
+      </header>
+      <section class="panel">
+        <h2>已遇敵人（${seen.length}／${Object.keys(ENEMIES).length}）</h2>
+        <ul class="codex-list">${enemyRows}</ul>
+      </section>
+      <section class="panel">
+        <h2>已通角色（${cleared.length}／${Object.keys(CHARACTERS).length}）</h2>
+        <ul class="codex-list">${charRows}</ul>
+      </section>
+      <section class="panel">
+        <h2>已解鎖（${owned.length} 項）</h2>
+        <ul class="codex-list">${metaRows}</ul>
+      </section>
+      <div class="actions">
+        <button type="button" class="btn btn-ghost" data-action="back-title">返回標題</button>
+      </div>
     </main>
   `;
 }
@@ -1056,6 +1146,84 @@ function runKeyLine(run, char) {
   return `${parts.join("，")}——三區都行晒。`;
 }
 
+/** 結算時抽 meta 三揀一（未擁有優先） */
+function prepareMetaChoices(isClear) {
+  state.metaChoices = pickMetaRewards(state.meta.owned || [], 3, Math.random, {
+    charId: state.run?.characterId || state.selectedCharId,
+    // 失敗都畀薄 meta，但唔派「打穿三區」嘅解鎖台詞（名不符實）
+    allowUnlock: !!isClear,
+  });
+}
+
+/** 揀 meta 獎勵：解鎖類永久存，buff 類下局生效 */
+function applyMetaChoice(id) {
+  const r = META_REWARDS[id];
+  if (!r) return;
+  if (r.kind === "buff") {
+    setBuff(state.meta, id);
+  } else {
+    markOwned(state.meta, id);
+  }
+  saveMeta(state.meta);
+  state.metaChoices = [];
+  state.statusMsg = `帶走「${r.name}」`;
+}
+
+/** 結算頁：meta 三揀一（通關／失敗共用） */
+function renderMetaPick() {
+  const ids = state.metaChoices || [];
+  if (!ids.length) return "";
+  const cards = ids
+    .map((id) => {
+      const r = META_REWARDS[id];
+      if (!r) return "";
+      const owned = (state.meta.owned || []).includes(id);
+      const kindLabel =
+        r.kind === "unlock" ? "解鎖台詞" : r.kind === "card" ? "名片角" : "下局加成";
+      return `
+        <button type="button" class="meta-choice meta-choice--${r.kind}" data-action="pick-meta" data-meta="${escapeHtml(id)}">
+          <span class="meta-kind">${escapeHtml(kindLabel)}${owned && r.kind !== "buff" ? "・已有" : ""}</span>
+          <strong class="meta-name">${escapeHtml(r.name)}</strong>
+          <span class="meta-desc">${escapeHtml(r.desc)}</span>
+          <span class="meta-flavor">「${escapeHtml(r.flavor)}」</span>
+        </button>`;
+    })
+    .join("");
+  return `
+    <section class="panel meta-panel">
+      <h2>帶走的東西</h2>
+      <p class="lede">三揀一，會留到下一局。</p>
+      <div class="meta-list">${cards}</div>
+    </section>`;
+}
+
+/** 名片：顯示已通關角色、遇過敵人、已解鎖 meta */
+function renderNameCard(char, run) {
+  const cleared = state.meta.cleared || [];
+  const seen = state.meta.seen || [];
+  const owned = state.meta.owned || [];
+  const unlockedNames = owned
+    .map((id) => META_REWARDS[id])
+    .filter((r) => r && r.kind === "unlock")
+    .map((r) => r.name);
+  return `
+    <section class="panel name-card">
+      <h2>名片</h2>
+      <p class="name-card-title">《香江小風波》・${escapeHtml(char.name)}</p>
+      <p class="name-card-sub">三區通關 · 被動「${escapeHtml(char.passive.name)}」</p>
+      <ul class="name-card-stats">
+        <li><span>已通角色</span><strong>${cleared.length}／${Object.keys(CHARACTERS).length}</strong></li>
+        <li><span>已遇敵人</span><strong>${seen.length}／${Object.keys(ENEMIES).length}</strong></li>
+        <li><span>已解鎖</span><strong>${owned.length} 項</strong></li>
+      </ul>
+      ${
+        unlockedNames.length
+          ? `<p class="name-card-marks">${unlockedNames.map((n) => `<span class="name-mark">${escapeHtml(n)}</span>`).join("")}</p>`
+          : ""
+      }
+    </section>`;
+}
+
 function renderVictory() {
   const run = state.run || { deck: [], hp: 0, maxHp: 0, gold: 0, encounters: [] };
   const char = activeChar();
@@ -1137,14 +1305,8 @@ function renderVictory() {
         <h2>牌組構成</h2>
         <ul class="deck-list">${deckLines || "<li>（空）</li>"}</ul>
       </section>
-      <section class="panel stub-card">
-        <h2>名片（stub）</h2>
-        <p class="lede">
-          《香江小風波》・${escapeHtml(char.name)}<br />
-          三區通關 · 被動「${escapeHtml(char.passive.name)}」<br />
-          <span class="stub-note">分享名片功能下一版先開；呢格留位。</span>
-        </p>
-      </section>
+      ${renderNameCard(char, run)}
+      ${renderMetaPick()}
       <div class="actions result-actions">
         <button type="button" class="btn btn-primary btn-pressable btn-rerun" data-action="again">
           <span class="btn-rerun-main">再來一局</span>
@@ -1231,6 +1393,7 @@ function renderDefeat() {
             : ""
         }
       </section>
+      ${renderMetaPick()}
       <div class="actions result-actions">
         <button type="button" class="btn btn-primary btn-pressable btn-rerun" data-action="again">
           <span class="btn-rerun-main">再來一局</span>
@@ -1421,6 +1584,9 @@ function render() {
       break;
     case "branch":
       html = renderBranch();
+      break;
+    case "codex":
+      html = renderCodex();
       break;
     case "boss-gate":
       html = renderBossGate();
@@ -1927,6 +2093,9 @@ function beginBattle(enemyId) {
     state.statusMsg = "對手未定";
     return;
   }
+  // 圖鑑：記住遇過邊個（唔劇透未遇）
+  markSeen(state.meta, enemyId);
+  saveMeta(state.meta);
   if (enemy.isBoss) {
     state.pendingBossId = enemyId;
     state.screen = "boss-gate";
@@ -2036,6 +2205,10 @@ function advanceMap(opts = {}) {
     } else {
       // Act3 最終 Boss 勝 → 通關結算
       state.screen = "victory";
+      // 名冊：記住已通關角色
+      markCleared(state.meta, state.run.characterId);
+      saveMeta(state.meta);
+      prepareMetaChoices(true);
       sfx.win();
     }
   } else if (autoScreen) {
@@ -2154,6 +2327,9 @@ function onClick(event) {
     case "to-select":
       state.screen = "select";
       break;
+    case "to-codex":
+      state.screen = "codex";
+      break;
     case "back-title":
       state.screen = "title";
       state.run = null;
@@ -2166,12 +2342,17 @@ function onClick(event) {
       break;
     }
     case "confirm-char":
-      state.run = createRun(state.selectedCharId);
+      // 先消耗 meta buff（每局只用一次），再建立 run
+      state.activeMetaBuff = consumeBuff(state.meta);
+      state.run = createRun(state.selectedCharId, state.activeMetaBuff);
       state.screen = "map";
       // 選角 → 第一戰唔好斷戲：講一句開場，同時提醒被動
       {
         const c = characterById(state.selectedCharId);
-        state.statusMsg = c.openLine || "";
+        const buffNote = state.activeMetaBuff
+          ? ` · 帶住「${META_REWARDS[state.activeMetaBuff]?.name ?? ""}」入場`
+          : "";
+        state.statusMsg = (c.openLine || "") + buffNote;
         state.openingHint = `被動「${c.passive.name}」——${c.passive.desc}`;
       }
       break;
@@ -2260,9 +2441,15 @@ function onClick(event) {
       }
       break;
     }
+    case "pick-meta": {
+      const mid = t.getAttribute("data-meta");
+      applyMetaChoice(mid);
+      break;
+    }
     case "to-defeat":
       syncRunHpFromBattle();
       state.screen = "defeat";
+      prepareMetaChoices(false);
       sfx.lose();
       break;
     case "skip-reward":
