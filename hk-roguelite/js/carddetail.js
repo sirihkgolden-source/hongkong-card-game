@@ -19,22 +19,22 @@ export function cardEffectLines(card) {
 
   // 傷害：分開講「半血加成」同「標記」兩種特別情況
   if (card.dmg) {
-    let dmgLine = `造成 ${card.dmg} 點傷害。`;
+    let dmgLine = `出手打 ${card.dmg} 傷。`;
     if (card.dmgBonusOnLowHp) {
-      dmgLine += `你自己半血以下時，額外 +${card.dmgBonusOnLowHp} 傷。`;
+      dmgLine += `自己半血以下時，再加 +${card.dmgBonusOnLowHp} 傷。`;
     }
     out.push(dmgLine);
   }
 
-  if (card.block) out.push(`獲得 ${card.block} 點擋，擋住敵人今個回合嘅傷害。`);
+  if (card.block) out.push(`加 ${card.block} 擋——擋住呢回合打入嚟嘅傷害。`);
 
-  if (card.heal) out.push(`回復 ${card.heal} 點生命。`);
+  if (card.heal) out.push(`回 ${card.heal} 滴血。`);
 
-  if (card.draw) out.push(`抽 ${card.draw} 張牌。`);
+  if (card.draw) out.push(`摸 ${card.draw} 張牌。`);
 
-  if (card.mark) out.push(`施加標記：敵人下個回合再多痛 ${card.mark}。`);
+  if (card.mark) out.push(`落標記：敵人下一回合再多痛 ${card.mark}。`);
 
-  if (out.length === 0) out.push("冇即時數值效果——多數係舖路或者觸發被動。");
+  if (out.length === 0) out.push("冇即時數值——多數係舖路或者觸發被動。");
   return out;
 }
 
@@ -47,27 +47,27 @@ export function cardWhenToUse(card) {
   const cost = card.cost ?? 0;
 
   if (card.dmg && card.dmg >= 12) {
-    return "重拳——留返敵人血少嗰時收佢，或者打 Boss 破盾。";
+    return "重手——留返對手血薄時收尾，或者打 Boss 拆盾。";
   }
   if (card.dmg && card.draw) {
-    return "打得又抽得，牌唔會斷——開場就可以出。";
+    return "打得又摸得，牌唔會斷——開場就可以出。";
   }
   if (card.block && card.block >= 8) {
-    return "敵人寫住要打大數嘅時候出，慳返幾多血。";
+    return "對手寫住大數嗰下先出，慳返幾多血。";
   }
   if (card.block) {
     return "捱打前出，擋幾多得幾多。";
   }
   if (card.heal) {
-    return "唔好等血見底——早啲回，捱得耐啲。";
+    return "唔好等血見底——早啲補，捱得耐啲。";
   }
   if (card.draw && !card.dmg) {
-    return "手牌乾嘅時候出，幫你搵返攻擊牌。";
+    return "手牌乾嘅時候出，幫你搵返出擊牌。";
   }
   if (cost === 0) {
     return "免費牌，有得打就打，唔會蝕。";
   }
-  return "睇場合用——冇特別限制。";
+  return "睇場合用——冇硬性限制。";
 }
 
 /**
