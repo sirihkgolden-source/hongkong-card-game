@@ -26,11 +26,11 @@ export function cardEffectLines(card) {
     out.push(dmgLine);
   }
 
-  if (card.block) out.push(`加 ${card.block} 擋——呢回合打入嚟嘅先頂住一陣，唔甩。`);
+  if (card.block) out.push(`加 ${card.block} 擋——呢回合打入嚟嘅先頂住一陣，唔亂。`);
 
-  if (card.heal) out.push(`回 ${card.heal} 滴血——身子骨收齊，企穩。`);
+  if (card.heal) out.push(`回 ${card.heal} 滴血——身子骨執穩，守住。`);
 
-  if (card.draw) out.push(`摸 ${card.draw} 張——袋口再開一輪，牌路活，唔甩棄。`);
+  if (card.draw) out.push(`摸 ${card.draw} 張——袋口再開一輪，牌路活，唔亂棄。`);
 
   if (card.mark) out.push(`留低標記：下回合對面再痛 ${card.mark}——數簿未埋清。`);
 
@@ -56,10 +56,10 @@ export function cardWhenToUse(card) {
     return "對手寫住大數嗰下先出——慳返條命先緊要。";
   }
   if (card.block) {
-    return "捱打前出——擋幾多得幾多，唔好等拳頭落街口，睇清。";
+    return "捱打前出——擋幾多得幾多，唔好等拳頭落街口，睇準。";
   }
   if (card.heal) {
-    return "唔好等血見底——早啲補，街口先捱得耐啲，撑住補。";
+    return "唔好等血見底——早啲補，街口先捱得耐啲，落定補。";
   }
   if (card.draw && !card.dmg) {
     return "手牌乾嘅時候出——幫你搵返出擊牌先。";
