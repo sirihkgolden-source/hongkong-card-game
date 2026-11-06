@@ -741,6 +741,14 @@ function nodeTypeMeta(node) {
     return { key: "reward", icon: "＋", label: "選牌", cls: "node-reward" };
   }
   if (node.type === "branch") {
+    // Act3 硬路 enemyPool 可能抽到精英——地圖要標 ★，唔好淨係寫「分支」
+    const opts = node.options || [];
+    const hasElite = opts.some((o) =>
+      (o.enemyPool || []).some((id) => enemyById(id)?.isElite)
+    );
+    if (hasElite) {
+      return { key: "elite", icon: "★", label: "分支／精英", cls: "node-branch node-elite" };
+    }
     return { key: "branch", icon: "⑂", label: "分支", cls: "node-branch" };
   }
   if (node.enemyPool) {
@@ -953,20 +961,33 @@ function renderMap() {
 function renderBossGate() {
   const enemy = enemyById(state.pendingBossId || "E04");
   const isFinal = !!enemy.isFinalBoss;
+  const isElite = !!enemy.isElite && !enemy.isBoss;
   const actName = actDisplayName(state.run?.act || 1);
+  const eyebrow = isFinal
+    ? `最終 Boss・Act${state.run?.act || 3} ${actName}`
+    : isElite
+      ? `精英遭遇・Act${state.run?.act || 3} ${actName}`
+      : "區 Boss";
+  const hint = isFinal
+    ? "打完呢場，就係呢一鋪嘅結算。"
+    : isElite
+      ? "呢班人唔係普通雜魚——停一停，睇清楚先入場。"
+      : "停一停，睇清楚對手先入場。";
+  const cta = isFinal ? "落場" : isElite ? "硬上" : "繼續";
+  const aria = isElite ? "精英戰前" : "Boss 戰前";
   return `
-    <main class="screen screen-boss-gate${isFinal ? " is-final" : ""}" aria-label="Boss 戰前">
+    <main class="screen screen-boss-gate${isFinal ? " is-final" : ""}${isElite ? " is-elite" : ""}" aria-label="${aria}">
       <header class="brand-block brand-compact">
-        <p class="eyebrow">${isFinal ? `最終 Boss・Act${state.run?.act || 3} ${escapeHtml(actName)}` : "區 Boss"}</p>
+        <p class="eyebrow">${escapeHtml(eyebrow)}</p>
         <h1 class="section-title">${escapeHtml(enemy.name)}</h1>
       </header>
       <figure class="boss-gate-art">
         <img src="${escapeHtml(enemy.art)}" alt="${escapeHtml(enemy.name)}" />
       </figure>
       <blockquote class="boss-gate-quote">「${escapeHtml(enemy.flavor)}」</blockquote>
-      <p class="boss-gate-hint">${isFinal ? "打完呢場，就係呢一鋪嘅結算。" : "停一停，睇清楚對手先入場。"}</p>
+      <p class="boss-gate-hint">${escapeHtml(hint)}</p>
       <div class="actions">
-        <button type="button" class="btn btn-primary btn-pressable" data-action="boss-continue">${isFinal ? "落場" : "繼續"}</button>
+        <button type="button" class="btn btn-primary btn-pressable" data-action="boss-continue">${escapeHtml(cta)}</button>
       </div>
     </main>
   `;
@@ -2532,7 +2553,8 @@ function beginBattle(enemyId) {
     state.statusMsg = "對手未定";
     return;
   }
-  if (enemy.isBoss) {
+  // Boss／精英都先停閘口一句，唔好直接跳入戰鬥
+  if (enemy.isBoss || enemy.isElite) {
     state.pendingBossId = enemyId;
     state.screen = "boss-gate";
     return;
