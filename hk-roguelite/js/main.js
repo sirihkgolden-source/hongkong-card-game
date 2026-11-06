@@ -1562,7 +1562,7 @@ function renderVictory() {
         <p class="tagline result-sub">通關 · 三區打穿</p>
       </header>
       <section class="panel clear-hero">
-        <p class="clear-badge">★ 通關 CLEAR ★</p>
+        <p class="clear-badge">★ 通關 · 三區打穿 ★</p>
         <p class="eyebrow">Act3・${escapeHtml(META.act3Name)}</p>
         <h2>天台無燈，你仲企得住</h2>
         <p class="lede">
@@ -1719,7 +1719,7 @@ function renderDefeat() {
     <main class="screen screen-result is-lose" aria-label="敗北">
       <header class="brand-block">
         <h1 class="brand result-title dim">${escapeHtml(META.title)}</h1>
-        <p class="tagline result-sub">敗北 · Act${act} 節點 ${nodeN}/${map.length}</p>
+        <p class="tagline result-sub">仆街 · Act${act}・第 ${nodeN}/${map.length} 格</p>
       </header>
       <section class="panel">
         <h2>${escapeHtml(actTitles[act] || actTitles[1])}</h2>
@@ -1736,12 +1736,12 @@ function renderDefeat() {
           <li><span>能量（終局）</span><strong>${b ? b.energy : "—"}</strong></li>
         </ul>
         <p class="lede">
-          死亡＝本局結束。行到 Act${act}「${escapeHtml(actDisplayName(act))}」第 ${nodeN} 格。
+          呢鋪完。行到「${escapeHtml(actDisplayName(act))}」第 ${nodeN} 格就企唔穩。
         </p>
         <div class="next-run">
           <p class="next-run-title">再開一局 · 可以咁試</p>
           <ul class="next-run-list">
-            <li><strong>換构筑：</strong>${escapeHtml(advice.line)}</li>
+            <li><strong>換牌路：</strong>${escapeHtml(advice.line)}</li>
             <li><strong>換角色：</strong>試吓「${escapeHtml(advice.targetName)}」——${escapeHtml(advice.targetRoute)}。${escapeHtml(CHARACTERS[advice.targetId]?.playstyle || "")}</li>
             <li><strong>唔換都得：</strong>用返「${escapeHtml(char.passive.name)}」（${escapeHtml(char.route || "")}），今次行遠啲。</li>
           </ul>
