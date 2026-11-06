@@ -730,11 +730,11 @@
   }
 
   .clear-badge {
-    font-size: 0.58rem;
-    padding: 0.04rem 0.3rem;
+    font-size: 0.66rem;
+    padding: 0.06rem 0.34rem;
     justify-self: start;
     margin: 0;
-    line-height: 1.2;
+    line-height: 1.25;
   }
 
   .clear-hero .eyebrow {
@@ -761,11 +761,12 @@
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.1rem 0.3rem;
-    font-size: 0.56rem;
-    line-height: 1.15;
+    font-size: 0.64rem;
+    line-height: 1.2;
     grid-column: 1 / -1;
     margin: 0;
     padding: 0;
+    color: rgba(220, 232, 248, 0.92);
   }
 
   .clear-stats li {
@@ -803,11 +804,12 @@
   }
 
   .clear-keys-line {
-    font-size: 0.56rem;
+    font-size: 0.64rem;
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    color: rgba(220, 232, 248, 0.9);
   }
 
   /* 細節收納區：橫屏唔展開都唔阻主掣 */
