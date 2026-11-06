@@ -230,7 +230,7 @@ export function playCard(b, handIndex) {
     b.enemyHp = Math.max(0, b.enemyHp - dealt);
     pushLog(
       b,
-      `落「${card.name}」——打落 ${dealt} 傷${enemyBlocked ? `（擋走 ${enemyBlocked}）` : ""}${usedKuaisou ? "【快手加碼】" : ""}——出手過數`
+      `落「${card.name}」——打落 ${dealt} 傷${enemyBlocked ? `（擋走 ${enemyBlocked}）` : ""}${usedKuaisou ? "【快手加碼】" : ""}——出手過關`
     );
   }
 
@@ -260,7 +260,7 @@ export function playCard(b, handIndex) {
   }
   if (card.mark) {
     b.enemyMark += card.mark;
-    pushLog(b, `留低 ${card.mark} 點——下回合再痛一截，收齊過`);
+    pushLog(b, `留低 ${card.mark} 點——下回合再痛一截，執穩過`);
   }
 
   let kuaisouArmed = false;
@@ -329,7 +329,7 @@ export function tryDangkou(b, damageTaken) {
   b.dangkouUsed = true;
   const block = 8;
   b.playerBlock += block;
-  pushLog(b, `【檔口】首次捱打——擋上 ${block}——企穩先啦！`);
+  pushLog(b, `【檔口】首次捱打——擋上 ${block}——守住先啦！`);
   return { triggered: true, block };
 }
 
