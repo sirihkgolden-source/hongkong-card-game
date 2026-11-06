@@ -2072,7 +2072,7 @@ body {
 
 .pile-num {
   font-family: var(--font-display);
-  font-size: 0.9rem;
+  font-size: 0.98rem;
   font-weight: 900;
   color: var(--ink);
 }
@@ -2195,7 +2195,7 @@ body {
 
 .fx-float--low-energy {
   color: #ff8c9a;
-  font-size: 1.1rem;
+  font-size: 0.85rem;
   text-shadow: 0 0 14px rgba(255, 70, 80, 0.9), 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
@@ -2475,7 +2475,8 @@ body {
 }
 
 .battle-log li + li {
-  margin-top: 0.25rem;
+  margin-top: 0.32rem;
+  line-height: 1.45;
 }
 
 /* 回合結束短回饋：最頂一行，金色，淡入 */
