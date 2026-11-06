@@ -398,14 +398,14 @@ function renderTitle() {
     <main class="screen screen-title" aria-label="標題">
       <header class="brand-block">
         <h1 class="brand">${escapeHtml(META.title)}</h1>
-        <p class="tagline">香港霓虹街頭卡牌 Rogue-lite</p>
-        <span class="badge">完整三區 · 後巷 → 旺角 → 城寨天台 · 四角色</span>
+        <p class="tagline">後巷夜醒 · 霓虹街頭卡牌</p>
+        <span class="badge">三區一路 · 後巷 → 旺角 → 天台 · 四角落場</span>
       </header>
       <section class="panel panel-hero-copy">
         <h2>一鋪一個傳奇</h2>
         <p class="lede">
-          揀角色、組牌闖三區。短、上癮、想再來一局。<br />
-          四角色開局 → 後巷・夜醒 → 旺角霓虹 → 城寨・天台 → 籠門之王 → 通關結算。
+          揀邊個落場、執牌闖三區。短、上癮、想再嚟一鋪。<br />
+          四角開局 → 後巷・夜醒 → 旺角霓虹 → 城寨・天台 → 籠門之王 → 通關結算。
         </p>
       </section>
       <div class="actions">
@@ -430,14 +430,14 @@ function renderTitle() {
                   : ""
               }
         <button type="button" class="btn btn-${state.savedRun ? "ghost" : "primary"} btn-pressable" data-action="to-select">${
-          state.savedRun ? "新局（會覆蓋存檔）" : "進入選角"
+          state.savedRun ? "新局（會覆蓋存檔）" : "去選角"
         }</button>
         <button type="button" class="btn btn-ghost btn-pressable" data-action="to-settings">設定</button>`
         }
       </div>
       <p class="daily-line${isClaimedToday() ? " is-claimed" : " is-todo"}">${escapeHtml(dailyStatusLine())}</p>
       ${renderSfxToggle()}
-      <p class="foot-note">入口：hk-roguelite/index.html · 目錄暫名 hk-roguelite</p>
+      <p class="foot-note">《香江小風波》· 同舊 demo 隔離</p>
     </main>
   `;
 }
