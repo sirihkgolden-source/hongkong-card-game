@@ -2701,7 +2701,7 @@ body {
 
 .fx-float--dmg {
   color: #ff5a6c;
-  font-size: 1.85rem;
+  font-size: 0.9rem;
 }
 
 .fx-float--block {
@@ -2711,12 +2711,13 @@ body {
 }
 
 .fx-float--heal {
+  font-size: 0.9rem;
   color: var(--ok);
 }
 
 .fx-float--kuaisou {
   color: var(--neon-amber);
-  font-size: 1.7rem;
+  font-size: 0.88rem;
 }
 
 /* 金幣跳字：金色 + 上彈，數值變動即刻見到 */
