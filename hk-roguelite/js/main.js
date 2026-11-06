@@ -1278,7 +1278,7 @@ function renderReward() {
       </header>
       <div class="reward-grid">${choices}</div>
       <div class="actions">
-        <button type="button" class="btn btn-ghost" data-action="skip-reward">唔執——跳過呢鋪獎</button>
+        <button type="button" class="btn btn-ghost" data-action="skip-reward">唔執——跳過呢鋪獎先</button>
       </div>
       <p class="status" role="status">${escapeHtml(state.statusMsg)}</p>
     </main>
@@ -1680,7 +1680,7 @@ function nextRunAdvice(near) {
   const target = CHARACTERS[targetId] || CHARACTERS.oil;
 
   const buildHint = {
-    hp: "下次早啲入士多補血／飲廿四味，或者袋多幾張擋同回血。",
+    hp: "下次早啲入士多補血／飲廿四味，或者袋多幾張擋同回血先。",
     energy: "下次入士多執「提神能量飲品」，或者袋多幾張 0 費牌。",
     deck: "下次戰後唔好跳過選牌——袋口夠厚先撐到尾。",
     relic: "下次記得行士多——身家遺物白賺，專屬貨只對自己有效。",
@@ -1958,7 +1958,7 @@ function shopLeaveLine() {
 
   // 血少：提醒下次要補
   if (ratio <= 0.35) {
-    return `你行出士多，風一吹先發覺——得返 ${hp}/${maxHp}。下次早啲補血。`;
+    return `你行出士多，風一吹先發覺——得返 ${hp}/${maxHp}。下次早啲補血先。`;
   }
   // 有遺物：講返件貨
   if (relicCount > 0) {
@@ -1969,7 +1969,7 @@ function shopLeaveLine() {
     return `袋住 ${gold} 個大洋走——呢條街，有錢就有底氣。`;
   }
   // 兜底
-  return "兩手空空行出士多，但至少抖順咗一口氣。";
+  return "兩手空空行出士多，但至少抖順咗一口氣先。";
 }
 
 function render() {
