@@ -229,7 +229,7 @@ export function playCard(b, handIndex) {
     b.enemyHp = Math.max(0, b.enemyHp - dealt);
     pushLog(
       b,
-      `打出「${card.name}」——造成 ${dealt} 傷${enemyBlocked ? `（擋 ${enemyBlocked}）` : ""}${usedKuaisou ? "【快手】" : ""}`
+      `落「${card.name}」——打落 ${dealt} 傷${enemyBlocked ? `（擋走 ${enemyBlocked}）` : ""}${usedKuaisou ? "【快手】" : ""}`
     );
   }
 
@@ -237,7 +237,7 @@ export function playCard(b, handIndex) {
     b.playerBlock += card.block;
     blockGained = card.block;
     target = "self";
-    pushLog(b, `打出「${card.name}」——加 ${card.block} 擋`);
+    pushLog(b, `落「${card.name}」——擋上 ${card.block}`);
   }
   if (card.heal) {
     const before = b.playerHp;
@@ -246,20 +246,20 @@ export function playCard(b, handIndex) {
     if (!b.healBonusUsed && (b.relicHealBonusFirst || 0) > 0) {
       amount += b.relicHealBonusFirst;
       b.healBonusUsed = true;
-      pushLog(b, `【跌打藥箱】首次回血 +${b.relicHealBonusFirst}`);
+      pushLog(b, `【跌打藥箱】首次回血多 ${b.relicHealBonusFirst}`);
     }
     b.playerHp = Math.min(b.playerMaxHp, b.playerHp + amount);
     healed = b.playerHp - before;
     target = "self";
-    pushLog(b, `打出「${card.name}」——回 ${healed} HP`);
+    pushLog(b, `落「${card.name}」——回 ${healed} HP`);
   }
   if (card.draw) {
     drawCards(b, card.draw);
-    pushLog(b, `摸 ${card.draw} 張`);
+    pushLog(b, `袋口摸 ${card.draw} 張`);
   }
   if (card.mark) {
     b.enemyMark += card.mark;
-    pushLog(b, `電留住 ${card.mark} 點——下回合發作`);
+    pushLog(b, `留低 ${card.mark} 點——下回合再痛`);
   }
 
   let kuaisouArmed = false;
