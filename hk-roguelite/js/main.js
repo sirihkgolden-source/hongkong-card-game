@@ -700,14 +700,14 @@ function renderSelect() {
     <main class="screen" aria-label="選角">
       <header class="brand-block brand-compact">
         <h1 class="brand">${escapeHtml(META.title)}</h1>
-        <p class="tagline">開局四揀一 · 同一條後巷</p>
+        <p class="tagline">四角開局 · 同一條後巷夜醒</p>
       </header>
       <section class="panel">
-        <h2>選擇角色</h2>
+        <h2>揀邊個落場</h2>
         <ul class="char-list">${list}</ul>
         <p class="passive-box">
-          <strong>被動・${escapeHtml(selected.passive.name)}</strong><br />
-          ${escapeHtml(selected.passive.desc)}
+          <strong>打法・${escapeHtml(selected.playstyle || "")}</strong><br />
+          被動「${escapeHtml(selected.passive.name)}」——${escapeHtml(selected.passive.desc)}
         </p>
         ${
           selected.rerunHook?.select
@@ -2986,7 +2986,7 @@ function onClick(event) {
       {
         const c = characterById(state.selectedCharId);
         state.statusMsg = c.openLine || "";
-        state.openingHint = `被動「${c.passive.name}」——${c.passive.desc}`;
+        state.openingHint = `${c.playstyle || c.passive.name} · 被動「${c.passive.name}」`;
       }
       break;
     case "relic-info": {
