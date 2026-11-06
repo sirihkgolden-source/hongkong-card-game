@@ -1410,7 +1410,7 @@ export const EVENTS = {
       {
         id: "ask_cage",
         label: "問阿嬸籠邊點去",
-        effectText: "睇更表——下戰多 1 能量，袋入「舊帳對數」",
+        effectText: "下戰開場 +1 能量；牌組加入「舊帳對數」",
         apply: (run) => {
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
           run.deck.push("S72");
@@ -1531,7 +1531,7 @@ export const EVENTS = {
       {
         id: "read_shift",
         label: "幫佢睇更表",
-        effectText: "下戰開場 +1 能量；牌組加入「舊帳對數」",
+        effectText: "睇更表——下戰多 1 能量，袋入「舊帳對數」",
         apply: (run) => {
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
           run.deck.push("S72");
