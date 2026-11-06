@@ -214,8 +214,8 @@ export function resetDaily() {
  */
 export function dailyStatusLine(d = new Date()) {
   const data = loadDaily();
-  if (data.date !== dateKey(d)) return "今日未領——打完一鋪（贏輸都計）就有得收，街口記低先啦喂。";
-  if (data.kind === "gold") return `今日已領：下一鋪開波 +${data.value} 大洋入袋口——記得返嚟攞走先。`;
-  if (data.kind === "line") return "今日已領：街口一句收低袋口——慢慢睇返先。";
-  return "今日已領——街口記低咗一筆先。";
+  if (data.date !== dateKey(d)) return "今日未領——打完一鋪（贏輸都計）就有得收，街口記低袋口數。";
+  if (data.kind === "gold") return `今日已領：下一鋪開波 +${data.value} 大洋入袋口——記得返嚟攞走，唔好亂花。`;
+  if (data.kind === "line") return "今日已領：街口一句收低袋口——穩陣慢慢睇返。";
+  return "今日已領——街口記低咗一筆喺簿。";
 }
