@@ -350,7 +350,7 @@ function renderCardFace(cardId, opts = {}) {
 function renderDeckPreview(ids, opts = {}) {
   const s = summarizeDeck(ids, CARDS);
   if (s.total === 0) {
-    return `<p class="deck-empty">牌組未有牌。</p>`;
+    return `<p class="deck-empty">袋口未有牌。</p>`;
   }
   const rows = s.rows
     .map(
@@ -1064,9 +1064,9 @@ function renderBattle() {
 
   const overBanner =
     b.over === "win"
-      ? `<div class="battle-banner win">勝利！</div>`
+      ? `<div class="battle-banner win">贏咗！</div>`
       : b.over === "lose"
-        ? `<div class="battle-banner lose">你倒下了</div>`
+        ? `<div class="battle-banner lose">你仆低咗</div>`
         : "";
 
   // 戰後一句：所有敵人都可以有（Boss 用 .boss-afterword，普通戰用同一 class 唔影響版面）
@@ -1174,12 +1174,12 @@ function renderBattle() {
       <div class="pile-row" role="group" aria-label="牌堆">
         <span class="pile-pill pile-draw" id="pile-draw">
           <span class="pile-icon" aria-hidden="true">🂠</span>
-          <span class="pile-label">牌庫</span>
+          <span class="pile-label">牌庫袋</span>
           <strong class="pile-num">${b.drawPile.length}</strong>
         </span>
         <span class="pile-pill pile-discard" id="pile-discard">
           <span class="pile-icon" aria-hidden="true">♻</span>
-          <span class="pile-label">棄牌</span>
+          <span class="pile-label">棄牌堆</span>
           <strong class="pile-num">${b.discard.length}</strong>
         </span>
         <span class="pile-pill pile-hand">
@@ -1203,11 +1203,11 @@ function renderBattle() {
             </section>`
           : ""
       }
-      <div class="hand" role="list" aria-label="手牌（可左右滑）">${hand || '<p class="empty-hand">沒有手牌</p>'}</div>
+      <div class="hand" role="list" aria-label="手牌（可左右滑）">${hand || '<p class="empty-hand">手牌空咗</p>'}</div>
       <div class="battle-actions">
         ${
           b.over === "win"
-            ? `<button type="button" class="btn btn-primary btn-pressable" data-action="battle-win">收取戰果</button>`
+            ? `<button type="button" class="btn btn-primary btn-pressable" data-action="battle-win">執埋戰果</button>`
             : b.over === "lose"
               ? `<button type="button" class="btn btn-primary btn-pressable" data-action="to-defeat">結算</button>`
               : `<button type="button" class="btn btn-ghost" data-action="end-turn" ${state.busy ? "disabled" : ""}>結束回合</button>`
