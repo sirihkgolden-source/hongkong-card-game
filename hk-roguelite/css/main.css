@@ -577,9 +577,9 @@ body {
 
 /* 一句講清點玩 */
 .char-playstyle {
-  font-size: 0.74rem;
+  font-size: 0.92rem;
   line-height: 1.45;
-  color: var(--ink);
+  color: rgba(220, 232, 248, 0.9);
   opacity: 0.9;
 }
 
@@ -760,8 +760,8 @@ body {
 .daily-line {
   margin: 0;
   text-align: center;
-  font-size: 0.82rem;
-  line-height: 1.5;
+  font-size: 0.88rem;
+  line-height: 1.55;
   min-height: 44px;
   display: flex;
   align-items: center;
@@ -860,9 +860,9 @@ body {
 
 .deck-overview {
   margin: 0;
-  font-size: 0.8rem;
-  line-height: 1.5;
-  color: rgba(190, 212, 236, 0.86);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: rgba(220, 232, 248, 0.92);
 }
 
 .deck-list-preview {
