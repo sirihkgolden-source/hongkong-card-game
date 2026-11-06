@@ -465,11 +465,11 @@ function renderSettings() {
   const confirmBlock = confirming
     ? `
       <div class="settings-confirm" role="alert">
-        <p class="settings-confirm-title">真係要清除？清走就冇得救。</p>
-        <p class="settings-confirm-body">會清走上面列住嘅本機進度（圖鑑、名冊、解鎖）。音效設定會保留。</p>
+        <p class="settings-confirm-title">真係要清？街口進度一清就冇得救。</p>
+        <p class="settings-confirm-body">會清走上面列住嘅本機進度（圖鑑、名冊、解鎖）。音效設定會留低。</p>
         <div class="settings-confirm-actions">
-          <button type="button" class="btn btn-danger btn-pressable" data-action="confirm-clear">係，清除</button>
-          <button type="button" class="btn btn-ghost btn-pressable" data-action="cancel-clear">唔好，取消</button>
+          <button type="button" class="btn btn-danger btn-pressable" data-action="confirm-clear">係，清走</button>
+          <button type="button" class="btn btn-ghost btn-pressable" data-action="cancel-clear">唔好，留住</button>
         </div>
       </div>`
     : `
@@ -498,15 +498,15 @@ function renderSettings() {
       <section class="panel settings-howto">
         <h2>街頭操作（一句）</h2>
         <ul class="howto-list">
-          <li><strong>撳牌</strong>就出手；<strong>撳住牌 0.4 秒</strong>睇詳情（唔會出手）。</li>
+          <li><strong>撳牌</strong>就出手；<strong>撳住牌 0.4 秒</strong>睇詳情（唔會落場）。</li>
           <li>對手頭上寫住呢回合想打幾多——睇清先決定擋定打。</li>
-          <li>冇牌打就撳「結束回合」，對手出手；捱完再摸牌、回滿⚡。</li>
+          <li>冇牌打就撳「結束回合」，對手出手；捱完再摸牌、回滿格氣。</li>
         </ul>
       </section>
 
       <section class="panel">
         <h2>本機進度</h2>
-        <p class="lede">呢啲只存喺你部機（localStorage），冇上雲、冇帳號。</p>
+        <p class="lede">呢啲只存喺你部機（localStorage）——冇上雲、冇帳號、街口自理。</p>
         ${keyList}
         ${confirmBlock}
         ${
@@ -2898,7 +2898,7 @@ function onClick(event) {
       break;
     case "toggle-sfx": {
       const nowMuted = toggleMuted();
-      state.statusMsg = nowMuted ? "音效已關。" : "音效已開。";
+      state.statusMsg = nowMuted ? "音效已關——街口靜咗。" : "音效已開——街口有聲。";
       // 開啟時即刻「叮」一聲，證明真係有聲（靜音時當然唔響）
       if (!nowMuted) sfx.coin();
       break;
