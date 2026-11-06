@@ -53,21 +53,21 @@ export function cardWhenToUse(card) {
     return "打得又摸得，牌唔會斷——開波就可以落。";
   }
   if (card.block && card.block >= 8) {
-    return "對手寫住大數嗰下先出，慳返條命。";
+    return "對手寫住大數嗰下先出——慳返條命。";
   }
   if (card.block) {
-    return "捱打前出——擋幾多得幾多，唔好等拳頭落嚟。";
+    return "捱打前出——擋幾多得幾多，唔好等拳頭落街。";
   }
   if (card.heal) {
-    return "唔好等血見底——早啲補，街口先捱得耐。";
+    return "唔好等血見底——早啲補，街口先捱得耐啲。";
   }
   if (card.draw && !card.dmg) {
-    return "手牌乾嘅時候出，幫你搵返出擊牌。";
+    return "手牌乾嘅時候出——幫你搵返出擊牌。";
   }
   if (cost === 0) {
     return "免費牌——有空位就落，唔會蝕本。";
   }
-  return "睇場合用——冇硬性限制，街口隨機應變。";
+  return "睇場合用——冇硬性限制，街口隨機應變，咪硬嚟。";
 }
 
 /**
@@ -91,11 +91,11 @@ export function cardDetail(card) {
   const rarityRaw = card.rarity || "—";
   const rarityLabel =
     rarityRaw === "普通"
-      ? "普通・街口貨"
+      ? "普通・街口貨色"
       : rarityRaw === "稀有"
-        ? "稀有・夜檔貨"
+        ? "稀有・夜檔貨色"
         : rarityRaw === "專屬"
-          ? "專屬・身家貨"
+          ? "專屬・身家貨色"
           : rarityRaw;
   return {
     name: card.name || "（無名）",
