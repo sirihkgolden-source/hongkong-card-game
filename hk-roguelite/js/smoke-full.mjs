@@ -402,6 +402,20 @@ section("地圖副標港味（唔用機械腔）", () => {
   assert(ACT3_MAP[5].title === "籠門之王", "Act3 Boss 名被改");
 });
 
+/* ---------- 7c. 事件頁眉港味（唔用機械腔） ---------- */
+section("事件頁眉港味（唔用機械腔）", () => {
+  const mainSrc = readFileSync(new URL("./main.js", import.meta.url), "utf8");
+  assert(!mainSrc.includes("短事件 · 選項改機械效果"), "事件頁仍掛機械腔 tagline");
+  assert(!mainSrc.includes("選項改機械效果"), "事件頁仍寫「機械效果」");
+  for (const line of [
+    "巷口一事 · 點揀都會改局",
+    "霓虹底一事 · 點揀都會改局",
+    "天台一事 · 點揀都會改局",
+  ]) {
+    assert(mainSrc.includes(line), `事件頁缺港味副句「${line}」`);
+  }
+});
+
 /* ---------- 8. 事件池（每區 ≥5，全部必改局；可見 HP／牌／金／能量／擋） ---------- */
 section("事件池（每區 ≥5，全部必改局）", () => {
   const titles = new Set();
