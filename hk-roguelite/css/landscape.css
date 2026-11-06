@@ -545,17 +545,19 @@
 
   .map-cta,
   .map-done {
-    font-size: 0.58rem;
+    font-size: 0.66rem;
     padding: 0.12rem 0.36rem;
     /* 橫屏都要掂得到：唔可以再 min-height:0 壓到 15px */
     min-height: 28px;
     min-width: 52px;
+    color: rgba(220, 232, 248, 0.92);
   }
 
   .foot-note {
     grid-area: foot;
     margin: 0;
-    font-size: 0.52rem;
+    font-size: 0.64rem;
+    color: rgba(200, 214, 232, 0.88);
   }
 
   .opening-block {
@@ -1164,8 +1166,9 @@
   }
 
   .foot-note {
-    font-size: 0.5rem;
+    font-size: 0.6rem;
     margin: 0;
+    color: rgba(200, 214, 232, 0.88);
   }
 
   /* ════════════════════════════════════════════
