@@ -25,9 +25,9 @@ export const DAILY_VERSION = 1;
 
 /** 金幣獎勵（下局開局多幾多） */
 export const DAILY_GOLD = [
-  { kind: "gold", value: 6, name: "街坊請你食飯", desc: "下一鋪開波袋口多 6 個大洋。" },
-  { kind: "gold", value: 8, name: "士多找贖", desc: "下一鋪開波袋口多 8 個大洋。" },
-  { kind: "gold", value: 10, name: "今日手氣順", desc: "下一鋪開波袋口多 10 個大洋。" },
+  { kind: "gold", value: 6, name: "街坊請食", desc: "下一鋪開波袋口多 6 個大洋。" },
+  { kind: "gold", value: 8, name: "士多找贖聲", desc: "下一鋪開波袋口多 8 個大洋。" },
+  { kind: "gold", value: 10, name: "手氣順過街口", desc: "下一鋪開波袋口多 10 個大洋。" },
 ];
 
 /** 名片句（純文字收藏） */
@@ -46,6 +46,9 @@ export const DAILY_LINES = [
   { kind: "line", name: "今日一句", text: "「後巷唔講規矩，講邊個仲企得住。」" },
   { kind: "line", name: "今日一句", text: "「籠門一開，賭嘅唔止係注碼。」" },
   { kind: "line", name: "今日一句", text: "「你袋口幾厚，街口都睇得出。」" },
+  { kind: "line", name: "今日一句", text: "「簷篷底眯一陣，雨聲都替你數數。」" },
+  { kind: "line", name: "今日一句", text: "「便利店雪櫃風，吹唔散你袋口嘅火氣。」" },
+  { kind: "line", name: "今日一句", text: "「天台無燈，但你鞋底仲印住三區塵。」" },
 ];
 
 /** 全部可能獎勵（測試用） */
