@@ -2477,8 +2477,8 @@ body {
 }
 
 .battle-log li + li {
-  margin-top: 0.32rem;
-  line-height: 1.45;
+  margin-top: 0.36rem;
+  line-height: 1.5;
 }
 
 /* 回合結束短回饋：最頂一行，金色，淡入 */
