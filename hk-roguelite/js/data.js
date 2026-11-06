@@ -2219,7 +2219,7 @@ export const RELICS = {
   rl_gate_key: {
     id: "rl_gate_key",
     name: "鐵閘鎖匙",
-    desc: "每場戰鬥開場 +1 能量。",
+    desc: "開閘多一格氣——每場開波 +1 能量。",
     flavor: "執到條匙，閘就唔再係牆。",
     effect: { startEnergy: 1 },
     rarity: "普通",
@@ -2227,7 +2227,7 @@ export const RELICS = {
   rl_helmet: {
     id: "rl_helmet",
     name: "地盤安全帽",
-    desc: "每場戰鬥開場自帶 8 擋。",
+    desc: "戴實先出閘——每場開波自帶 8 擋。",
     flavor: "上面印住「安全」，你戴住去打人。",
     effect: { startBlock: 8 },
     rarity: "普通",
@@ -2235,7 +2235,7 @@ export const RELICS = {
   rl_mahjong_lamp: {
     id: "rl_mahjong_lamp",
     name: "麻雀檯燈",
-    desc: "每場戰鬥首回合多抽 1 張。",
+    desc: "燈一亮先摸牌——每場首回合多抽 1 張。",
     flavor: "四個人打牌，燈膽最亮嗰個贏。",
     effect: { startDraw: 1 },
     rarity: "稀有",
@@ -2243,7 +2243,7 @@ export const RELICS = {
   rl_rwb_bag: {
     id: "rl_rwb_bag",
     name: "紅白藍袋",
-    desc: "每場戰鬥勝利回 5 HP。",
+    desc: "袋口有藥——每場打贏回 5 HP。",
     flavor: "袋唔重，但你孭住佢行咗三條街。",
     effect: { healOnWin: 5 },
     rarity: "普通",
@@ -2251,7 +2251,7 @@ export const RELICS = {
   rl_cha_ledger: {
     id: "rl_cha_ledger",
     name: "茶記賬簿",
-    desc: "小怪勝場額外 +3 金幣。",
+    desc: "賬簿記多一筆——小怪勝場多 3 金。",
     flavor: "邊枱未埋單，賬簿記得比你清楚。",
     effect: { goldBonus: 3 },
     rarity: "普通",
@@ -2259,7 +2259,7 @@ export const RELICS = {
   rl_neon_tube: {
     id: "rl_neon_tube",
     name: "霓虹燈膽",
-    desc: "所有攻擊 +2 傷害。",
+    desc: "燈膽照住拳——所有攻擊多 2 傷害。",
     flavor: "拆落嚟嘅燈膽仲暖手——照住你就夠。",
     effect: { attackBonus: 2 },
     rarity: "稀有",
@@ -2267,7 +2267,7 @@ export const RELICS = {
   rl_med_wine: {
     id: "rl_med_wine",
     name: "跌打酒",
-    desc: "入手即刻最大生命 +10（並回 10）。",
+    desc: "飲完身子硬——入手即最大生命 +10（並回 10）。",
     flavor: "味道沖，但係真係得。",
     effect: { instantMaxHp: 10 },
     rarity: "普通",
@@ -2275,7 +2275,7 @@ export const RELICS = {
   rl_kwun_yam: {
     id: "rl_kwun_yam",
     name: "觀音借庫",
-    desc: "入手即刻 +16 金幣。",
+    desc: "庫銀落袋——入手即 +16 金。",
     flavor: "借咗就係借咗，還唔還係另一件事。",
     effect: { instantGold: 16 },
     rarity: "稀有",
@@ -2287,7 +2287,7 @@ export const RELICS = {
   rl_oil_flask: {
     id: "rl_oil_flask",
     name: "阿油・電油樽",
-    desc: "【阿油】每場戰鬥開始多 1 次抽牌機會（首回合多抽 2 張）。",
+    desc: "【阿油】電油入拳——每場開波首回合多抽 2 張。",
     flavor: "電油唔止入電單車——入你對拳都得。",
     effect: { startDraw: 2 },
     rarity: "專屬",
@@ -2297,7 +2297,7 @@ export const RELICS = {
   rl_asan_apron: {
     id: "rl_asan_apron",
     name: "阿珊・茶記圍裙",
-    desc: "【阿珊】每場戰鬥額外 +6 開場擋。",
+    desc: "【阿珊】圍裙一綁——每場額外 +6 開場擋。",
     flavor: "圍裙一綁，成個檔口都係你嘅防線。",
     effect: { startBlock: 6 },
     rarity: "專屬",
@@ -2307,7 +2307,7 @@ export const RELICS = {
   rl_kauko_signboard: {
     id: "rl_kauko_signboard",
     name: "九哥・招牌眼鏡",
-    desc: "【九哥】每回合開始多抽 1 張。",
+    desc: "【九哥】招牌眼——每回合開始多抽 1 張。",
     flavor: "招牌睇得穿，牌底自然都睇得穿。",
     effect: { drawPerTurn: 1 },
     rarity: "專屬",
@@ -2317,7 +2317,7 @@ export const RELICS = {
   rl_sing_kit: {
     id: "rl_sing_kit",
     name: "勝仔・跌打藥箱",
-    desc: "【勝仔】每場戰鬥首次回血時，額外多回 4 HP。",
+    desc: "【勝仔】藥箱開蓋——每場首次回血多 4 HP。",
     flavor: "箱仔細細，但入面乜都有——連你估唔到嘅都有。",
     effect: { healBonusFirst: 4 },
     rarity: "專屬",
@@ -2330,7 +2330,7 @@ export const RELICS = {
   rl_tram_token: {
     id: "rl_tram_token",
     name: "叮叮車票",
-    desc: "每場戰鬥首回合額外 +1 能量。",
+    desc: "車上多一格——每場首回合額外 +1 能量。",
     flavor: "車票唔記得用，就一直袋喺度——上到車先發覺仲有一格。",
     effect: { firstTurnEnergy: 1 },
     rarity: "普通",
@@ -2339,7 +2339,7 @@ export const RELICS = {
   rl_bamboo_hat: {
     id: "rl_bamboo_hat",
     name: "竹帽",
-    desc: "每場戰鬥開波自帶 5 擋。",
+    desc: "帽簷擋兩下——每場開波自帶 5 擋。",
     flavor: "落雨唔怕，落石都頂得住兩下。",
     effect: { startBlock: 5 },
     rarity: "普通",
@@ -2348,7 +2348,7 @@ export const RELICS = {
   rl_stamp_card: {
     id: "rl_stamp_card",
     name: "印花卡",
-    desc: "打贏小怪多 2 金——儲夠有得換。",
+    desc: "印花儲住——打贏小怪多 2 金。",
     flavor: "儲滿十個印花換個電飯煲，可惜你冇命等到。",
     effect: { goldBonus: 2 },
     rarity: "普通",
@@ -2357,7 +2357,7 @@ export const RELICS = {
   rl_herbal_cup: {
     id: "rl_herbal_cup",
     name: "涼茶碗",
-    desc: "每場戰鬥勝利回 3 HP。",
+    desc: "苦口一碗——每場打贏回 3 HP。",
     flavor: "苦口良藥——飲完，傷都冇咁痛。",
     effect: { healOnWin: 3 },
     rarity: "稀有",
@@ -2366,7 +2366,7 @@ export const RELICS = {
   rl_iron_knuckle: {
     id: "rl_iron_knuckle",
     name: "鐵指虎",
-    desc: "每張攻擊牌額外 +1 傷害。",
+    desc: "指節上鐵——每張攻擊多 1 傷害。",
     flavor: "戴上去，拳頭先算數。",
     effect: { attackPerCard: 1 },
     rarity: "稀有",
@@ -2375,7 +2375,7 @@ export const RELICS = {
   rl_tin_lunchbox: {
     id: "rl_tin_lunchbox",
     name: "鐵飯盒",
-    desc: "每場開波自帶 4 擋；小怪勝場額外 +1 金。",
+    desc: "飯盒擋一擋——開波 4 擋，小怪勝場多 1 金。",
     flavor: "盒蓋凹咗，但飯香仲在——擋得住，又賺到。",
     effect: { startBlock: 4, goldBonus: 1 },
     rarity: "普通",
@@ -2384,7 +2384,7 @@ export const RELICS = {
   rl_egg_waffle: {
     id: "rl_egg_waffle",
     name: "雞蛋仔紙袋",
-    desc: "勝場回血類效果額外 +2 HP。",
+    desc: "甜味補血——勝場回血類多 2 HP。",
     flavor: "紙袋透熱，甜味喺後巷都聞得到。",
     effect: { healOnWinBonus: 2 },
     rarity: "普通",
