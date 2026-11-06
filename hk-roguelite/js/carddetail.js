@@ -91,7 +91,7 @@ export function cardDetail(card) {
   return {
     name: card.name || "（無名）",
     cost: Number.isFinite(card.cost) ? card.cost : 0,
-    typeLabel: card.type === "attack" ? "攻擊" : card.type === "skill" ? "技能" : "—",
+    typeLabel: card.type === "attack" ? "攻擊・出拳" : card.type === "skill" ? "技能・手法" : "—",
     rarity: card.rarity || "—",
     blurb: card.blurb || "",
     lines: cardEffectLines(card),
