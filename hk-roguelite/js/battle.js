@@ -119,7 +119,7 @@ function drawCards(b, n) {
       b.drawPile = shuffle(b.discard);
       b.discard = [];
       reshuffled = recycled;
-      pushLog(b, "洗返牌堆……袋口翻新一輪。");
+      pushLog(b, "洗返牌堆……袋口翻新一輪，唔好亂摸。");
     }
     const id = b.drawPile.shift();
     if (id) b.hand.push(id);
@@ -142,7 +142,7 @@ export function startPlayerTurn(b) {
   b.discard.push(...b.hand);
   b.hand = [];
   drawCards(b, 5 + (b.turn === 1 ? b.relicDraw || 0 : 0) + (b.relicDrawPerTurn || 0));
-  pushLog(b, b.turn === 1 ? "開波——輪到你出手，街口睇住。" : `第 ${b.turn} 回合——輪到你出手，繼續撑住。`);
+  pushLog(b, b.turn === 1 ? "開波——輪到你出手，街口記低呢鋪。" : `第 ${b.turn} 回合——輪到你出手，穩陣撑住。`);
 
   if (b.enemyMark > 0) {
     const markDmg = b.enemyMark;
@@ -365,7 +365,7 @@ export function endTurn(b) {
     result.dangkou = tryDangkou(b, raw);
   } else if (intent.kind === "block") {
     b.enemyBlock += intent.value;
-    pushLog(b, `${b.enemyName}：${intent.label}——對面守緊層擋`);
+    pushLog(b, `${b.enemyName}：${intent.label}——對面守緊層擋，穩陣`);
   } else if (intent.kind === "buff_attack") {
     b.enemyAtkBonus += intent.value;
     pushLog(b, `${b.enemyName}：${intent.label}（攻勢 +${b.enemyAtkBonus}）——對面蓄勢`);
