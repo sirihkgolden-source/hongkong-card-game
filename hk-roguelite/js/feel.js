@@ -198,7 +198,7 @@ export function flashShuffle(b, recycled) {
   setNumSafe("#pile-draw", b?.drawPile?.length ?? 0);
   const anchor = document.getElementById("pile-draw");
   if (anchor) {
-    floatText(anchor, recycled ? `洗返牌堆 ${recycled} 張——袋口翻新一輪` : "洗返牌堆——袋口翻新一輪", "block");
+    floatText(anchor, recycled ? `洗返牌堆 ${recycled} 張——袋口翻新一輪先` : "洗返牌堆——袋口翻新一輪先", "block");
   }
 }
 
@@ -259,7 +259,7 @@ export function showPassiveBanner(text, variant = "kuaisou") {
 
 /** @deprecated 用 showPassiveBanner("快手！平一費", "kuaisou") */
 export function showKuaisouBanner() {
-  showPassiveBanner("快手！平一費——節奏嚟喇喂", "kuaisou");
+  showPassiveBanner("快手！平一費——節奏嚟喇喂！", "kuaisou");
 }
 
 /**
@@ -289,7 +289,7 @@ export function clearFx() {
 export function floatGold(delta) {
   if (!delta) return;
   const goldEl = findGoldAnchor();
-  const text = delta > 0 ? `+${delta} 大洋入袋口` : `${delta} 大洋出水口`;
+  const text = delta > 0 ? `+${delta} 大洋入袋口` : `${delta} 大洋出水口邊`;
   floatText(goldEl, text, delta > 0 ? "gold" : "gold-spend");
 }
 
@@ -316,7 +316,7 @@ export function floatRunDeltas(deltas, pushLine) {
     lines.push({ text: relic > 0 ? `+${relic} 件身家入袋` : `${relic} 件身家出水`, variant: "kuaisou" });
   }
   if (block) {
-    lines.push({ text: block > 0 ? `+${block} 擋上身` : `${block} 擋散`, variant: "block" });
+    lines.push({ text: block > 0 ? `+${block} 擋上身` : `${block} 擋散晒`, variant: "block" });
   }
   if (energy) {
     lines.push({ text: energy > 0 ? `+${energy} 格氣入袋` : `${energy} 格氣出水`, variant: "kuaisou" });
