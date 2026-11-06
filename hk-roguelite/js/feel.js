@@ -304,7 +304,7 @@ export function floatRunDeltas(deltas, pushLine) {
   const lines = [];
   const { hp = 0, maxHp = 0, deck = 0, block = 0, energy = 0, gold = 0, relic = 0 } = deltas || {};
   if (hp) {
-    lines.push({ text: hp > 0 ? `+${hp} 血回籠` : `${hp} 血出水口`, variant: hp > 0 ? "heal" : "dmg" });
+    lines.push({ text: hp > 0 ? `+${hp} 血回籠先` : `${hp} 血出水口邊`, variant: hp > 0 ? "heal" : "dmg" });
   }
   if (maxHp) {
     lines.push({ text: maxHp > 0 ? `+${maxHp} 最大血` : `${maxHp} 最大血出水`, variant: "heal" });
@@ -316,10 +316,10 @@ export function floatRunDeltas(deltas, pushLine) {
     lines.push({ text: relic > 0 ? `+${relic} 件身家入袋口` : `${relic} 件身家出水口`, variant: "kuaisou" });
   }
   if (block) {
-    lines.push({ text: block > 0 ? `+${block} 擋上身` : `${block} 擋散晒`, variant: "block" });
+    lines.push({ text: block > 0 ? `+${block} 擋上身先` : `${block} 擋散晒`, variant: "block" });
   }
   if (energy) {
-    lines.push({ text: energy > 0 ? `+${energy} 格氣入袋` : `${energy} 格氣出水口`, variant: "kuaisou" });
+    lines.push({ text: energy > 0 ? `+${energy} 格氣入袋口` : `${energy} 格氣出水口`, variant: "kuaisou" });
   }
   if (gold) {
     lines.push({ text: gold > 0 ? `+${gold} 大洋入袋口` : `${gold} 大洋出水口`, variant: gold > 0 ? "gold" : "gold-spend" });
