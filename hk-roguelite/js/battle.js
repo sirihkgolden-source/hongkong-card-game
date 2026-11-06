@@ -119,7 +119,7 @@ function drawCards(b, n) {
       b.drawPile = shuffle(b.discard);
       b.discard = [];
       reshuffled = recycled;
-      pushLog(b, "洗牌……袋口翻新。");
+      pushLog(b, "洗返牌堆……袋口翻新。");
     }
     const id = b.drawPile.shift();
     if (id) b.hand.push(id);
@@ -142,7 +142,7 @@ export function startPlayerTurn(b) {
   b.discard.push(...b.hand);
   b.hand = [];
   drawCards(b, 5 + (b.turn === 1 ? b.relicDraw || 0 : 0) + (b.relicDrawPerTurn || 0));
-  pushLog(b, b.turn === 1 ? "開波——輪到你出手。" : `第 ${b.turn} 回合——輪到你出手。`);
+  pushLog(b, b.turn === 1 ? "開波——輪到你出手，街口睇住。" : `第 ${b.turn} 回合——輪到你出手。`);
 
   if (b.enemyMark > 0) {
     const markDmg = b.enemyMark;
@@ -151,7 +151,7 @@ export function startPlayerTurn(b) {
     b.enemyMark = 0;
     if (b.enemyHp <= 0) {
       b.over = "win";
-      pushLog(b, "對手仆低——呢鋪收工！");
+      pushLog(b, "對手仆低——呢鋪收工，行得過！");
     }
   }
 }
@@ -295,7 +295,7 @@ export function playCard(b, handIndex) {
 
   if (b.enemyHp <= 0) {
     b.over = "win";
-    pushLog(b, "對手仆低——呢鋪收工！");
+    pushLog(b, "對手仆低——呢鋪收工，行得過！");
   }
 
   return {
