@@ -59,10 +59,10 @@ export function cardWhenToUse(card) {
     return "捱打前出——擋幾多得幾多，唔好等拳頭落街口。";
   }
   if (card.heal) {
-    return "唔好等血見底——早啲補，街口先捱得耐啲。";
+    return "唔好等血見底——早啲補，街口先捱得耐啲先。";
   }
   if (card.draw && !card.dmg) {
-    return "手牌乾嘅時候出——幫你搵返出擊牌。";
+    return "手牌乾嘅時候出——幫你搵返出擊牌先。";
   }
   if (cost === 0) {
     return "免費牌——有空位就落，唔會蝕本銀。";
@@ -91,16 +91,16 @@ export function cardDetail(card) {
   const rarityRaw = card.rarity || "—";
   const rarityLabel =
     rarityRaw === "普通"
-      ? "普通・街口貨色"
+      ? "普通・街口貨色檔"
       : rarityRaw === "稀有"
-        ? "稀有・夜檔貨色"
+        ? "稀有・夜檔貨色檔"
         : rarityRaw === "專屬"
-          ? "專屬・身家貨色"
+          ? "專屬・身家貨色檔"
           : rarityRaw;
   return {
     name: card.name || "（無名）",
     cost: Number.isFinite(card.cost) ? card.cost : 0,
-    typeLabel: card.type === "attack" ? "攻擊・出拳" : card.type === "skill" ? "技能・手法" : "—",
+    typeLabel: card.type === "attack" ? "攻擊・出拳檔" : card.type === "skill" ? "技能・手法檔" : "—",
     rarity: rarityLabel,
     blurb: card.blurb || "",
     lines: cardEffectLines(card),
