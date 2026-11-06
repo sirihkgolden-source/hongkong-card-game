@@ -647,20 +647,20 @@ function renderPause() {
       </button>`;
 
   return `
-    <main class="screen screen-pause" aria-label="暫停">
+    <main class="screen screen-pause" aria-label="停一停">
       <header class="brand-block brand-compact">
-        <h1 class="brand">暫停</h1>
-        <p class="tagline">${fromBattle ? "戰鬥中 · 停一停" : "路上 · 停一停"}</p>
+        <h1 class="brand">停一停</h1>
+        <p class="tagline">${fromBattle ? "巷口交手 · 唞吓氣" : "地圖路邊 · 唞吓氣"}</p>
       </header>
 
       <section class="panel pause-panel">
-        <h2>而家嘅一局</h2>
+        <h2>而家呢一鋪</h2>
         ${s.ok ? items : `<p class="lede">未有進行中嘅一局。</p>`}
         <p class="pause-warn">${escapeHtml(pauseLossLine(s))}</p>
       </section>
 
       <div class="actions">
-        <button type="button" class="btn btn-primary btn-pressable" data-action="resume">繼續</button>
+        <button type="button" class="btn btn-primary btn-pressable" data-action="resume">繼續行</button>
         ${confirmBlock}
         <button type="button" class="btn btn-ghost btn-pressable" data-action="to-settings">設定</button>
       </div>
@@ -924,7 +924,7 @@ function renderMap() {
           <span class="map-sub">${escapeHtml(subText)}</span>
           <span class="map-title">${escapeHtml(titleText)}</span>
         </span>
-        ${current ? '<span class="map-cta">進入</span>' : ""}
+        ${current ? '<span class="map-cta">行入</span>' : ""}
         ${done ? '<span class="map-done">✓ 行過</span>' : ""}
       </li>
     `;
@@ -937,7 +937,7 @@ function renderMap() {
           <p class="eyebrow">Act${run.act}・${escapeHtml(actName)}</p>
           <h1 class="run-title">${escapeHtml(char.name)}</h1>
         </div>
-        <button type="button" class="pause-btn" data-action="to-pause" aria-label="暫停">暫停<span class="pause-btn-icon" aria-hidden="true">❚❚</span></button>
+        <button type="button" class="pause-btn" data-action="to-pause" aria-label="停一停">停一停<span class="pause-btn-icon" aria-hidden="true">❚❚</span></button>
         <div class="run-stats" role="group" aria-label="狀態">
           <span>HP ${run.hp}/${run.maxHp}</span>
           <span>金幣 ${run.gold}</span>
@@ -958,10 +958,10 @@ function renderMap() {
             : ""
       }
       <section class="panel map-panel">
-        <h2>節點路線</h2>
+        <h2>今晚路線</h2>
         <ol class="map-list">${nodes}</ol>
       </section>
-      <p class="foot-note">被動「${escapeHtml(char.passive.name)}」全程生效 · ${escapeHtml(META.isolationNote)}</p>
+      <p class="foot-note">打法「${escapeHtml(char.playstyle || char.passive.name)}」全程生效 · 被動「${escapeHtml(char.passive.name)}」</p>
     </main>
   `;
 }
@@ -1212,7 +1212,7 @@ function renderBattle() {
               ? `<button type="button" class="btn btn-primary btn-pressable" data-action="to-defeat">結算</button>`
               : `<button type="button" class="btn btn-ghost" data-action="end-turn" ${state.busy ? "disabled" : ""}>結束回合</button>`
         }
-        <button type="button" class="pause-btn pause-btn--battle" data-action="to-pause" aria-label="暫停">暫停<span class="pause-btn-icon" aria-hidden="true">❚❚</span></button>
+        <button type="button" class="pause-btn pause-btn--battle" data-action="to-pause" aria-label="停一停">停一停<span class="pause-btn-icon" aria-hidden="true">❚❚</span></button>
       </div>
       <ul class="battle-log" aria-live="polite">
         ${b.log.map((l) => `<li>${escapeHtml(l)}</li>`).join("")}
