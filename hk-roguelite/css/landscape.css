@@ -146,10 +146,11 @@
 
   /* 戰前句：首回合一行，唔好撐爆敵人欄 */
   #fighter-enemy .enemy-flavor-line {
-    font-size: 0.55rem;
-    line-height: 1.25;
+    font-size: 0.64rem;
+    line-height: 1.3;
     margin: 0.05rem 0 0;
-    max-height: 2.6em;
+    max-height: 2.8em;
+    color: rgba(220, 232, 248, 0.9);
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;
