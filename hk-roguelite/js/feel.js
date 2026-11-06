@@ -198,7 +198,7 @@ export function flashShuffle(b, recycled) {
   setNumSafe("#pile-draw", b?.drawPile?.length ?? 0);
   const anchor = document.getElementById("pile-draw");
   if (anchor) {
-    floatText(anchor, recycled ? `洗返牌堆 ${recycled} 張` : "洗返牌堆", "block");
+    floatText(anchor, recycled ? `洗返牌堆 ${recycled} 張——袋口翻新` : "洗返牌堆——袋口翻新", "block");
   }
 }
 
@@ -289,7 +289,7 @@ export function clearFx() {
 export function floatGold(delta) {
   if (!delta) return;
   const goldEl = findGoldAnchor();
-  const text = delta > 0 ? `+${delta} 金入袋` : `${delta} 金出水`;
+  const text = delta > 0 ? `+${delta} 大洋入袋` : `${delta} 大洋出水`;
   floatText(goldEl, text, delta > 0 ? "gold" : "gold-spend");
 }
 
@@ -307,7 +307,7 @@ export function floatRunDeltas(deltas, pushLine) {
     lines.push({ text: hp > 0 ? `+${hp} 血` : `${hp} 血`, variant: hp > 0 ? "heal" : "dmg" });
   }
   if (maxHp) {
-    lines.push({ text: maxHp > 0 ? `+${maxHp} 最大命` : `${maxHp} 最大命`, variant: "heal" });
+    lines.push({ text: maxHp > 0 ? `+${maxHp} 最大血` : `${maxHp} 最大血`, variant: "heal" });
   }
   if (deck) {
     lines.push({ text: deck > 0 ? `+${deck} 張入袋` : `${deck} 張牌`, variant: "kuaisou" });
@@ -322,7 +322,7 @@ export function floatRunDeltas(deltas, pushLine) {
     lines.push({ text: energy > 0 ? `+${energy} 格氣` : `${energy} 格氣`, variant: "kuaisou" });
   }
   if (gold) {
-    lines.push({ text: gold > 0 ? `+${gold} 金入袋` : `${gold} 金出水`, variant: gold > 0 ? "gold" : "gold-spend" });
+    lines.push({ text: gold > 0 ? `+${gold} 大洋入袋` : `${gold} 大洋出水`, variant: gold > 0 ? "gold" : "gold-spend" });
   }
   if (!lines.length) return;
 
