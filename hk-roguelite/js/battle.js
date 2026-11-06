@@ -147,7 +147,7 @@ export function startPlayerTurn(b) {
   if (b.enemyMark > 0) {
     const markDmg = b.enemyMark;
     b.enemyHp = Math.max(0, b.enemyHp - markDmg);
-    pushLog(b, `跳電發作——對面再痛 ${markDmg}`);
+    pushLog(b, `跳電發作——對面再痛 ${markDmg}——數簿未埋`);
     b.enemyMark = 0;
     if (b.enemyHp <= 0) {
       b.over = "win";
@@ -230,7 +230,7 @@ export function playCard(b, handIndex) {
     b.enemyHp = Math.max(0, b.enemyHp - dealt);
     pushLog(
       b,
-      `落「${card.name}」——打落 ${dealt} 傷${enemyBlocked ? `（擋走 ${enemyBlocked}）` : ""}${usedKuaisou ? "【快手】" : ""}`
+      `落「${card.name}」——打落 ${dealt} 傷${enemyBlocked ? `（擋走 ${enemyBlocked}）` : ""}${usedKuaisou ? "【快手加碼】" : ""}`
     );
   }
 
@@ -238,7 +238,7 @@ export function playCard(b, handIndex) {
     b.playerBlock += card.block;
     blockGained = card.block;
     target = "self";
-    pushLog(b, `落「${card.name}」——擋上 ${card.block}`);
+    pushLog(b, `落「${card.name}」——擋上 ${card.block}——先頂住`);
   }
   if (card.heal) {
     const before = b.playerHp;
@@ -247,20 +247,20 @@ export function playCard(b, handIndex) {
     if (!b.healBonusUsed && (b.relicHealBonusFirst || 0) > 0) {
       amount += b.relicHealBonusFirst;
       b.healBonusUsed = true;
-      pushLog(b, `【跌打藥箱】首次回血多 ${b.relicHealBonusFirst}`);
+      pushLog(b, `【跌打藥箱】首次回血多 ${b.relicHealBonusFirst}——一劑頂兩劑`);
     }
     b.playerHp = Math.min(b.playerMaxHp, b.playerHp + amount);
     healed = b.playerHp - before;
     target = "self";
-    pushLog(b, `落「${card.name}」——回 ${healed} HP`);
+    pushLog(b, `落「${card.name}」——回 ${healed} HP——身子骨駁返`);
   }
   if (card.draw) {
     drawCards(b, card.draw);
-    pushLog(b, `袋口摸 ${card.draw} 張`);
+    pushLog(b, `袋口摸 ${card.draw} 張——再開一輪`);
   }
   if (card.mark) {
     b.enemyMark += card.mark;
-    pushLog(b, `留低 ${card.mark} 點——下回合再痛`);
+    pushLog(b, `留低 ${card.mark} 點——下回合再痛一截`);
   }
 
   let kuaisouArmed = false;
@@ -269,7 +269,7 @@ export function playCard(b, handIndex) {
     if (b.attacksPlayed % 3 === 0) {
       b.kuaisouReady = true;
       kuaisouArmed = true;
-      pushLog(b, "【快手】下一記平一費兼多 3 傷！");
+      pushLog(b, "【快手】下一記平一費兼多 3 傷——節奏嚟！");
     }
   }
 
@@ -280,7 +280,7 @@ export function playCard(b, handIndex) {
     drawCards(b, 1);
     zhaopaiyanDrew = true;
     drawnExtra = 1;
-    pushLog(b, "【招牌眼】首次技能——袋口多摸 1！");
+    pushLog(b, "【招牌眼】首次技能——袋口多摸 1——睇得通！");
   }
 
   // 跌打：每場首次打技能牌即刻回 4 HP
@@ -290,7 +290,7 @@ export function playCard(b, handIndex) {
     const before = b.playerHp;
     b.playerHp = Math.min(b.playerMaxHp, b.playerHp + 4);
     seotongHealed = b.playerHp - before;
-    pushLog(b, `【跌打】首次技能——回 ${seotongHealed} HP！`);
+    pushLog(b, `【跌打】首次技能——回 ${seotongHealed} HP——藥油見效！`);
   }
 
   if (b.enemyHp <= 0) {
@@ -329,7 +329,7 @@ export function tryDangkou(b, damageTaken) {
   b.dangkouUsed = true;
   const block = 8;
   b.playerBlock += block;
-  pushLog(b, `【檔口】首次捱打——擋上 ${block}！`);
+  pushLog(b, `【檔口】首次捱打——擋上 ${block}——守住先！`);
   return { triggered: true, block };
 }
 
@@ -360,7 +360,7 @@ export function endTurn(b) {
     b.playerHp = Math.max(0, b.playerHp - dealt);
     result.dealt = dealt;
     result.blocked = blocked;
-    pushLog(b, `${b.enemyName}：${intent.label} → 你捱咗 ${dealt} 傷`);
+    pushLog(b, `${b.enemyName}：${intent.label} → 你捱咗 ${dealt} 傷——街口記低`);
     // 捱打＝對方出手攻擊（全擋都算受擊）
     result.dangkou = tryDangkou(b, raw);
   } else if (intent.kind === "block") {
@@ -376,7 +376,7 @@ export function endTurn(b) {
 
   if (b.playerHp <= 0) {
     b.over = "lose";
-    pushLog(b, "你仆街……街口靜咗。");
+    pushLog(b, "你仆街……街口靜咗一陣。");
     return result;
   }
 
