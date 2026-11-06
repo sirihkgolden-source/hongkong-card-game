@@ -19,22 +19,22 @@ export function cardEffectLines(card) {
 
   // 傷害：分開講「半血加成」同「標記」兩種特別情況
   if (card.dmg) {
-    let dmgLine = `出拳打落 ${card.dmg} 傷。`;
+    let dmgLine = `出拳打落 ${card.dmg} 傷——街口見真章。`;
     if (card.dmgBonusOnLowHp) {
       dmgLine += `自己半血以下再加 ${card.dmgBonusOnLowHp} 傷——血少氣旺。`;
     }
     out.push(dmgLine);
   }
 
-  if (card.block) out.push(`加 ${card.block} 擋——呢回合打入嚟嘅先頂住。`);
+  if (card.block) out.push(`加 ${card.block} 擋——呢回合打入嚟嘅先頂住一陣。`);
 
-  if (card.heal) out.push(`回 ${card.heal} 滴血——身子骨駁返。`);
+  if (card.heal) out.push(`回 ${card.heal} 滴血——身子骨駁返嚟。`);
 
-  if (card.draw) out.push(`摸 ${card.draw} 張——袋口再開。`);
+  if (card.draw) out.push(`摸 ${card.draw} 張——袋口再開一輪。`);
 
-  if (card.mark) out.push(`留低標記：下回合對面再痛 ${card.mark}。`);
+  if (card.mark) out.push(`留低標記：下回合對面再痛 ${card.mark}——數簿未埋。`);
 
-  if (out.length === 0) out.push("冇即時數值——多數係舖路、起手或者觸發被動。");
+  if (out.length === 0) out.push("冇即時數值——多數係舖路、起手或者觸發被動，街口先鋪定。");
   return out;
 }
 
@@ -47,10 +47,10 @@ export function cardWhenToUse(card) {
   const cost = card.cost ?? 0;
 
   if (card.dmg && card.dmg >= 12) {
-    return "重手——留返對手血薄收尾，或者 Boss 拆盾嗰下。";
+    return "重手——留返對手血薄收尾，或者 Boss 拆盾嗰一下。";
   }
   if (card.dmg && card.draw) {
-    return "打得又摸得，牌唔會斷——開場就可以落。";
+    return "打得又摸得，牌唔會斷——開波就可以落。";
   }
   if (card.block && card.block >= 8) {
     return "對手寫住大數嗰下先出，慳返條命。";
@@ -65,7 +65,7 @@ export function cardWhenToUse(card) {
     return "手牌乾嘅時候出，幫你搵返出擊牌。";
   }
   if (cost === 0) {
-    return "免費牌——有空位就落，唔會蝕。";
+    return "免費牌——有空位就落，唔會蝕本。";
   }
   return "睇場合用——冇硬性限制，街口隨機應變。";
 }
