@@ -1365,11 +1365,11 @@ function renderRest() {
       (r) => `
         <button type="button" class="event-choice${canRelicBuy ? "" : " is-disabled"}" data-action="shop-relic" data-relic="${escapeHtml(r.id)}" ${canRelicBuy ? "" : "disabled"}>
           <strong>${escapeHtml(r.name)}<span class="relic-rarity">${escapeHtml(r.rarity)}</span></strong>
-          <span>花 ${SHOP.relicCost} 金幣 · ${escapeHtml(r.desc)}${canRelicBuy ? "" : "（金幣不足）"}</span>
+          <span>${escapeHtml(r.flavor || r.desc)} · 花 ${SHOP.relicCost}（${escapeHtml(r.desc)}）${canRelicBuy ? "" : "（金幣不足）"}</span>
         </button>`
     )
     .join("");
-  // 消耗品貨架（每局洗一次，一定有 1 件）
+  // 消耗品貨架（每局洗一次，一定有 1 件）——主句用 flavor，機械 desc 留括號
   const consumableStock = (state.shopConsumables || [])
     .map((id) => CONSUMABLES[id])
     .filter(Boolean)
@@ -1378,7 +1378,7 @@ function renderRest() {
       return `
         <button type="button" class="event-choice${affordable ? "" : " is-disabled"}" data-action="buy-consumable" data-consumable="${escapeHtml(c.id)}" ${affordable ? "" : "disabled"}>
           <strong>${escapeHtml(c.name)}<span class="relic-rarity">消耗</span></strong>
-          <span>花 ${c.price} 金幣 · ${escapeHtml(c.desc)}${affordable ? "" : "（金幣不足）"}</span>
+          <span>${escapeHtml(c.flavor || c.desc)} · 花 ${c.price}（${escapeHtml(c.desc)}）${affordable ? "" : "（金幣不足）"}</span>
         </button>`;
     })
     .join("");
@@ -1387,7 +1387,7 @@ function renderRest() {
       (r) => `
         <button type="button" class="event-choice is-sell" data-action="sell-relic" data-relic="${escapeHtml(r.id)}">
           <strong>賣・${escapeHtml(r.name)}</strong>
-          <span>+${SHOP.sellRelicGain} 金幣（${escapeHtml(r.desc)}）</span>
+          <span>+${SHOP.sellRelicGain} 金幣 · ${escapeHtml(r.flavor || r.desc)}</span>
         </button>`
     )
     .join("");
