@@ -1,7 +1,7 @@
 /**
  * 暫停／返回標題嘅「會丟失咩」計算。
  *
- * 獨立成一個純函式，因為呢段文案最容易講錯（講少咗＝呃玩家，講多咗＝唔敢走）。
+ * 獨立成一個純函式，因為呢段文案最容易講錯（講少咗＝呃玩家，講多咗＝唔敢出街）。
  * 放喺模組就可以畀 smoke 直接測，唔需要開瀏覽器。
  *
  * 規則：返回標題 = 呢一局即刻報銷，冇得「續上次」。所以一定要講清：
@@ -68,6 +68,6 @@ export function pauseSummary(run, opts = {}) {
  * @param {ReturnType<typeof pauseSummary>} s
  */
 export function pauseLossLine(s) {
-  if (!s || !s.ok) return "而家未有進行中嘅一鋪——出街先再講。";
-  return `返標題會幫你存起呢一鋪（Act${s.act} 街口第 ${Math.min(s.done + 1, s.total)}／${s.total} 格），下次撳「繼續」就返得嚟。`;
+  if (!s || !s.ok) return "而家未有進行中嘅一鋪——出街先，再返嚟講。";
+  return `返標題會幫你存起呢一鋪（Act${s.act} 街口第 ${Math.min(s.done + 1, s.total)}／${s.total} 格），下次撳「繼續」就返得嚟——唔會白行。`;
 }
