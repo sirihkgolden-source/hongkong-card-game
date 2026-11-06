@@ -1396,7 +1396,7 @@ function renderRest() {
       (r) => `
         <button type="button" class="event-choice is-sell" data-action="sell-relic" data-relic="${escapeHtml(r.id)}">
           <strong>賣・${escapeHtml(r.name)}</strong>
-          <span>+${SHOP.sellRelicGain} 金幣 · ${escapeHtml(r.flavor || r.desc)}</span>
+          <span>+${SHOP.sellRelicGain} 大洋 · ${escapeHtml(r.flavor || r.desc)}</span>
         </button>`
     )
     .join("");
@@ -1411,7 +1411,7 @@ function renderRest() {
       ([id, n]) => `
         <button type="button" class="event-choice is-sell" data-action="sell-card" data-card="${escapeHtml(id)}">
           <strong>賣・${escapeHtml(cardById(id)?.name ?? id)} ×${n}</strong>
-          <span>+${SHOP.sellCardGain} 金幣（牌組 −1 張）</span>
+          <span>+${SHOP.sellCardGain} 大洋（牌組 −1 張）</span>
         </button>`
     )
     .join("");
@@ -1422,7 +1422,7 @@ function renderRest() {
         <p class="tagline">${escapeHtml(restSub)}</p>
       </header>
       <section class="panel">
-        <p class="lede">現時 HP ${state.run.hp}/${state.run.maxHp} · 金幣 ${state.run.gold} · 牌組 ${state.run.deck.length}。揀一項：</p>
+        <p class="lede">現時 HP ${state.run.hp}/${state.run.maxHp} · 大洋 ${state.run.gold} · 牌組 ${state.run.deck.length}。揀一項：</p>
         <div class="event-choices">
           <button type="button" class="event-choice" data-action="rest-heal">
             <strong>${escapeHtml(flavor.restHealLabel)}</strong>
@@ -1444,7 +1444,7 @@ function renderRest() {
           </button>
           <button type="button" class="event-choice${canCardBuy ? "" : " is-disabled"}" data-action="shop-card" ${canCardBuy ? "" : "disabled"}>
             <strong>${escapeHtml(flavor.shopCardLabel)}</strong>
-            <span>花 ${SHOP.cardCost} 金幣入手「${escapeHtml(shopCard?.name ?? cardId)}」${canCardBuy ? "" : "（大洋不足）"}</span>
+            <span>花 ${SHOP.cardCost} 大洋入手「${escapeHtml(shopCard?.name ?? cardId)}」${canCardBuy ? "" : "（大洋不足）"}</span>
           </button>
           <button type="button" class="event-choice${canPackBuy ? "" : " is-disabled"}" data-action="shop-pack" ${canPackBuy ? "" : "disabled"}>
             <strong>${escapeHtml(flavor.shopPackLabel)}</strong>
@@ -1528,13 +1528,13 @@ function runKeyLine(run, char) {
   // 金幣：分三檔
   if (gold >= 40) parts.push(`袋住 ${gold} 個大洋`);
   else if (gold >= 15) parts.push(`剩 ${gold} 個大洋`);
-  else parts.push(`金幣使剩 ${gold}`);
+  else parts.push(`大洋使剩 ${gold}`);
 
   // 遺物
   if (relics >= 5) parts.push(`孭住 ${relics} 件貨`);
   else if (relics >= 2) parts.push(`${relics} 件遺物傍身`);
-  else if (relics === 1) parts.push("只得一件遺物");
-  else parts.push("一件遺物都冇攞");
+  else if (relics === 1) parts.push("只得一件遺物傍身");
+  else parts.push("一件遺物都冇攞過");
 
   // 主路線
   if (route) parts.push(`行${route}條路`);
@@ -3150,7 +3150,7 @@ function onClick(event) {
         state.shopMsg = flavor.shopHealMsg(SHOP.healAmt);
         showRunDeltas(before);
       } else {
-        state.shopMsg = "大洋不足——袋口未夠。";
+        state.shopMsg = "大洋不足——袋口未夠銀紙。";
       }
       break;
     case "shop-card":
@@ -3163,13 +3163,13 @@ function onClick(event) {
         state.shopMsg = flavor.shopCardMsg(cardById(cardId)?.name ?? cardId);
         showRunDeltas(before);
       } else {
-        state.shopMsg = "大洋不足——袋口未夠。";
+        state.shopMsg = "大洋不足——袋口未夠銀紙。";
       }
       break;
     case "shop-pack": {
       const flavor = restShopForAct(state.run.act || 1);
       if (state.run.gold < SHOP.packCost) {
-        state.shopMsg = "大洋不足——袋口未夠。";
+        state.shopMsg = "大洋不足——袋口未夠銀紙。";
         break;
       }
       const packCardId = pickPackCard(state.run.characterId);
@@ -3188,7 +3188,7 @@ function onClick(event) {
     case "shop-reroll": {
       const flavor = restShopForAct(state.run.act || 1);
       if (state.run.gold < SHOP.rerollCost) {
-        state.shopMsg = "大洋不足——袋口未夠。";
+        state.shopMsg = "大洋不足——袋口未夠銀紙。";
         break;
       }
       const before = runSnapshot();
@@ -3212,7 +3212,7 @@ function onClick(event) {
       const cs = CONSUMABLES[csId];
       if (!cs) break;
       if (state.run.gold < cs.price) {
-        state.shopMsg = "大洋不足——袋口未夠。";
+        state.shopMsg = "大洋不足——袋口未夠銀紙。";
         break;
       }
       const before = runSnapshot();
@@ -3229,7 +3229,7 @@ function onClick(event) {
       const relic = relicById(relicId);
       if (!relic) return;
       if (state.run.gold < SHOP.relicCost) {
-        state.shopMsg = "大洋不足——袋口未夠。";
+        state.shopMsg = "大洋不足——袋口未夠銀紙。";
         break;
       }
       if ((state.run.relics || []).includes(relicId)) {
