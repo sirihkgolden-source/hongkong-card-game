@@ -119,7 +119,7 @@ function drawCards(b, n) {
       b.drawPile = shuffle(b.discard);
       b.discard = [];
       reshuffled = recycled;
-      pushLog(b, "洗牌……");
+      pushLog(b, "洗牌……袋口翻新。");
     }
     const id = b.drawPile.shift();
     if (id) b.hand.push(id);
@@ -146,11 +146,11 @@ export function startPlayerTurn(b) {
   if (b.enemyMark > 0) {
     const markDmg = b.enemyMark;
     b.enemyHp = Math.max(0, b.enemyHp - markDmg);
-    pushLog(b, `跳電發作，造成 ${markDmg} 傷害`);
+    pushLog(b, `跳電發作——造成 ${markDmg} 傷`);
     b.enemyMark = 0;
     if (b.enemyHp <= 0) {
       b.over = "win";
-      pushLog(b, "對手倒下！");
+      pushLog(b, "對手仆低！");
     }
   }
 }
@@ -229,7 +229,7 @@ export function playCard(b, handIndex) {
     b.enemyHp = Math.max(0, b.enemyHp - dealt);
     pushLog(
       b,
-      `打出「${card.name}」造成 ${dealt} 傷害${enemyBlocked ? `（擋 ${enemyBlocked}）` : ""}${usedKuaisou ? "【快手】" : ""}`
+      `打出「${card.name}」——造成 ${dealt} 傷${enemyBlocked ? `（擋 ${enemyBlocked}）` : ""}${usedKuaisou ? "【快手】" : ""}`
     );
   }
 
@@ -237,7 +237,7 @@ export function playCard(b, handIndex) {
     b.playerBlock += card.block;
     blockGained = card.block;
     target = "self";
-    pushLog(b, `打出「${card.name}」獲得 ${card.block} 護盾`);
+    pushLog(b, `打出「${card.name}」——加 ${card.block} 擋`);
   }
   if (card.heal) {
     const before = b.playerHp;
@@ -251,15 +251,15 @@ export function playCard(b, handIndex) {
     b.playerHp = Math.min(b.playerMaxHp, b.playerHp + amount);
     healed = b.playerHp - before;
     target = "self";
-    pushLog(b, `打出「${card.name}」回復 ${healed} HP`);
+    pushLog(b, `打出「${card.name}」——回 ${healed} HP`);
   }
   if (card.draw) {
     drawCards(b, card.draw);
-    pushLog(b, `抽 ${card.draw} 張`);
+    pushLog(b, `摸 ${card.draw} 張`);
   }
   if (card.mark) {
     b.enemyMark += card.mark;
-    pushLog(b, `電留住咗 ${card.mark} 點，下回合發作`);
+    pushLog(b, `電留住 ${card.mark} 點——下回合發作`);
   }
 
   let kuaisouArmed = false;
@@ -294,7 +294,7 @@ export function playCard(b, handIndex) {
 
   if (b.enemyHp <= 0) {
     b.over = "win";
-    pushLog(b, "對手倒下！");
+    pushLog(b, "對手仆低！");
   }
 
   return {
@@ -359,7 +359,7 @@ export function endTurn(b) {
     b.playerHp = Math.max(0, b.playerHp - dealt);
     result.dealt = dealt;
     result.blocked = blocked;
-    pushLog(b, `${b.enemyName}：${intent.label} → 你受到 ${dealt} 傷害`);
+    pushLog(b, `${b.enemyName}：${intent.label} → 你食咗 ${dealt} 傷`);
     // 捱打＝對方出手攻擊（全擋都算受擊）
     result.dangkou = tryDangkou(b, raw);
   } else if (intent.kind === "block") {
@@ -375,7 +375,7 @@ export function endTurn(b) {
 
   if (b.playerHp <= 0) {
     b.over = "lose";
-    pushLog(b, "你倒下了……");
+    pushLog(b, "你仆街……");
     return result;
   }
 
