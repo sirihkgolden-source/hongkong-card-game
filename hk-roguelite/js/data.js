@@ -910,7 +910,7 @@ export const ACT1_MAP = [
       {
         id: "hard",
         label: "頂硬上：打埋呢班人",
-        effectText: "入戰鬥（敵人較硬）；贏咗多 6 金",
+        effectText: "正面硬碰（敵人較硬）；贏咗袋多 6 金",
         kind: "battle",
         enemyId: "E02",
         bonusGold: 6,
@@ -918,7 +918,7 @@ export const ACT1_MAP = [
       {
         id: "detour",
         label: "繞路：行後巷尾",
-        effectText: "入事件；順手拾到 5 金，兼回 6 HP",
+        effectText: "兜入排檔尾（短事）；順手執 5 金，兼回 6 HP",
         kind: "event",
         eventId: "ev_dai_pai_dong",
         bonusGold: 5,
@@ -988,7 +988,7 @@ export const ACT2_MAP = [
       {
         id: "hard",
         label: "照拆：同拆遷隊硬碰",
-        effectText: "入戰鬥（招牌拆遷隊）；贏咗多 7 金",
+        effectText: "同招牌拆遷隊硬碰；贏咗袋多 7 金",
         kind: "battle",
         enemyId: "E07",
         bonusGold: 7,
@@ -996,7 +996,7 @@ export const ACT2_MAP = [
       {
         id: "detour",
         label: "兜路：行後樓梯落去",
-        effectText: "入事件；順手拾到 6 金，兼回 5 HP",
+        effectText: "兜後樓梯遇短事；順手執 6 金，兼回 5 HP",
         kind: "event",
         eventId: "ev_neon_sign",
         bonusGold: 6,
@@ -1059,7 +1059,7 @@ export const ACT3_MAP = [
       {
         id: "hard",
         label: "清場：正面衝上去",
-        effectText: "入戰鬥（可能遇到精英）；贏咗多 8 金",
+        effectText: "正面清場（或遇精英）；贏咗袋多 8 金",
         kind: "battle",
         enemyPool: ["E10", "E11", "E08"],
         bonusGold: 8,
@@ -1067,7 +1067,7 @@ export const ACT3_MAP = [
       {
         id: "detour",
         label: "攀水管：由外牆爬",
-        effectText: "入事件；順手拾到 7 金，兼回 4 HP",
+        effectText: "攀外牆遇短事；順手執 7 金，兼回 4 HP",
         kind: "event",
         eventId: "ev_rooftop_laundry",
         bonusGold: 7,

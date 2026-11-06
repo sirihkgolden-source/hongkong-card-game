@@ -844,6 +844,14 @@ function renderBranch() {
   const opts = node?.options || [];
   if (!opts.length) return renderMap();
   const char = activeChar();
+  const act = state.run?.act || 1;
+  // 三區分支 lede 唔共用「企喺巷口」——按場景換句
+  const branchLede =
+    act === 3
+      ? `${char.name}企喺梯口，上頂定攀外牆——兩邊都唔會白行。`
+      : act === 2
+        ? `${char.name}企喺天橋底，前面兩條路——拆定兜，兩邊都改局。`
+        : `${char.name}企喺鐵閘前，前面兩條路——頂硬定繞，兩邊都唔會白行。`;
   const cards = opts
     .map(
       (o) => `
@@ -856,11 +864,11 @@ function renderBranch() {
   return `
     <main class="screen" aria-label="分支">
       <header class="brand-block brand-compact">
-        <h1 class="section-title">${escapeHtml(node.title || "二揀一")}</h1>
+        <h1 class="section-title">${escapeHtml(node.title || "兩條路")}</h1>
         <p class="tagline">行邊條路由你話事</p>
       </header>
       <section class="panel">
-        <p class="lede">${escapeHtml(char.name)}企喺巷口，前面兩條路。兩邊都唔會白行。</p>
+        <p class="lede">${escapeHtml(branchLede)}</p>
         <div class="branch-list">${cards}</div>
       </section>
     </main>
