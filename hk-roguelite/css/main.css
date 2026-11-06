@@ -2470,7 +2470,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.06);
   font-size: 0.82rem;
   color: rgba(220, 232, 248, 0.9);
-  max-height: 7.5rem;
+  max-height: 8rem;
   overflow: auto;
 }
 
@@ -2481,15 +2481,15 @@ body {
 
 /* 回合結束短回饋：最頂一行，金色，淡入 */
 .battle-log .turn-line {
-  margin: 0 0 0.3rem;
-  padding: 0.3rem 0.45rem;
+  margin: 0 0 0.34rem;
+  padding: 0.34rem 0.5rem;
   border-radius: 7px;
   border-left: 2px solid var(--neon-amber);
-  background: rgba(255, 193, 74, 0.12);
+  background: rgba(255, 193, 74, 0.14);
   color: var(--neon-amber);
-  font-size: 0.8rem;
+  font-size: 0.84rem;
   font-weight: 700;
-  line-height: 1.4;
+  line-height: 1.45;
   opacity: 0;
   transition: opacity 0.2s ease;
 }
