@@ -238,7 +238,7 @@ export function playCard(b, handIndex) {
     b.playerBlock += card.block;
     blockGained = card.block;
     target = "self";
-    pushLog(b, `落「${card.name}」——擋上 ${card.block}——先頂住`);
+    pushLog(b, `落「${card.name}」——擋上 ${card.block}——先頂住陣`);
   }
   if (card.heal) {
     const before = b.playerHp;
@@ -252,11 +252,11 @@ export function playCard(b, handIndex) {
     b.playerHp = Math.min(b.playerMaxHp, b.playerHp + amount);
     healed = b.playerHp - before;
     target = "self";
-    pushLog(b, `落「${card.name}」——回 ${healed} HP——身子骨駁返`);
+    pushLog(b, `落「${card.name}」——回 ${healed} HP——身子骨駁返嚟`);
   }
   if (card.draw) {
     drawCards(b, card.draw);
-    pushLog(b, `袋口摸 ${card.draw} 張——再開一輪`);
+    pushLog(b, `袋口摸 ${card.draw} 張——再開一輪牌`);
   }
   if (card.mark) {
     b.enemyMark += card.mark;
@@ -376,7 +376,7 @@ export function endTurn(b) {
 
   if (b.playerHp <= 0) {
     b.over = "lose";
-    pushLog(b, "你仆街……街口靜咗一陣，燈都淡咗。");
+    pushLog(b, "你仆街……街口靜咗一陣，燈都淡咗晒。");
     return result;
   }
 
