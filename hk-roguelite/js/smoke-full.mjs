@@ -443,6 +443,24 @@ section("事件頁眉港味（唔用機械腔）", () => {
   }
 });
 
+/* ---------- 7d. 分支路口文案港味 ---------- */
+section("分支路口文案港味", () => {
+  const mainSrc = readFileSync(new URL("./main.js", import.meta.url), "utf8");
+  assert(!mainSrc.includes("企喺巷口，前面兩條路"), "分支 lede 仍共用巷口句");
+  assert(mainSrc.includes("企喺鐵閘前"), "Act1 分支 lede 缺鐵閘前");
+  assert(mainSrc.includes("企喺天橋底"), "Act2 分支 lede 缺天橋底");
+  assert(mainSrc.includes("企喺梯口"), "Act3 分支 lede 缺梯口");
+  for (const map of [ACT1_MAP, ACT2_MAP, ACT3_MAP]) {
+    const branch = map.find((n) => n.type === "branch");
+    assert(branch, "缺分支節點");
+    for (const o of branch.options || []) {
+      assert(o.effectText && o.effectText.length >= 8, `${branch.id}/${o.id} effectText 太短`);
+      assert(!o.effectText.startsWith("入戰鬥"), `${branch.id}/${o.id} effectText 仍係「入戰鬥」機械腔`);
+      assert(!o.effectText.startsWith("入事件"), `${branch.id}/${o.id} effectText 仍係「入事件」機械腔`);
+    }
+  }
+});
+
 /* ---------- 8. 事件池（每區 ≥5，全部必改局；可見 HP／牌／金／能量／擋） ---------- */
 section("事件池（每區 ≥5，全部必改局）", () => {
   const titles = new Set();
