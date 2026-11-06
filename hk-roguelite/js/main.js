@@ -1239,10 +1239,10 @@ function pickFeedback(card) {
     return `執咗「${name}」——擋得又補得，捱夜更穩陣。`;
   }
   if (card.block) {
-    return `執咗「${name}」——多一層擋，命硬一截，撑場。`;
+    return `執咗「${name}」——多一層擋，命硬一截，企穩。`;
   }
   if (card.heal) {
-    return `執咗「${name}」——有得補血，唔使咁快仆街，跟住。`;
+    return `執咗「${name}」——有得補血，唔使咁快仆街，跟實。`;
   }
   if (card.draw) {
     return `執咗「${name}」——袋口多摸，牌路順啲先。`;
@@ -1958,7 +1958,7 @@ function shopLeaveLine() {
 
   // 血少：提醒下次要補
   if (ratio <= 0.35) {
-    return `你行出士多，風一吹先發覺——得返 ${hp}/${maxHp}。下次早啲補血，跟住撑場。`;
+    return `你行出士多，風一吹先發覺——得返 ${hp}/${maxHp}。下次早啲補血，跟實撑住。`;
   }
   // 有遺物：講返件貨
   if (relicCount > 0) {
@@ -1969,7 +1969,7 @@ function shopLeaveLine() {
     return `袋住 ${gold} 個大洋走——呢條街，有錢就有底氣。`;
   }
   // 兜底
-  return "兩手空空行出士多，但至少抖順咗一口氣，唔散先。";
+  return "兩手空空行出士多，但至少抖順咗一口氣，唔甩先。";
 }
 
 function render() {
