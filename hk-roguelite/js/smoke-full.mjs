@@ -203,6 +203,16 @@ section("便利店（金幣出口／遺物／消耗品／Act 差異）", () => {
     assert(cs.length === 1, "消耗品貨架抽唔到");
     assert(CONSUMABLES[cs[0]], `消耗品 ${cs[0]} 冇定義`);
   }
+  // 貨架主句要露出 flavor（唔好淨係機械 desc）
+  for (const c of Object.values(CONSUMABLES)) {
+    assert(c.flavor && c.flavor.length >= 6, `消耗品 ${c.id} 缺 flavor`);
+  }
+  for (const r of Object.values(RELICS)) {
+    assert(r.flavor && r.flavor.length >= 6, `遺物 ${r.id} 缺 flavor`);
+  }
+  const mainSrc = readFileSync(new URL("./main.js", import.meta.url), "utf8");
+  assert(mainSrc.includes("c.flavor || c.desc"), "消耗品貨架未露出 flavor");
+  assert(mainSrc.includes("r.flavor || r.desc"), "遺物貨架未露出 flavor");
 });
 
 /* ---------- 4. 遺物 ---------- */
