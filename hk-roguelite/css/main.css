@@ -2507,10 +2507,10 @@ body {
 .reward-why {
   margin: 0;
   padding: 0 0.15rem;
-  font-size: 0.7rem;
-  line-height: 1.45;
+  font-size: 0.78rem;
+  line-height: 1.4;
   color: var(--neon-amber);
-  opacity: 0.88;
+  opacity: 0.95;
 }
 
 @media (max-width: 560px) {
@@ -2592,9 +2592,17 @@ body {
   background: rgba(255, 45, 149, 0.08);
 }
 
+/* effectText／貨架副句：要比 label 弱一級但仍清楚可讀（港味＋數值） */
 .event-choice span {
-  font-size: 0.8rem;
-  color: var(--ink-dim);
+  font-size: 0.84rem;
+  line-height: 1.35;
+  color: rgba(232, 240, 255, 0.78);
+  letter-spacing: 0.01em;
+}
+
+.event-choice strong {
+  font-size: 0.95rem;
+  line-height: 1.25;
 }
 
 .run-inline {
