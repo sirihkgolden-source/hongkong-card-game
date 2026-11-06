@@ -376,6 +376,32 @@ section("Act 銜接（兩段過場）", () => {
   }
 });
 
+/* ---------- 7b. 地圖副標港味 ---------- */
+section("地圖副標港味（唔用機械腔）", () => {
+  const forbidden = ["短事件", "分支路線", "戰鬥 → 選牌", "休息／便利店"];
+  const all = [];
+  for (const [act, map] of [
+    [1, ACT1_MAP],
+    [2, ACT2_MAP],
+    [3, ACT3_MAP],
+  ]) {
+    assert(map.length === 6, `Act${act} 應維持六節點`);
+    for (const n of map) {
+      assert(n.subtitle && n.subtitle.length >= 4, `${n.id} 缺港味副標`);
+      for (const bad of forbidden) {
+        assert(n.subtitle !== bad, `${n.id} 副標仍係機械腔「${bad}」`);
+      }
+      all.push(n.subtitle);
+    }
+  }
+  // 十八格副標盡量唔重複（允許少數跨 Act 同類型相近，但唔好完全一樣）
+  assert(new Set(all).size >= 16, `地圖副標重複太多：${new Set(all).size}/18`);
+  // Boss 正式名未改
+  assert(ACT1_MAP[5].title === "巷口鐵閘・睇場", "Act1 Boss 名被改");
+  assert(ACT2_MAP[5].title === "西裝收數隊", "Act2 Boss 名被改");
+  assert(ACT3_MAP[5].title === "籠門之王", "Act3 Boss 名被改");
+});
+
 /* ---------- 8. 事件池（每區 ≥5，全部必改局；可見 HP／牌／金／能量／擋） ---------- */
 section("事件池（每區 ≥5，全部必改局）", () => {
   const titles = new Set();
