@@ -160,5 +160,5 @@ export function saveSummary(data) {
   const maxHp = Number(data.maxHp) || 0;
   const gold = Number(data.gold) || 0;
   const deck = Array.isArray(data.deck) ? data.deck.length : 0;
-  return `Act${act}・街口行到第 ${Math.min(done + 1, 6)}／6 格 · 血 ${hp}／${maxHp} · ${gold} 金 · ${deck} 張牌——續得睇清打過，收齊盤`;
+  return `Act${act}・街口行到第 ${Math.min(done + 1, 6)}／6 格 · 血 ${hp}／${maxHp} · ${gold} 金 · ${deck} 張牌——續得睇準打過，執穩盤`;
 }
