@@ -1176,7 +1176,7 @@ body {
 
 .settings-confirm-title {
   margin: 0;
-  font-size: 0.94rem;
+  font-size: 1rem;
   font-weight: 700;
   color: #ffcec7;
   line-height: 1.4;
@@ -1184,9 +1184,9 @@ body {
 
 .settings-confirm-body {
   margin: 0;
-  font-size: 0.82rem;
+  font-size: 0.88rem;
   line-height: 1.55;
-  color: rgba(255, 216, 210, 0.88);
+  color: rgba(255, 226, 220, 0.94);
 }
 
 .settings-confirm-actions {
@@ -1480,10 +1480,10 @@ body {
 
 /* 摘要：細字但唔可以太淡（要有用），用 0.86 對比得住 */
 .btn-continue-sub {
-  font-size: 0.76rem;
-  line-height: 1.35;
+  font-size: 0.84rem;
+  line-height: 1.4;
   font-weight: 500;
-  color: rgba(10, 22, 34, 0.82);
+  color: rgba(10, 22, 34, 0.9);
   white-space: normal;
 }
 
