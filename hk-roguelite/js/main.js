@@ -831,10 +831,10 @@ function relicPlainText(r) {
   if (e.attackPerCard) return `每張攻擊牌再加 ${e.attackPerCard} 傷——指節上鐵。`;
   if (e.healOnWin) return `打贏回 ${e.healOnWin} HP——唔使成日入士多。`;
   if (e.healOnWinBonus) return `勝場回血再多 ${e.healOnWinBonus} HP——甜品加成。`;
-  if (e.goldBonus) return `打贏小怪多 ${e.goldBonus} 金——袋口積少成多。`;
+  if (e.goldBonus) return `打贏小怪多 ${e.goldBonus} 大洋——袋口積少成多。`;
   if (e.healBonusFirst) return `每場首次回血多 ${e.healBonusFirst} HP——一劑頂兩劑。`;
   if (e.instantMaxHp) return `入手即最大生命 +${e.instantMaxHp}——身子硬一截。`;
-  if (e.instantGold) return `入手即多 ${e.instantGold} 金——庫銀落袋。`;
+  if (e.instantGold) return `入手即多 ${e.instantGold} 大洋——庫銀落袋。`;
   return r.desc;
 }
 
@@ -1224,19 +1224,19 @@ function renderBattle() {
 
 /** 選牌後一句人話：講清呢張牌實際幫到你咩 */
 function pickFeedback(card) {
-  if (!card) return "執咗入袋——街口多一隻手牌傍身。";
+  if (!card) return "執咗入袋——街口多一隻手牌傍身先。";
   const name = card.name;
   if (card.dmg && card.dmg >= 12) {
-    return `執咗「${name}」——重手一記，鐵閘都震兩下。`;
+    return `執咗「${name}」——重手一記，鐵閘都震兩下街口。`;
   }
   if (card.dmg && card.draw) {
-    return `執咗「${name}」——打得又摸得，牌路唔斷。`;
+    return `執咗「${name}」——打得又摸得，牌路唔斷線。`;
   }
   if (card.dmg) {
-    return `執咗「${name}」——多一隻出擊，唔使淨靠起手。`;
+    return `執咗「${name}」——多一隻出擊，唔使淨靠起手牌。`;
   }
   if (card.block && card.heal) {
-    return `執咗「${name}」——擋得又補得，捱夜更穩。`;
+    return `執咗「${name}」——擋得又補得，捱夜更穩陣。`;
   }
   if (card.block) {
     return `執咗「${name}」——多一層擋，命硬一截。`;
@@ -1245,7 +1245,7 @@ function pickFeedback(card) {
     return `執咗「${name}」——有得補血，唔使咁快仆街。`;
   }
   if (card.draw) {
-    return `執咗「${name}」——袋口多摸，牌路順啲。`;
+    return `執咗「${name}」——袋口多摸，牌路順啲先。`;
   }
   return `執咗「${name}」——袋口厚一分，街口好行啲啲。`;
 }
