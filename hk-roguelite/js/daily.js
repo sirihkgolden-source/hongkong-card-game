@@ -49,6 +49,8 @@ export const DAILY_LINES = [
   { kind: "line", name: "今日一句", text: "「簷篷底眯一陣，雨聲都替你數數。」" },
   { kind: "line", name: "今日一句", text: "「便利店雪櫃風，吹唔散你袋口嘅火氣。」" },
   { kind: "line", name: "今日一句", text: "「天台無燈，但你鞋底仲印住三區塵。」" },
+  { kind: "line", name: "今日一句", text: "「蓋走存檔之前，想清楚呢一鋪值唔值得留。」" },
+  { kind: "line", name: "今日一句", text: "「格氣用晒都唔緊要——結束回合，再嚟過。」" },
 ];
 
 /** 全部可能獎勵（測試用） */
@@ -210,7 +212,7 @@ export function resetDaily() {
 export function dailyStatusLine(d = new Date()) {
   const data = loadDaily();
   if (data.date !== dateKey(d)) return "今日未領——打完一鋪（贏輸都計）就有得收。";
-  if (data.kind === "gold") return `今日已領：下一鋪開波 +${data.value} 大洋入袋。`;
-  if (data.kind === "line") return "今日已領：街口一句收低。";
-  return "今日已領。";
+  if (data.kind === "gold") return `今日已領：下一鋪開波 +${data.value} 大洋入袋——記得嚟攞。`;
+  if (data.kind === "line") return "今日已領：街口一句收低袋口。";
+  return "今日已領——街口記低。";
 }
