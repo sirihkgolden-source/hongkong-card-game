@@ -49,9 +49,9 @@ export function pauseSummary(run, opts = {}) {
   // 逐項砌成人話；用嘅都是真實數值，冇一項係估
   const items = [
     `Act${act} · 街口行到第 ${Math.min(done + 1, total)}／${total} 格`,
-    `血量 ${hp}／${maxHp}`,
+    `血 ${hp}／${maxHp}`,
     `${gold} 個大洋`,
-    `袋口 ${deck} 張牌`,
+    `袋口 ${deck} 張牌——街口盤數`,
   ];
   if (relics > 0) items.push(`身家 ${relics} 件遺物`);
 
@@ -68,6 +68,6 @@ export function pauseSummary(run, opts = {}) {
  * @param {ReturnType<typeof pauseSummary>} s
  */
 export function pauseLossLine(s) {
-  if (!s || !s.ok) return "而家未有進行中嘅一鋪——出街先，再返嚟講。";
-  return `返標題會幫你存起呢一鋪（Act${s.act} 街口第 ${Math.min(s.done + 1, s.total)}／${s.total} 格），下次撳「繼續」就返得嚟——唔會白行。`;
+  if (!s || !s.ok) return "而家未有進行中嘅一鋪——出街先，返嚟再講。";
+  return `返標題會幫你存起呢一鋪（Act${s.act} 街口第 ${Math.min(s.done + 1, s.total)}／${s.total} 格），下次撳「繼續」就返得嚟——街口唔會白行。`;
 }
