@@ -2470,7 +2470,7 @@ body {
   border-radius: 10px;
   background: rgba(0, 0, 0, 0.35);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  font-size: 0.82rem;
+  font-size: 0.86rem;
   color: rgba(220, 232, 248, 0.9);
   max-height: 8rem;
   overflow: auto;
@@ -2799,17 +2799,17 @@ body {
 
 .fx-float--dangkou {
   color: var(--neon-cyan);
-  font-size: 1.65rem;
+  font-size: 0.95rem;
 }
 
 .fx-float--zhaopaiyan {
   color: #c9a0ff;
-  font-size: 1.45rem;
+  font-size: 0.92rem;
 }
 
 .fx-float--yanli {
   color: #b8ff5c;
-  font-size: 1.65rem;
+  font-size: 0.95rem;
 }
 
 .fx-kuaisou-banner {
