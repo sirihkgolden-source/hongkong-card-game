@@ -692,7 +692,7 @@ body {
 
 .foot-note {
   text-align: center;
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   color: rgba(154, 173, 200, 0.65);
   letter-spacing: 0.02em;
 }
@@ -1501,7 +1501,7 @@ body {
 
 .overwrite-title {
   margin: 0;
-  font-size: 0.95rem;
+  font-size: 1.02rem;
   font-weight: 700;
   color: #ffcec7;
   line-height: 1.4;
@@ -1509,9 +1509,9 @@ body {
 
 .overwrite-body {
   margin: 0;
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   line-height: 1.55;
-  color: rgba(255, 216, 210, 0.9);
+  color: rgba(255, 226, 220, 0.94);
 }
 
 .overwrite-actions {
@@ -3552,9 +3552,9 @@ body {
 
 .act-trans-line {
   margin: 0;
-  font-size: 0.92rem;
+  font-size: 1.05rem;
   line-height: 1.65;
-  color: var(--ink);
+  color: rgba(230, 238, 250, 0.95);
 }
 
 .act-trans-note {
@@ -3562,9 +3562,9 @@ body {
   padding: 0.35rem 0.5rem;
   border-radius: 8px;
   background: rgba(255, 45, 149, 0.1);
-  font-size: 0.8rem;
+  font-size: 0.92rem;
   font-style: italic;
-  color: var(--neon-magenta);
+  color: rgba(220, 232, 248, 0.9);
 }
 
 /* 「差一點」診斷：失敗頁最搶眼嘅一句 */
