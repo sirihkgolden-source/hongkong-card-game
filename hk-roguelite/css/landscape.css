@@ -161,8 +161,9 @@
     grid-area: log;
     margin: 0;
     padding: 0.28rem 0.4rem;
-    font-size: 0.62rem;
-    line-height: 1.4;
+    font-size: 0.72rem;
+    line-height: 1.45;
+    color: rgba(220, 232, 248, 0.9);
     overflow-y: auto;
     overscroll-behavior: contain;
     min-height: 0;
