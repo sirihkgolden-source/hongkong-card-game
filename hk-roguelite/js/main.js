@@ -1224,7 +1224,7 @@ function renderBattle() {
 
 /** 選牌後一句人話：講清呢張牌實際幫到你咩 */
 function pickFeedback(card) {
-  if (!card) return "執咗入袋。";
+  if (!card) return "執咗入袋——街口多一隻手牌。";
   const name = card.name;
   if (card.dmg && card.dmg >= 12) {
     return `執咗「${name}」——重手一記，鐵閘都震。`;
@@ -1242,12 +1242,12 @@ function pickFeedback(card) {
     return `執咗「${name}」——多一層擋，命硬啲。`;
   }
   if (card.heal) {
-    return `執咗「${name}」——有得補血，唔使咁快落。`;
+    return `執咗「${name}」——有得補血，唔使咁快落街。`;
   }
   if (card.draw) {
-    return `執咗「${name}」——多摸幾張，牌路順啲。`;
+    return `執咗「${name}」——袋口多摸，牌路順啲。`;
   }
-  return `執咗「${name}」——袋口厚一分。`;
+  return `執咗「${name}」——袋口厚一分，街口好行啲。`;
 }
 
 function renderReward() {
@@ -1958,18 +1958,18 @@ function shopLeaveLine() {
 
   // 血少：提醒下次要補
   if (ratio <= 0.35) {
-    return `你行出士多，風一吹先發覺——得返 ${hp}/${maxHp}。下次記住補血。`;
+    return `你行出士多，風一吹先發覺——得返 ${hp}/${maxHp}。下次早啲補血。`;
   }
   // 有遺物：講返件貨
   if (relicCount > 0) {
-    return `袋住 ${relicCount} 件貨行出去，老闆喺後面嗌：「記得返嚟呀。」`;
+    return `袋住 ${relicCount} 件身家行出去，老闆喺後面嗌：「記得返嚟呀。」`;
   }
   // 金多：講錢
   if (gold >= 30) {
     return `袋住 ${gold} 個大洋走——呢條街，有錢就有底氣。`;
   }
   // 兜底
-  return "兩手空空行出去，但至少抖順咗一口氣。";
+  return "兩手空空行出士多，但至少抖順咗一口氣。";
 }
 
 function render() {
