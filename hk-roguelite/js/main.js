@@ -1733,7 +1733,7 @@ function renderDefeat() {
           <li><span>牌組</span><strong>${(run.deck || []).length} 張</strong></li>
           <li><span>遺物</span><strong>${(run.relics || []).length} 件</strong></li>
           <li><span>金幣</span><strong>${run.gold || 0}</strong></li>
-          <li><span>能量（終局）</span><strong>${b ? b.energy : "—"}</strong></li>
+          <li><span>格氣（終局）</span><strong>${b ? b.energy : "—"}</strong></li>
         </ul>
         <p class="lede">
           呢鋪完。行到「${escapeHtml(actDisplayName(act))}」第 ${nodeN} 格就企唔穩。
@@ -2268,7 +2268,7 @@ async function playCardWithFeel(handIndex, cardEl) {
       void cardEl.offsetWidth;
       cardEl.classList.add("is-shake-no");
       setTimeout(() => cardEl.classList.remove("is-shake-no"), 420);
-      floatText(cardEl, `要 ${cost} 能量`, "low-energy");
+      floatText(cardEl, `要 ${cost} 格氣`, "low-energy");
     }
     const energyEl = document.getElementById("player-energy");
     if (energyEl) {
@@ -2277,7 +2277,7 @@ async function playCardWithFeel(handIndex, cardEl) {
       energyEl.classList.add("is-bump");
       setTimeout(() => energyEl.classList.remove("is-bump"), 460);
     }
-    state.pendingTurnLine = `能量唔夠——呢張要 ${cost}，你仲有 ${b.energy}。`;
+    state.pendingTurnLine = `格氣唔夠——呢張要 ${cost}，你仲有 ${b.energy}。`;
     flushTurnLine();
     sfx.click();
     return;
@@ -2502,21 +2502,21 @@ async function endTurnWithFeel() {
       } else if (blocked > 0) {
         state.pendingTurnLine = `全擋 ${blocked}——一啖都冇漏。`;
       } else {
-        state.pendingTurnLine = "捱過咗一下。";
+        state.pendingTurnLine = "捱過咗一下——仲企得住。";
       }
     } else if (result?.kind === "block") {
-      state.pendingTurnLine = "對面守緊——下回合要撞穿佢。";
+      state.pendingTurnLine = "對面守緊——下回合要撞穿佢層擋。";
     } else if (result?.kind === "buff_attack" || result?.kind === "buff") {
-      state.pendingTurnLine = "對面喺度蓄勢，下擊會更痛。";
+      state.pendingTurnLine = "對面喺度蓄勢——下擊會更痛。";
     } else if (result?.kind === "weaken") {
-      state.pendingTurnLine = "被踩一腳——下張攻擊會鈍啲。";
+      state.pendingTurnLine = "被踩一腳——下張攻擊會鈍一截。";
     } else {
-      state.pendingTurnLine = "輪到你——手牌仲喺度。";
+      state.pendingTurnLine = "輪到你——手牌仲喺袋口。";
     }
   } else if (b?.over === "win") {
-    state.pendingTurnLine = "對面企唔住喇——收工。";
+    state.pendingTurnLine = "對面企唔住喇——呢鋪收工。";
   } else if (b?.over === "lose") {
-    state.pendingTurnLine = "頂唔住……";
+    state.pendingTurnLine = "頂唔住……街口靜咗。";
   }
 
   state.busy = false;
