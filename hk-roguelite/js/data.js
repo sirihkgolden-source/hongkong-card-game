@@ -1112,13 +1112,13 @@ export const EVENTS = {
       {
         id: "bluff",
         label: "吹水話自己熟路",
-        effectText: "吹得掂——最大生命 +3 兼回 3；下戰多 1 能量，入場帶 6 擋",
+        effectText: "吹得掂——最大生命 +3 兼回 3；下戰多 1 格氣，入場帶 6 擋",
         apply: (run) => {
           run.maxHp += 3;
           run.hp = Math.min(run.maxHp, run.hp + 3);
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
           run.nextBattleBlock = (run.nextBattleBlock || 0) + 6;
-          return "吹得掂——底氣壯咗，下一場開局多 1 能量，兼帶 6 擋入場。";
+          return "吹得掂——底氣壯咗，下一場開波多 1 格氣，兼帶 6 擋入場。";
         },
       },
       {
@@ -1154,7 +1154,7 @@ export const EVENTS = {
       {
         id: "slip",
         label: "跣足溜走",
-        effectText: "腳底一滑——回 6 HP；下戰少 1 能量，入場帶 8 擋",
+        effectText: "腳底一滑——回 6 HP；下戰少 1 格氣，入場帶 8 擋",
         apply: (run) => {
           run.hp = Math.min(run.maxHp, run.hp + 6);
           run.nextBattleEnergyPenalty = (run.nextBattleEnergyPenalty || 0) + 1;
@@ -1196,12 +1196,12 @@ export const EVENTS = {
       {
         id: "bet_gear",
         label: "押舖頭面子",
-        effectText: "押身家——下戰多 1 能量、入場帶 10 擋，袋入「舊帳對數」",
+        effectText: "押身家——下戰多 1 格氣、入場帶 10 擋，袋入「舊帳對數」",
         apply: (run) => {
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
           run.nextBattleBlock = (run.nextBattleBlock || 0) + 10;
           run.deck.push("S72");
-          return "面子抵錢——下場多 1 能量、10 擋入場，仲多一張「舊帳對數」。";
+          return "面子抵錢——下場多 1 格氣、10 擋入場，仲多一張「舊帳對數」。";
         },
       },
       {
@@ -1249,7 +1249,7 @@ export const EVENTS = {
       {
         id: "ask_gate",
         label: "問阿伯鐵閘點行",
-        effectText: "阿伯指條路——下戰多 1 能量，袋入「掛波小心」",
+        effectText: "阿伯指條路——下戰多 1 格氣，袋入「掛波小心」",
         apply: (run) => {
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
           run.deck.push("S22");
@@ -1309,7 +1309,7 @@ export const EVENTS = {
       {
         id: "squeeze_in",
         label: "硬擠入去",
-        effectText: "逼入車廂——掉 8 HP；下戰多 2 能量",
+        effectText: "逼入車廂——掉 8 HP；下戰多 2 格氣",
         apply: (run) => {
           run.hp = Math.max(1, run.hp - 8);
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 2;
@@ -1410,7 +1410,7 @@ export const EVENTS = {
       {
         id: "ask_cage",
         label: "問阿嬸籠邊點去",
-        effectText: "問籠邊路——下戰多 1 能量，袋入「舊帳對數」",
+        effectText: "問籠邊路——下戰多 1 格氣，袋入「舊帳對數」",
         apply: (run) => {
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
           run.deck.push("S72");
@@ -1531,7 +1531,7 @@ export const EVENTS = {
       {
         id: "read_shift",
         label: "幫佢睇更表",
-        effectText: "睇更表——下戰多 1 能量，袋入「舊帳對數」",
+        effectText: "睇更表——下戰多 1 格氣，袋入「舊帳對數」",
         apply: (run) => {
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
           run.deck.push("S72");
@@ -1644,7 +1644,7 @@ export const EVENTS = {
       {
         id: "ask_news",
         label: "打聽街口風聲",
-        effectText: "問老闆街訊——最大生命 +3，下戰多 1 能量",
+        effectText: "問老闆街訊——最大生命 +3，下戰多 1 格氣",
         apply: (run) => {
           run.maxHp += 3;
           run.hp = Math.min(run.maxHp, run.hp + 3);
@@ -1685,7 +1685,7 @@ export const EVENTS = {
       {
         id: "ask_who",
         label: "問上面係咩人",
-        effectText: "問上面邊個——下戰多 1 能量，袋入「舊帳對數」",
+        effectText: "問上面邊個——下戰多 1 格氣，袋入「舊帳對數」",
         apply: (run) => {
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
           run.deck.push("S72");
@@ -1727,7 +1727,7 @@ export const EVENTS = {
       {
         id: "pay_yum",
         label: "夾埋鄰桌埋單",
-        effectText: "夾埋鄰桌——掉 4 金；最大生命 +4，下戰多 1 能量",
+        effectText: "夾埋鄰桌——掉 4 金；最大生命 +4，下戰多 1 格氣",
         apply: (run) => {
           run.gold = Math.max(0, run.gold - 4);
           run.maxHp += 4;
@@ -1782,7 +1782,7 @@ export const EVENTS = {
       {
         id: "help_fold",
         label: "幫手收雨布",
-        effectText: "幫手執檔——回 8 HP，下戰多 1 能量",
+        effectText: "幫手執檔——回 8 HP，下戰多 1 格氣",
         apply: (run) => {
           run.hp = Math.min(run.maxHp, run.hp + 8);
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
@@ -1813,7 +1813,7 @@ export const EVENTS = {
       {
         id: "offer_gold",
         label: "塞幾蚊入功德箱",
-        effectText: "塞香油錢——掉 6 金；下戰多 2 能量，袋入「舊帳對數」",
+        effectText: "塞香油錢——掉 6 金；下戰多 2 格氣，袋入「舊帳對數」",
         apply: (run) => {
           run.gold = Math.max(0, run.gold - 6);
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 2;
