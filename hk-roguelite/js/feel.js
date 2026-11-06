@@ -304,22 +304,22 @@ export function floatRunDeltas(deltas, pushLine) {
   const lines = [];
   const { hp = 0, maxHp = 0, deck = 0, block = 0, energy = 0, gold = 0, relic = 0 } = deltas || {};
   if (hp) {
-    lines.push({ text: hp > 0 ? `+${hp} HP` : `${hp} HP`, variant: hp > 0 ? "heal" : "dmg" });
+    lines.push({ text: hp > 0 ? `+${hp} 血` : `${hp} 血`, variant: hp > 0 ? "heal" : "dmg" });
   }
   if (maxHp) {
-    lines.push({ text: maxHp > 0 ? `+${maxHp} 最大生命` : `${maxHp} 最大生命`, variant: "heal" });
+    lines.push({ text: maxHp > 0 ? `+${maxHp} 最大命` : `${maxHp} 最大命`, variant: "heal" });
   }
   if (deck) {
-    lines.push({ text: deck > 0 ? `+${deck} 張牌` : `${deck} 張牌`, variant: "kuaisou" });
+    lines.push({ text: deck > 0 ? `+${deck} 張入袋` : `${deck} 張牌`, variant: "kuaisou" });
   }
   if (relic) {
-    lines.push({ text: relic > 0 ? `+${relic} 件遺物` : `${relic} 件遺物`, variant: "kuaisou" });
+    lines.push({ text: relic > 0 ? `+${relic} 件身家` : `${relic} 件遺物`, variant: "kuaisou" });
   }
   if (block) {
     lines.push({ text: block > 0 ? `+${block} 擋上身` : `${block} 擋`, variant: "block" });
   }
   if (energy) {
-    lines.push({ text: energy > 0 ? `+${energy} 能量` : `${energy} 能量`, variant: "kuaisou" });
+    lines.push({ text: energy > 0 ? `+${energy} 格氣` : `${energy} 格氣`, variant: "kuaisou" });
   }
   if (gold) {
     lines.push({ text: gold > 0 ? `+${gold} 金入袋` : `${gold} 金出水`, variant: gold > 0 ? "gold" : "gold-spend" });
