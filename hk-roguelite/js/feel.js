@@ -259,7 +259,7 @@ export function showPassiveBanner(text, variant = "kuaisou") {
 
 /** @deprecated 用 showPassiveBanner("快手！平一費", "kuaisou") */
 export function showKuaisouBanner() {
-  showPassiveBanner("快手！平一費——節奏嚟喇喂！", "kuaisou");
+  showPassiveBanner("快手！平一費——節奏嚟喇喂！！", "kuaisou");
 }
 
 /**
@@ -310,16 +310,16 @@ export function floatRunDeltas(deltas, pushLine) {
     lines.push({ text: maxHp > 0 ? `+${maxHp} 最大血` : `${maxHp} 最大血出水`, variant: "heal" });
   }
   if (deck) {
-    lines.push({ text: deck > 0 ? `+${deck} 張入袋` : `${deck} 張出水`, variant: "kuaisou" });
+    lines.push({ text: deck > 0 ? `+${deck} 張入袋口` : `${deck} 張出水口`, variant: "kuaisou" });
   }
   if (relic) {
-    lines.push({ text: relic > 0 ? `+${relic} 件身家入袋` : `${relic} 件身家出水`, variant: "kuaisou" });
+    lines.push({ text: relic > 0 ? `+${relic} 件身家入袋口` : `${relic} 件身家出水口`, variant: "kuaisou" });
   }
   if (block) {
     lines.push({ text: block > 0 ? `+${block} 擋上身` : `${block} 擋散晒`, variant: "block" });
   }
   if (energy) {
-    lines.push({ text: energy > 0 ? `+${energy} 格氣入袋` : `${energy} 格氣出水`, variant: "kuaisou" });
+    lines.push({ text: energy > 0 ? `+${energy} 格氣入袋` : `${energy} 格氣出水口`, variant: "kuaisou" });
   }
   if (gold) {
     lines.push({ text: gold > 0 ? `+${gold} 大洋入袋口` : `${gold} 大洋出水口`, variant: gold > 0 ? "gold" : "gold-spend" });
