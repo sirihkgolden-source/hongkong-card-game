@@ -178,6 +178,16 @@ section("便利店（金幣出口／遺物／消耗品／Act 差異）", () => {
   const healLabels = [1, 2, 3].map((a) => restShopForAct(a).shopHealLabel);
   assert(new Set(healLabels).size === 3, "三區回血標籤重複");
   assert(Object.keys(REST_SHOP_BY_ACT).length >= 3, "REST_SHOP_BY_ACT 缺區");
+  // 說明句港味：唔好淨係「花 N 金幣回復 M HP」／共用「變賣牌組」
+  const sellTitles = [1, 2, 3].map((a) => restShopForAct(a).sellTitle);
+  assert(new Set(sellTitles).size === 3, "三區變賣標題應互異");
+  assert(!sellTitles.includes("變賣牌組"), "變賣標題仍係機械腔「變賣牌組」");
+  for (const a of [1, 2, 3]) {
+    const d = restShopForAct(a).shopHealDesc;
+    assert(typeof d === "string" && d.length >= 8, `Act${a} shopHealDesc 太短`);
+    assert(!/^花 \d+ 金幣回復/.test(d), `Act${a} shopHealDesc 仍係機械腔`);
+    assert(restShopForAct(a).shopPackDesc.includes("卡包"), `Act${a} shopPackDesc 應提卡包`);
+  }
 
   // 遺物貨架每次都抽夠
   const run = { characterId: "oil", relics: [] };
