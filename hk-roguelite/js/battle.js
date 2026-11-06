@@ -119,7 +119,7 @@ function drawCards(b, n) {
       b.drawPile = shuffle(b.discard);
       b.discard = [];
       reshuffled = recycled;
-      pushLog(b, "洗返牌堆……袋口翻新。");
+      pushLog(b, "洗返牌堆……袋口翻新一輪。");
     }
     const id = b.drawPile.shift();
     if (id) b.hand.push(id);
@@ -151,7 +151,7 @@ export function startPlayerTurn(b) {
     b.enemyMark = 0;
     if (b.enemyHp <= 0) {
       b.over = "win";
-      pushLog(b, "對手仆低——呢鋪收工，行得過！");
+      pushLog(b, "對手仆低——呢鋪收工，街口行得過！");
     }
   }
 }
@@ -230,7 +230,7 @@ export function playCard(b, handIndex) {
     b.enemyHp = Math.max(0, b.enemyHp - dealt);
     pushLog(
       b,
-      `落「${card.name}」——打落 ${dealt} 傷${enemyBlocked ? `（擋走 ${enemyBlocked}）` : ""}${usedKuaisou ? "【快手加碼】" : ""}`
+      `落「${card.name}」——打落 ${dealt} 傷${enemyBlocked ? `（擋走 ${enemyBlocked}）` : ""}${usedKuaisou ? "【快手加碼】" : ""}——出手`
     );
   }
 
@@ -295,7 +295,7 @@ export function playCard(b, handIndex) {
 
   if (b.enemyHp <= 0) {
     b.over = "win";
-    pushLog(b, "對手仆低——呢鋪收工，行得過！");
+    pushLog(b, "對手仆低——呢鋪收工，街口行得過！");
   }
 
   return {
