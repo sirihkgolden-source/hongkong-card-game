@@ -142,6 +142,7 @@ export function startPlayerTurn(b) {
   b.discard.push(...b.hand);
   b.hand = [];
   drawCards(b, 5 + (b.turn === 1 ? b.relicDraw || 0 : 0) + (b.relicDrawPerTurn || 0));
+  pushLog(b, b.turn === 1 ? "開波——輪到你出手。" : `第 ${b.turn} 回合——輪到你出手。`);
 
   if (b.enemyMark > 0) {
     const markDmg = b.enemyMark;
