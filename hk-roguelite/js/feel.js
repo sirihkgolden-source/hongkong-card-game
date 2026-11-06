@@ -228,7 +228,7 @@ export async function playerHurtFlash() {
 }
 
 /**
- * 意圖預示放大
+ * 意圖預示放大（對手下一手——街口要睇清）
  */
 export async function telegraphIntent(el, ms = 250) {
   if (!el) {
@@ -241,9 +241,9 @@ export async function telegraphIntent(el, ms = 250) {
 }
 
 /**
- * 頂欄被動提示（快手／檔口／招牌眼）
+ * 頂欄被動提示（快手／檔口／招牌眼／跌打）——港味短句
  * @param {string} text
- * @param {"kuaisou"|"dangkou"|"zhaopaiyan"} [variant]
+ * @param {"kuaisou"|"dangkou"|"zhaopaiyan"|"seotong"} [variant]
  */
 export function showPassiveBanner(text, variant = "kuaisou") {
   const root = fxRoot();
@@ -257,14 +257,14 @@ export function showPassiveBanner(text, variant = "kuaisou") {
   setTimeout(() => banner.remove(), 800);
 }
 
-/** @deprecated 用 showPassiveBanner("快手！", "kuaisou") */
+/** @deprecated 用 showPassiveBanner("快手！平一費", "kuaisou") */
 export function showKuaisouBanner() {
-  showPassiveBanner("快手！", "kuaisou");
+  showPassiveBanner("快手！平一費", "kuaisou");
 }
 
 /**
  * 選牌確認動感：卡片放大高亮 + 輕輕上彈，然後才離開畫面。
- * 令「揀咗邊張」有明確回饋，唔會一 click 就跳走。
+ * 令「揀咗邊張入袋」有明確回饋，唔會一 click 就跳走。
  */
 export async function confirmPick(el, ms = 260) {
   if (!el) {
