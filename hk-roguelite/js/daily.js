@@ -32,15 +32,15 @@ export const DAILY_GOLD = [
 
 /** 名片句（純文字收藏） */
 export const DAILY_LINES = [
-  { kind: "line", name: "今日一句", text: "「條街唔會記得你贏幾多次，淨係記得你有冇再嚟。」" },
-  { kind: "line", name: "今日一句", text: "「霓虹燈壞咗會有人整，人散咗就冇人執。」" },
-  { kind: "line", name: "今日一句", text: "「你以為自己行得快，其實係條巷短。」" },
+  { kind: "line", name: "今日一句", text: "「條街唔會記得你贏幾多次，淨係記得你有冇再嚟過。」" },
+  { kind: "line", name: "今日一句", text: "「霓虹燈壞咗會有人整，人散咗就冇人執返。」" },
+  { kind: "line", name: "今日一句", text: "「你以為自己行得快，其實係條巷短過你諗。」" },
   { kind: "line", name: "今日一句", text: "「每個睇場都有第一日；每個第一日都想返屋企。」" },
   { kind: "line", name: "今日一句", text: "「天台冇燈，但都有人喺上面等緊你。」" },
   { kind: "line", name: "今日一句", text: "「跌打酒醫得瘀傷，醫唔到唔服氣。」" },
   { kind: "line", name: "今日一句", text: "「便利店燈亮過街燈，但照唔到你個袋口。」" },
   { kind: "line", name: "今日一句", text: "「鐵閘一落，成條巷先記得邊個仲企喺出面。」" },
-  { kind: "line", name: "今日一句", text: "「旺角冇夜深，淨係有人未散。」" },
+  { kind: "line", name: "今日一句", text: "「旺角冇夜深，淨係有人未散場。」" },
   { kind: "line", name: "今日一句", text: "「天台風大，吹散嘅唔止係煙。」" },
   { kind: "line", name: "今日一句", text: "「士多櫃檯燈一閃，找贖聲比你心跳大聲。」" },
   { kind: "line", name: "今日一句", text: "「後巷唔講規矩，講邊個仲企得住。」" },
@@ -214,7 +214,7 @@ export function resetDaily() {
  */
 export function dailyStatusLine(d = new Date()) {
   const data = loadDaily();
-  if (data.date !== dateKey(d)) return "今日未領——打完一鋪（贏輸都計）就有得收，街口記低先。";
+  if (data.date !== dateKey(d)) return "今日未領——打完一鋪（贏輸都計）就有得收，街口記低先啦。";
   if (data.kind === "gold") return `今日已領：下一鋪開波 +${data.value} 大洋入袋——記得返嚟攞走。`;
   if (data.kind === "line") return "今日已領：街口一句收低袋口——慢慢睇返。";
   return "今日已領——街口記低咗一筆。";
