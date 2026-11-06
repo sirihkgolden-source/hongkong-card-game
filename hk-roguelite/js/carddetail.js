@@ -19,7 +19,7 @@ export function cardEffectLines(card) {
 
   // 傷害：分開講「半血加成」同「標記」兩種特別情況
   if (card.dmg) {
-    let dmgLine = `出拳打落 ${card.dmg} 傷——街口見真章。`;
+    let dmgLine = `出拳打落 ${card.dmg} 傷——街口見真章先。`;
     if (card.dmgBonusOnLowHp) {
       dmgLine += `自己半血以下再加 ${card.dmgBonusOnLowHp} 傷——血少氣旺，越捱越狠。`;
     }
@@ -32,9 +32,9 @@ export function cardEffectLines(card) {
 
   if (card.draw) out.push(`摸 ${card.draw} 張——袋口再開一輪，牌路活。`);
 
-  if (card.mark) out.push(`留低標記：下回合對面再痛 ${card.mark}——數簿未埋。`);
+  if (card.mark) out.push(`留低標記：下回合對面再痛 ${card.mark}——數簿未埋清。`);
 
-  if (out.length === 0) out.push("冇即時數值——多數係舖路、起手或者觸發被動，街口先鋪定位。");
+  if (out.length === 0) out.push("冇即時數值——多數係舖路、起手或者觸發被動，街口先鋪定位數。");
   return out;
 }
 
@@ -47,7 +47,7 @@ export function cardWhenToUse(card) {
   const cost = card.cost ?? 0;
 
   if (card.dmg && card.dmg >= 12) {
-    return "重手——留返對手血薄收尾，或者 Boss 拆盾嗰一下先落。";
+    return "重手——留返對手血薄收尾，或者 Boss 拆盾嗰一下先落袋。";
   }
   if (card.dmg && card.draw) {
     return "打得又摸得，牌唔會斷——開波就可以落袋。";
@@ -65,9 +65,9 @@ export function cardWhenToUse(card) {
     return "手牌乾嘅時候出——幫你搵返出擊牌先。";
   }
   if (cost === 0) {
-    return "免費牌——有空位就落，唔會蝕本銀。";
+    return "免費牌——有空位就落，唔會蝕本銀紙。";
   }
-  return "睇場合用——冇硬性限制，街口隨機應變，咪硬嚟。";
+  return "睇場合用——冇硬性限制，街口隨機應變，咪硬嚟頂。";
 }
 
 /**
