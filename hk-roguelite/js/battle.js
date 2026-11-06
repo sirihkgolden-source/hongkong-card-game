@@ -147,7 +147,7 @@ export function startPlayerTurn(b) {
   if (b.enemyMark > 0) {
     const markDmg = b.enemyMark;
     b.enemyHp = Math.max(0, b.enemyHp - markDmg);
-    pushLog(b, `跳電發作——對面再痛 ${markDmg}——數簿未埋`);
+    pushLog(b, `跳電發作——對面再痛 ${markDmg}——數簿未埋清`);
     b.enemyMark = 0;
     if (b.enemyHp <= 0) {
       b.over = "win";
@@ -260,7 +260,7 @@ export function playCard(b, handIndex) {
   }
   if (card.mark) {
     b.enemyMark += card.mark;
-    pushLog(b, `留低 ${card.mark} 點——下回合再痛一截`);
+    pushLog(b, `留低 ${card.mark} 點——下回合再痛一截先`);
   }
 
   let kuaisouArmed = false;
@@ -269,7 +269,7 @@ export function playCard(b, handIndex) {
     if (b.attacksPlayed % 3 === 0) {
       b.kuaisouReady = true;
       kuaisouArmed = true;
-      pushLog(b, "【快手】下一記平一費兼多 3 傷——節奏嚟！");
+      pushLog(b, "【快手】下一記平一費兼多 3 傷——節奏嚟喇！");
     }
   }
 
@@ -280,7 +280,7 @@ export function playCard(b, handIndex) {
     drawCards(b, 1);
     zhaopaiyanDrew = true;
     drawnExtra = 1;
-    pushLog(b, "【招牌眼】首次技能——袋口多摸 1——睇得通！");
+    pushLog(b, "【招牌眼】首次技能——袋口多摸 1——睇得通晒！");
   }
 
   // 跌打：每場首次打技能牌即刻回 4 HP
@@ -329,7 +329,7 @@ export function tryDangkou(b, damageTaken) {
   b.dangkouUsed = true;
   const block = 8;
   b.playerBlock += block;
-  pushLog(b, `【檔口】首次捱打——擋上 ${block}——守住先！`);
+  pushLog(b, `【檔口】首次捱打——擋上 ${block}——守住先啦！`);
   return { triggered: true, block };
 }
 
@@ -360,7 +360,7 @@ export function endTurn(b) {
     b.playerHp = Math.max(0, b.playerHp - dealt);
     result.dealt = dealt;
     result.blocked = blocked;
-    pushLog(b, `${b.enemyName}：${intent.label} → 你捱咗 ${dealt} 傷——街口記低`);
+    pushLog(b, `${b.enemyName}：${intent.label} → 你捱咗 ${dealt} 傷——街口記低一筆`);
     // 捱打＝對方出手攻擊（全擋都算受擊）
     result.dangkou = tryDangkou(b, raw);
   } else if (intent.kind === "block") {
