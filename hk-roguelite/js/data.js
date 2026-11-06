@@ -691,7 +691,7 @@ export const ENEMIES = {
     name: "後巷影",
     hp: 32,
     art: "assets/enemies/E01.jpg",
-    flavor: "後巷石屎濕漉漉，影在牆角不肯散。",
+    flavor: "後巷石屎濕漉漉，影喺牆角不肯散。",
     afterword: "影散咗。巷尾仲有幾滴未乾——你行得過。",
     intents: [
       { kind: "attack", value: 6, label: "偷襲 6" },
@@ -737,7 +737,7 @@ export const ENEMIES = {
     /** Boss 戰後一句（打贏之後先出現） */
     afterword: "鐵閘慢慢升起——你行得過，呢條巷以後都認得你。",
     /** 敗給呢個 Boss 時嘅專屬近 miss 一句 */
-    nearMiss: "鐵閘落淨半呎。你隻手已經摸到閘邊，就差嗰一下推。",
+    nearMiss: "鐵閘落淨半呎。你隻手已經摸到閘邊——就差嗰一下推。",
     isBoss: true,
     intents: [
       { kind: "attack", value: 10, label: "攔閘 10" },
@@ -783,7 +783,7 @@ export const ENEMIES = {
     /** Boss 戰後一句（打贏之後先出現） */
     afterword: "西裝散咗，數簿跌落地下——今晚冇人再問你拎。",
     /** 敗給呢個 Boss 時嘅專屬近 miss 一句 */
-    nearMiss: "數簿翻到最後一頁。爭一個數位，你就唔使還。",
+    nearMiss: "數簿翻到最後一頁。爭一個數位——你就唔使還。",
     isBoss: true,
     intents: [
       { kind: "attack", value: 12, label: "問數 12" },
@@ -846,7 +846,7 @@ export const ENEMIES = {
     flavor: "「呢度收工，你唔係工人。」安全帽一低頭，鐵枝就起。",
     afterword: "「收工就收工。」佢地執嘢走——你企喺原地，路係你嘅。",
     /** 精英近失（敗給清場隊時） */
-    nearMiss: "安全帽差一寸就撞實你。鐵枝掃過耳邊——就差呢下。",
+    nearMiss: "安全帽差一寸就撞實你。鐵枝掃過耳邊——就差呢一下。",
     isElite: true,
     intents: [
       { kind: "attack", value: 14, label: "清場砸 14" },
@@ -866,7 +866,7 @@ export const ENEMIES = {
     /** Boss 戰後一句（打贏之後先出現） */
     afterword: "籠門開咗。天台上面，第一次有人企住落嚟。",
     /** 敗給呢個 Boss 時嘅專屬近 miss 一句 */
-    nearMiss: "籠門差一寸就閂埋。你隻手指，仲夾喺門邊。",
+    nearMiss: "籠門差一寸就閂埋。你隻手指仲夾喺門邊——差一推。",
     isBoss: true,
     isFinalBoss: true,
     intents: [
