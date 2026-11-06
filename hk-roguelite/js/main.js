@@ -1210,7 +1210,7 @@ function renderBattle() {
             ? `<button type="button" class="btn btn-primary btn-pressable" data-action="battle-win">執埋戰果</button>`
             : b.over === "lose"
               ? `<button type="button" class="btn btn-primary btn-pressable" data-action="to-defeat">結算</button>`
-              : `<button type="button" class="btn btn-ghost" data-action="end-turn" ${state.busy ? "disabled" : ""}>結束回合</button>`
+              : `<button type="button" class="btn btn-ghost" data-action="end-turn" ${state.busy ? "disabled" : ""}>結束回合——對手出手</button>`
         }
         <button type="button" class="pause-btn pause-btn--battle" data-action="to-pause" aria-label="停一停">停一停<span class="pause-btn-icon" aria-hidden="true">❚❚</span></button>
       </div>
@@ -1278,7 +1278,7 @@ function renderReward() {
       </header>
       <div class="reward-grid">${choices}</div>
       <div class="actions">
-        <button type="button" class="btn btn-ghost" data-action="skip-reward">唔執——跳過呢鋪</button>
+        <button type="button" class="btn btn-ghost" data-action="skip-reward">唔執——跳過呢鋪獎</button>
       </div>
       <p class="status" role="status">${escapeHtml(state.statusMsg)}</p>
     </main>
@@ -1304,7 +1304,7 @@ function renderEvent() {
               : ""
           }
           <p class="lede">${escapeHtml(state.eventResult)}</p>
-          <p class="run-inline">HP ${state.run.hp}/${state.run.maxHp} · 牌組 ${state.run.deck.length} · 金幣 ${state.run.gold}</p>
+          <p class="run-inline">HP ${state.run.hp}/${state.run.maxHp} · 牌組 ${state.run.deck.length} · 大洋 ${state.run.gold}</p>
         </section>
         <div class="actions">
           <button type="button" class="btn btn-primary btn-pressable" data-action="finish-event">${hasNext ? "行埋下一件" : "繼續地圖"}</button>
@@ -2703,7 +2703,7 @@ function advanceMap(opts = {}) {
 function openReward() {
   state.rewardChoices = pickRewardChoices(3, [], state.run.characterId);
   state.screen = "reward";
-  state.statusMsg = "揀一張入袋——牌組厚一分";
+  state.statusMsg = "揀一張入袋——牌組厚一分先。";
 }
 
 function enterNode() {
@@ -3150,7 +3150,7 @@ function onClick(event) {
         state.shopMsg = flavor.shopHealMsg(SHOP.healAmt);
         showRunDeltas(before);
       } else {
-        state.shopMsg = "大洋不足——袋口未夠銀紙。";
+        state.shopMsg = "大洋不足——袋口銀紙未夠數。";
       }
       break;
     case "shop-card":
@@ -3163,13 +3163,13 @@ function onClick(event) {
         state.shopMsg = flavor.shopCardMsg(cardById(cardId)?.name ?? cardId);
         showRunDeltas(before);
       } else {
-        state.shopMsg = "大洋不足——袋口未夠銀紙。";
+        state.shopMsg = "大洋不足——袋口銀紙未夠數。";
       }
       break;
     case "shop-pack": {
       const flavor = restShopForAct(state.run.act || 1);
       if (state.run.gold < SHOP.packCost) {
-        state.shopMsg = "大洋不足——袋口未夠銀紙。";
+        state.shopMsg = "大洋不足——袋口銀紙未夠數。";
         break;
       }
       const packCardId = pickPackCard(state.run.characterId);
@@ -3188,7 +3188,7 @@ function onClick(event) {
     case "shop-reroll": {
       const flavor = restShopForAct(state.run.act || 1);
       if (state.run.gold < SHOP.rerollCost) {
-        state.shopMsg = "大洋不足——袋口未夠銀紙。";
+        state.shopMsg = "大洋不足——袋口銀紙未夠數。";
         break;
       }
       const before = runSnapshot();
@@ -3212,7 +3212,7 @@ function onClick(event) {
       const cs = CONSUMABLES[csId];
       if (!cs) break;
       if (state.run.gold < cs.price) {
-        state.shopMsg = "大洋不足——袋口未夠銀紙。";
+        state.shopMsg = "大洋不足——袋口銀紙未夠數。";
         break;
       }
       const before = runSnapshot();
@@ -3229,7 +3229,7 @@ function onClick(event) {
       const relic = relicById(relicId);
       if (!relic) return;
       if (state.run.gold < SHOP.relicCost) {
-        state.shopMsg = "大洋不足——袋口未夠銀紙。";
+        state.shopMsg = "大洋不足——袋口銀紙未夠數。";
         break;
       }
       if ((state.run.relics || []).includes(relicId)) {
