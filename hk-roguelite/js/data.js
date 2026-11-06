@@ -1185,7 +1185,7 @@ export const EVENTS = {
       {
         id: "bet_blood",
         label: "押自己一身血",
-        effectText: "失去 12 HP；最大生命 +6；牌組加入「打邊爐氣」",
+        effectText: "籠邊賭血——掉 12 HP；最大生命 +6，袋入「打邊爐氣」",
         apply: (run) => {
           run.hp = Math.max(1, run.hp - 12);
           run.maxHp += 6;
@@ -1196,7 +1196,7 @@ export const EVENTS = {
       {
         id: "bet_gear",
         label: "押舖頭面子",
-        effectText: "下戰開場 +1 能量；入場帶 10 擋；牌組加入「舊帳對數」",
+        effectText: "押身家——下戰多 1 能量、入場帶 10 擋，袋入「舊帳對數」",
         apply: (run) => {
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
           run.nextBattleBlock = (run.nextBattleBlock || 0) + 10;
@@ -1207,7 +1207,7 @@ export const EVENTS = {
       {
         id: "bet_hand",
         label: "押自己隻右手",
-        effectText: "最大生命 +2 並回 10；牌組加入「大力出奇蹟」",
+        effectText: "賭一手——最大生命 +2 兼回 10，袋入「大力出奇蹟」",
         apply: (run) => {
           run.maxHp += 2;
           run.hp = Math.min(run.maxHp, run.hp + 10);
@@ -1390,7 +1390,7 @@ export const EVENTS = {
       {
         id: "help_hang",
         label: "幫手收衫",
-        effectText: "回 12 HP；最大生命 +3",
+        effectText: "幫手晾衫——回 12 HP，最大生命 +3",
         apply: (run) => {
           run.maxHp += 3;
           run.hp = Math.min(run.maxHp, run.hp + 12);
@@ -1400,7 +1400,7 @@ export const EVENTS = {
       {
         id: "take_rope",
         label: "拆條尼龍繩",
-        effectText: "牌組加入「萬年船」；下戰入場帶 8 擋",
+        effectText: "拆尼龍繩——袋入「萬年船」；下戰入場帶 8 擋",
         apply: (run) => {
           run.deck.push("S11");
           run.nextBattleBlock = (run.nextBattleBlock || 0) + 8;
@@ -1410,7 +1410,7 @@ export const EVENTS = {
       {
         id: "ask_cage",
         label: "問阿嬸籠邊點去",
-        effectText: "下戰開場 +1 能量；牌組加入「舊帳對數」",
+        effectText: "問籠邊路——下戰多 1 能量，袋入「舊帳對數」",
         apply: (run) => {
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
           run.deck.push("S72");
@@ -1429,7 +1429,7 @@ export const EVENTS = {
       {
         id: "smoke",
         label: "食埋佢先上",
-        effectText: "失去 9 HP；最大生命 +8",
+        effectText: "抽一口——掉 9 HP，最大生命 +8",
         apply: (run) => {
           run.hp = Math.max(1, run.hp - 9);
           run.maxHp += 8;
@@ -1439,7 +1439,7 @@ export const EVENTS = {
       {
         id: "keep_it",
         label: "袋住唔食",
-        effectText: "牌組加入「打邊爐氣」；下戰入場帶 6 擋",
+        effectText: "留低支煙——袋入「打邊爐氣」；下戰入場帶 6 擋",
         apply: (run) => {
           run.deck.push("S64");
           run.nextBattleBlock = (run.nextBattleBlock || 0) + 6;
@@ -1449,7 +1449,7 @@ export const EVENTS = {
       {
         id: "pass_it",
         label: "傳畀下一個",
-        effectText: "回 8 HP；牌組加入「加底唔該」",
+        effectText: "遞俾人——回 8 HP，袋入「加底唔該」",
         apply: (run) => {
           run.hp = Math.min(run.maxHp, run.hp + 8);
           run.deck.push("S25");
@@ -1551,7 +1551,7 @@ export const EVENTS = {
       {
         id: "wash_face",
         label: "洗個面",
-        effectText: "回 10 HP；最大生命 +2",
+        effectText: "水缸洗面——回 10 HP，最大生命 +2",
         apply: (run) => {
           run.maxHp += 2;
           run.hp = Math.min(run.maxHp, run.hp + 10);
@@ -1561,7 +1561,7 @@ export const EVENTS = {
       {
         id: "drink_raw",
         label: "就咁飲一啖",
-        effectText: "失去 4 HP；最大生命 +7",
+        effectText: "生水灌落去——掉 4 HP，最大生命 +7",
         apply: (run) => {
           run.hp = Math.max(1, run.hp - 4);
           run.maxHp += 7;
@@ -1571,7 +1571,7 @@ export const EVENTS = {
       {
         id: "fill_canteen",
         label: "裝滿個水壺",
-        effectText: "回 5 HP；牌組加入「萬年船」",
+        effectText: "裝水傍身——回 5 HP，袋入「萬年船」",
         apply: (run) => {
           run.hp = Math.min(run.maxHp, run.hp + 5);
           run.deck.push("S11");
@@ -1675,7 +1675,7 @@ export const EVENTS = {
       {
         id: "rest_here",
         label: "坐低抖一陣",
-        effectText: "回 8 HP；最大生命 +3",
+        effectText: "轉角眯一陣——回 8 HP，最大生命 +3",
         apply: (run) => {
           run.maxHp += 3;
           run.hp = Math.min(run.maxHp, run.hp + 8);
@@ -1685,7 +1685,7 @@ export const EVENTS = {
       {
         id: "ask_who",
         label: "問上面係咩人",
-        effectText: "下戰開場 +1 能量；牌組加入「舊帳對數」",
+        effectText: "問上面邊個——下戰多 1 能量，袋入「舊帳對數」",
         apply: (run) => {
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
           run.deck.push("S72");
@@ -1695,7 +1695,7 @@ export const EVENTS = {
       {
         id: "trade_smoke",
         label: "同佢交換一支煙",
-        effectText: "失去 5 HP；牌組加入「打邊爐氣」",
+        effectText: "換支煙——掉 5 HP，袋入「打邊爐氣」",
         apply: (run) => {
           run.hp = Math.max(1, run.hp - 5);
           run.deck.push("S64");
@@ -1802,7 +1802,7 @@ export const EVENTS = {
       {
         id: "kneel",
         label: "跪低拜三拜",
-        effectText: "回 9 HP；最大生命 +4；下戰入場帶 7 擋",
+        effectText: "跪低拜神——回 9 HP；最大生命 +4，入場帶 7 擋",
         apply: (run) => {
           run.maxHp += 4;
           run.hp = Math.min(run.maxHp, run.hp + 9);
@@ -1813,7 +1813,7 @@ export const EVENTS = {
       {
         id: "offer_gold",
         label: "塞幾蚊入功德箱",
-        effectText: "失去 6 金；下戰開場 +2 能量；牌組加入「舊帳對數」",
+        effectText: "塞香油錢——掉 6 金；下戰多 2 能量，袋入「舊帳對數」",
         apply: (run) => {
           run.gold = Math.max(0, run.gold - 6);
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 2;
@@ -1824,7 +1824,7 @@ export const EVENTS = {
       {
         id: "take_ash",
         label: "拈一撮香灰入袋",
-        effectText: "失去 6 HP；牌組加入「打邊爐氣」＋「大力出奇蹟」",
+        effectText: "執爐灰——掉 6 HP，袋入「打邊爐氣」＋「大力出奇蹟」",
         apply: (run) => {
           run.hp = Math.max(1, run.hp - 6);
           run.deck.push("S64", "S07");
