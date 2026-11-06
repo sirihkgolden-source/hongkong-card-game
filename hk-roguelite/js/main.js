@@ -774,7 +774,7 @@ function renderActTransition() {
         <p class="act-trans-from">由${escapeHtml(t.from)}行過嚟</p>
         <p class="act-trans-line">${escapeHtml(t.line)}</p>
         <p class="act-trans-note">「${escapeHtml(t.note)}」</p>
-        <p class="run-inline">${escapeHtml(char.name)} · HP ${state.run.hp}/${state.run.maxHp} · 牌組 ${state.run.deck.length} · 金幣 ${state.run.gold}</p>
+        <p class="run-inline">${escapeHtml(char.name)} · 血 ${state.run.hp}/${state.run.maxHp} · 袋口 ${state.run.deck.length} 張 · ${state.run.gold} 金</p>
       </section>
       <div class="actions">
         <button type="button" class="btn btn-primary btn-pressable" data-action="continue-act">行入${escapeHtml(t.to)}</button>
@@ -1559,10 +1559,10 @@ function renderVictory() {
     <main class="screen screen-result is-win is-clear" aria-label="通關結算">
       <header class="brand-block">
         <h1 class="brand result-title">${escapeHtml(META.title)}</h1>
-        <p class="tagline result-sub">通關 · 三區打穿</p>
+        <p class="tagline result-sub">通關 · 三區打穿——街口記得你</p>
       </header>
       <section class="panel clear-hero">
-        <p class="clear-badge">★ 通關 · 三區打穿 ★</p>
+        <p class="clear-badge">★ 通關 · 三區打穿 · 仲企得住 ★</p>
         <p class="eyebrow">Act3・${escapeHtml(META.act3Name)}</p>
         <h2>天台無燈，你仲企得住</h2>
         <p class="lede">
@@ -1580,19 +1580,19 @@ function renderVictory() {
             : ""
         }
         <ul class="clear-stats">
-          <li><span>剩餘 HP</span><strong>${run.hp}/${run.maxHp}</strong></li>
-          <li><span>金幣</span><strong>${run.gold}</strong></li>
-          <li><span>牌組</span><strong>${run.deck.length} 張</strong></li>
-          <li><span>遺物</span><strong>${(run.relics || []).length} 件</strong></li>
+          <li><span>剩血</span><strong>${run.hp}/${run.maxHp}</strong></li>
+          <li><span>袋口大洋</span><strong>${run.gold}</strong></li>
+          <li><span>袋口牌</span><strong>${run.deck.length} 張</strong></li>
+          <li><span>身家遺物</span><strong>${(run.relics || []).length} 件</strong></li>
           <li><span>勝場</span><strong>${run.victories || 0}</strong></li>
           <li><span>主路線</span><strong>${escapeHtml(char.route || "—")}</strong></li>
         </ul>
         <p class="clear-keys">
-          <span class="clear-keys-label">本局關鍵</span>
+          <span class="clear-keys-label">本局關鍵——街口記住</span>
           <span class="clear-keys-line">${escapeHtml(runKeyLine(run, char))}</span>
         </p>
         <div class="next-run next-run-clear">
-          <p class="next-run-title">再開一局</p>
+          <p class="next-run-title">再開一局——街口唔會停</p>
           <ul class="next-run-list">
             <li><strong>同路線：</strong>繼續行「${escapeHtml(char.route || "")}」——${escapeHtml(char.playstyle || "")}</li>
             <li><strong>換口味：</strong>試吓其他三角色／勝仔，睇邊條路更啱你。</li>
