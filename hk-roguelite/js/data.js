@@ -2057,7 +2057,7 @@ export const CONSUMABLES = {
   cs_painkiller: {
     id: "cs_painkiller",
     name: "必理痛",
-    desc: "即刻回 18 HP。",
+    desc: "止痛兩粒——即刻回 18 HP。",
     flavor: "一板四粒，痛就食兩粒——剩返兩粒留返下次。",
     price: 7,
     /** 三區都見得到；偏後巷／唐樓 */
@@ -2072,7 +2072,7 @@ export const CONSUMABLES = {
   cs_bandage: {
     id: "cs_bandage",
     name: "藥水膠布",
-    desc: "即刻最大生命 +5，並回 5。",
+    desc: "膠布一貼——最大生命 +5，兼回 5。",
     flavor: "貼住傷口，行路都冇咁痛。",
     price: 9,
     acts: [1, 2, 3],
@@ -2085,7 +2085,7 @@ export const CONSUMABLES = {
   cs_energy_drink: {
     id: "cs_energy_drink",
     name: "提神能量飲品",
-    desc: "下一場戰鬥開場 +1 能量。",
+    desc: "提神一口——下一場開波多 1 能量。",
     flavor: "味道似藥水，但真係頂得一陣。",
     price: 8,
     acts: [1, 2, 3],
@@ -2097,7 +2097,7 @@ export const CONSUMABLES = {
   cs_lucky_charm: {
     id: "cs_lucky_charm",
     name: "黃大仙靈符",
-    desc: "牌組加入一張「椒鹽補刀」。",
+    desc: "靈符入袋——牌組加一張「椒鹽補刀」。",
     flavor: "求個心安，順手多張平價補刀。",
     price: 6,
     acts: [1, 2, 3],
@@ -2110,7 +2110,7 @@ export const CONSUMABLES = {
   cs_vitamilk: {
     id: "cs_vitamilk",
     name: "維他奶",
-    desc: "回 10 HP；下戰入場帶 4 擋。",
+    desc: "豆香落肚——回 10 HP，下戰帶 4 擋。",
     flavor: "紙包一扭，豆香散滿唐樓梯間。",
     price: 5,
     acts: [1],
@@ -2124,7 +2124,7 @@ export const CONSUMABLES = {
   cs_fishballs: {
     id: "cs_fishballs",
     name: "魚蛋杯",
-    desc: "回 8 HP；牌組加入「芝麻糊暖」。",
+    desc: "魚蛋落肚——回 8 HP，袋入「芝麻糊暖」。",
     flavor: "竹籤戳住，辣醬多到滴落霓虹地。",
     price: 7,
     acts: [2],
@@ -2138,7 +2138,7 @@ export const CONSUMABLES = {
   cs_egg_tart: {
     id: "cs_egg_tart",
     name: "蛋撻",
-    desc: "最大生命 +3 並回 3；下戰開場 +1 能量。",
+    desc: "蛋撻入肚——最大生命 +3 兼回 3，下戰多 1 能量。",
     flavor: "酥皮碎落鐵皮棚，甜到你忘記上面有個王。",
     price: 8,
     acts: [3],
@@ -2153,7 +2153,7 @@ export const CONSUMABLES = {
   cs_twenty_four: {
     id: "cs_twenty_four",
     name: "廿四味",
-    desc: "清走「下戰 −能量」；回 8 HP。",
+    desc: "苦口沖晦氣——清走「下戰 −能量」，兼回 8 HP。",
     flavor: "苦到面都縐——但晦氣真係沖得走。",
     price: 7,
     acts: [1, 2, 3],
