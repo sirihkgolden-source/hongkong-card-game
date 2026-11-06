@@ -28,14 +28,14 @@ export const ACT_TRANSITIONS = {
   2: {
     from: "後巷・夜醒",
     to: "旺角霓虹",
-    line: "鐵閘一拉开，斜路直衝彌敦道。燈箱一口一口咬住夜色——後巷暫且丟低，旺角到了。",
-    note: "街闊咗，人情薄；銀紙聲大過人聲。",
+    line: "鐵閘一拉开，斜路直衝彌敦道。燈箱一口一口咬住夜色——後巷暫且丟低，旺角到。",
+    note: "街闊咗，人情薄——銀紙聲大過人聲。",
   },
   3: {
     from: "旺角霓虹",
     to: "城寨・天台",
-    line: "霓虹愈行愈淡，樓縫愈夾愈窄。樓梯盡頭一道鐵門——門後係天台，亦係終點。",
-    note: "上到天台，燈熄、風硬、冇退路。",
+    line: "霓虹愈行愈淡，樓縫愈夾愈窄。樓梯盡頭一道鐵門——門後係天台，亦係今鋪終點。",
+    note: "上到天台——燈熄、風硬、冇退路。",
   },
 };
 
@@ -473,9 +473,9 @@ export const CHARACTERS = {
   oil: {
     id: "oil",
     name: "阿油・後巷經紀",
-    short: "出手快、愛搏；一路削血一路加速",
+    short: "出手快、愛搏——一路削血一路加速",
     /** 一句講清點玩（選角一眼睇到路線） */
-    playstyle: "連環出拳——每三張攻擊，第四張平一費兼加傷。",
+    playstyle: "連環出拳——每三張攻擊，第四張平一費兼多傷。",
     route: "搏命・攻擊",
     initial: "油",
     portrait: "assets/art/portraits/ayau.webp",
@@ -514,9 +514,9 @@ export const CHARACTERS = {
   asan: {
     id: "asan",
     name: "阿珊・茶記夜更",
-    short: "捱得、護得場；盾厚再反打",
+    short: "捱得、護得場——盾厚先反打",
     /** 一句講清點玩（選角一眼睇到路線） */
-    playstyle: "疊盾捱打——擋夠先還手，愈守愈硬淨。",
+    playstyle: "疊盾捱打——擋夠先還手，愈守愈硬。",
     route: "守住・擋回",
     initial: "珊",
     portrait: "assets/art/portraits/ashan.jpg",
@@ -556,9 +556,9 @@ export const CHARACTERS = {
   kauko: {
     id: "kauko",
     name: "九哥・招牌工",
-    short: "識睇牌、識抽牌；技能多、節奏活",
+    short: "識睇牌、識抽牌——技能多、節奏活",
     /** 一句講清點玩（選角一眼睇到路線） */
-    playstyle: "抽牌鋪路——技能先起手，牌多就有得揀。",
+    playstyle: "抽牌鋪路——技能先起手，袋口有得揀。",
     route: "節奏・抽牌",
     initial: "九",
     portrait: "assets/art/portraits/kauko.jpg",
@@ -598,11 +598,11 @@ export const CHARACTERS = {
   sing: {
     id: "sing",
     name: "勝仔・跌打館學徒",
-    short: "捱得痛、識自救；血薄但有得回",
+    short: "捱得痛、識自救——血薄但有得回",
     /** 選角立繪：跌打館學徒（白頭巾、手纏繃帶、藥櫃「正骨推拿」） */
     portrait: "assets/art/portraits/shingzai.webp",
     /** 一句講清點玩：回復流，同快手／檔口／招牌眼完全唔同 */
-    playstyle: "邊打邊醫——每場第一次出技能牌就回血，愈拖愈唔死。",
+    playstyle: "邊打邊醫——每場首次技能就回血，愈拖愈唔死。",
     route: "回復・續戰",
     initial: "勝",
     maxHp: 54,
