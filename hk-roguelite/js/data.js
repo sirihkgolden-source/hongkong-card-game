@@ -697,6 +697,7 @@ export const ENEMIES = {
       { kind: "attack", value: 6, label: "偷襲 6" },
       { kind: "attack", value: 8, label: "撲影 8" },
       { kind: "block", value: 5, label: "隱影擋 5" },
+      { kind: "weaken", value: 1, label: "滲冷：你下擊−1" },
     ],
   },
   E02: {
@@ -710,6 +711,7 @@ export const ENEMIES = {
       { kind: "attack", value: 9, label: "砸罐 9" },
       { kind: "attack", value: 7, label: "酸液 7" },
       { kind: "buff_attack", value: 2, label: "發酵＋2攻" },
+      { kind: "block", value: 4, label: "車仔擋 4" },
     ],
   },
   E03: {
@@ -723,6 +725,7 @@ export const ENEMIES = {
       { kind: "attack", value: 7, label: "擠壓 7" },
       { kind: "attack", value: 11, label: "逼爆 11" },
       { kind: "weaken", value: 2, label: "踩腳：你下擊−2" },
+      { kind: "block", value: 5, label: "袋牆擋 5" },
     ],
   },
   E04: {
@@ -753,7 +756,8 @@ export const ENEMIES = {
     intents: [
       { kind: "attack", value: 11, label: "夾擊 11" },
       { kind: "attack", value: 14, label: "圍埋 14" },
-      { kind: "block", value: 6, label: "人牆 6" },
+      { kind: "block", value: 6, label: "人牆擋 6" },
+      { kind: "buff_attack", value: 1, label: "報數＋1攻" },
     ],
   },
   E07: {
@@ -767,6 +771,7 @@ export const ENEMIES = {
       { kind: "attack", value: 12, label: "鋸字 12" },
       { kind: "weaken", value: 2, label: "火花：你下擊−2" },
       { kind: "attack", value: 15, label: "拆招牌 15" },
+      { kind: "block", value: 6, label: "鐵架擋 6" },
     ],
   },
   E05: {
@@ -799,6 +804,7 @@ export const ENEMIES = {
       { kind: "attack", value: 13, label: "紥鐵 13" },
       { kind: "attack", value: 10, label: "鐵枝橫掃 10" },
       { kind: "buff_attack", value: 2, label: "上螺絲＋2攻" },
+      { kind: "block", value: 6, label: "鐵網擋 6" },
     ],
   },
   /** Act3 小怪：清場 */
@@ -813,6 +819,7 @@ export const ENEMIES = {
       { kind: "attack", value: 10, label: "沙包砸 10" },
       { kind: "block", value: 7, label: "疊沙包擋 7" },
       { kind: "attack", value: 13, label: "膊頭一撞 13" },
+      { kind: "weaken", value: 1, label: "擋住路：你下擊−1" },
     ],
   },
   /** Act3 小怪：籠邊睇客 */
@@ -827,6 +834,7 @@ export const ENEMIES = {
       { kind: "attack", value: 11, label: "偷位 11" },
       { kind: "weaken", value: 2, label: "撩腳：你下擊−2" },
       { kind: "attack", value: 14, label: "補拳 14" },
+      { kind: "block", value: 5, label: "縮位擋 5" },
     ],
   },
   /** Act3 精英：地盤清場隊 */
@@ -837,12 +845,15 @@ export const ENEMIES = {
     art: "assets/enemies/E08.png",
     flavor: "「呢度收工，你唔係工人。」安全帽一低頭，鐵枝就起。",
     afterword: "「收工就收工。」佢地執嘢走，你企喺原地。",
+    /** 精英近失（敗給清場隊時） */
+    nearMiss: "安全帽差一寸就撞實你。鐵枝掃過耳邊——就差呢下。",
     isElite: true,
     intents: [
-      { kind: "attack", value: 14, label: "清場 14" },
-      { kind: "attack", value: 11, label: "撬棍 11" },
+      { kind: "attack", value: 14, label: "清場砸 14" },
+      { kind: "attack", value: 11, label: "撬棍掃 11" },
       { kind: "block", value: 9, label: "人牆擋 9" },
       { kind: "attack", value: 17, label: "收工埋數 17" },
+      { kind: "weaken", value: 2, label: "趕客：你下擊−2" },
     ],
   },
   /** Act3 最終 Boss：籠門之王 */
@@ -863,6 +874,7 @@ export const ENEMIES = {
       { kind: "block", value: 10, label: "靠籠擋 10" },
       { kind: "attack", value: 10, label: "膝撞 10" },
       { kind: "attack", value: 19, label: "落地一記 19" },
+      { kind: "buff_attack", value: 2, label: "籠氣＋2攻" },
     ],
   },
 };

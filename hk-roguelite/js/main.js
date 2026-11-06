@@ -1105,11 +1105,16 @@ function renderBattle() {
             <strong>${escapeHtml(b.enemyName)}${b.isFinalBoss ? " · 最終 Boss" : b.isBoss ? " · Boss" : ""}</strong>
             <div class="hp-bar"><span id="enemy-hp-fill" style="width:${Math.max(0, (b.enemyHp / b.enemyMaxHp) * 100)}%"></span></div>
             <span class="hp-text" id="enemy-hp-text">${b.enemyHp}/${b.enemyMaxHp}${b.enemyBlock ? ` · 盾 ${b.enemyBlock}` : ""}</span>
-            <span class="intent intent--${intent.kind}" id="enemy-intent">
+            <span class="intent intent--${intent.kind}" id="enemy-intent" title="${escapeHtml(intentKindText(intent.kind))}">
               <span class="intent-icon" aria-hidden="true">${intentIcon(intent.kind)}</span>
               <span class="intent-kind">${intentKindText(intent.kind)}</span>
               <span class="intent-label">${escapeHtml(intent.label)}</span>
             </span>
+            ${
+              b.enemyFlavor && b.turn <= 1 && !b.over
+                ? `<p class="enemy-flavor-line" id="enemy-flavor">「${escapeHtml(b.enemyFlavor)}」</p>`
+                : ""
+            }
           </div>
         </div>
         <div class="fighter player" id="fighter-player">
@@ -1757,8 +1762,8 @@ function nearMissInfo() {
     text,
   });
 
-  // 0) 敗給 Boss：用該 Boss 專屬港味一句（最優先）
-  if (b && b.isBoss) {
+  // 0) 敗給 Boss／精英：用專屬港味 nearMiss（最優先）
+  if (b && (b.isBoss || b.isElite)) {
     const bossDef = enemyById(b.enemyId);
     if (bossDef?.nearMiss) {
       const pct =
@@ -2509,6 +2514,14 @@ function startBattleNow(enemyId) {
   const enemy = enemyById(enemyId);
   state.battle = createBattle(state.run, enemy);
   startPlayerTurn(state.battle);
+  // 非 Boss 亦要有戰前一句：寫入戰鬥日誌（Boss 已有 gate 大字）
+  if (enemy?.flavor && state.battle) {
+    state.battle.log = state.battle.log || [];
+    if (!enemy.isBoss) {
+      state.battle.log.unshift(`「${enemy.flavor}」`);
+      if (state.battle.log.length > 8) state.battle.log.pop();
+    }
+  }
   state.pendingBossId = null;
   state.screen = "battle";
 }

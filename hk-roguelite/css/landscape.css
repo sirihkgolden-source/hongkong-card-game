@@ -144,6 +144,18 @@
     font-size: 0.68rem;
   }
 
+  /* 戰前句：首回合一行，唔好撐爆敵人欄 */
+  #fighter-enemy .enemy-flavor-line {
+    font-size: 0.55rem;
+    line-height: 1.25;
+    margin: 0.05rem 0 0;
+    max-height: 2.6em;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
   /* ── 中：戰鬥日誌（可滾，唔會撐高） ── */
   .battle-log {
     grid-area: log;
