@@ -2079,10 +2079,12 @@ body {
 
 .pile-draw .pile-num {
   color: var(--neon-cyan);
+  font-size: 1.02rem;
 }
 
 .pile-discard .pile-num {
   color: var(--neon-amber);
+  font-size: 1.02rem;
 }
 
 .pile-pill.is-bump {
