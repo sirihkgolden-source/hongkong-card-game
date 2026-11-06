@@ -822,19 +822,19 @@ function relicBar(run) {
 function relicPlainText(r) {
   if (!r) return "";
   const e = r.effect || {};
-  if (e.startEnergy) return `每場開波多 ${e.startEnergy} 點能量——出手多一次。`;
-  if (e.firstTurnEnergy) return `每場第一回合多 ${e.firstTurnEnergy} 點能量——起手快一拍。`;
-  if (e.startBlock) return `每場開波自動有 ${e.startBlock} 擋——第一下唔怕。`;
-  if (e.startDraw) return `每場開波抽多 ${e.startDraw} 張——起手牌多。`;
-  if (e.drawPerTurn) return `每個回合都抽多 ${e.drawPerTurn} 張——牌唔會斷。`;
-  if (e.attackBonus) return `每張攻擊都痛多 ${e.attackBonus} 點。`;
-  if (e.attackPerCard) return `每張攻擊牌再加 ${e.attackPerCard} 傷害。`;
-  if (e.healOnWin) return `打贏一場回 ${e.healOnWin} HP——唔使成日入士多。`;
+  if (e.startEnergy) return `開閘多 ${e.startEnergy} 格氣——出手多一次。`;
+  if (e.firstTurnEnergy) return `首回合多 ${e.firstTurnEnergy} 格氣——起手快一拍。`;
+  if (e.startBlock) return `開波自帶 ${e.startBlock} 擋——第一下唔驚。`;
+  if (e.startDraw) return `開波多摸 ${e.startDraw} 張——起手袋口厚。`;
+  if (e.drawPerTurn) return `每回合多摸 ${e.drawPerTurn} 張——牌唔會斷。`;
+  if (e.attackBonus) return `每記攻擊痛多 ${e.attackBonus}——拳頭有斤兩。`;
+  if (e.attackPerCard) return `每張攻擊牌再加 ${e.attackPerCard} 傷——指節上鐵。`;
+  if (e.healOnWin) return `打贏回 ${e.healOnWin} HP——唔使成日入士多。`;
   if (e.healOnWinBonus) return `勝場回血再多 ${e.healOnWinBonus} HP——甜品加成。`;
-  if (e.goldBonus) return `打贏小怪多 ${e.goldBonus} 金——積少成多。`;
-  if (e.healBonusFirst) return `每場首次回血多回 ${e.healBonusFirst} HP——一劑頂兩劑。`;
-  if (e.instantMaxHp) return `入手即刻最大生命 +${e.instantMaxHp}。`;
-  if (e.instantGold) return `入手即刻多 ${e.instantGold} 金。`;
+  if (e.goldBonus) return `打贏小怪多 ${e.goldBonus} 金——袋口積少成多。`;
+  if (e.healBonusFirst) return `每場首次回血多 ${e.healBonusFirst} HP——一劑頂兩劑。`;
+  if (e.instantMaxHp) return `入手即最大生命 +${e.instantMaxHp}——身子硬一截。`;
+  if (e.instantGold) return `入手即多 ${e.instantGold} 金——庫銀落袋。`;
   return r.desc;
 }
 
