@@ -2066,7 +2066,7 @@ export const CONSUMABLES = {
       const before = run.hp;
       run.hp = Math.min(run.maxHp, run.hp + 18);
       const healed = run.hp - before;
-      return healed > 0 ? `食咗兩粒，回咗 ${healed} HP。` : "已經滿血，食咗都冇用。";
+      return healed > 0 ? `必理痛落肚——回咗 ${healed} HP。` : "已經滿血，食咗都冇用——留返下次。";
     },
   },
   cs_bandage: {
@@ -2079,7 +2079,7 @@ export const CONSUMABLES = {
     apply: (run) => {
       run.maxHp += 5;
       run.hp = Math.min(run.maxHp, run.hp + 5);
-      return "貼好膠布——最大生命 +5，順手回 5 HP。";
+      return "膠布貼實——最大生命 +5，順手回 5 HP。";
     },
   },
   cs_energy_drink: {
@@ -2091,7 +2091,7 @@ export const CONSUMABLES = {
     acts: [1, 2, 3],
     apply: (run) => {
       run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
-      return "飲完心跳快咗——下一場開局多 1 能量。";
+      return "提神飲落肚——下一場開波多 1 格氣。";
     },
   },
   cs_lucky_charm: {
@@ -2103,7 +2103,7 @@ export const CONSUMABLES = {
     acts: [1, 2, 3],
     apply: (run) => {
       run.deck.push("S02");
-      return "靈符入袋——牌組多咗張「椒鹽補刀」。";
+      return "黃大仙靈符入袋——多咗張「椒鹽補刀」。";
     },
   },
   /** Act1 偏唐樓：維他奶 */
@@ -2117,7 +2117,7 @@ export const CONSUMABLES = {
     apply: (run) => {
       run.hp = Math.min(run.maxHp, run.hp + 10);
       run.nextBattleBlock = (run.nextBattleBlock || 0) + 4;
-      return "飲完維他奶——回 10 HP，下場帶 4 擋。";
+      return "維他奶落肚——回 10 HP，下場帶 4 擋入場。";
     },
   },
   /** Act2 偏旺角夜：魚蛋 */
@@ -2131,7 +2131,7 @@ export const CONSUMABLES = {
     apply: (run) => {
       run.hp = Math.min(run.maxHp, run.hp + 8);
       run.deck.push("S47");
-      return "魚蛋落肚——回 8 HP，多咗張「芝麻糊暖」。";
+      return "魚蛋杯落肚——回 8 HP，袋入「芝麻糊暖」。";
     },
   },
   /** Act3 偏天台：蛋撻 */
@@ -2146,7 +2146,7 @@ export const CONSUMABLES = {
       run.maxHp += 3;
       run.hp = Math.min(run.maxHp, run.hp + 3);
       run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
-      return "蛋撻入肚——最大生命 +3，下場多 1 能量。";
+      return "蛋撻酥皮碎——最大生命 +3，下場多 1 格氣。";
     },
   },
   /** 缺項：清走下戰能量懲罰（事件負面狀態出口） */
@@ -2164,11 +2164,11 @@ export const CONSUMABLES = {
       run.hp = Math.min(run.maxHp, run.hp + 8);
       const healed = run.hp - before;
       if (had > 0) {
-        return `飲完廿四味——清咗下戰 −${had} 能量，兼回 ${healed} HP。`;
+        return `廿四味沖完——清咗下戰 −${had} 格氣，兼回 ${healed} HP。`;
       }
       return healed > 0
-        ? `飲完廿四味——冇晦氣好清，回咗 ${healed} HP。`
-        : "已經滿血，廿四味淨係苦口。";
+        ? `廿四味沖完——冇晦氣好清，回咗 ${healed} HP。`
+        : "廿四味沖完——冇晦氣，血都滿。";
     },
   },
 };
