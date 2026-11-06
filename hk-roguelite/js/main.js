@@ -550,23 +550,23 @@ function renderTutorial() {
   const steps = [
     {
       icon: "🃏",
-      key: "出牌",
+      key: "出手",
       title: "揀張牌，撳落去",
-      body: "手牌喺最底。撳一張就會打出——攻擊牌打過去，技能牌留俾自己。",
+      body: "手牌喺最底。撳一張就出手——攻擊打過去，技能留俾自己。",
       note: "每張牌左上角係費用，你要有咁多⚡先打得。",
     },
     {
       icon: "🛡",
       key: "擋",
       title: "擋住先，唔急",
-      body: "有啲牌會畀你「擋」。擋喺敵人回合幫你食傷，捱完就清。",
-      note: "敵人頭上面會寫住今回合想打幾多——睇清楚再決定。",
+      body: "有啲牌會畀你「擋」。對手回合幫你食傷，捱完就清。",
+      note: "對手頭上寫住呢回合想打幾多——睇清再決定。",
     },
     {
       icon: "🔚",
       key: "結束回合",
       title: "冇牌打就收手",
-      body: "撳「結束回合」，敵人就會出手。捱完之後你會重新抽牌、回滿⚡。",
+      body: "撳「結束回合」，對手就出手。捱完之後再摸牌、回滿⚡。",
       note: "唔夠費用嘅牌打唔出，唔好死撳——留返下一回合。",
     },
   ];
@@ -593,19 +593,19 @@ function renderTutorial() {
     <main class="screen screen-tutorial" aria-label="教學">
       <header class="brand-block brand-compact">
         <h1 class="brand">點玩？</h1>
-        <p class="tagline">三件事識咗，就打得</p>
+        <p class="tagline">三樣識咗，條街就行得</p>
       </header>
 
       <section class="panel tut-panel">
-        <p class="lede">呢條街唔會等人。不過學識呢三樣，你就唔會白死。</p>
+        <p class="lede">呢條街唔會等人。學識呢三樣，你就唔會白死。</p>
         <ol class="tut-list">${cards}</ol>
       </section>
 
       <div class="actions">
-        <button type="button" class="btn btn-primary btn-pressable" data-action="finish-tutorial">明白，開始</button>
+        <button type="button" class="btn btn-primary btn-pressable" data-action="finish-tutorial">明白，落場</button>
         <button type="button" class="btn btn-ghost btn-pressable" data-action="finish-tutorial">跳過教學</button>
       </div>
-      <p class="foot-note">之後想再睇：設定頁清除本機進度</p>
+      <p class="foot-note">之後想再睇：設定頁清走本機進度</p>
     </main>
   `;
 }
