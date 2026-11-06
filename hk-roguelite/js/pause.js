@@ -48,12 +48,12 @@ export function pauseSummary(run, opts = {}) {
 
   // 逐項砌成人話；用嘅都是真實數值，冇一項係估
   const items = [
-    `Act${act} · 街口行到第 ${Math.min(done + 1, total)}／${total} 格`,
+    `Act${act} · 街口行到第 ${Math.min(done + 1, total)}／${total} 格——未散`,
     `血 ${hp}／${maxHp}`,
-    `${gold} 個大洋`,
+    `${gold} 個大洋——袋口`,
     `袋口 ${deck} 張牌——街口盤數`,
   ];
-  if (relics > 0) items.push(`身家 ${relics} 件遺物`);
+  if (relics > 0) items.push(`身家 ${relics} 件遺物傍身`);
 
   return { ok: true, act, done, total, hp, maxHp, gold, deck, relics, items };
 }
