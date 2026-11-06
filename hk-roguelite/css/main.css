@@ -3018,6 +3018,14 @@ body {
 }
 
 /* 最終 Boss：加一層紅黑壓迫感 */
+.screen-boss-gate.is-elite .eyebrow {
+  color: var(--warn, #e8b84a);
+}
+
+.screen-boss-gate.is-elite .boss-gate-quote {
+  border-color: rgba(232, 184, 74, 0.45);
+}
+
 .screen-boss-gate.is-final .boss-gate-art {
   border-color: rgba(255, 92, 108, 0.55);
   box-shadow: 0 0 28px rgba(255, 45, 149, 0.22);

@@ -325,6 +325,29 @@ section("敵人戰前句／意圖齊全", () => {
   assert(new Set(flavors).size === flavors.length, "戰前句重複");
 });
 
+/* ---------- 5c. 精英閘口 ---------- */
+section("精英閘口（地盤清場隊先停一句）", () => {
+  const e08 = enemyById("E08");
+  assert(e08?.isElite, "E08 應標 isElite");
+  assert(e08.flavor && e08.flavor.length >= 8, "E08 缺戰前 flavor");
+  assert(!e08.isBoss, "E08 唔應該係 Boss（用精英閘，唔改三大 Boss）");
+  // beginBattle 要對精英同 Boss 一齊閘
+  const mainSrc = readFileSync(new URL("./main.js", import.meta.url), "utf8");
+  assert(
+    /isBoss\s*\|\|\s*enemy\.isElite|enemy\.isElite\s*\|\|\s*enemy\.isBoss/.test(mainSrc) ||
+      mainSrc.includes("enemy.isBoss || enemy.isElite"),
+    "beginBattle 未對精英開閘口"
+  );
+  assert(mainSrc.includes("is-elite"), "精英閘口缺 is-elite 樣式鉤");
+  assert(mainSrc.includes("精英遭遇"), "精英閘口缺「精英遭遇」眉標");
+  assert(mainSrc.includes("硬上"), "精英閘口缺 CTA「硬上」");
+  // Act3 分支硬路要有機會抽到 E08
+  const branch = ACT3_MAP.find((n) => n.type === "branch");
+  assert(branch, "Act3 缺分支");
+  const hard = (branch.options || []).find((o) => o.id === "hard");
+  assert(hard?.enemyPool?.includes("E08"), "Act3 硬路池缺 E08");
+});
+
 /* ---------- 6. 再開一局 ---------- */
 section("再開一局（資料層確保有鉤）", () => {
   for (const id of CHAR_IDS) {
