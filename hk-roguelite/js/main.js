@@ -412,32 +412,32 @@ function renderTitle() {
         ${
           state.overwriteConfirm === "confirm" && state.savedRun
             ? `<div class="overwrite-confirm" role="alert">
-                 <p class="overwrite-title">開新局會蓋走而家嘅存檔。</p>
+                 <p class="overwrite-title">開新局會蓋走而家呢一鋪存檔。</p>
                  <p class="overwrite-body">${escapeHtml(saveSummary(state.savedRun))}</p>
-                 <p class="overwrite-body">蓋走之後冇得返轉頭。想留住呢一局就撳「唔好」。</p>
+                 <p class="overwrite-body">蓋走之後冇得返轉頭。想留住呢一鋪就撳「唔好」。</p>
                  <div class="overwrite-actions">
                    <button type="button" class="btn btn-danger btn-pressable" data-action="confirm-overwrite">係，開新局</button>
-                   <button type="button" class="btn btn-ghost btn-pressable" data-action="cancel-overwrite">唔好，留住存檔</button>
+                   <button type="button" class="btn btn-ghost btn-pressable" data-action="cancel-overwrite">唔好，留住呢鋪</button>
                  </div>
                </div>`
             : `${
                 // 有存檔先顯示「繼續」——冇存檔唔應該出一個撳完冇反應嘅掣
                 state.savedRun
                   ? `<button type="button" class="btn btn-primary btn-pressable btn-continue" data-action="continue-run">
-                 <span class="btn-continue-main">繼續</span>
+                 <span class="btn-continue-main">繼續呢一鋪</span>
                  <span class="btn-continue-sub">${escapeHtml(saveSummary(state.savedRun))}</span>
                </button>`
                   : ""
               }
         <button type="button" class="btn btn-${state.savedRun ? "ghost" : "primary"} btn-pressable" data-action="to-select">${
-          state.savedRun ? "新局（會覆蓋存檔）" : "去選角"
+          state.savedRun ? "新局（會蓋走存檔）" : "去選角"
         }</button>
         <button type="button" class="btn btn-ghost btn-pressable" data-action="to-settings">設定</button>`
         }
       </div>
       <p class="daily-line${isClaimedToday() ? " is-claimed" : " is-todo"}">${escapeHtml(dailyStatusLine())}</p>
       ${renderSfxToggle()}
-      <p class="foot-note">《香江小風波》· 同舊 demo 隔離</p>
+      <p class="foot-note">《香江小風波》· 同舊 demo 隔離 · 街口自理</p>
     </main>
   `;
 }
@@ -634,7 +634,7 @@ function renderPause() {
     ? `
       <div class="pause-confirm" role="alert">
         <p class="pause-confirm-title">返標題？而家會幫你存起呢一局。</p>
-        <p class="pause-confirm-body">下次入遊戲撳「繼續」就返得嚟。想開新局先要覆蓋存檔。</p>
+        <p class="pause-confirm-body">下次入遊戲撳「繼續」就返得嚟。想開新局先要蓋走存檔。</p>
         <div class="pause-confirm-actions">
           <button type="button" class="btn btn-danger btn-pressable" data-action="confirm-quit">係，返標題</button>
           <button type="button" class="btn btn-ghost btn-pressable" data-action="cancel-quit">唔好，繼續打</button>
