@@ -2067,6 +2067,7 @@ body {
 
 .pile-label {
   letter-spacing: 0.04em;
+  font-size: 0.72rem;
 }
 
 .pile-num {
@@ -2346,8 +2347,9 @@ body {
 }
 
 .empty-hand {
+  font-size: 0.9rem;
   margin: 0;
-  color: var(--ink-dim);
+  color: rgba(220, 232, 248, 0.88);
   text-align: center;
   flex: 1 0 100%;
 }
@@ -2466,8 +2468,8 @@ body {
   border-radius: 10px;
   background: rgba(0, 0, 0, 0.35);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  font-size: 0.75rem;
-  color: var(--ink-dim);
+  font-size: 0.82rem;
+  color: rgba(220, 232, 248, 0.9);
   max-height: 7.5rem;
   overflow: auto;
 }
@@ -2484,7 +2486,7 @@ body {
   border-left: 2px solid var(--neon-amber);
   background: rgba(255, 193, 74, 0.12);
   color: var(--neon-amber);
-  font-size: 0.74rem;
+  font-size: 0.8rem;
   font-weight: 700;
   line-height: 1.4;
   opacity: 0;
