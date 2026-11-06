@@ -692,7 +692,7 @@ export const ENEMIES = {
     hp: 32,
     art: "assets/enemies/E01.jpg",
     flavor: "後巷石屎濕漉漉，影在牆角不肯散。",
-    afterword: "影散咗。巷尾仲有幾滴未乾。",
+    afterword: "影散咗。巷尾仲有幾滴未乾——你行得過。",
     intents: [
       { kind: "attack", value: 6, label: "偷襲 6" },
       { kind: "attack", value: 8, label: "撲影 8" },
@@ -706,7 +706,7 @@ export const ENEMIES = {
     hp: 42,
     art: "assets/enemies/E02.jpg",
     flavor: "推住車仔喺巷尾擺檔，罐頭個個都過咗期——「食唔死嘅，放心。」",
-    afterword: "車仔翻咗，罐頭滾滿一地。阿叔坐喺牆邊喘氣。",
+    afterword: "車仔翻咗，罐頭滾滿一地。阿叔坐喺牆邊喘氣——呢檔收工。",
     intents: [
       { kind: "attack", value: 9, label: "砸罐 9" },
       { kind: "attack", value: 7, label: "酸液 7" },
@@ -720,7 +720,7 @@ export const ENEMIES = {
     hp: 38,
     art: "assets/enemies/E03.jpg",
     flavor: "手抽四大袋，肩頭一撞就過——「借借，趕住返屋企煮飯。」",
-    afterword: "阿姐執返啲袋，邊行邊鬧：「後生仔，唔識讓路。」",
+    afterword: "阿姐執返啲袋，邊行邊鬧：「後生仔，唔識讓路。」——你冇睬。",
     intents: [
       { kind: "attack", value: 7, label: "擠壓 7" },
       { kind: "attack", value: 11, label: "逼爆 11" },
@@ -752,7 +752,7 @@ export const ENEMIES = {
     hp: 48,
     art: "assets/enemies/E06.jpg",
     flavor: "三個企喺燈箱底，一眼關七——「行過嘅，都要留低個名。」",
-    afterword: "三個人散開，燈箱仲喺度閃。你行過，冇人再攔。",
+    afterword: "三個人散開，燈箱仲喺度閃。你行過——冇人再攔。",
     intents: [
       { kind: "attack", value: 11, label: "夾擊 11" },
       { kind: "attack", value: 14, label: "圍埋 14" },
@@ -766,7 +766,7 @@ export const ENEMIES = {
     hp: 52,
     art: "assets/enemies/E07.png",
     flavor: "電鋸聲響——呢條街嘅字，今晚拆完。",
-    afterword: "電鋸停咗。招牌吊喺半空，仲未跌。",
+    afterword: "電鋸停咗。招牌吊喺半空，仲未跌——你行得過。",
     intents: [
       { kind: "attack", value: 12, label: "鋸字 12" },
       { kind: "weaken", value: 2, label: "火花：你下擊−2" },
@@ -799,7 +799,7 @@ export const ENEMIES = {
     hp: 56,
     art: "assets/enemies/E09.png",
     flavor: "鐵枝一紥，天台都震。你行入嚟，就當你係工地雜物。",
-    afterword: "鐵枝散落一地。天台靜返，只剩風聲。",
+    afterword: "鐵枝散落一地。天台靜返，只剩風聲——你仲企住。",
     intents: [
       { kind: "attack", value: 13, label: "紥鐵 13" },
       { kind: "attack", value: 10, label: "鐵枝橫掃 10" },
@@ -814,7 +814,7 @@ export const ENEMIES = {
     hp: 52,
     art: "assets/enemies/E10.png",
     flavor: "膊頭托住兩個沙包，行過都唔望你一眼——「唔好企路中間。」",
-    afterword: "沙包放低咗。阿頭抹咗把汗，冇再望你。",
+    afterword: "沙包放低咗。阿頭抹咗把汗，冇再望你——路通。",
     intents: [
       { kind: "attack", value: 10, label: "沙包砸 10" },
       { kind: "block", value: 7, label: "疊沙包擋 7" },
@@ -829,7 +829,7 @@ export const ENEMIES = {
     hp: 46,
     art: "assets/enemies/E11.png",
     flavor: "籠邊個個都落過注。佢唔落注——佢落手。",
-    afterword: "佢縮返入人群。籠邊繼續有人落注。",
+    afterword: "佢縮返入人群。籠邊繼續有人落注——你唔係注碼。",
     intents: [
       { kind: "attack", value: 11, label: "偷位 11" },
       { kind: "weaken", value: 2, label: "撩腳：你下擊−2" },
@@ -844,7 +844,7 @@ export const ENEMIES = {
     hp: 72,
     art: "assets/enemies/E08.png",
     flavor: "「呢度收工，你唔係工人。」安全帽一低頭，鐵枝就起。",
-    afterword: "「收工就收工。」佢地執嘢走，你企喺原地。",
+    afterword: "「收工就收工。」佢地執嘢走——你企喺原地，路係你嘅。",
     /** 精英近失（敗給清場隊時） */
     nearMiss: "安全帽差一寸就撞實你。鐵枝掃過耳邊——就差呢下。",
     isElite: true,
