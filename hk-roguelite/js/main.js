@@ -1654,11 +1654,11 @@ function renderVictory() {
 
 /** 近失種類人話標籤（結算一眼明） */
 const NEAR_MISS_LABELS = {
-  boss: "差喺 Boss",
-  hp: "差喺血量",
-  energy: "差喺能量",
-  deck: "差喺牌組",
-  relic: "差喺遺物",
+  boss: "差喺 Boss 門口",
+  hp: "差喺血量——補早啲",
+  energy: "差喺能量——格氣唔夠",
+  deck: "差喺牌組——袋口太薄",
+  relic: "差喺遺物——身家少",
 };
 
 /**
@@ -1692,7 +1692,7 @@ function nextRunAdvice(near) {
     targetName: target.name,
     targetRoute: target.route || "",
     line: buildHint[near.kind] || "下次換個打法——街口唔認第二次。",
-    barSub: `${NEAR_MISS_LABELS[near.kind] || "差一點"} · 換角或換牌路再試`,
+    barSub: `${NEAR_MISS_LABELS[near.kind] || "差一點"} · 換角或換牌路再出街`,
   };
 }
 
@@ -2262,7 +2262,7 @@ async function playCardWithFeel(handIndex, cardEl) {
   const cost = effectiveCost(b, cardId);
   if (b.energy < cost) {
     // 唔夠費：卡面震一下 + 跳字 + 能量欄閃紅，唔好靜靜點唔到
-    state.statusMsg = `唔夠能量——要 ${cost}，得 ${b.energy}`;
+    state.statusMsg = `格氣唔夠——要 ${cost}，得 ${b.energy}`;
     if (cardEl) {
       cardEl.classList.remove("is-shake-no");
       void cardEl.offsetWidth;
@@ -2986,7 +2986,7 @@ function onClick(event) {
       {
         const c = characterById(state.selectedCharId);
         state.statusMsg = c.openLine || "";
-        state.openingHint = `${c.playstyle || c.passive.name} · 被動「${c.passive.name}」`;
+        state.openingHint = `${c.playstyle || c.passive.name} · 被動「${c.passive.name}」開工`;
       }
       break;
     case "relic-info": {
