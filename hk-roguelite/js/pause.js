@@ -50,10 +50,10 @@ export function pauseSummary(run, opts = {}) {
   const items = [
     `Act${act} · 街口行到第 ${Math.min(done + 1, total)}／${total} 格——未散場`,
     `血 ${hp}／${maxHp}——仲企得住`,
-    `${gold} 個大洋——袋口有數，落袋`,
-    `袋口 ${deck} 張牌——街口盤數收齊`,
+    `${gold} 個大洋——袋口有數，入袋`,
+    `袋口 ${deck} 張牌——街口盤數執穩`,
   ];
-  if (relics > 0) items.push(`身家 ${relics} 件遺物傍身，睇清掉`);
+  if (relics > 0) items.push(`身家 ${relics} 件遺物傍身，睇準掉`);
 
   return { ok: true, act, done, total, hp, maxHp, gold, deck, relics, items };
 }
@@ -69,5 +69,5 @@ export function pauseSummary(run, opts = {}) {
  */
 export function pauseLossLine(s) {
   if (!s || !s.ok) return "而家未有進行中嘅一鋪——出街先，返嚟再傾計。";
-  return `返標題會幫你存起呢一鋪（Act${s.act} 街口第 ${Math.min(s.done + 1, s.total)}／${s.total} 格），下次撳「繼續」就返得嚟——街口唔會白行一轉路，企穩傍身。`;
+  return `返標題會幫你存起呢一鋪（Act${s.act} 街口第 ${Math.min(s.done + 1, s.total)}／${s.total} 格），下次撳「繼續」就返得嚟——街口唔會白行一轉路，守住傍身。`;
 }
