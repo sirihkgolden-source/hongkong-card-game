@@ -25,9 +25,9 @@ export const DAILY_VERSION = 1;
 
 /** 金幣獎勵（下局開局多幾多） */
 export const DAILY_GOLD = [
-  { kind: "gold", value: 6, name: "街坊請食", desc: "下一鋪開波袋口多 6 個大洋。" },
-  { kind: "gold", value: 8, name: "士多找贖聲", desc: "下一鋪開波袋口多 8 個大洋。" },
-  { kind: "gold", value: 10, name: "手氣順過街口", desc: "下一鋪開波袋口多 10 個大洋。" },
+  { kind: "gold", value: 6, name: "街坊請食", desc: "下一鋪開波——袋口多 6 個大洋傍身。" },
+  { kind: "gold", value: 8, name: "士多找贖聲", desc: "下一鋪開波——袋口多 8 個大洋傍身。" },
+  { kind: "gold", value: 10, name: "手氣順過街口", desc: "下一鋪開波——袋口多 10 個大洋傍身。" },
 ];
 
 /** 名片句（純文字收藏） */
@@ -51,6 +51,9 @@ export const DAILY_LINES = [
   { kind: "line", name: "今日一句", text: "「天台無燈，但你鞋底仲印住三區塵。」" },
   { kind: "line", name: "今日一句", text: "「蓋走存檔之前，想清楚呢一鋪值唔值得留。」" },
   { kind: "line", name: "今日一句", text: "「格氣用晒都唔緊要——結束回合，再嚟過。」" },
+  { kind: "line", name: "今日一句", text: "「西裝收數隊走咗，數簿仲留喺街口。」" },
+  { kind: "line", name: "今日一句", text: "「睇場唔記得你名，只記得你有冇再嚟過閘。」" },
+  { kind: "line", name: "今日一句", text: "「籠門之王唔怕人多，怕你袋口仲有下一張。」" },
 ];
 
 /** 全部可能獎勵（測試用） */
@@ -211,8 +214,8 @@ export function resetDaily() {
  */
 export function dailyStatusLine(d = new Date()) {
   const data = loadDaily();
-  if (data.date !== dateKey(d)) return "今日未領——打完一鋪（贏輸都計）就有得收。";
+  if (data.date !== dateKey(d)) return "今日未領——打完一鋪（贏輸都計）就有得收，街口記低。";
   if (data.kind === "gold") return `今日已領：下一鋪開波 +${data.value} 大洋入袋——記得嚟攞。`;
-  if (data.kind === "line") return "今日已領：街口一句收低袋口。";
+  if (data.kind === "line") return "今日已領：街口一句收低袋口——慢慢睇。";
   return "今日已領——街口記低。";
 }
