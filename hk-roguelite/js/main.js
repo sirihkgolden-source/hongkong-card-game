@@ -1077,17 +1077,17 @@ function renderBattle() {
 
   const readyHint =
     b.kuaisouReady
-      ? " · 快手就緒"
+      ? " · 快手就緒——下一記平一費"
       : b.passiveId === "dangkou" && !b.dangkouUsed
-        ? " · 檔口待命"
+        ? " · 檔口待命——捱打下先觸"
         : b.passiveId === "zhaopaiyan"
           ? b.zhaopaiyanUsed
-            ? " · 招牌眼已亮"
-            : " · 招牌眼待命"
+            ? " · 招牌眼已亮——抽過"
+            : " · 招牌眼待命——首次技能抽"
           : b.passiveId === "seotong"
             ? b.seotongUsed
-              ? " · 跌打已用"
-              : " · 跌打待命"
+              ? " · 跌打已用——回過"
+              : " · 跌打待命——首次技能回"
             : "";
 
   // HUD 被動短標：一眼見到自己被動叫咩、狀態係待命／就緒／用過
@@ -1680,18 +1680,18 @@ function nextRunAdvice(near) {
   const target = CHARACTERS[targetId] || CHARACTERS.oil;
 
   const buildHint = {
-    hp: "下次早啲入士多補血／食廿四味，或者揀多幾張擋牌同回血牌。",
-    energy: "下次入士多買「提神能量飲品」，或者揀多幾張 0 費牌。",
-    deck: "下次戰後唔好跳過選牌，牌組夠厚先撐到尾。",
-    relic: "下次記得行士多——遺物係白賺嘅，專屬貨只對自己有效。",
-    boss: "下次見 Boss 之前留爆發牌；勝仔回血線亦較捱得。",
+    hp: "下次早啲入士多補血／飲廿四味，或者袋多幾張擋同回血。",
+    energy: "下次入士多執「提神能量飲品」，或者袋多幾張 0 費牌。",
+    deck: "下次戰後唔好跳過選牌——袋口夠厚先撐到尾。",
+    relic: "下次記得行士多——身家遺物白賺，專屬貨只對自己有效。",
+    boss: "下次見 Boss 之前留爆發牌；勝仔回血線更捱得。",
   };
 
   return {
     targetId,
     targetName: target.name,
     targetRoute: target.route || "",
-    line: buildHint[near.kind] || "下次換個打法試吓。",
+    line: buildHint[near.kind] || "下次換個打法——街口唔認第二次。",
     barSub: `${NEAR_MISS_LABELS[near.kind] || "差一點"} · 換角或換牌路再試`,
   };
 }
