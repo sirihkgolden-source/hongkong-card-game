@@ -76,8 +76,8 @@ export function summarizeDeck(deck, cards) {
  * @param {ReturnType<typeof summarizeDeck>} s
  */
 export function deckOverviewLine(s) {
-  if (!s || s.total === 0) return "袋口空——仲未有牌入袋，出街先。";
-  return `袋口共 ${s.total} 張 · 攻擊 ${s.attacks} · 技能 ${s.skills} · 平均 ${s.avgCost} 費／張——街口盤數`;
+  if (!s || s.total === 0) return "袋口空——仲未有牌入袋，出街先執兩張。";
+  return `袋口共 ${s.total} 張 · 攻擊 ${s.attacks} · 技能 ${s.skills} · 平均 ${s.avgCost} 費／張——街口盤數清`;
 }
 
 /**
