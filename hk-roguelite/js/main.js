@@ -1224,52 +1224,61 @@ function renderBattle() {
 
 /** 選牌後一句人話：講清呢張牌實際幫到你咩 */
 function pickFeedback(card) {
-  if (!card) return "入咗牌組。";
+  if (!card) return "執咗入袋。";
   const name = card.name;
   if (card.dmg && card.dmg >= 12) {
-    return `入咗「${name}」——一張重拳，Boss 都食唔消。`;
+    return `執咗「${name}」——重手一記，鐵閘都震。`;
   }
   if (card.dmg && card.draw) {
-    return `入咗「${name}」——打得又抽得，牌唔會斷。`;
+    return `執咗「${name}」——打得又摸得，牌唔會斷。`;
   }
   if (card.dmg) {
-    return `入咗「${name}」——出手多一個選擇，唔使淨靠 starter。`;
+    return `執咗「${name}」——多一隻出擊，唔使淨靠起手。`;
   }
   if (card.block && card.heal) {
-    return `入咗「${name}」——擋得又回得，捱得更耐。`;
+    return `執咗「${name}」——擋得又補得，捱夜更穩。`;
   }
   if (card.block) {
-    return `入咗「${name}」——多一層擋，命硬啲。`;
+    return `執咗「${name}」——多一層擋，命硬啲。`;
   }
   if (card.heal) {
-    return `入咗「${name}」——有得回血，唔使咁快死。`;
+    return `執咗「${name}」——有得補血，唔使咁快落。`;
   }
   if (card.draw) {
-    return `入咗「${name}」——抽多張，牌路順啲。`;
+    return `執咗「${name}」——多摸幾張，牌路順啲。`;
   }
-  return `入咗「${name}」——牌組厚一分。`;
+  return `執咗「${name}」——袋口厚一分。`;
 }
 
 function renderReward() {
+  const act = state.run?.act || 1;
+  const rewardTitle =
+    act === 3 ? "水塔邊三揀一" : act === 2 ? "夜檔尾三揀一" : "巷口三揀一";
+  const rewardTag =
+    act === 3
+      ? `天台風大 · 揀一張入袋 · 金幣 ${state.run.gold}`
+      : act === 2
+        ? `霓虹未熄 · 揀一張入袋 · 金幣 ${state.run.gold}`
+        : `雨未停 · 揀一張入袋 · 金幣 ${state.run.gold}`;
   const choices = state.rewardChoices
     .map((id) => {
       const card = cardById(id);
       return `
         <div class="reward-cell">
           ${renderCardFace(id, { pickId: id })}
-          <p class="reward-why">${escapeHtml(pickFeedback(card).replace(/^入咗「.*?」——/, ""))}</p>
+          <p class="reward-why">${escapeHtml(pickFeedback(card).replace(/^執咗「.*?」——/, ""))}</p>
         </div>`;
     })
     .join("");
   return `
     <main class="screen screen-wide" aria-label="選牌">
       <header class="brand-block brand-compact">
-        <h1 class="section-title">三選一・壯大牌組</h1>
-        <p class="tagline">揀一張加入本局牌組 · 金幣 ${state.run.gold}</p>
+        <h1 class="section-title">${escapeHtml(rewardTitle)}</h1>
+        <p class="tagline">${escapeHtml(rewardTag)}</p>
       </header>
       <div class="reward-grid">${choices}</div>
       <div class="actions">
-        <button type="button" class="btn btn-ghost" data-action="skip-reward">跳過（不取牌）</button>
+        <button type="button" class="btn btn-ghost" data-action="skip-reward">唔執（跳過）</button>
       </div>
       <p class="status" role="status">${escapeHtml(state.statusMsg)}</p>
     </main>
@@ -3080,8 +3089,8 @@ function onClick(event) {
       advanceMap();
       state.statusMsg =
         (state.run.deck || []).length <= 10
-          ? "冇揀牌——牌組仍然薄，下一場要小心啲。"
-          : "跳過咗呢張。牌組冇變，但慳返個位。";
+          ? "唔執——袋口仲薄，下一場要惜力。"
+          : "唔執呢張。袋口冇變，慳返個位。";
       break;
     case "finish-event":
       // 每局事件節點抽 2 個：行完第一個接第二個，行完先返地圖
