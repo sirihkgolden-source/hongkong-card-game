@@ -402,6 +402,33 @@ section("地圖副標港味（唔用機械腔）", () => {
   assert(ACT3_MAP[5].title === "籠門之王", "Act3 Boss 名被改");
 });
 
+/* ---------- 7b2. 地圖主標港味（非 Boss） ---------- */
+section("地圖主標港味（非 Boss）", () => {
+  const forbidden = [
+    "街頭閒事",
+    "路口二揀一",
+    "旺角閒事",
+    "旺角路口",
+    "天台閒事",
+    "上天台前",
+  ];
+  const titles = [];
+  for (const map of [ACT1_MAP, ACT2_MAP, ACT3_MAP]) {
+    for (const n of map) {
+      if (n.type === "boss") continue;
+      assert(n.title && n.title.length >= 2, `${n.id} 缺主標`);
+      for (const bad of forbidden) {
+        assert(n.title !== bad, `${n.id} 主標仍係機械腔「${bad}」`);
+      }
+      titles.push(n.title);
+    }
+  }
+  assert(new Set(titles).size === titles.length, "非 Boss 地圖主標有重複");
+  assert(ACT1_MAP[5].title === "巷口鐵閘・睇場", "Act1 Boss 名被改");
+  assert(ACT2_MAP[5].title === "西裝收數隊", "Act2 Boss 名被改");
+  assert(ACT3_MAP[5].title === "籠門之王", "Act3 Boss 名被改");
+});
+
 /* ---------- 7c. 事件頁眉港味（唔用機械腔） ---------- */
 section("事件頁眉港味（唔用機械腔）", () => {
   const mainSrc = readFileSync(new URL("./main.js", import.meta.url), "utf8");

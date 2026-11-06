@@ -887,7 +887,7 @@ export const ACT1_MAP = [
   {
     id: "n1",
     type: "battle",
-    title: "後巷影",
+    title: "濕漉後巷",
     subtitle: "石屎濕漉 · 打完執牌",
     enemyId: "E01",
     bg: "assets/art/bg/bg_act1_alley.jpg",
@@ -895,7 +895,7 @@ export const ACT1_MAP = [
   {
     id: "n2",
     type: "event",
-    title: "街頭閒事",
+    title: "梯間風聲",
     subtitle: "巷口風聲 · 三揀一",
     bg: "assets/art/bg/bg_act1_alley.jpg",
   },
@@ -903,7 +903,7 @@ export const ACT1_MAP = [
     id: "n3",
     // Act 內分支：二揀一，兩邊獎勵／風險唔同，但都必改局
     type: "branch",
-    title: "路口二揀一",
+    title: "鐵閘前兩條路",
     subtitle: "頂硬定繞路 · 兩邊都改局",
     bg: "assets/art/bg/bg_act1_alley.jpg",
     options: [
@@ -936,7 +936,7 @@ export const ACT1_MAP = [
   {
     id: "n5",
     type: "battle",
-    title: "逼爆潮",
+    title: "行人隧道口",
     subtitle: "人潮一湧 · 打完執牌",
     enemyId: "E03",
     bg: "assets/art/bg/bg_act1_alley.jpg",
@@ -958,7 +958,7 @@ export const ACT2_MAP = [
   {
     id: "a2n1",
     type: "battle",
-    title: "旺角圍標",
+    title: "燈箱底圍標",
     subtitle: "燈箱底睇水 · 戰鬥",
     enemyId: "E06",
     bg: "assets/art/bg/bg_act2_mongkok.jpg",
@@ -966,14 +966,14 @@ export const ACT2_MAP = [
   {
     id: "a2n2",
     type: "reward",
-    title: "夜檔執牌",
+    title: "夜檔尾執牌",
     subtitle: "夜檔收攤 · 揀一張",
     bg: "assets/art/bg/bg_act2_mongkok.jpg",
   },
   {
     id: "a2n3",
     type: "event",
-    title: "旺角閒事",
+    title: "彌敦道事嗎",
     subtitle: "彌敦道擦肩 · 三揀一",
     bg: "assets/art/bg/bg_act2_mongkok.jpg",
   },
@@ -981,7 +981,7 @@ export const ACT2_MAP = [
     id: "a2n4",
     // Act2 分支：兩條路都改局
     type: "branch",
-    title: "旺角路口",
+    title: "天橋底兩條路",
     subtitle: "照拆定兜路 · 兩邊都改局",
     bg: "assets/art/bg/bg_act2_mongkok.jpg",
     options: [
@@ -1029,7 +1029,7 @@ export const ACT3_MAP = [
   {
     id: "a3n1",
     type: "battle",
-    title: "紮鐵佬",
+    title: "天台紮鐵",
     subtitle: "鐵枝一紥 · 戰鬥",
     enemyId: "E09",
     bg: "assets/art/bg/bg_act3_rooftop.jpg",
@@ -1037,14 +1037,14 @@ export const ACT3_MAP = [
   {
     id: "a3n2",
     type: "reward",
-    title: "天台執牌",
+    title: "水塔邊執牌",
     subtitle: "水塔邊 · 揀一張",
     bg: "assets/art/bg/bg_act3_rooftop.jpg",
   },
   {
     id: "a3n3",
     type: "event",
-    title: "天台閒事",
+    title: "籠邊事嗎",
     subtitle: "籠邊夜話 · 三揀一",
     bg: "assets/art/bg/bg_act3_rooftop.jpg",
   },
@@ -1052,7 +1052,7 @@ export const ACT3_MAP = [
     id: "a3n4",
     // Act3 分支：尾段，兩邊都改局
     type: "branch",
-    title: "上天台前",
+    title: "上頂前兩條路",
     subtitle: "清場定攀水管 · 或遇精英",
     bg: "assets/art/bg/bg_act3_rooftop.jpg",
     options: [
