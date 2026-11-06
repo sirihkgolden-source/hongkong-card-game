@@ -484,7 +484,7 @@ export const CHARACTERS = {
     passive: {
       id: "kuaisou",
       name: "快手",
-      desc: "每打出第 3 張攻擊牌，下一張攻擊平一費（最低 0）兼額外 +3 傷害。",
+      desc: "三拳之後第四下平一費（最低 0）兼多 3 傷——快手節奏。",
     },
     /** 「再開一局」鉤：選角／結算各用一句港味（純文案，唔影響數值） */
     rerunHook: {
@@ -525,7 +525,7 @@ export const CHARACTERS = {
     passive: {
       id: "dangkou",
       name: "檔口",
-      desc: "每場戰鬥首次捱打之後，即刻加 8 擋。",
+      desc: "檔口第一次捱打，即刻加 8 擋——守住先。",
     },
     /** 「再開一局」鉤：選角／結算各用一句港味（純文案，唔影響數值） */
     rerunHook: {
@@ -567,7 +567,7 @@ export const CHARACTERS = {
     passive: {
       id: "zhaopaiyan",
       name: "招牌眼",
-      desc: "每場戰鬥首次打出技能牌，即刻多抽 1 張。",
+      desc: "招牌眼一開：每場首次技能牌，即刻多抽 1 張。",
     },
     /** 「再開一局」鉤：選角／結算各用一句港味（純文案，唔影響數值） */
     rerunHook: {
@@ -610,7 +610,7 @@ export const CHARACTERS = {
     passive: {
       id: "seotong",
       name: "跌打",
-      desc: "每場戰鬥首次打出技能牌，即刻回 4 HP。",
+      desc: "跌打開蓋：每場首次技能牌，即刻回 4 HP。",
     },
     /** 「再開一局」鉤 */
     rerunHook: {
