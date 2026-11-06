@@ -482,12 +482,12 @@ function renderSettings() {
     <main class="screen screen-settings" aria-label="設定">
       <header class="brand-block brand-compact">
         <h1 class="brand">設定</h1>
-        <p class="tagline">本機設定 · 唔會上載任何資料</p>
+        <p class="tagline">街口設定 · 資料唔會上雲</p>
       </header>
 
       <section class="panel">
         <h2>音效</h2>
-        <p class="lede">而家：<strong>${off ? "關" : "開"}</strong>。設定會記住，重開瀏覽器都仍然生效。</p>
+        <p class="lede">而家：<strong>${off ? "關" : "開"}</strong>。記住喺你部機，重開瀏覽器都仍然生效。</p>
         <button type="button" class="sfx-toggle${off ? " is-muted" : ""}" data-action="toggle-sfx"
           aria-pressed="${off ? "true" : "false"}" aria-label="${off ? "音效已關，撳一下開啟" : "音效已開，撳一下靜音"}">
           <span class="sfx-toggle-icon" aria-hidden="true">${off ? "🔇" : "🔊"}</span>
@@ -496,17 +496,17 @@ function renderSettings() {
       </section>
 
       <section class="panel settings-howto">
-        <h2>點玩（操作一句）</h2>
+        <h2>街頭操作（一句）</h2>
         <ul class="howto-list">
-          <li><strong>撳牌</strong>就出牌；<strong>撳住牌 0.4 秒</strong>睇詳情（唔會出牌）。</li>
-          <li>敵人頭上寫住今回合想打幾多——睇清楚先決定擋定打。</li>
-          <li>冇牌打就撳「結束回合」，敵人出手，之後重新抽牌回滿⚡。</li>
+          <li><strong>撳牌</strong>就出手；<strong>撳住牌 0.4 秒</strong>睇詳情（唔會出手）。</li>
+          <li>對手頭上寫住呢回合想打幾多——睇清先決定擋定打。</li>
+          <li>冇牌打就撳「結束回合」，對手出手；捱完再摸牌、回滿⚡。</li>
         </ul>
       </section>
 
       <section class="panel">
         <h2>本機進度</h2>
-        <p class="lede">呢啲資料只存喺你部機（localStorage），冇上雲。</p>
+        <p class="lede">呢啲只存喺你部機（localStorage），冇上雲、冇帳號。</p>
         ${keyList}
         ${confirmBlock}
         ${
@@ -518,7 +518,7 @@ function renderSettings() {
 
       <div class="actions">
         <button type="button" class="btn btn-primary btn-pressable" data-action="back-title">${
-          state.settingsReturnTo === "pause" ? "返暫停" : "返標題"
+          state.settingsReturnTo === "pause" ? "返停一停" : "返標題"
         }</button>
       </div>
     </main>
