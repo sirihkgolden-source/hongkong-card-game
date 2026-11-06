@@ -146,11 +146,11 @@ export function startPlayerTurn(b) {
   if (b.enemyMark > 0) {
     const markDmg = b.enemyMark;
     b.enemyHp = Math.max(0, b.enemyHp - markDmg);
-    pushLog(b, `跳電發作——造成 ${markDmg} 傷`);
+    pushLog(b, `跳電發作——對面再痛 ${markDmg}`);
     b.enemyMark = 0;
     if (b.enemyHp <= 0) {
       b.over = "win";
-      pushLog(b, "對手仆低！");
+      pushLog(b, "對手仆低——呢鋪收工！");
     }
   }
 }
@@ -268,7 +268,7 @@ export function playCard(b, handIndex) {
     if (b.attacksPlayed % 3 === 0) {
       b.kuaisouReady = true;
       kuaisouArmed = true;
-      pushLog(b, "【快手】下一張攻擊費用 −1 並 +3 傷害！");
+      pushLog(b, "【快手】下一記平一費兼多 3 傷！");
     }
   }
 
@@ -279,7 +279,7 @@ export function playCard(b, handIndex) {
     drawCards(b, 1);
     zhaopaiyanDrew = true;
     drawnExtra = 1;
-    pushLog(b, "【招牌眼】首次技能・抽 1！");
+    pushLog(b, "【招牌眼】首次技能——袋口多摸 1！");
   }
 
   // 跌打：每場首次打技能牌即刻回 4 HP
@@ -289,12 +289,12 @@ export function playCard(b, handIndex) {
     const before = b.playerHp;
     b.playerHp = Math.min(b.playerMaxHp, b.playerHp + 4);
     seotongHealed = b.playerHp - before;
-    pushLog(b, `【跌打】首次技能・回 ${seotongHealed} HP！`);
+    pushLog(b, `【跌打】首次技能——回 ${seotongHealed} HP！`);
   }
 
   if (b.enemyHp <= 0) {
     b.over = "win";
-    pushLog(b, "對手仆低！");
+    pushLog(b, "對手仆低——呢鋪收工！");
   }
 
   return {
@@ -328,7 +328,7 @@ export function tryDangkou(b, damageTaken) {
   b.dangkouUsed = true;
   const block = 8;
   b.playerBlock += block;
-  pushLog(b, `【檔口】首次捱打・加 ${block} 擋！`);
+  pushLog(b, `【檔口】首次捱打——擋上 ${block}！`);
   return { triggered: true, block };
 }
 
@@ -359,7 +359,7 @@ export function endTurn(b) {
     b.playerHp = Math.max(0, b.playerHp - dealt);
     result.dealt = dealt;
     result.blocked = blocked;
-    pushLog(b, `${b.enemyName}：${intent.label} → 你食咗 ${dealt} 傷`);
+    pushLog(b, `${b.enemyName}：${intent.label} → 你捱咗 ${dealt} 傷`);
     // 捱打＝對方出手攻擊（全擋都算受擊）
     result.dangkou = tryDangkou(b, raw);
   } else if (intent.kind === "block") {
@@ -367,7 +367,7 @@ export function endTurn(b) {
     pushLog(b, `${b.enemyName}：${intent.label}`);
   } else if (intent.kind === "buff_attack") {
     b.enemyAtkBonus += intent.value;
-    pushLog(b, `${b.enemyName}：${intent.label}（現攻加成 ${b.enemyAtkBonus}）`);
+    pushLog(b, `${b.enemyName}：${intent.label}（攻勢 +${b.enemyAtkBonus}）`);
   } else if (intent.kind === "weaken") {
     b.playerWeaken = intent.value;
     pushLog(b, `${b.enemyName}：${intent.label}`);
@@ -375,7 +375,7 @@ export function endTurn(b) {
 
   if (b.playerHp <= 0) {
     b.over = "lose";
-    pushLog(b, "你仆街……");
+    pushLog(b, "你仆街……街口靜咗。");
     return result;
   }
 
