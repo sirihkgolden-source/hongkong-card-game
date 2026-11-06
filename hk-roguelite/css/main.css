@@ -2706,7 +2706,7 @@ body {
 
 .fx-float--block {
   color: #b8fff6;
-  font-size: 1.25rem;
+  font-size: 0.9rem;
   text-shadow: 0 0 14px rgba(61, 224, 255, 1), 0 2px 8px rgba(0, 0, 0, 0.65);
 }
 
@@ -2723,14 +2723,14 @@ body {
 /* 金幣跳字：金色 + 上彈，數值變動即刻見到 */
 .fx-float--gold {
   color: #ffd76a;
-  font-size: 1.35rem;
+  font-size: 0.9rem;
   text-shadow: 0 0 16px rgba(255, 193, 74, 0.95), 0 2px 8px rgba(0, 0, 0, 0.8);
   font-weight: 900;
 }
 
 .fx-float--gold-spend {
   color: #ffb4a2;
-  font-size: 1.2rem;
+  font-size: 0.88rem;
   text-shadow: 0 0 14px rgba(255, 140, 110, 0.9), 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
