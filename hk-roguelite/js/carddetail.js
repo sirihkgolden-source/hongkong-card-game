@@ -88,11 +88,20 @@ export function cardDetail(card) {
       whenToUse: "",
     };
   }
+  const rarityRaw = card.rarity || "—";
+  const rarityLabel =
+    rarityRaw === "普通"
+      ? "普通・街口貨"
+      : rarityRaw === "稀有"
+        ? "稀有・夜檔貨"
+        : rarityRaw === "專屬"
+          ? "專屬・身家貨"
+          : rarityRaw;
   return {
     name: card.name || "（無名）",
     cost: Number.isFinite(card.cost) ? card.cost : 0,
     typeLabel: card.type === "attack" ? "攻擊・出拳" : card.type === "skill" ? "技能・手法" : "—",
-    rarity: card.rarity || "—",
+    rarity: rarityLabel,
     blurb: card.blurb || "",
     lines: cardEffectLines(card),
     whenToUse: card.whenToUse ? card.whenToUse : cardWhenToUse(card),
