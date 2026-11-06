@@ -50,10 +50,10 @@ export const DAILY_LINES = [
   { kind: "line", name: "今日一句", text: "「便利店雪櫃風，吹唔散你袋口嘅火氣。」" },
   { kind: "line", name: "今日一句", text: "「天台無燈，但你鞋底仲印住三區塵。」" },
   { kind: "line", name: "今日一句", text: "「蓋走存檔之前，想清楚呢一鋪值唔值得留。」" },
-  { kind: "line", name: "今日一句", text: "「格氣用晒都唔緊要——結束回合，再嚟過。」" },
-  { kind: "line", name: "今日一句", text: "「西裝收數隊走咗，數簿仲留喺街口。」" },
-  { kind: "line", name: "今日一句", text: "「睇場唔記得你名，只記得你有冇再嚟過閘。」" },
-  { kind: "line", name: "今日一句", text: "「籠門之王唔怕人多，怕你袋口仲有下一張。」" },
+  { kind: "line", name: "今日一句", text: "「格氣用晒都唔緊要——結束回合，再嚟過一鋪。」" },
+  { kind: "line", name: "今日一句", text: "「西裝收數隊走咗，數簿仲留喺街口燈下。」" },
+  { kind: "line", name: "今日一句", text: "「睇場唔記得你名，只記得你有冇再嚟過鐵閘。」" },
+  { kind: "line", name: "今日一句", text: "「籠門之王唔怕人多，怕你袋口仲有下一張牌。」" },
 ];
 
 /** 全部可能獎勵（測試用） */
@@ -214,8 +214,8 @@ export function resetDaily() {
  */
 export function dailyStatusLine(d = new Date()) {
   const data = loadDaily();
-  if (data.date !== dateKey(d)) return "今日未領——打完一鋪（贏輸都計）就有得收，街口記低。";
+  if (data.date !== dateKey(d)) return "今日未領——打完一鋪（贏輸都計）就有得收，街口記低先。";
   if (data.kind === "gold") return `今日已領：下一鋪開波 +${data.value} 大洋入袋——記得返嚟攞。`;
-  if (data.kind === "line") return "今日已領：街口一句收低袋口——慢慢睇。";
+  if (data.kind === "line") return "今日已領：街口一句收低袋口——慢慢睇返。";
   return "今日已領——街口記低咗。";
 }
