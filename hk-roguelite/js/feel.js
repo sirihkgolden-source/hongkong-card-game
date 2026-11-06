@@ -188,7 +188,7 @@ export function syncPileCounts(b) {
   if (discardChanged) bump(document.getElementById("pile-discard"));
 }
 
-/** 洗牌提示：牌庫膠囊閃一下 + 跳字 */
+/** 洗返牌堆提示：牌庫膠囊閃一下 + 跳字 */
 export function flashShuffle(b, recycled) {
   const row = document.querySelector(".pile-row");
   if (row) {
@@ -198,7 +198,7 @@ export function flashShuffle(b, recycled) {
   setNumSafe("#pile-draw", b?.drawPile?.length ?? 0);
   const anchor = document.getElementById("pile-draw");
   if (anchor) {
-    floatText(anchor, recycled ? `洗牌 ${recycled} 張` : "洗牌", "block");
+    floatText(anchor, recycled ? `洗返牌堆 ${recycled} 張` : "洗返牌堆", "block");
   }
 }
 
@@ -289,7 +289,7 @@ export function clearFx() {
 export function floatGold(delta) {
   if (!delta) return;
   const goldEl = findGoldAnchor();
-  const text = delta > 0 ? `+${delta} 金幣` : `${delta} 金幣`;
+  const text = delta > 0 ? `+${delta} 金入袋` : `${delta} 金出水`;
   floatText(goldEl, text, delta > 0 ? "gold" : "gold-spend");
 }
 
@@ -316,13 +316,13 @@ export function floatRunDeltas(deltas, pushLine) {
     lines.push({ text: relic > 0 ? `+${relic} 件遺物` : `${relic} 件遺物`, variant: "kuaisou" });
   }
   if (block) {
-    lines.push({ text: block > 0 ? `+${block} 擋` : `${block} 擋`, variant: "block" });
+    lines.push({ text: block > 0 ? `+${block} 擋上身` : `${block} 擋`, variant: "block" });
   }
   if (energy) {
     lines.push({ text: energy > 0 ? `+${energy} 能量` : `${energy} 能量`, variant: "kuaisou" });
   }
   if (gold) {
-    lines.push({ text: gold > 0 ? `+${gold} 金幣` : `${gold} 金幣`, variant: gold > 0 ? "gold" : "gold-spend" });
+    lines.push({ text: gold > 0 ? `+${gold} 金入袋` : `${gold} 金出水`, variant: gold > 0 ? "gold" : "gold-spend" });
   }
   if (!lines.length) return;
 
