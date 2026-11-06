@@ -1304,11 +1304,19 @@ function renderEvent() {
       </button>`
     )
     .join("");
+  // 事件頁眉：唔再用「短事件／機械效果」系統腔；按區換港味副句
+  const act = state.run?.act || 1;
+  const eventTagline =
+    act === 3
+      ? "天台一事 · 點揀都會改局"
+      : act === 2
+        ? "霓虹底一事 · 點揀都會改局"
+        : "巷口一事 · 點揀都會改局";
   return `
     <main class="screen" aria-label="事件">
       <header class="brand-block brand-compact">
         <h1 class="section-title">${escapeHtml(ev.title)}</h1>
-        <p class="tagline">短事件 · 選項改機械效果</p>
+        <p class="tagline">${escapeHtml(eventTagline)}</p>
       </header>
       <figure class="event-art">
         <img src="${escapeHtml(ev.art)}" alt="" />
