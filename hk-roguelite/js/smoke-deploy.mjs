@@ -171,6 +171,20 @@ for (const need of ["index.html", "css/main.css", "js/main.js", "js/data.js", "j
     /grid-template-columns:\s*minmax\(0,\s*1fr\)/.test(battleTop[1]) || /min-width:\s*0/.test(battleTop[1]),
     ".battle-top 要有 minmax(0,1fr) 或 min-width: 0（防敵人卡撐闊）"
   );
+
+  // 選牌獎卡：唔可以跟手牌 `flex: 0 0 118px`（直向 .reward-cell 會鎖死高度，
+  // 令青字 .card-stats 溢出壓住橙金 .reward-why）
+  const rewardFace = /\.reward-cell\s+\.card-face\s*\{([^}]*)\}/m.exec(css);
+  assert(rewardFace, "搵唔到 .reward-cell .card-face 規則（防選牌叠字）");
+  assert(
+    /flex:\s*0\s+0\s+auto/.test(rewardFace[1]),
+    ".reward-cell .card-face 要 flex: 0 0 auto（高度跟內容，唔鎖 118px）"
+  );
+  assert(/height:\s*auto/.test(rewardFace[1]), ".reward-cell .card-face 要 height: auto");
+  assert(
+    /\.reward-why\s*\{[^}]*color:\s*var\(--neon-amber\)/s.test(css),
+    ".reward-why 要保持橙金短述（var(--neon-amber)）"
+  );
 }
 
 /* ---------- 8. 手機橫屏（主驗收尺寸） ---------- */
