@@ -198,7 +198,7 @@ export function flashShuffle(b, recycled) {
   setNumSafe("#pile-draw", b?.drawPile?.length ?? 0);
   const anchor = document.getElementById("pile-draw");
   if (anchor) {
-    floatText(anchor, recycled ? `洗返牌堆 ${recycled} 張——袋口翻新` : "洗返牌堆——袋口翻新", "block");
+    floatText(anchor, recycled ? `洗返牌堆 ${recycled} 張——袋口翻新一輪` : "洗返牌堆——袋口翻新一輪", "block");
   }
 }
 
@@ -259,7 +259,7 @@ export function showPassiveBanner(text, variant = "kuaisou") {
 
 /** @deprecated 用 showPassiveBanner("快手！平一費", "kuaisou") */
 export function showKuaisouBanner() {
-  showPassiveBanner("快手！平一費——節奏嚟", "kuaisou");
+  showPassiveBanner("快手！平一費——節奏嚟喇", "kuaisou");
 }
 
 /**
@@ -289,7 +289,7 @@ export function clearFx() {
 export function floatGold(delta) {
   if (!delta) return;
   const goldEl = findGoldAnchor();
-  const text = delta > 0 ? `+${delta} 大洋入袋口` : `${delta} 大洋出水`;
+  const text = delta > 0 ? `+${delta} 大洋入袋口` : `${delta} 大洋出水口`;
   floatText(goldEl, text, delta > 0 ? "gold" : "gold-spend");
 }
 
@@ -307,7 +307,7 @@ export function floatRunDeltas(deltas, pushLine) {
     lines.push({ text: hp > 0 ? `+${hp} 血回籠` : `${hp} 血出水`, variant: hp > 0 ? "heal" : "dmg" });
   }
   if (maxHp) {
-    lines.push({ text: maxHp > 0 ? `+${maxHp} 最大血` : `${maxHp} 最大血`, variant: "heal" });
+    lines.push({ text: maxHp > 0 ? `+${maxHp} 最大血` : `${maxHp} 最大血出水`, variant: "heal" });
   }
   if (deck) {
     lines.push({ text: deck > 0 ? `+${deck} 張入袋` : `${deck} 張出水`, variant: "kuaisou" });
