@@ -25,9 +25,9 @@ export const DAILY_VERSION = 1;
 
 /** 金幣獎勵（下局開局多幾多） */
 export const DAILY_GOLD = [
-  { kind: "gold", value: 6, name: "街坊請食——袋口暖", desc: "下一鋪開波——袋口多 6 個大洋傍身。" },
-  { kind: "gold", value: 8, name: "士多找贖聲——叮一聲", desc: "下一鋪開波——袋口多 8 個大洋傍身。" },
-  { kind: "gold", value: 10, name: "手氣順過街口——今日旺", desc: "下一鋪開波——袋口多 10 個大洋傍身。" },
+  { kind: "gold", value: 6, name: "街坊請食——袋口暖", desc: "下一鋪開波——袋口多 6 個大洋傍身先。" },
+  { kind: "gold", value: 8, name: "士多找贖聲——叮一聲", desc: "下一鋪開波——袋口多 8 個大洋傍身先。" },
+  { kind: "gold", value: 10, name: "手氣順過街口——今日旺", desc: "下一鋪開波——袋口多 10 個大洋傍身先。" },
 ];
 
 /** 名片句（純文字收藏） */
@@ -215,7 +215,7 @@ export function resetDaily() {
 export function dailyStatusLine(d = new Date()) {
   const data = loadDaily();
   if (data.date !== dateKey(d)) return "今日未領——打完一鋪（贏輸都計）就有得收，街口記低先。";
-  if (data.kind === "gold") return `今日已領：下一鋪開波 +${data.value} 大洋入袋——記得返嚟攞。`;
+  if (data.kind === "gold") return `今日已領：下一鋪開波 +${data.value} 大洋入袋——記得返嚟攞走。`;
   if (data.kind === "line") return "今日已領：街口一句收低袋口——慢慢睇返。";
-  return "今日已領——街口記低咗。";
+  return "今日已領——街口記低咗一筆。";
 }
