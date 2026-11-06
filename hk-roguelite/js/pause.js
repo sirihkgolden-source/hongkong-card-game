@@ -48,12 +48,12 @@ export function pauseSummary(run, opts = {}) {
 
   // 逐項砌成人話；用嘅都是真實數值，冇一項係估
   const items = [
-    `Act${act} 打到第 ${Math.min(done + 1, total)}／${total} 格`,
-    `HP ${hp}／${maxHp}`,
+    `Act${act} · 行到第 ${Math.min(done + 1, total)}／${total} 格`,
+    `血量 ${hp}／${maxHp}`,
     `${gold} 個大洋`,
-    `${deck} 張牌`,
+    `袋口 ${deck} 張牌`,
   ];
-  if (relics > 0) items.push(`${relics} 件遺物`);
+  if (relics > 0) items.push(`身家 ${relics} 件遺物`);
 
   return { ok: true, act, done, total, hp, maxHp, gold, deck, relics, items };
 }
@@ -68,6 +68,6 @@ export function pauseSummary(run, opts = {}) {
  * @param {ReturnType<typeof pauseSummary>} s
  */
 export function pauseLossLine(s) {
-  if (!s || !s.ok) return "而家未有進行中嘅一局。";
-  return `返標題會幫你存起呢一局（Act${s.act} 第 ${Math.min(s.done + 1, s.total)}／${s.total} 格），下次撳「繼續」返得嚟。`;
+  if (!s || !s.ok) return "而家未有進行中嘅一鋪。";
+  return `返標題會幫你存起呢一鋪（Act${s.act} 第 ${Math.min(s.done + 1, s.total)}／${s.total} 格），下次撳「繼續」就返得嚟。`;
 }
