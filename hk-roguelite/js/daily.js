@@ -38,6 +38,10 @@ export const DAILY_LINES = [
   { kind: "line", name: "今日一句", text: "「每個睇場都有第一日；每個第一日都想返屋企。」" },
   { kind: "line", name: "今日一句", text: "「天台冇燈，但都有人喺上面等緊你。」" },
   { kind: "line", name: "今日一句", text: "「跌打酒醫得瘀傷，醫唔到唔服氣。」" },
+  { kind: "line", name: "今日一句", text: "「便利店燈亮過街燈，但照唔到你個袋口。」" },
+  { kind: "line", name: "今日一句", text: "「鐵閘一落，成條巷先記得邊個仲企喺出面。」" },
+  { kind: "line", name: "今日一句", text: "「旺角冇夜深，淨係有人未散。」" },
+  { kind: "line", name: "今日一句", text: "「天台風大，吹散嘅唔止係煙。」" },
 ];
 
 /** 全部可能獎勵（測試用） */
@@ -198,8 +202,8 @@ export function resetDaily() {
  */
 export function dailyStatusLine(d = new Date()) {
   const data = loadDaily();
-  if (data.date !== dateKey(d)) return "今日未領——打一局（贏輸都計）就有。";
-  if (data.kind === "gold") return `今日已領：下局 +${data.value} 金。`;
-  if (data.kind === "line") return "今日已領：一句名片句。";
+  if (data.date !== dateKey(d)) return "今日未領——打完一鋪（贏輸都計）就有。";
+  if (data.kind === "gold") return `今日已領：下鋪開局 +${data.value} 大洋。`;
+  if (data.kind === "line") return "今日已領：街口一句。";
   return "今日已領。";
 }
