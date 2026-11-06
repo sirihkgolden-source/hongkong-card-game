@@ -566,7 +566,7 @@ function renderTutorial() {
       icon: "🔚",
       key: "結束回合",
       title: "冇牌打就收手",
-      body: "撳「結束回合」，對手就出手。捱完之後再摸牌、回滿⚡。",
+      body: "撳「結束回合」，對手就出手。捱完之後再摸牌、回滿格氣。",
       note: "唔夠費用嘅牌打唔出，唔好死撳——留返下一回合。",
     },
   ];
@@ -1256,10 +1256,10 @@ function renderReward() {
     act === 3 ? "水塔邊三揀一" : act === 2 ? "夜檔尾三揀一" : "巷口三揀一";
   const rewardTag =
     act === 3
-      ? `天台風大 · 揀一張入袋 · 金幣 ${state.run.gold}`
+      ? `天台風大 · 揀一張入袋 · 大洋 ${state.run.gold}`
       : act === 2
-        ? `霓虹未熄 · 揀一張入袋 · 金幣 ${state.run.gold}`
-        : `雨未停 · 揀一張入袋 · 金幣 ${state.run.gold}`;
+        ? `霓虹未熄 · 揀一張入袋 · 大洋 ${state.run.gold}`
+        : `雨未停 · 揀一張入袋 · 大洋 ${state.run.gold}`;
   const choices = state.rewardChoices
     .map((id) => {
       const card = cardById(id);
@@ -2262,7 +2262,7 @@ async function playCardWithFeel(handIndex, cardEl) {
   const cost = effectiveCost(b, cardId);
   if (b.energy < cost) {
     // 唔夠費：卡面震一下 + 跳字 + 能量欄閃紅，唔好靜靜點唔到
-    state.statusMsg = `格氣唔夠——要 ${cost}，得 ${b.energy}`;
+    state.statusMsg = `格氣唔夠——要 ${cost}，得 ${b.energy}——換張平牌先。`;
     if (cardEl) {
       cardEl.classList.remove("is-shake-no");
       void cardEl.offsetWidth;
@@ -2575,7 +2575,7 @@ function startBattleNow(enemyId) {
 function beginBattle(enemyId) {
   const enemy = enemyById(enemyId);
   if (!enemy) {
-    state.statusMsg = "對手未定";
+    state.statusMsg = "對手未定——街口仲喺度排。";
     return;
   }
   // Boss／精英都先停閘口一句，唔好直接跳入戰鬥
@@ -2887,7 +2887,7 @@ function onClick(event) {
       state.pendingBossId = null;
       // 一律回地圖：戰鬥入面嘅存檔都係由該節點重入（唔存戰鬥內部狀態）
       state.screen = "map";
-      state.statusMsg = `續上次——Act${state.run.act}，第 ${state.run.mapIndex + 1}／${currentMap().length} 格。`;
+      state.statusMsg = `續上次——Act${state.run.act}，街口第 ${state.run.mapIndex + 1}／${currentMap().length} 格。`;
       state.openingHint = "";
       break;
     }
@@ -3071,7 +3071,7 @@ function onClick(event) {
           // 其餘：選牌疊喺戰鬥節點上，揀完先推進
           openReward();
         }
-        if (gold > 0) state.statusMsg = `揀一張加入牌組 · 獲 ${gold} 金幣`;
+        if (gold > 0) state.statusMsg = `揀一張入袋 · 獲 ${gold} 大洋`;
       }
       break;
     }
