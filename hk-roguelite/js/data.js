@@ -1253,7 +1253,7 @@ export const EVENTS = {
         apply: (run) => {
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
           run.deck.push("S22");
-          return "阿伯指咗條後巷——下一場多 1 能量，仲多張擋牌。";
+          return "阿伯指咗條後巷——下一場多 1 格氣，仲多張擋牌。";
         },
       },
     ],
@@ -1313,7 +1313,7 @@ export const EVENTS = {
         apply: (run) => {
           run.hp = Math.max(1, run.hp - 8);
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 2;
-          return "夾到骨都響，但逼出咗一肚子火——下場多 2 能量。";
+          return "夾到骨都響，但逼出咗一肚子火——下場多 2 格氣。";
         },
       },
       {
@@ -1414,7 +1414,7 @@ export const EVENTS = {
         apply: (run) => {
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
           run.deck.push("S72");
-          return "阿嬸指住水塔後面——下一場多 1 能量，仲多張標記牌。";
+          return "阿嬸指住水塔後面——下一場多 1 格氣，仲多張標記牌。";
         },
       },
     ],
@@ -1535,7 +1535,7 @@ export const EVENTS = {
         apply: (run) => {
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
           run.deck.push("S72");
-          return "你幫佢數清更數，佢教你點睇數——下場多 1 能量，仲多張對數牌。";
+          return "你幫佢數清更數，佢教你點睇數——下場多 1 格氣，仲多張對數牌。";
         },
       },
     ],
@@ -1733,7 +1733,7 @@ export const EVENTS = {
           run.maxHp += 4;
           run.hp = Math.min(run.maxHp, run.hp + 4);
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
-          return "畀完數，伙記拍你膊頭——身子實淨，下場多 1 能量。";
+          return "畀完數，伙記拍你膊頭——身子實淨，下場多 1 格氣。";
         },
       },
       {
@@ -1786,7 +1786,7 @@ export const EVENTS = {
         apply: (run) => {
           run.hp = Math.min(run.maxHp, run.hp + 8);
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 1;
-          return "雨布一折，檔主塞你一枝冰——回 8 HP，下場多 1 能量。";
+          return "雨布一折，檔主塞你一枝冰——回 8 HP，下場多 1 格氣。";
         },
       },
     ],
@@ -1818,7 +1818,7 @@ export const EVENTS = {
           run.gold = Math.max(0, run.gold - 6);
           run.nextBattleEnergyBonus = (run.nextBattleEnergyBonus || 0) + 2;
           run.deck.push("S72");
-          return "箱蓋一響——下場多 2 能量，仲多張對數牌。";
+          return "箱蓋一響——下場多 2 格氣，仲多張對數牌。";
         },
       },
       {
@@ -1944,9 +1944,9 @@ export const REST_SHOP_BY_ACT = {
     restUpgradeHeal: 4,
     restUpgradeMsg: "後巷磨好把刀——牌組加入「廊燈直拳」，順手回 4 HP。",
     restCleanseLabel: "沖個涼（街喉）",
-    restCleanseClear: (n) => `街喉沖走「下戰 −${n} 能量」；兼回 6 HP`,
+    restCleanseClear: (n) => `街喉沖走「下戰 −${n} 格氣」；兼回 6 HP`,
     restCleansePlain: "冇負面狀態；街喉水涼，純粹回 6 HP",
-    restCleanseMsgClear: (n) => `街喉沖走晦氣——清咗下戰 −${n} 能量，兼回 6 HP。`,
+    restCleanseMsgClear: (n) => `街喉沖走晦氣——清咗下戰 −${n} 格氣，兼回 6 HP。`,
     restCleanseMsgPlain: "街喉沖完，人都醒神——回 6 HP。",
     shopHealLabel: "士多・豉油雞飯",
     shopHealDesc: `塞 ${SHOP.healCost} 銀紙買盒豉油雞飯 · 回 ${SHOP.healAmt} HP`,
@@ -1977,9 +1977,9 @@ export const REST_SHOP_BY_ACT = {
     restUpgradeHeal: 4,
     restUpgradeMsg: "霓虹底磨好把刀——牌組加入「單車變摩托」，順手回 4 HP。",
     restCleanseLabel: "沖個涼（公廁）",
-    restCleanseClear: (n) => `公廁沖走「下戰 −${n} 能量」；兼回 6 HP`,
+    restCleanseClear: (n) => `公廁沖走「下戰 −${n} 格氣」；兼回 6 HP`,
     restCleansePlain: "冇負面狀態；公廁水溫古怪，純粹回 6 HP",
-    restCleanseMsgClear: (n) => `公廁沖走一身霓虹味——清咗下戰 −${n} 能量，兼回 6 HP。`,
+    restCleanseMsgClear: (n) => `公廁沖走一身霓虹味——清咗下戰 −${n} 格氣，兼回 6 HP。`,
     restCleanseMsgPlain: "公廁沖完，人都醒神——回 6 HP。",
     shopHealLabel: "便利店・魚蛋杯",
     shopHealDesc: `塞 ${SHOP.healCost} 銀紙買杯魚蛋 · 回 ${SHOP.healAmt} HP`,
@@ -2010,9 +2010,9 @@ export const REST_SHOP_BY_ACT = {
     restUpgradeHeal: 4,
     restUpgradeMsg: "天台磨好把刀——牌組加入「萬年船」，順手回 4 HP。",
     restCleanseLabel: "沖個涼（水塔喉）",
-    restCleanseClear: (n) => `水塔喉沖走「下戰 −${n} 能量」；兼回 6 HP`,
+    restCleanseClear: (n) => `水塔喉沖走「下戰 −${n} 格氣」；兼回 6 HP`,
     restCleansePlain: "冇負面狀態；水塔喉凍到震，純粹回 6 HP",
-    restCleanseMsgClear: (n) => `水塔喉沖走晦氣——清咗下戰 −${n} 能量，兼回 6 HP。`,
+    restCleanseMsgClear: (n) => `水塔喉沖走晦氣——清咗下戰 −${n} 格氣，兼回 6 HP。`,
     restCleanseMsgPlain: "水塔喉沖完，人都醒神——回 6 HP。",
     shopHealLabel: "籠屋士多・即食麵",
     shopHealDesc: `塞 ${SHOP.healCost} 銀紙買碗即食麵 · 回 ${SHOP.healAmt} HP`,
@@ -2085,7 +2085,7 @@ export const CONSUMABLES = {
   cs_energy_drink: {
     id: "cs_energy_drink",
     name: "提神能量飲品",
-    desc: "提神一口——下一場開波多 1 能量。",
+    desc: "提神一口——下一場開波多 1 格氣。",
     flavor: "味道似藥水，但真係頂得一陣。",
     price: 8,
     acts: [1, 2, 3],
@@ -2138,7 +2138,7 @@ export const CONSUMABLES = {
   cs_egg_tart: {
     id: "cs_egg_tart",
     name: "蛋撻",
-    desc: "蛋撻入肚——最大生命 +3 兼回 3，下戰多 1 能量。",
+    desc: "蛋撻入肚——最大生命 +3 兼回 3，下戰多 1 格氣。",
     flavor: "酥皮碎落鐵皮棚，甜到你忘記上面有個王。",
     price: 8,
     acts: [3],
@@ -2153,7 +2153,7 @@ export const CONSUMABLES = {
   cs_twenty_four: {
     id: "cs_twenty_four",
     name: "廿四味",
-    desc: "苦口沖晦氣——清走「下戰 −能量」，兼回 8 HP。",
+    desc: "苦口沖晦氣——清走「下戰 −格氣」，兼回 8 HP。",
     flavor: "苦到面都縐——但晦氣真係沖得走。",
     price: 7,
     acts: [1, 2, 3],
@@ -2219,7 +2219,7 @@ export const RELICS = {
   rl_gate_key: {
     id: "rl_gate_key",
     name: "鐵閘鎖匙",
-    desc: "開閘多一格氣——每場開波 +1 能量。",
+    desc: "開閘多一格氣——每場開波 +1 格氣。",
     flavor: "執到條匙，閘就唔再係牆。",
     effect: { startEnergy: 1 },
     rarity: "普通",
@@ -2330,7 +2330,7 @@ export const RELICS = {
   rl_tram_token: {
     id: "rl_tram_token",
     name: "叮叮車票",
-    desc: "車上多一格——每場首回合額外 +1 能量。",
+    desc: "車上多一格——每場首回合額外 +1 格氣。",
     flavor: "車票唔記得用，就一直袋喺度——上到車先發覺仲有一格。",
     effect: { firstTurnEnergy: 1 },
     rarity: "普通",
