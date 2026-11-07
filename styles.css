@@ -3006,13 +3006,13 @@ button.side-icon {
   flex-shrink: 0;
 }
 .screen.bg-result .result-art {
-  width: 36%;
-  max-height: 18vh;
+  width: 86%;
+  max-height: 32vh;
+  min-height: 22vh;
   object-fit: cover;
   object-position: center top;
   margin: 0 auto 2px;
-  flex-shrink: 1;
-  min-height: 0;
+  flex: 1 1 26vh;
 }
 .screen.bg-result .result-panel {
   padding: 8px 10px;
@@ -5095,13 +5095,14 @@ button.side-icon {
 }
 .screen.bg-soft .soft-art,
 .screen.bg-soft .result-art.soft-art {
-  max-height: 11vh;
-  width: 34%;
+  width: 92%;
+  max-height: 36vh;
+  min-height: 24vh;
   margin: 0 auto;
   object-fit: cover;
-  border-radius: 10px;
-  flex: 0 1 auto;
-  min-height: 0;
+  object-position: center 30%;
+  border-radius: 12px;
+  flex: 1 1 28vh;
 }
 .screen.bg-soft .soft-scroll > .bubble {
   flex: 0 1 auto;
@@ -8558,7 +8559,7 @@ html, body {
   /* 結果：橫排，字唔好被裁 */
   .screen.bg-result .result-body { flex-direction: row; flex-wrap: wrap; gap: 6px; align-items: flex-start; }
   .screen.bg-result .result-banner { flex: 1 1 100%; margin: 0 0 2px; font-size: 0.92rem; padding: 5px 8px; }
-  .screen.bg-result .result-art { flex: 0 0 26%; width: 26%; max-height: 30vh; margin: 0; }
+  .screen.bg-result .result-art { flex: 0 0 40%; width: 40%; max-height: 46vh; min-height: 0; margin: 0; }
   .screen.bg-result .result-panel { flex: 1 1 60%; font-size: 0.7rem; padding: 6px 8px; }
   .screen.bg-result .result-cta { padding: 2px 6px 0; gap: 3px; }
   .screen.bg-result .result-bubble { padding: 5px 10px; font-size: 0.72rem; }
@@ -8568,7 +8569,7 @@ html, body {
   .screen.bg-soft { padding-bottom: 6px; }
   .screen.bg-soft .soft-scroll { flex-direction: row; flex-wrap: wrap; align-items: flex-start; gap: 6px; padding: 0 2px; }
   .screen.bg-soft .soft-art,
-  .screen.bg-soft .result-art.soft-art { flex: 0 0 22%; width: 22%; max-height: 34vh; margin: 0; }
+  .screen.bg-soft .result-art.soft-art { flex: 0 0 42%; width: 42%; max-height: 46vh; min-height: 0; margin: 0; }
   .screen.bg-soft .soft-scroll > .bubble { flex: 1 1 66%; max-height: 34vh; font-size: 0.68rem; -webkit-line-clamp: 5; }
   .screen.bg-soft .soft-scroll > .soft-panel { flex: 1 1 100%; margin-top: 2px; padding: 6px 8px; font-size: 0.68rem; }
   .screen.bg-soft .soft-cta { padding: 2px 4px; gap: 6px; }
@@ -10826,8 +10827,10 @@ html, body {
 }
 .fate-result-art {
   width: 100%;
-  max-height: 26vh;
+  max-height: 36vh;
+  min-height: 24vh;
   object-fit: cover;
+  object-position: center 30%;
   border-radius: 9px;
   border: 2px solid #0a0610;
 }
@@ -10886,8 +10889,10 @@ html, body {
 .eb-art {
   display: block;
   width: 100%;
-  max-height: 30vh;
+  max-height: 42vh;
+  min-height: 28vh;
   object-fit: cover;
+  object-position: center 30%;
 }
 .eb-name {
   font-size: 1.16rem;
