@@ -4396,6 +4396,7 @@
       revive: "bg-soft",
       allies: "bg-soft",
       gearBag: "bg-soft",
+      itemBag: "bg-soft",
       team: "bg-team",
       equip: "bg-team",
       prep: "bg-team",
@@ -4451,6 +4452,7 @@
       revive: viewFighterRevive,
       allies: viewAlliesPanel,
       gearBag: viewGearBag,
+      itemBag: viewItemBag,
       prep: viewPrep,
       team: viewPrep,
       equip: viewPrep,
@@ -9306,6 +9308,51 @@
     render();
   }
 
+  function viewItemBag(root) {
+    const need = Math.max(1, ((DATA.shard_rewards && DATA.shard_rewards.need) | 0) || 10);
+    const total = shardTotal();
+    const pool = shardRewardPool();
+    const lines = pool.map((id) => {
+      const n = shardCountOf(id);
+      if (n <= 0) return "";
+      const f = fighterById[id];
+      return `<div class="ib-sub">${esc(f ? f.name : id)} · ${n}／${need}</div>`;
+    }).join("");
+    root.innerHTML = `
+      ${lifeHudHtml()}
+      <div class="ribbon">道具</div>
+      <div class="al-wrap">
+        <div class="gb-label">已獲得</div>
+        <div class="ib-item">
+          ${shardIconHtml("ib-ico")}
+          <div class="gb-slot-body">
+            <div class="gb-slot-name">殘頁</div>
+            <div class="gb-slot-stat">×${total}　每 ${need} 張可在卡冊換一張戰鬥卡</div>
+            ${lines}
+          </div>
+        </div>
+        <div class="gb-label">可使用</div>
+        <p class="ally-empty">暫停未有</p>
+      </div>
+      <div class="soft-cta">
+        <button type="button" class="btn gold" id="btn-item-back">返回</button>
+      </div>
+      ${storyDockHtml()}
+    `;
+    $("#btn-item-back", root).onclick = () => {
+      state.screen = state.itemBagReturnScreen || "events";
+      state.itemBagReturnScreen = null;
+      render();
+    };
+    wireStoryDock(root);
+  }
+
+  function openItemBag() {
+    if (state.screen !== "itemBag") state.itemBagReturnScreen = state.screen || "events";
+    state.screen = "itemBag";
+    render();
+  }
+
   /** 故事流底欄 7 掣（港式名；對齊參考：盟友／冒險技能／戰鬥技能／裝備／道具／聲望／戰利品） */
   function storyDockHtml() {
     return `
@@ -9343,6 +9390,10 @@
         }
         if (k === "gear") {
           openGearBag();
+          return;
+        }
+        if (k === "item") {
+          openItemBag();
           return;
         }
         if (k === "fame") {
