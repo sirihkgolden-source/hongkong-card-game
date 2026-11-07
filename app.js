@@ -849,8 +849,8 @@
       step: run.step | 0,
       /* t408（§2.4）：連同人生旗標一齊顯示，令「有後果」睇得到 */
       flags: Array.isArray(pick.flags) ? pick.flags.slice() : [],
-      /* 隔年故事：跟上一次選擇的賞／罰。入帳留到玩家確認返回。 */
-      relative: officeRelativePreview(pick, officePaceOf(run.packId)),
+      /* 李步岸不再即時獎罰；分數留到六十五歲才決定結局 */
+      relative: officeIntervalYears(officePack(run)) ? null : officeRelativePreview(pick, officePaceOf(run.packId)),
     };
     /*
      * t406：四拍流程的階段。
@@ -882,12 +882,31 @@
     return bestKey;
   }
 
+  /**
+   * 李步岸：六十五歲才判定一次。
+   * 完美結局是在海嵐峰做到六十五歲退休。
+   * 其餘是另一種普通人生：升主管、屋邨送行、轉去飯堂、調去別的屋苑。
+   */
+  function guardBaoanEnding(route) {
+    const d = (route && route.duty) | 0;
+    const r = (route && route.rapport) | 0;
+    const v = (route && route.venture) | 0;
+    const f = (route && route.friction) | 0;
+    if (f >= 10 && f >= r + 4 && f >= d) return "transfer";
+    if (v >= 10 && v >= d + 3 && v >= r + 3) return "canteen";
+    if (d >= r + 8 && d >= v && d >= f) return "captain";
+    if (r >= d + 8 && r >= v && r >= f) return "neighbors";
+    return "retire";
+  }
+
   /** 抵達最後節點：算出結局事件 */
   function officeFinishRun() {
     const run = state.officeRun;
     if (!run) return null;
     const pack = officePack(run);
-    const routeKey = officeResolveRoute(run.route, pack);
+    const routeKey = (pack && pack.id === "guard_baoan")
+      ? guardBaoanEnding(run.route)
+      : officeResolveRoute(run.route, pack);
     const endingEv = officeEndingEvent(routeKey, pack);
     return { routeKey, endingEv };
   }
@@ -5015,7 +5034,7 @@
     const actCount = Math.max(1, (pack.office_chain || []).length);
     const intervalYears = officeIntervalYears(pack);
     const chainNote = intervalYears
-      ? `唔會一次過演完。每過 ${intervalYears} 年，先會再遇到李步岸。如果你繼續上次的做法，會有獎勵；如果反口，會有懲罰。`
+      ? `唔會一次過演完。每過 ${intervalYears} 年再遇到李步岸。到六十五歲，才按這些年的做法揭曉他的人生。完美的一條，是在海嵐峰退休。`
       : `每一幕三個選擇，後果喺選擇之後才揭示。共 ${actCount} 幕，行到最後才見結局。本包不設中途獎賞、不設升級。`;
     const endingsHtml = isOfficeChain && Array.isArray(pack.office_endings)
       ? (officeCleared
@@ -5833,7 +5852,7 @@
       return `<button type="button" class="of-choice" data-choice="${i}" aria-label="選項${label}：${esc(c.text)}">
         <span class="of-choice-tag">選項 ${label}</span>
         <span class="of-choice-text">${esc(c.text)}</span>
-        <span class="of-choice-unknown">${paced && paceNow.lastTrack ? "後果未知 · 會跟上一次比較" : "後果未知 · 選後揭曉"}</span>
+        <span class="of-choice-unknown">${paced ? "選完才知道這一年發生了什麼" : "後果未知 · 選後揭曉"}</span>
       </button>`;
     }).join("") : "";
 
@@ -5894,9 +5913,7 @@
       cta = `<button class="btn gold of-cta-main" id="of-next" type="button">${nextLabel}</button>`;
     }
     const paceNote = paced
-      ? (paceNow.lastTrack
-        ? "今次會跟上一次的選擇比較。繼續上次的做法有獎勵，反口就有懲罰。揀完就返回日常生活。"
-        : `揀完就返回日常生活。每過 ${intervalYears} 年，先會再遇到李步岸。到時會按你今次的選擇，給予獎勵或懲罰。`)
+      ? `這些選擇會留到六十五歲，決定他的人生。揀完就返回日常生活，每過 ${intervalYears} 年再遇到他。`
       : "此故事包不設獎賞與升級；行到最後才知道結果。";
 
     const trail = (run.chosen || []).map((c, i) =>
@@ -6020,7 +6037,6 @@
     const isLast = retiring || (!paced && (idx < 0 || idx >= chain.length - 1));
 
     if (paced && !retiring) {
-      applyOfficeRelative(relative);
       officeCommitPace(run, false);
       officeReturnToLife();
       return;
@@ -7912,7 +7928,7 @@
         ? `<div class="of-hud">${esc(packMeta ? packMeta.name : "故事包")} · ${officeIntervalYears(packMeta) ? `${state.age | 0}歲 · ` : ""}結局</div>`
         : lifeHudHtml()}
       <div class="ribbon">${isEnding
-        ? "分支結局"
+        ? (officeIntervalYears(packMeta) ? esc(ev.office_ending_label || "人生結局") : "分支結局")
         : ageRibbon(esc(ev.name))}</div>
       <div class="soft-scroll soft-reveal${isEnding ? " of-ending-scroll" : ""}">
         ${endingBanner}
@@ -7921,12 +7937,13 @@
         <div class="bubble neon">${esc(ev.desc)}</div>
         ${isEnding ? `<div class="of-ending-dialogue">${eventDialogueHtml(ev, "soft-dialogue")}</div>` : eventDialogueHtml(ev, "soft-dialogue")}
         ${endingVoice}
+        ${isEnding && ev.life_summary ? `<div class="of-ending-summary"><div class="of-ending-kicker">人生總結</div><p>${esc(ev.life_summary)}</p></div>` : ""}
         <div class="soft-panel">${state.softNote ? `<span style="color:var(--neon-pink);font-weight:800">${esc(state.softNote)}</span><br/>` : ""}${isEnding ? "" : esc(eventCategoryLabel(ev) || "日常") + "<br/>"}${rewardLine}</div>
       </div>
       <div class="soft-cta">
         ${isEnding
           ? `<p class="of-ending-note">${officeIntervalYears(packMeta)
-            ? "李步岸沒有死，只是到了保安員可以退休的年紀。看完就返回，你的歲數照舊加一歲。"
+            ? (ev.ending_note || "看完就返回，你的歲數照舊加一歲。")
             : "故事包歲月獨立於人生歲數——返回人生後，你仍然係原本歲數。"}</p>
              <button class="btn gold of-ending-ok" id="btn-ok-ending" type="button">睇完，返回人生</button>`
           : autoAdvanceBarHtml(lifeDoneFlag() ? "結算今世" : `下一歲 ${state.age + 1}歲`)}

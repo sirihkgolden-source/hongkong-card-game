@@ -10893,6 +10893,19 @@ html, body {
   color: #f6f0ff;
 }
 .of-ending-dialogue .dlg-who { color: var(--neon-cyan, #3dfff0); }
+.of-ending-summary {
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 211, 106, 0.08);
+  border: 1px solid rgba(255, 211, 106, 0.35);
+}
+.of-ending-summary p {
+  margin: 4px 0 0;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: #f6f0ff;
+}
 .of-ending-voice {
   margin: 8px 4px;
   padding: 10px 12px;
