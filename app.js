@@ -830,7 +830,7 @@
     albumTab: "fighters",
     /** 卡冊搜尋字 */
     albumQuery: "",
-    /** 卡冊稀有度篩選（null=全部；循環 stub） */
+    /** 卡冊效果分類篩選（null=全部；攻擊／群攻／增益／控制／防護／回復） */
     albumFilterRarity: null,
     /** 卡冊詳情 modal */
     albumDetailId: null,
@@ -10960,7 +10960,7 @@
 
   /* ---------- 卡冊 helpers（album- 前綴；唔動 prep layout） ---------- */
   const ALBUM_MAX_STAR = 5;
-  const ALBUM_FILTER_CYCLE = [null, "普通", "稀有", "史詩", "最高級"];
+  const ALBUM_FILTER_CYCLE = [null, "攻擊", "群攻", "增益", "控制", "防護", "回復"];
   /** demo 收藏種子版：隨機各 5 張戰鬥／技能／裝備 count=1；其餘 0。Bump 強制重種子。 */
   const DEMO_CARD_COUNTS_SEED = 271;
 
@@ -11028,7 +11028,9 @@
     if (typeof state.albumQuery !== "string") state.albumQuery = "";
     if (state.albumDetailId == null) state.albumDetailId = null;
     if (state.albumDetailKind == null) state.albumDetailKind = null;
-    if (state.albumFilterRarity === undefined) state.albumFilterRarity = null;
+    if (state.albumFilterRarity === undefined || (state.albumFilterRarity && ALBUM_FILTER_CYCLE.indexOf(state.albumFilterRarity) < 0)) {
+      state.albumFilterRarity = null;
+    }
     if (!state.cardCounts || typeof state.cardCounts !== "object") state.cardCounts = {};
     if (!state.fighterStars || typeof state.fighterStars !== "object") state.fighterStars = {};
     if (!state.skillStars || typeof state.skillStars !== "object") state.skillStars = {};
@@ -11347,15 +11349,13 @@
     // 卡冊只顯示已擁有（count>0）；全目錄仍由 albumListForTab 等 helper 提供
     return albumListForTab(tab).filter((e) => {
       if (albumCardCount(e.id) <= 0) return false;
+      const roles = cardRoleLabels(e.item);
       if (q) {
-        const hay = `${e.name} ${e.id} ${albumRarityKey(e.kind, e.item)}`.toLowerCase();
+        const hay = `${e.name} ${e.id} ${roles.join(" ")} ${albumRarityKey(e.kind, e.item)}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
-      if (fr) {
-        const rk = albumRarityKey(e.kind, e.item) || (e.kind === "skills" ? "" : "普通");
-        // 技能多數無 rarity：有篩選時唔硬剔（只靠搜尋）；戰鬥／裝備跟稀有度
-        if (e.kind === "skills") return true;
-        if (rk !== fr) return false;
+      if (fr && ALBUM_FILTER_CYCLE.indexOf(fr) > 0) {
+        if (roles.indexOf(fr) < 0) return false;
       }
       return true;
     });
@@ -11537,7 +11537,9 @@
       tab === "skills" ? "技能卡" : tab === "gear" ? "裝備卡" : "戰鬥卡";
 
     const hasQueryOrFilter = !!(String(state.albumQuery || "").trim() || state.albumFilterRarity);
-    const emptyMsg = hasQueryOrFilter ? "此頁尚無已擁有卡" : "未持有任何卡";
+    const emptyMsg = state.albumFilterRarity
+      ? `沒有「${state.albumFilterRarity}」分類的卡`
+      : (hasQueryOrFilter ? "找不到符合的卡" : "未持有任何卡");
     const cells = entries
       .map((e) => {
         const count = albumCardCount(e.id);
