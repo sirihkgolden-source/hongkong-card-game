@@ -10504,12 +10504,46 @@ html, body {
 .shop-card.gift-card .shop-card-body { gap: 1px; }
 .shop-card.gift-card { min-height: 0; }
 
+/* 免費三選一：戰鬥卡圖要大到認到人，唔好再用商店 52px 縮圖 */
+.shop-grid.gift-grid {
+  grid-template-columns: 1fr;
+  overflow-y: auto;
+  align-content: start;
+  gap: 8px;
+}
+.shop-card.gift-card {
+  display: grid;
+  grid-template-columns: 148px minmax(0, 1fr);
+  align-items: stretch;
+}
+.shop-card.gift-card img {
+  width: 148px;
+  height: 198px;
+  max-height: none;
+  aspect-ratio: auto;
+  object-fit: cover;
+  object-position: center top;
+}
+
 /* 橫屏：摘要收成 2 行，避免擠爆 */
 @media (orientation: landscape) and (max-width: 1024px) {
   .gift-card-desc {
     font-size: 0.52rem;
     -webkit-line-clamp: 2;
     margin: 1px 0 2px;
+  }
+  .shop-grid.gift-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .shop-card.gift-card {
+    display: flex;
+    flex-direction: column;
+  }
+  .shop-card.gift-card img {
+    width: 100%;
+    height: auto;
+    max-height: 42vh;
+    aspect-ratio: 3 / 4;
   }
 }
 
