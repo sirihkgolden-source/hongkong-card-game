@@ -6966,6 +6966,7 @@
         <p class="tea-intro">做差事儲聲望，同老闆娘講兩句，就有特別貨。<br/><span class="tea-tap-hint">點卡片可以睇完整說明</span></p>
         <div class="tea-list">${rows}</div>
       </div>
+      <button class="btn ghost dm-home-btn" id="btn-tea-home" type="button">回主頁</button>
       ${detailCard
         ? teaCardDetailHtml(detailCard, {
             owned: bought.has(detailCard.id),
@@ -7051,6 +7052,8 @@
         };
       }
     }
+    const teaHome = $("#btn-tea-home", root);
+    if (teaHome) teaHome.onclick = () => { state.teaDetailId = null; state.screen = "home"; render(); };
     $("#tab-life", root).onclick = () => { state.screen = "home"; render(); };
     $("#tab-jobs", root).onclick = () => { state.screen = "missions"; render(); };
     const tb = $("#tab-book", root);

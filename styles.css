@@ -9835,7 +9835,7 @@ html, body {
 .dm-chip.fame { background: rgba(184,120,255,0.22); color: #e3c8ff; }
 
 /* ===== 茶記：聲望換特殊卡 ===== */
-.screen.bg-soft.tea-screen { padding-bottom: 68px; gap: 5px; }
+.screen.bg-soft.tea-screen { padding-bottom: 78px !important; gap: 5px; }
 .tea-wrap {
   flex: 1 1 auto;
   min-height: 0;
