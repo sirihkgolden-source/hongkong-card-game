@@ -5015,7 +5015,7 @@
     const actCount = Math.max(1, (pack.office_chain || []).length);
     const intervalYears = officeIntervalYears(pack);
     const chainNote = intervalYears
-      ? `唔會一次過演完。每 ${intervalYears} 年先再遇到李步岸。今次選擇會跟上一次比較：同一條路有賞，反口有罰。`
+      ? `唔會一次過演完。每過 ${intervalYears} 年，先會再遇到李步岸。如果你繼續上次的做法，會有獎勵；如果反口，會有懲罰。`
       : `每一幕三個選擇，後果喺選擇之後才揭示。共 ${actCount} 幕，行到最後才見結局。本包不設中途獎賞、不設升級。`;
     const endingsHtml = isOfficeChain && Array.isArray(pack.office_endings)
       ? (officeCleared
@@ -5858,8 +5858,8 @@
       const attrTxt = name ? `${name} ${(rel.attrDelta | 0) > 0 ? "+" : ""}${rel.attrDelta}` : "";
       const nums = [soulTxt, attrTxt].filter(Boolean).join(" · ");
       const head = rel.same
-        ? `跟上一次「${rel.lastText}」同一條路。`
-        : `同你上次「${rel.lastText}」相反。`;
+        ? `你繼續上次的做法：「${rel.lastText}」。`
+        : `你上次揀了「${rel.lastText}」，今次卻反口。`;
       return `<div class="of-relative ${rel.same ? "reward" : "punish"}" role="status">
         <div class="of-relative-tag">${rel.same ? "獎勵" : "懲罰"}</div>
         <p>${esc(head)}</p>
@@ -5895,8 +5895,8 @@
     }
     const paceNote = paced
       ? (paceNow.lastTrack
-        ? "今次會跟上一次選擇比較。同一條路有賞，反口有罰。揀完就返回人生。"
-        : `揀完呢一幕就返回人生。每 ${intervalYears} 年先會再遇到李步岸，到時會按今次選擇賞或者罰。`)
+        ? "今次會跟上一次的選擇比較。繼續上次的做法有獎勵，反口就有懲罰。揀完就返回日常生活。"
+        : `揀完就返回日常生活。每過 ${intervalYears} 年，先會再遇到李步岸。到時會按你今次的選擇，給予獎勵或懲罰。`)
       : "此故事包不設獎賞與升級；行到最後才知道結果。";
 
     const trail = (run.chosen || []).map((c, i) =>
@@ -7926,7 +7926,7 @@
       <div class="soft-cta">
         ${isEnding
           ? `<p class="of-ending-note">${officeIntervalYears(packMeta)
-            ? "李步岸冇死。佢只係到咗保安員合法退休年紀，喜劇收場。返回人生後，你照過你的歲數。"
+            ? "李步岸沒有死，只是到了保安員可以退休的年紀。看完就返回，你的歲數照舊加一歲。"
             : "故事包歲月獨立於人生歲數——返回人生後，你仍然係原本歲數。"}</p>
              <button class="btn gold of-ending-ok" id="btn-ok-ending" type="button">睇完，返回人生</button>`
           : autoAdvanceBarHtml(lifeDoneFlag() ? "結算今世" : `下一歲 ${state.age + 1}歲`)}
