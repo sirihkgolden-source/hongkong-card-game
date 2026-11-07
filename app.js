@@ -4810,6 +4810,7 @@
       allies: "bg-soft",
       gearBag: "bg-soft",
       itemBag: "bg-soft",
+      battleSkills: "bg-soft",
       team: "bg-team",
       equip: "bg-team",
       prep: "bg-team",
@@ -4867,6 +4868,7 @@
       allies: viewAlliesPanel,
       gearBag: viewGearBag,
       itemBag: viewItemBag,
+      battleSkills: viewBattleSkills,
       prep: viewPrep,
       team: viewPrep,
       equip: viewPrep,
@@ -10264,6 +10266,93 @@
     render();
   }
 
+  function skillHolders(sid) {
+    const names = [];
+    (state.team || []).forEach((fid) => {
+      if ((state.loadout[fid] || []).indexOf(sid) < 0) return;
+      const f = fighterById[fid];
+      const name = (f && f.name) || String(fid);
+      names.push(isDeadFighter(fid) ? `${name}（陣亡）` : name);
+    });
+    return names;
+  }
+
+  function viewBattleSkills(root) {
+    albumEnsureState();
+    const equippedIds = new Set();
+    (state.team || []).forEach((fid) => {
+      (state.loadout[fid] || []).forEach((sid) => { if (sid) equippedIds.add(sid); });
+    });
+    const byId = new Map();
+    (DATA.skills || []).forEach((sk) => {
+      if (!sk || !sk.id) return;
+      if (albumCardCount(sk.id) > 0 || equippedIds.has(sk.id)) byId.set(sk.id, sk);
+    });
+    equippedIds.forEach((sid) => {
+      if (!byId.has(sid) && skillById[sid]) byId.set(sid, skillById[sid]);
+    });
+    const list = [...byId.values()];
+    list.sort((a, b) => String(a.id).localeCompare(String(b.id)));
+    const equipped = list.filter((sk) => equippedIds.has(sk.id));
+    const idle = list.filter((sk) => !equippedIds.has(sk.id));
+    const row = (sk, on) => {
+      const holders = on ? skillHolders(sk.id) : [];
+      const art = sk.art
+        ? `<img src="${esc(sk.art)}" alt="" />`
+        : `<span class="gb-ph">技</span>`;
+      const where = on
+        ? (holders.length ? `已裝備 · ${holders.join("、")}` : "已裝備")
+        : "未裝備";
+      const burned = isBurnedSkill(sk.id) ? " · 今世不可再用" : "";
+      return `<button type="button" class="gb-item bs-skill${on ? " on" : ""}" data-bs-skill="${esc(sk.id)}">
+        <div class="gb-slot-art">${art}</div>
+        <div class="gb-slot-body">
+          <div class="gb-slot-name">${esc(sk.name || sk.id)}</div>
+          <div class="gb-slot-stat">${esc(where)}${burned} · ×${albumCardCount(sk.id)}</div>
+        </div>
+      </button>`;
+    };
+    const block = (title, arr, on) => `
+      <div class="gb-label">${title}</div>
+      <div class="gb-list">${arr.length ? arr.map((sk) => row(sk, on)).join("") : `<p class="ally-empty">未有</p>`}</div>`;
+    root.innerHTML = `
+      ${lifeHudHtml()}
+      <div class="ribbon">戰鬥技</div>
+      <div class="al-wrap gb-wrap">
+        <div class="gb-scroll">
+          <p class="al-hint">點一張技能卡查看說明。</p>
+          ${block("已裝備", equipped, true)}
+          ${block("未裝備", idle, false)}
+        </div>
+      </div>
+      <div class="soft-cta">
+        <button type="button" class="btn gold" id="btn-bs-back">返回</button>
+      </div>
+      ${storyDockHtml()}
+    `;
+    root.querySelectorAll("[data-bs-skill]").forEach((btn) => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const sk = skillById[btn.getAttribute("data-bs-skill")];
+        if (!sk) return;
+        showHelpTip(btn, skillHelpText(sk, { checkBurned: true }));
+      };
+    });
+    $("#btn-bs-back", root).onclick = () => {
+      hideHelpTip();
+      state.screen = state.battleSkillsReturnScreen || "events";
+      state.battleSkillsReturnScreen = null;
+      render();
+    };
+    wireStoryDock(root);
+  }
+
+  function openBattleSkills() {
+    if (state.screen !== "battleSkills") state.battleSkillsReturnScreen = state.screen || "events";
+    state.screen = "battleSkills";
+    render();
+  }
+
   /** 故事流底欄 7 掣（港式名；對齊參考：盟友／冒險技能／戰鬥技能／裝備／道具／聲望／戰利品） */
   function storyDockHtml() {
     return `
@@ -10305,6 +10394,10 @@
         }
         if (k === "item") {
           openItemBag();
+          return;
+        }
+        if (k === "battle") {
+          openBattleSkills();
           return;
         }
         if (k === "fame") {

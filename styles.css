@@ -8932,6 +8932,13 @@ html, body {
 .gb-slot-name { font-size: 0.82rem; font-weight: 900; color: var(--text); }
 .gb-slot-stat { font-size: 0.64rem; font-weight: 700; color: #c9b8d8; }
 .gb-act { padding: 4px 8px !important; font-size: 0.66rem !important; min-height: 0 !important; }
+button.bs-skill {
+  width: 100%;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
 .ib-item {
   display: grid;
   grid-template-columns: 52px minmax(0, 1fr);
