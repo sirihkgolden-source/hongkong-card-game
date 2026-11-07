@@ -1137,7 +1137,7 @@
       if (f.def != null) bits.push(`防${f.def}`);
     }
     const roles = cardRoleLabels(f).join("、");
-    const rare = f.rarity_slang || f.rarity || "?";
+    const rare = officialRarityLabel(f, "?");
     const blurb = f.flavor || f.blurb || "";
     const lv = (opts.preview && opts.preview.level) ? opts.preview.level : fighterLevelOf(f.id);
     const star = albumFighterStar(f.id);
@@ -1210,7 +1210,7 @@
       e.flavor ||
       e.blurb ||
       "後巷殘影——一擊就要記低。";
-    const rare = def.rarity_slang || def.rarity || "敵方";
+    const rare = officialRarityLabel(def, "敵方");
     const art = e.art || def.art || null;
     const head = [
       `<div class="ht-title">「${esc(name)}」</div>`,
@@ -2003,6 +2003,33 @@
     // 舊檔別名：傳奇＝最高級（t322 已拆 epic／legend，唔可以再混）
     if (low === "legend" || key === "傳奇") return RARITY_LABELS.legend;
     return key;
+  }
+
+  /** 口語叫法只留喺資料，畫面一律用官方稀有度 */
+  const RARITY_SLANG_TO_NAME = {
+    "街招卡": "普通",
+    "靚牌": "稀有",
+    "勁牌": "史詩",
+    "鎮場王牌": "最高級",
+    "鎮埸王牌": "最高級",
+    "鎮場王版": "最高級",
+    "鎮埸王版": "最高級",
+  };
+
+  function officialRarityLabel(cardOrName, fallback) {
+    let raw = "";
+    let slang = "";
+    if (cardOrName && typeof cardOrName === "object") {
+      raw = cardOrName.rarity || "";
+      slang = cardOrName.rarity_slang || "";
+    } else {
+      raw = cardOrName == null ? "" : String(cardOrName);
+    }
+    const fromRaw = rarityLabelAny(raw);
+    if (fromRaw && !RARITY_SLANG_TO_NAME[fromRaw]) return fromRaw;
+    if (slang && RARITY_SLANG_TO_NAME[slang]) return RARITY_SLANG_TO_NAME[slang];
+    if (raw && RARITY_SLANG_TO_NAME[raw]) return RARITY_SLANG_TO_NAME[raw];
+    return fromRaw || fallback || "";
   }
 
   /** 由官方名／id 取英文 id（排序、class 用） */
@@ -3559,7 +3586,7 @@
       if (pv.matk != null) bits.push(`魔攻${pv.matk}`);
     }
     const roles = cardRoleLabels(f).join("、");
-    const rare = f.rarity_slang || f.rarity || "?";
+    const rare = officialRarityLabel(f, "?");
     const blurb = f.flavor || f.blurb || "";
     const lv = (opts.preview && opts.preview.level) ? opts.preview.level : fighterLevelOf(f.id);
     const star = albumFighterStar(f.id);
@@ -3749,7 +3776,7 @@
       e.flavor ||
       e.blurb ||
       "後巷殘影——一擊就要記低。";
-    const rare = def.rarity_slang || def.rarity || "敵方";
+    const rare = officialRarityLabel(def, "敵方");
     const lines = [
       `「${name}」`,
       `${rare}｜攻${atk ?? "?"} 速${spd ?? "?"} 血${hp ?? "?"}`,
@@ -6866,7 +6893,7 @@
     const artHtml = art
       ? `<img src="${esc(art)}" alt="${esc(name)}" loading="lazy" data-card-name="${esc(name)}" data-card-kind="fighter" />`
       : `<img src="${cardGlyphDataUrl(name, "fighter")}" alt="${esc(name)}" />`;
-    const rare = (f && (f.rarity_slang || f.rarity)) || card.rarity || "特殊";
+    const rare = (f && officialRarityLabel(f)) || officialRarityLabel(card) || "特殊";
     const stars = f ? albumFighterStar(f.id) : 1;
     const rich = f ? fighterHelpRichHtml(f, { preview: fighterPreviewStats(f) }) : "";
     const blurb = card.blurb || (f && (f.blurb || f.flavor)) || "";
@@ -6918,7 +6945,7 @@
           <div class="tea-art">${artHtml}${owned ? `<span class="tea-badge">已換</span>` : ""}</div>
           <div class="tea-body">
             <div class="tea-name">${esc(name)}<span class="tea-help-ico" aria-hidden="true">?</span></div>
-            <div class="tea-rare">${esc((f && (f.rarity_slang || f.rarity)) || c.rarity || "特殊")}${f ? ` · 攻${f.atk | 0} 速${f.spd | 0}` : ""}</div>
+            <div class="tea-rare">${esc((f && officialRarityLabel(f)) || officialRarityLabel(c) || "特殊")}${f ? ` · 攻${f.atk | 0} 速${f.spd | 0}` : ""}</div>
             ${blurb ? `<p class="tea-blurb">${esc(blurb)}</p>` : ""}
             <div class="tea-price"><span class="tea-fame">聲望 ${price}</span></div>
           </div>
@@ -9090,8 +9117,7 @@
       const dead = isDeadFighter(fid);
       const pv = dead ? null : fighterPreviewStats(f);
       const stars = albumFighterStar(fid);
-      const rare = shopRarityLabel(f.rarity) || f.rarity || "普通";
-      const slang = f.rarity_slang || "";
+      const rare = officialRarityLabel(f, "普通");
       const inField = deploySet.has(fid);
       const load = (state.loadout[fid] || []).filter(Boolean).map((sid) => skillById[sid]).filter(Boolean);
       const loadHtml = load.length
@@ -9126,7 +9152,7 @@
               <span class="al-name">${esc(f.name)}</span>
               <span class="al-lv">Lv.${pv ? pv.level : fighterLevelOf(fid)}</span>
             </div>
-            <div class="al-sub">${esc(rare)}${slang ? " · " + esc(slang) : ""} · ${starsRowHtml(stars, ALBUM_MAX_STAR)}</div>
+            <div class="al-sub">${esc(rare)} · ${starsRowHtml(stars, ALBUM_MAX_STAR)}</div>
             <div class="al-stats">${statBits}</div>
             ${basic}${innate}
             <div class="al-line"><span class="al-k">已裝</span><span class="al-skills">${loadHtml}</span></div>
@@ -12086,7 +12112,7 @@
         .map((id) => {
           const f = fighterById[id];
           const isCur = id === cur;
-          const slang = f.rarity_slang || f.rarity || "";
+          const rarityLabel = officialRarityLabel(f);
           const stars = "★".repeat(Math.min(5, Math.max(1, (f.slots | 0) - 2)));
           const helpA = fighterHelpText(f);
           return `<div class="ally-pick${isCur ? " cur" : ""}" data-fid="${esc(id)}">
@@ -12094,7 +12120,7 @@
               <img src="${esc(f.art)}" alt="${esc(f.name)}" />
               <span class="ap-stars">${stars}</span>
               <span class="ap-name">${esc(f.name)}</span>
-              ${slang ? `<span class="ap-slang">${esc(slang)}</span>` : ""}
+              ${rarityLabel ? `<span class="ap-slang">${esc(rarityLabel)}</span>` : ""}
             </button>
             <button type="button" class="ap-act${isCur ? " cancel" : ""}" data-fid="${esc(id)}" data-act="${isCur ? "cancel" : "pick"}">${isCur ? "取消" : "選擇"}</button>
           </div>`;
@@ -12116,7 +12142,7 @@
       const f = fighterById[id];
       if (f) {
         const pv = fighterPreviewStats(f);
-        const slang = f.rarity_slang || f.rarity || "";
+        const rarityLabel = officialRarityLabel(f);
         const albumStar = albumFighterStar(id);
         const stars = "★".repeat(Math.min(ALBUM_MAX_STAR, Math.max(1, albumStar)));
         const cap = raritySlots(f);
@@ -12236,7 +12262,7 @@
               <span class="fd-pill">出戰卡</span>
               <span class="fd-title">${esc(f.name)}</span>
               <span class="fd-lv">Lv.${pv.level}</span>
-              <span class="fd-stars">${stars}${slang ? " · " + esc(slang) : ""}</span>
+              <span class="fd-stars">${stars}${rarityLabel ? " · " + esc(rarityLabel) : ""}</span>
             </div>
             <div class="fd-body">
               <img class="fd-art" src="${esc(f.art)}" alt="${esc(f.name)}" />
@@ -13350,9 +13376,7 @@
     const isEnemy = unit.side === "enemy";
     const atkLabel = L["ui.atk"] || "攻";
     const spdLabel = L["ui.spd"] || "速";
-    const rarityBase = def.rarity || (isEnemy ? "敵方" : "普通");
-    const raritySlang = def.rarity_slang || "";
-    const rarity = raritySlang ? `${rarityBase} · ${raritySlang}` : rarityBase;
+    const rarity = officialRarityLabel(def, isEnemy ? "敵方" : "普通");
     const tags = cardRoleLabels(def);
     const basic = unit.basic || def.basic || "首通";
     const skill = unit.skill || def.skill || "自帶技";
