@@ -11008,6 +11008,33 @@ html, body {
   letter-spacing: 0.06em;
   color: rgba(233, 220, 255, 0.75);
 }
+/* 命運按下後：力量／敏捷等加減值放喺畫面正中 */
+.screen > .fate-delta-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 6;
+  width: min(92%, 340px);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 12px;
+  text-align: center;
+  pointer-events: none;
+  border-radius: 14px;
+  background: rgba(10, 6, 16, 0.82);
+  border: 2px solid rgba(255, 211, 106, 0.45);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+.screen > .fate-delta-center .srb-chip {
+  font-size: 1.02rem;
+  padding: 6px 12px;
+}
 
 /* 籌碼：負值用減益色（紅），唔用綠色劇透「好壞」但數字要睇得明 */
 .srb-chip.attr.down {

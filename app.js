@@ -12006,20 +12006,6 @@
     const story = fateOutcomeText(f);
     const n = Math.min(3, (state.fateYearIndex | 0) + 1);
 
-    /* t408：HUD 短暫跳字（金幣／XP／維度），令「有嘢發生」即刻睇得到 */
-    (function floatFateGains() {
-      const bits = [];
-      if ((fx.gold | 0) !== 0) bits.push(`金幣 ${fx.gold > 0 ? "+" : ""}${fx.gold}`);
-      if ((fx.soul | 0) !== 0) bits.push(`膠幣 ${fx.soul > 0 ? "+" : ""}${fx.soul}`);
-      if ((fx.xp | 0) !== 0) bits.push(`經驗 ${fx.xp > 0 ? "+" : ""}${fx.xp}`);
-      const a = fx.attrs || {};
-      Object.keys(a).forEach((k) => {
-        const v = a[k] | 0;
-        if (v) bits.push(`${ATTR_SHORT[k] || k} ${v > 0 ? "+" : ""}${v}`);
-      });
-      if (bits.length) hudFloat(bits.join("　"));
-    })();
-
     root.innerHTML = `
       ${lifeHudHtml()}
       <div class="ribbon">${ageRibbon("人生命運")}</div>
@@ -12028,12 +12014,8 @@
       <div class="fate-result">
         <img class="fate-result-art" src="${esc(f.art || fateArt(f))}" alt="" />
         <p class="fate-result-story">${esc(story)}</p>
-        <div class="fate-result-bar" role="status">
-          <span class="srb-ico">✦</span>
-          <span class="srb-text">今世際遇</span>
-          <span class="srb-chips">${chips || `<span class="srb-chip">無增減</span>`}</span>
-        </div>
       </div>
+      <div class="fate-delta-center" role="status">${chips || `<span class="srb-chip">無增減</span>`}</div>
       <button class="btn gold of-cta-main" id="fate-result-next" type="button">繼續</button>
       <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
       ${storyDockHtml()}
