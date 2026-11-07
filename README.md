@@ -2,6 +2,10 @@
 
 可點擊嘅垂直切片：標題 → 今世主頁 → 揀事件 → 編隊（3 張）→ 遇敵 → 自動戰 → 結算。
 
+## 《香江小風波》已獨立成庫
+
+Roguelite《香江小風波》已搬到 **[`sirihkgolden-source/hk-roguelite`](https://github.com/sirihkgolden-source/hk-roguelite)**，不再放喺本倉庫 `hk-roguelite/`。本倉庫只保留《香江 Card Game》直向切片。
+
 ## 點樣打開
 
 **最穩（推薦）**— 喺本資料夾開本機伺服器：
