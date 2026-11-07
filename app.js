@@ -1006,6 +1006,11 @@
      * 殘頁不在此回滾。
      */
     lifePocket: null,
+    /**
+     * 幫派滿貫回報的升星只在今世有效。
+     * { kind: "gear"|"fighter", id }；離開今世就清掉，不寫進永久星數。
+     */
+    lifeStarBonus: null,
     /** 最近一次離世的膠幣結算，主頁顯示一次直到再開新局 */
     lastSoulSettle: null,
     /** 今世身世 id（origin screen 揀） */
@@ -2919,6 +2924,9 @@
         earned: state.lastSoulSettle.earned == null ? null : (state.lastSoulSettle.earned | 0),
         kept: !!state.lastSoulSettle.kept,
       } : null,
+      lifeStarBonus: state.lifeStarBonus && state.lifeStarBonus.id
+        ? { kind: state.lifeStarBonus.kind === "fighter" ? "fighter" : "gear", id: String(state.lifeStarBonus.id) }
+        : null,
     };
   }
 
@@ -3115,6 +3123,11 @@
           teaShopBought: teaIn.filter((id) => typeof id === "string" && id),
           cardShards: clonePositiveCounts(data.lifePocket.cardShards),
         };
+      }
+      state.lifeStarBonus = null;
+      if (data.lifeStarBonus && typeof data.lifeStarBonus === "object" && data.lifeStarBonus.id) {
+        const kind = data.lifeStarBonus.kind === "fighter" ? "fighter" : "gear";
+        state.lifeStarBonus = { kind, id: String(data.lifeStarBonus.id) };
       }
       state.lastSoulSettle = null;
       if (data.lastSoulSettle && typeof data.lastSoulSettle === "object") {
@@ -3341,6 +3354,7 @@
     state.factions = {};
     state.factionChoiceResult = null;
     state.factionSkirmish = false;
+    state.lifeStarBonus = null;
     state.minigame = null;
     state.battle = null;
     state.lastResult = null;
@@ -6479,11 +6493,10 @@
     ensureGearShape();
     const item = itemByIdLookup()[itemId];
     if (!item || albumCardCount(itemId) <= 0) return 0;
-    const star = equipStarOf(item);
+    const star = baseEquipStar(item);
     const maxS = Math.max(1, Number(item.max_star) || ALBUM_MAX_STAR);
     if (star >= maxS) return 0;
-    state.equipStars[itemId] = star + 1;
-    bumpEquipStar(1);
+    state.lifeStarBonus = { kind: "gear", id: itemId };
     return star + 1;
   }
 
@@ -6491,9 +6504,9 @@
     albumEnsureState();
     const f = fighterById[fighterId];
     if (!f || albumCardCount(fighterId) <= 0) return 0;
-    const star = albumFighterStar(fighterId);
+    const star = baseFighterStar(fighterId);
     if (star >= ALBUM_MAX_STAR) return 0;
-    state.fighterStars[fighterId] = star + 1;
+    state.lifeStarBonus = { kind: "fighter", id: fighterId };
     return star + 1;
   }
 
@@ -6529,7 +6542,7 @@
       <div class="ribbon">${ageRibbon(esc(ev.name || "勢力回報"))}</div>
       <div class="shop-wrap">
         <div class="shop-gold-banner">${esc(fname)} ${factionFavor(ev.faction_id)}/${FACTION_FAVOR_MAX} · 今世免費升一星</div>
-        <p class="shop-sub">${gear ? "選一件裝備。今世只此一件，離開今世後可以再來。" : "選一張戰鬥卡。今世只此一張，離開今世後可以再來。"}</p>
+        <p class="shop-sub">${gear ? "選一件裝備。這顆星只在今世有效，離開今世就會消失。" : "選一張戰鬥卡。這顆星只在今世有效，離開今世就會消失。"}</p>
         <div class="shop-grid shop-grid-scroll">${cards}</div>
       </div>
       <div class="soft-cta">
@@ -6559,7 +6572,7 @@
         const name = gear
           ? ((itemByIdLookup()[id] && itemByIdLookup()[id].name) || id)
           : ((fighterById[id] && fighterById[id].name) || id);
-        finish(`「${name}」免費升至 ★${next}`, true);
+        finish(`「${name}」今世暫時升至 ★${next}。離開今世後會回到原來的星。`, true);
       };
     });
     $("#btn-star-leave", root).onclick = () => {
@@ -7689,7 +7702,7 @@
     albumEnsureState();
     const f = fighterById[fighterId];
     if (!f) return false;
-    const star = albumFighterStar(fighterId);
+    const star = baseFighterStar(fighterId);
     if (star >= ALBUM_MAX_STAR) return false;
     const price = starUpPrice(star);
     if ((state.gold | 0) < price) return false;
@@ -7792,7 +7805,7 @@
     ensureGearShape();
     const item = itemByIdLookup()[itemId];
     if (!item) return false;
-    const star = equipStarOf(item);
+    const star = baseEquipStar(item);
     const maxS = Math.max(1, Number(item.max_star) || 5);
     if (star >= maxS) return false;
     const price = gearUpgradePrice(star);
@@ -9747,13 +9760,25 @@
     return Object.fromEntries(equipItemList().map((it) => [it.id, it]));
   }
 
-  function equipStarOf(item) {
+  function lifeStarBonusOf(kind, id) {
+    const b = state.lifeStarBonus;
+    if (!b || b.kind !== kind || b.id !== id) return 0;
+    return 1;
+  }
+
+  function baseEquipStar(item) {
     if (!item) return 1;
     ensureGearShape();
     const maxS = Math.max(1, Number(item.max_star) || 5);
     let s = state.equipStars[item.id];
     if (s == null) s = Number(item.star) || 1;
     return Math.min(maxS, Math.max(1, s | 0));
+  }
+
+  function equipStarOf(item) {
+    if (!item) return 1;
+    const maxS = Math.max(1, Number(item.max_star) || 5);
+    return Math.min(maxS, baseEquipStar(item) + lifeStarBonusOf("gear", item.id));
   }
 
   /** effective = base + star_bonus_per_level * (star - 1) */
@@ -12236,13 +12261,15 @@
     if (before <= 0) albumMarkNewCardStar1(kind, id);
   }
 
-  function albumFighterStar(id) {
+  function baseFighterStar(id) {
     albumEnsureState();
-    const f = fighterById[id];
-    const maxS = ALBUM_MAX_STAR;
     let s = state.fighterStars[id];
     if (s == null) s = 1;
-    return Math.min(maxS, Math.max(1, s | 0));
+    return Math.min(ALBUM_MAX_STAR, Math.max(1, s | 0));
+  }
+
+  function albumFighterStar(id) {
+    return Math.min(ALBUM_MAX_STAR, baseFighterStar(id) + lifeStarBonusOf("fighter", id));
   }
 
   /* ---------- 戰鬥卡等級（帳號級 RPG；可與升星疊加） ---------- */
@@ -12583,7 +12610,9 @@
       toastFn(root, "找不到這張卡");
       return;
     }
-    const star = albumStarOf(kind, id, item);
+    const star = kind === "fighters"
+      ? baseFighterStar(id)
+      : (kind === "gear" ? baseEquipStar(item) : albumStarOf(kind, id, item));
     const maxS = albumMaxStar(kind, item);
     if (star >= maxS) {
       toastFn(root, "已滿星");
