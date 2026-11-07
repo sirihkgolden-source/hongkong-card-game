@@ -617,8 +617,8 @@
 
   /**
    * 今年該出現的下一幕。
-   * 間隔跟遊戲歲數：上次幾歲，再過 7 歲先再出現。
-   * 遊戲年紀到 65，就係李步岸合法退休，唔再排後面的幕。
+   * 間隔跟遊戲歲數：上次幾歲，再過若干歲先再出現。
+   * 遊戲年紀一到 65，李步岸的故事就結束，不再排後面的幕。
    */
   function officeDueChapter(pack, year) {
     if (!pack || !officeIntervalYears(pack)) return null;
@@ -631,7 +631,7 @@
     const idx = pace.next | 0;
     const age = state.age | 0;
     const interval = officeIntervalYears(pack);
-    if (idx > 0 && age >= baoanRetireAge(pack)) {
+    if (age >= baoanRetireAge(pack)) {
       return officeNodeById(pack.baoan_retire_event || "EV_GB_RETIRE");
     }
     if (idx < 0 || idx >= chain.length) return null;
@@ -980,6 +980,8 @@
     burnedSkills: [],
     /** 非教學期出戰卡死光 → 今世結束 */
     lifeWiped: false,
+    /** 李步岸在六十五歲揭曉結局後，今世就此結束，不再往下寫 */
+    storyEnded: false,
     /** account-level gear slots — itemId|null; bonuses apply to ALL battle cards */
     accountGear: { head: null, body: null, main: null, off: null, charm: null, feet: null },
     /** itemId -> star (1..max_star); 帳號級，跨今世保留 */
@@ -2563,16 +2565,18 @@
   }
 
   function lifeDoneFlag() {
-    // 今世行到壽命，或出戰卡死光。唔再於第 15 年切斷。
-    return lifeOver() || !!state.lifeWiped;
+    // 今世行到壽命、出戰卡死光，或李步岸的故事在六十五歲完結。
+    return lifeOver() || !!state.lifeWiped || !!state.storyEnded;
   }
 
   function lifeEndBlurb() {
+    if (state.storyEnded) return "六十五歲，李步岸的故事完結。沒有後續。";
     if (state.lifeWiped) return "出戰卡已死光——今世完結。";
     return "壽命已到——今世歲數上限。";
   }
 
   function lifeEndName() {
+    if (state.storyEnded) return "六十五歲結局";
     if (state.lifeWiped) return "全軍覆沒";
     return "壽命到限";
   }
@@ -2870,6 +2874,7 @@
       deadFighters: Array.isArray(state.deadFighters) ? state.deadFighters.slice() : [],
       burnedSkills: Array.isArray(state.burnedSkills) ? state.burnedSkills.slice() : [],
       lifeWiped: !!state.lifeWiped,
+      storyEnded: !!state.storyEnded,
       fatePicks: Array.isArray(state.fatePicks) ? state.fatePicks.slice() : [],
       fateYearIndex: state.fateYearIndex | 0,
       fateOffer: Array.isArray(state.fateOffer) ? state.fateOffer.slice() : [],
@@ -3013,6 +3018,7 @@
       state.burnedSkills = (Array.isArray(data.burnedSkills) ? data.burnedSkills : [])
         .filter((id) => id && skillById[id]);
       state.lifeWiped = !!data.lifeWiped;
+      state.storyEnded = !!data.storyEnded;
 
       state.fatePicks = (Array.isArray(data.fatePicks) ? data.fatePicks : [])
         .filter((id) => id && fateById[id]);
@@ -3362,6 +3368,7 @@
     state.deadFighters = [];
     state.burnedSkills = [];
     state.lifeWiped = false;
+    state.storyEnded = false;
     state.equipFocus = null;
     state.equipSlot = null;
     /* 身上裝備已按開局快照收回；今世新裝的清走 */
@@ -5204,7 +5211,7 @@
     const actCount = Math.max(1, (pack.office_chain || []).length);
     const intervalYears = officeIntervalYears(pack);
     const chainNote = intervalYears
-      ? `唔會一次過演完。每過 ${intervalYears} 年再遇到李步岸。到六十五歲，才按這些年的做法揭曉他的人生。完美的一條，是在海嵐峰退休。`
+      ? `唔會一次過演完。每過 ${intervalYears} 年再遇到李步岸。到六十五歲揭曉他的人生，故事就在那天結束，沒有後續。完美的一條，是在海嵐峰退休。`
       : `每一幕三個選擇，後果喺選擇之後才揭示。共 ${actCount} 幕，行到最後才見結局。本包不設中途獎賞、不設升級。`;
     const endingsHtml = isOfficeChain && Array.isArray(pack.office_endings)
       ? (officeCleared
@@ -8050,11 +8057,6 @@
     const endingClaimable = isEnding ? endingRewardAvailable(ev) : true;
     const gain = endingClaimable ? listedEventSoul(ev) : 0;
     const goldGain = endingClaimable ? (ev.reward_gold | 0) : 0;
-    const rewardLine = isEnding
-      ? (endingClaimable
-          ? `結局達成 · 獲得 <b style="color:var(--neon-gold)">+${gain}</b> ${esc(L["ui.resource"] || "膠幣")}（一次性）`
-          : `<span style="color:var(--muted)">此結局已領過 ${ev.reward_soul | 0} 膠幣——重玩唔再發</span>`)
-      : `今世賺了 <b style="color:var(--neon-gold)">+${gain}</b> ${esc(L["ui.resource"] || "膠幣")}${(ev.reward_xp|0) ? ` · 經驗 +${ev.reward_xp|0}` : ""}${goldGain ? ` · 金幣 +${goldGain}` : ""} · <span style="color:var(--neon-cyan)">下一歲 ${state.age + 1}歲（第 ${state.year + 1} 年）</span>`;
     const endingBanner = isEnding
       ? `<div class="of-ending-banner">
            <div class="of-ending-kicker">分支結局</div>
@@ -8068,6 +8070,12 @@
      * 優先用結局事件自己的 story_pack_id，否則退回當前使用中的包。
      */
     const packMeta = storyPackById(ev.story_pack_id) || storyPackById(state.activeStoryPackId) || officePack();
+    const storyCloses = isEnding && officeIntervalYears(packMeta);
+    const rewardLine = isEnding
+      ? (endingClaimable
+          ? `結局達成 · 獲得 <b style="color:var(--neon-gold)">+${gain}</b> ${esc(L["ui.resource"] || "膠幣")}（一次性）${storyCloses ? " · 六十五歲，故事完結" : ""}`
+          : `<span style="color:var(--muted)">此結局已領過 ${ev.reward_soul | 0} 膠幣——重玩唔再發</span>`)
+      : `今世賺了 <b style="color:var(--neon-gold)">+${gain}</b> ${esc(L["ui.resource"] || "膠幣")}${(ev.reward_xp|0) ? ` · 經驗 +${ev.reward_xp|0}` : ""}${goldGain ? ` · 金幣 +${goldGain}` : ""} · <span style="color:var(--neon-cyan)">下一歲 ${state.age + 1}歲（第 ${state.year + 1} 年）</span>`;
     /*
      * t406：結局要「全屏停住」——結語 + 角色一句 + 獎勵 + 明確按鈕。
      * 唔用 autoAdvanceBarHtml（點畫面即跳），改為單一確認掣。
@@ -8113,10 +8121,10 @@
       </div>
       <div class="soft-cta">
         ${isEnding
-          ? `<p class="of-ending-note">${officeIntervalYears(packMeta)
-            ? (ev.ending_note || "看完就返回，你的歲數照舊加一歲。")
+          ? `<p class="of-ending-note">${storyCloses
+            ? (ev.ending_note || "六十五歲，他的故事到此結束。沒有後續。")
             : "故事包歲月獨立於人生歲數——返回人生後，你仍然係原本歲數。"}</p>
-             <button class="btn gold of-ending-ok" id="btn-ok-ending" type="button">睇完，返回人生</button>`
+             <button class="btn gold of-ending-ok" id="btn-ok-ending" type="button">${storyCloses ? "故事完了" : "睇完，返回人生"}</button>`
           : autoAdvanceBarHtml(lifeDoneFlag() ? "結算今世" : `下一歲 ${state.age + 1}歲`)}
         <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
       </div>
@@ -8134,6 +8142,22 @@
       }
       state.shopLeftEmpty = false;
       trackEventMission(ev, { soft: true });
+      if (storyCloses) {
+        state.storyEnded = true;
+        state.selectedEvent = null;
+        state.softNote = "";
+        state.officeRun = null;
+        state.lastResult = {
+          win: true,
+          reward: gain | 0,
+          rewardBlurb: "六十五歲，李步岸的故事完結。沒有後續。",
+          eventName: ev.office_ending_label || "六十五歲結局",
+          deadNames: [],
+        };
+        state.screen = "result";
+        render();
+        return;
+      }
       advanceYear();
       state.selectedEvent = null;
       state.softNote = "";
@@ -14573,7 +14597,7 @@
      * 保留 `lifeDoneNote` 用嚟喺自動前進條上面講清楚下一步。
      */
     const lifeDoneNote = lifeDone
-      ? (lifeOver() ? "壽命已到 · 結算今世" : "今世完結 · 結算今世")
+      ? (state.storyEnded ? "故事完結 · 結算今世" : lifeOver() ? "壽命已到 · 結算今世" : "今世完結 · 結算今世")
       : "";
     root.innerHTML = `
       ${lifeHudHtml()}
@@ -14597,7 +14621,7 @@
           })()}
           ${(r.deadNames && r.deadNames.length) ? `<br/><span style="color:var(--neon-pink)">陣亡：${esc(r.deadNames.join("、"))}（技能一併不可再用）</span>` : ""}
           ${r.softRevive ? `<br/><span style="color:var(--neon-cyan)">教學期——出戰卡暫時倒下，下局可再出戰；本年遭遇可再揀。</span>` : ""}
-          ${lifeDone ? `<br/><span style="color:var(--neon-pink)">${lifeOver() ? "壽命已到——" : "出戰卡已死光——"}可結算今世返主頁。</span>` : ""}
+          ${lifeDone ? `<br/><span style="color:var(--neon-pink)">${state.storyEnded ? "故事完結——" : lifeOver() ? "壽命已到——" : "出戰卡已死光——"}可結算今世返主頁。</span>` : ""}
           ${lifeDone ? (() => {
             /*
              * t379：結算前明確講清楚膠幣會點變（唔好隱形回滾）。
