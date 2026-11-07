@@ -14312,17 +14312,175 @@
     const b = state.battle;
     const overlay = document.getElementById("card-inspect");
     if (overlay) overlay.remove();
-    if (b) b.inspectOpen = false;
+    if (b) {
+      b.inspectOpen = false;
+      b.inspectSkillSlot = null;
+      b.inspectUnitId = null;
+    }
     /* t399：用安全版（戰鬥狀態唔完整時唔會排 tick 而 crash） */
     resumeBattleSafe();
   }
 
-  function openCardInspect(unit) {
+  function equippedSkillRecord(sid) {
+    const s = skillById[sid];
+    if (!s) return null;
+    return {
+      id: s.id,
+      name: s.name,
+      cd: s.cd != null ? s.cd : 3,
+      effect: s.effect || "",
+      tags: skillTagsOf(s),
+      art: s.art || skillArtByName(s.name) || null,
+      kind: s.kind,
+      blurb: s.blurb,
+      flavor: s.flavor,
+      dmg_mult: s.dmg_mult,
+      hits: s.hits,
+      target: s.target,
+      power: s.power,
+      splash_mult: s.splash_mult,
+      heal_mult: s.heal_mult,
+      support: s.support,
+      passive: s.passive,
+      execute_hp_pct: s.execute_hp_pct,
+      execute_mult: s.execute_mult,
+      hit_scales: s.hit_scales,
+    };
+  }
+
+  /** 戰鬥中途換技：寫入口袋，並更新場上這張卡的技能，下一回合就用新的。 */
+  function applyLoadoutToBattleUnit(unit) {
+    if (!unit || unit.side !== "player" || !unit.id) return;
+    unit.equipped = loadoutIds(unit.id).map(equippedSkillRecord).filter(Boolean);
+    const active = unit.equipped.filter((s) => !skillCombatSpec(s).passive).length + (unit.skill ? 1 : 0);
+    if (active > 0 && (unit.skillCursor | 0) >= active) unit.skillCursor = 0;
+  }
+
+  function setBattleLoadoutSlot(fid, slot, sid) {
+    const f = fighterById[fid];
+    if (!f || isDeadFighter(fid)) return false;
+    const cap = raritySlots(f);
+    const display = Array.from({ length: cap }, (_, i) => (state.loadout[fid] || [])[i] || null);
+    if (slot < 0 || slot >= cap) return false;
+    if (sid) {
+      if (isBurnedSkill(sid) || skillFieldTaken(sid, fid)) return false;
+      claimSkillForFighter(fid, sid, slot);
+    } else {
+      display[slot] = null;
+      state.loadout[fid] = display;
+      if (!state.loadoutInited) state.loadoutInited = {};
+      state.loadoutInited[fid] = true;
+    }
+    const b = state.battle;
+    const unit = b && Array.isArray(b.players) ? b.players.find((p) => p.id === fid) : null;
+    if (unit) applyLoadoutToBattleUnit(unit);
+    return true;
+  }
+
+  function battleSkillEditorHtml(unit) {
+    const f = fighterById[unit.id];
+    if (!f) return "";
+    ensureLifeSkills();
+    const cap = raritySlots(f);
+    const load = Array.from({ length: cap }, (_, i) => (state.loadout[unit.id] || [])[i] || null);
+    const slots = load.map((sid, si) => {
+      const sk = sid ? skillById[sid] : null;
+      if (sk) {
+        return `<span class="ci-slot on"><b>${esc(sk.name)}</b><button type="button" class="ci-slot-off" data-bi-off="${si}">卸下</button></span>`;
+      }
+      return `<button type="button" class="ci-slot empty" data-bi-add="${si}">＋技能</button>`;
+    }).join("");
+    const b = state.battle;
+    const picking = b && b.inspectSkillSlot != null && b.inspectUnitId === unit.id;
+    let picker = "";
+    if (picking) {
+      const pickSlot = b.inspectSkillSlot | 0;
+      const equipped = new Set(load.filter(Boolean));
+      const pool = openPocketSkills()
+        .filter((sk) => !isBurnedSkill(sk.id) && !equipped.has(sk.id) && skillOwnedCopies(sk.id) > 0)
+        .filter((sk) => skillCompatible(f, sk));
+      const rows = pool.length
+        ? pool.map((sk) => {
+            const locked = skillFieldTaken(sk.id, unit.id);
+            const onName = locked ? skillEquippedOnName(sk.id, unit.id) : null;
+            if (locked) {
+              return `<div class="ci-pick locked">${esc(sk.name)}<small>已裝於「${esc(onName || "其他戰鬥卡")}」</small></div>`;
+            }
+            return `<button type="button" class="ci-pick" data-bi-equip="${esc(sk.id)}" data-bi-slot="${pickSlot}">${esc(sk.name)}</button>`;
+          }).join("")
+        : `<p class="ci-pick empty">沒有可裝技能</p>`;
+      picker = `<div class="ci-pick-box">
+        <div class="ci-label">揀技能裝上</div>
+        <div class="ci-pick-list">${rows}</div>
+        <button type="button" class="ci-pick-cancel" id="bi-sp-cancel">關閉</button>
+      </div>`;
+    }
+    return `<div class="ci-edit">
+      <div class="ci-label">更換技能</div>
+      <div class="ci-slots">${slots}</div>
+      ${picker}
+    </div>`;
+  }
+
+  function wireBattleSkillEditor(overlay, unit) {
+    const refresh = (keepPick) => {
+      const live = state.battle && state.battle.players
+        ? state.battle.players.find((p) => p.id === unit.id)
+        : unit;
+      openCardInspect(live || unit, { keepPick: !!keepPick });
+    };
+    overlay.querySelectorAll("[data-bi-add]").forEach((btn) => {
+      btn.onclick = (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        if (state.battle) {
+          state.battle.inspectSkillSlot = Number(btn.getAttribute("data-bi-add"));
+          state.battle.inspectUnitId = unit.id;
+        }
+        refresh(true);
+      };
+    });
+    overlay.querySelectorAll("[data-bi-off]").forEach((btn) => {
+      btn.onclick = (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        setBattleLoadoutSlot(unit.id, Number(btn.getAttribute("data-bi-off")), null);
+        if (state.battle) state.battle.inspectSkillSlot = null;
+        refresh(false);
+      };
+    });
+    overlay.querySelectorAll("[data-bi-equip]").forEach((btn) => {
+      btn.onclick = (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        setBattleLoadoutSlot(unit.id, Number(btn.getAttribute("data-bi-slot")), btn.getAttribute("data-bi-equip"));
+        if (state.battle) state.battle.inspectSkillSlot = null;
+        refresh(false);
+      };
+    });
+    const cancel = overlay.querySelector("#bi-sp-cancel");
+    if (cancel) {
+      cancel.onclick = (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        if (state.battle) state.battle.inspectSkillSlot = null;
+        refresh(false);
+      };
+    }
+  }
+
+  function openCardInspect(unit, opts) {
     const b = state.battle;
     if (!b || !b.running || !unit) return;
+    const keepPick = !!(opts && opts.keepPick);
+    const prevSlot = b.inspectSkillSlot;
+    const prevUnit = b.inspectUnitId;
     if (b.inspectOpen) closeCardInspectKeepPaused();
     pauseBattle();
     b.inspectOpen = true;
+    if (keepPick && prevUnit === unit.id) b.inspectSkillSlot = prevSlot;
+    else b.inspectSkillSlot = null;
+    b.inspectUnitId = unit.id;
 
     const def = lookupDef(unit) || {};
     const isEnemy = unit.side === "enemy";
@@ -14413,7 +14571,7 @@
                   skill_cd: skillCd,
                 }),
                 artFallback: unit.art,
-                equipped: !isEnemy && unit.equipped && unit.equipped.length
+                equipped: isEnemy && unit.equipped && unit.equipped.length
                   ? unit.equipped.map((s) => ({
                       id: s.id,
                       name: s.name,
@@ -14426,6 +14584,7 @@
                     }))
                   : [],
               })}
+              ${isEnemy ? "" : battleSkillEditorHtml(unit)}
               ${
                 skillEffect
                   ? `<div class="ci-skill-effect">${esc(skillEffect)}${
@@ -14460,7 +14619,7 @@
             <div class="ci-label">卡面文案</div>
             <div class="ci-flavor">${esc(flavor)}</div>
           </div>
-          <div class="ci-hint">點卡外／Esc 繼續</div>
+          <div class="ci-hint">${isEnemy ? "點卡外／Esc 繼續" : "點＋技能或卸下，可以換技能。點卡外／Esc 繼續"}</div>
         </div>
       </div>`;
     battleRoot.appendChild(overlay);
@@ -14483,6 +14642,7 @@
       el.addEventListener("click", show);
       wireLongPressHelp(el, tip);
     });
+    if (!isEnemy) wireBattleSkillEditor(overlay, unit);
   }
 
   /** Close overlay UI without resuming (used when swapping inspect target). */

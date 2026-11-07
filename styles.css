@@ -1697,7 +1697,8 @@ button.side-icon {
   padding: 8px 12px 6px;
   flex: 1 1 auto;
   min-height: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -1813,6 +1814,82 @@ button.side-icon {
   color: var(--muted);
   font-weight: 700;
   flex-shrink: 0;
+}
+.card-inspect-body .ci-edit {
+  margin: 4px 0 6px;
+  flex-shrink: 0;
+}
+.card-inspect-body .ci-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.card-inspect-body .ci-slot {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  border: 2px solid #0a0610;
+  border-radius: 8px;
+  background: #1a1028;
+  color: #f4efe6;
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 4px 6px;
+  box-shadow: 0 0 0 1px #ffd36a66;
+}
+.card-inspect-body .ci-slot.empty {
+  cursor: pointer;
+  color: var(--neon-cyan);
+}
+.card-inspect-body .ci-slot.on b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 7.2em;
+}
+.card-inspect-body .ci-slot-off,
+.card-inspect-body .ci-pick,
+.card-inspect-body .ci-pick-cancel {
+  border: 2px solid #0a0610;
+  border-radius: 6px;
+  background: #2a1840;
+  color: #f4efe6;
+  font: inherit;
+  font-size: 0.66rem;
+  font-weight: 800;
+  padding: 3px 6px;
+  cursor: pointer;
+}
+.card-inspect-body .ci-slot-off {
+  color: var(--neon-pink);
+}
+.card-inspect-body .ci-pick-box {
+  margin-top: 6px;
+  padding: 6px;
+  border-radius: 8px;
+  background: #120818ee;
+  box-shadow: 0 0 0 1px #2de2ff55;
+}
+.card-inspect-body .ci-pick-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 132px;
+  overflow-y: auto;
+}
+.card-inspect-body .ci-pick {
+  text-align: left;
+}
+.card-inspect-body .ci-pick.locked,
+.card-inspect-body .ci-pick.empty {
+  cursor: default;
+  color: var(--muted);
+}
+.card-inspect-body .ci-pick small {
+  display: block;
+  font-size: 0.58rem;
 }
 .card-inspect-body .ci-tags {
   display: flex;
