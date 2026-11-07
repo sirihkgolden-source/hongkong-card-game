@@ -1031,14 +1031,16 @@
     }
     for (const sk of equipped) {
       if (!sk || !sk.name) continue;
+      const full = sk.id && skillById[sk.id] ? skillById[sk.id] : sk;
+      const role = cardRoleLabels(full).join("、") || "技能";
       const ico = sk.art
         ? `<img src="${esc(sk.art)}" alt="" />`
         : fixedSlotIcoHtml(sk.name, artFallback);
-      const helpEq = skillHelpText(sk.id && skillById[sk.id] ? skillById[sk.id] : sk);
+      const helpEq = skillHelpText(full);
       slots.push(`<div class="bc-skill fd-skill filled" role="button" tabindex="0" data-ci-skill-help="1" data-help-text="${helpTextAttr(helpEq)}" title="${esc(sk.name)}">
         <span class="fds-ico">${ico}</span>
         <span class="fds-name">${esc(sk.name)}</span>
-        <span class="fds-tag">裝備</span>
+        <span class="fds-tag">${esc(role)}</span>
       </div>`);
     }
     return `<div class="bc-skills" aria-label="技能欄">${slots.join("")}</div>`;
@@ -1048,11 +1050,77 @@
       .map((sid) => skillById[sid])
       .filter(Boolean)
       .map((sk) => ({
+        id: sk.id,
         name: sk.name,
         art: sk.art || skillArtByName(sk.name) || null,
         cd: sk.cd,
+        effect: sk.effect,
+        kind: sk.kind,
+        dmg_mult: sk.dmg_mult,
+        heal_mult: sk.heal_mult,
+        splash_mult: sk.splash_mult,
+        target: sk.target,
+        support: sk.support,
+        passive: sk.passive,
       }));
   }
+  /**
+   * 卡牌說明分類：唔再顯示街頭主題（霓虹、打機舖…），改按招式做咩分。
+   * 一張卡可以同時係攻擊＋增益＋控制。裝備只睇攻／防／血／速。
+   */
+  function cardRoleLabels(card) {
+    if (!card) return [];
+    const text = [card.skill_effect, card.effect, card.passive].filter(Boolean).join("\n");
+    const roles = [];
+    const add = (name) => { if (name && roles.indexOf(name) < 0) roles.push(name); };
+    const isGear = !card.skill && !card.skill_effect && !card.effect && !card.kind
+      && (card.slot || card.tag_boost || card.star_bonus_per_level);
+    if (isGear) {
+      let atk = card.atk | 0;
+      let def = card.def | 0;
+      let hp = card.hp | 0;
+      let spd = card.spd | 0;
+      try {
+        const eff = effectiveEquipStats(card);
+        if (eff) {
+          atk = eff.atk | 0;
+          def = eff.def | 0;
+          hp = eff.hp | 0;
+          spd = eff.spd | 0;
+        }
+      } catch (e) {}
+      if (atk > 0) add("攻擊");
+      if (def > 0 || hp > 0) add("防護");
+      if (spd > 0) add("增益");
+      if (!roles.length) add("增益");
+      return roles.slice(0, 3);
+    }
+    const dmg = Number(card.dmg_mult) || 0;
+    const heal = Number(card.heal_mult) || 0;
+    const splash = Number(card.splash_mult) || 0;
+    const healClause = /治療|回血|回復|補血/.test(text);
+    const damageClause = /重擊|連打|濺射|對.{0,6}敵|單體 攻|敵全體 攻|敵.{0,8}攻×/.test(text);
+    if ((dmg > 0 || splash > 0 || (/攻×/.test(text) && !(healClause && !damageClause))) && card.kind !== "回復") {
+      add("攻擊");
+    }
+    if (card.kind === "群攻" || (card.target === "aoe" && roles.indexOf("攻擊") >= 0) || /敵全體 攻|全體敵.{0,6}攻/.test(text)) {
+      add("群攻");
+    }
+    if (heal > 0 || healClause || card.kind === "回復") add("回復");
+    if (/護盾|減傷|格擋/.test(text) || card.kind === "防護") add("防護");
+    if (/攻＋|攻\+|速＋|速\+|血＋|血\+|全隊|初始 CD−|CD−1|常駐/.test(text) || card.kind === "常駐") add("增益");
+    const selfStun = /自己暈|自身暈/.test(text);
+    if (/速−|速-|攻−|攻-|CD＋|CD\+|定身|沉默|命中率 ?[−\-]|命中.{0,6}[−\-]/.test(text) || (/暈/.test(text) && !selfStun)) {
+      add("控制");
+    }
+    if (roles.indexOf("群攻") >= 0) {
+      const atk = roles.indexOf("攻擊");
+      if (atk >= 0) roles.splice(atk, 1);
+    }
+    if (!roles.length) add(card.support ? "增益" : "攻擊");
+    return roles.slice(0, 3);
+  }
+
   function fighterHelpRichHtml(f, opts) {
     opts = opts || {};
     if (!f) return null;
@@ -1068,7 +1136,7 @@
       if (f.hp != null) bits.push(`血${f.hp}`);
       if (f.def != null) bits.push(`防${f.def}`);
     }
-    const tags = (f.tags || []).join("、") || "";
+    const roles = cardRoleLabels(f).join("、");
     const rare = f.rarity_slang || f.rarity || "?";
     const blurb = f.flavor || f.blurb || "";
     const lv = (opts.preview && opts.preview.level) ? opts.preview.level : fighterLevelOf(f.id);
@@ -1077,7 +1145,7 @@
       `<div class="ht-title">「${esc(f.name || "")}」</div>`,
       `<div class="ht-line">Lv.${lv}｜★${star}｜${esc(rare)}｜${esc(bits.join(" "))}</div>`,
     ];
-    if (tags) head.push(`<div class="ht-line">主題：${esc(tags)}</div>`);
+    if (roles) head.push(`<div class="ht-line">分類：${esc(roles)}</div>`);
     const equipped = opts.skipEquip ? [] : fighterEquippedForHelp(f.id);
     const slots = battleCardSkillSlotsHtml({
       basic: f.basic || "普通攻擊",
@@ -3490,7 +3558,7 @@
       if (pv.def != null) bits.push(`物防${pv.def}`);
       if (pv.matk != null) bits.push(`魔攻${pv.matk}`);
     }
-    const tags = (f.tags || []).join("、") || "";
+    const roles = cardRoleLabels(f).join("、");
     const rare = f.rarity_slang || f.rarity || "?";
     const blurb = f.flavor || f.blurb || "";
     const lv = (opts.preview && opts.preview.level) ? opts.preview.level : fighterLevelOf(f.id);
@@ -3499,7 +3567,7 @@
     if (opts.preview && ((opts.preview.growAtk | 0) || (opts.preview.growHp | 0))) {
       lines.push(`成長加成：攻+${opts.preview.growAtk | 0} 血+${opts.preview.growHp | 0}（等級＋升星可疊加）`);
     }
-    if (tags) lines.push(`主題：${tags}`);
+    if (roles) lines.push(`分類：${roles}`);
     if (f.basic) lines.push(`普攻：${f.basic}（${basicPowerParenLabel(f)}）`);
     if (f.skill) {
       // 卡冊／長按：攻擊型自帶加（物／魔），與出戰「自帶・物／魔」語義一致；純輔助唔加括號
@@ -3519,9 +3587,9 @@
       return `「${sk.name || ""}」\n已陪葬／陣亡帶走——今世不可再裝備。`;
     }
     const blurb = sk.blurb || sk.flavor || "";
-    const kind = sk.kind || "招式";
+    const roles = cardRoleLabels(sk).join("、") || sk.kind || "招式";
     const cd = sk.cd == null ? "?" : sk.cd;
-    const lines = [`「${sk.name || ""}」`, `${kind}｜CD ${cd}`];
+    const lines = [`「${sk.name || ""}」`, `分類：${roles}｜CD ${cd}`];
     if (sk.effect) lines.push(`效果：${sk.effect}`);
     const summary = skillCombatSummary(sk);
     if (summary) lines.push(`結算：${summary}`);
@@ -3575,9 +3643,8 @@
       lines.push(`已滿星 ★${maxStar}｜每星成長：${perStar.length ? perStar.join(" · ") : "—"}`);
     }
 
-    // 主題配對
-    const tagName = equipTagLabel(item.tag_boost);
-    if (tagName) lines.push(`主題：${tagName}（裝備加乘本身不分卡種，全隊生效）`);
+    const roleName = cardRoleLabels(item).join("、");
+    if (roleName) lines.push(`分類：${roleName}（加乘全隊生效）`);
 
     const blurb = item.flavor || item.blurb || "";
     if (blurb) lines.push(blurb);
@@ -3630,8 +3697,8 @@
       : `每升 1 星：${perStar || "—"}｜下一星需同名卡 ${need} 張（現有 ${count}${canUp ? " · 可升" : ""}）`;
     head.push(`<div class="ht-line">${esc(starLine)}</div>`);
 
-    const tagName = equipTagLabel(item.tag_boost);
-    if (tagName) head.push(`<div class="ht-line">主題：${esc(tagName)}（加乘不分卡種，全隊生效）</div>`);
+    const roleName = cardRoleLabels(item).join("、");
+    if (roleName) head.push(`<div class="ht-line">分類：${esc(roleName)}（加乘全隊生效）</div>`);
 
     const blurb = item.flavor || item.blurb || "";
     const flavor = blurb ? `<div class="ht-flavor">${esc(blurb)}</div>` : "";
@@ -6238,7 +6305,7 @@
         if (!sk) return "";
         const eff = String(sk.effect || "").trim();
         const cd = (sk.cd | 0) > 0 ? `CD ${sk.cd | 0}` : "";
-        const head = [cd, sk.kind || ""].filter(Boolean).join(" · ");
+        const head = [cd, cardRoleLabels(sk).join("、")].filter(Boolean).join(" · ");
         return head ? `${head}：${eff}` : eff;
       }
       if (kind === "gear") {
@@ -6249,7 +6316,7 @@
           const v = it[k] | 0;
           if (v) bits.push(`${({ atk: "攻", def: "防", mdef: "魔防", spd: "速", hp: "血" })[k]}＋${v}`);
         });
-        const tag = it.tag_boost ? ` · 主題：${equipTagLabel(it.tag_boost) || it.tag_boost}` : "";
+        const tag = cardRoleLabels(it).length ? ` · 分類：${cardRoleLabels(it).join("、")}` : "";
         return (bits.join(" ") || "無數值") + tag;
       }
       /* 戰鬥卡 */
@@ -13286,7 +13353,7 @@
     const rarityBase = def.rarity || (isEnemy ? "敵方" : "普通");
     const raritySlang = def.rarity_slang || "";
     const rarity = raritySlang ? `${rarityBase} · ${raritySlang}` : rarityBase;
-    const tags = def.tags || [];
+    const tags = cardRoleLabels(def);
     const basic = unit.basic || def.basic || "首通";
     const skill = unit.skill || def.skill || "自帶技";
     const skillCd = unit.skill_cd || def.skill_cd || 3;
