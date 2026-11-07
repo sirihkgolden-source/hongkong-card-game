@@ -8979,6 +8979,14 @@ button.bs-skill {
   background: linear-gradient(180deg, #ffe08a, #e0a83a);
   box-shadow: 0 0 0 2px #ffd36a;
 }
+.set-link {
+  color: var(--neon-cyan);
+  font-size: 0.86rem;
+  font-weight: 800;
+  word-break: break-all;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .ib-item {
   display: grid;
   grid-template-columns: 52px minmax(0, 1fr);

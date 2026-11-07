@@ -10455,6 +10455,14 @@
               ${pick(!collapsed, 'data-set-attrs="0"', "展開")}
             </div>
           </section>
+          <section class="set-row">
+            <div class="gb-slot-name">討論區</div>
+            <a class="set-link" href="https://forum.hkgolden.com/channel/NW" target="_blank" rel="noopener noreferrer">高登 NW 台</a>
+          </section>
+          <section class="set-row">
+            <div class="gb-slot-name">電郵</div>
+            <a class="set-link" href="mailto:sirihkgolden@gmail.com">sirihkgolden@gmail.com</a>
+          </section>
         </div>
       </div>
       <div class="soft-cta">
