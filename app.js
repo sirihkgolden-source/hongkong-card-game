@@ -526,6 +526,135 @@
     return (DATA.events || []).find((e) => e.id === id && e.office_node) || null;
   }
 
+  /**
+   * 李步岸這類包唔會一次過演完。
+   * `office_interval_years`（guard_baoan 預設 7）：每一幕之間要再過這麼多年，
+   * 先會再遇到下一幕。
+   */
+  function officeIntervalYears(pack) {
+    if (!pack) return 0;
+    const n = pack.office_interval_years | 0;
+    if (n > 0) return n;
+    if (pack.id === "guard_baoan") return 7;
+    return 0;
+  }
+
+  function officePaceOf(packId) {
+    if (!state.officePace || typeof state.officePace !== "object") state.officePace = {};
+    const id = packId || "";
+    if (!id) return null;
+    if (!state.officePace[id] || typeof state.officePace[id] !== "object") {
+      state.officePace[id] = {
+        next: 0, lastTrack: "", lastText: "", lastYear: 0, finished: false, route: {}, chosen: [],
+      };
+    }
+    return state.officePace[id];
+  }
+
+  /** 由選擇的 track，或路線分數最高的一項，推出 strict／human／slack／out */
+  function officeChoiceTrack(pick) {
+    if (!pick) return "";
+    if (pick.track) return pick.track;
+    const d = pick.delta || {};
+    const keys = ["pro", "warm", "chaos", "out"];
+    const map = { pro: "strict", warm: "human", chaos: "slack", out: "out" };
+    let best = "pro";
+    let bestV = -1;
+    keys.forEach((k) => {
+      const v = d[k] | 0;
+      if (v > bestV) { bestV = v; best = k; }
+    });
+    return map[best] || "";
+  }
+
+  const OFFICE_TRACK_ATTR = { strict: "lead", human: "luck", slack: "agi", out: "str" };
+
+  /**
+   * 跟上一次選擇比較。同一條路有賞，反口有罰。
+   * 第一幕冇上次，回傳 null。只計預覽，真正入帳留到玩家確認返回。
+   */
+  function officeRelativePreview(pick, pace) {
+    if (!pace || !pace.lastTrack) return null;
+    const track = officeChoiceTrack(pick);
+    if (!track) return null;
+    const same = track === pace.lastTrack;
+    const attr = OFFICE_TRACK_ATTR[pace.lastTrack] || "lead";
+    return {
+      same,
+      soul: same ? 12 : -8,
+      attr,
+      attrDelta: same ? 1 : -1,
+      lastText: pace.lastText || "",
+    };
+  }
+
+  function applyOfficeRelative(rel) {
+    if (!rel) return "";
+    const soul = rel.soul | 0;
+    state.soul = Math.max(0, (state.soul | 0) + soul);
+    const key = rel.attr;
+    const delta = rel.attrDelta | 0;
+    if (key && state.attrs && Object.prototype.hasOwnProperty.call(state.attrs, key)) {
+      state.attrs[key] = Math.max(0, (state.attrs[key] | 0) + delta);
+    }
+    const name = ATTR_LABEL[key] || "";
+    const soulTxt = soul > 0 ? `膠幣 +${soul}` : `膠幣 ${soul}`;
+    const attrTxt = name ? `${name} ${delta > 0 ? "+" : ""}${delta}` : "";
+    return [soulTxt, attrTxt].filter(Boolean).join("、");
+  }
+
+  function baoanRetireAge(pack) {
+    return (pack && pack.baoan_retire_age | 0) || 65;
+  }
+
+  /** 上次李步岸幕用的是遊戲裡的歲數（同畫面「X歲」同一個數） */
+  function paceAnchorAge(pace) {
+    if (!pace) return 0;
+    if ((pace.lastAge | 0) > 0) return pace.lastAge | 0;
+    if ((pace.lastYear | 0) > 0) return (pace.lastYear | 0) + 9;
+    return 0;
+  }
+
+  /**
+   * 今年該出現的下一幕。
+   * 間隔跟遊戲歲數：上次幾歲，再過 7 歲先再出現。
+   * 遊戲年紀到 65，就係李步岸合法退休，唔再排後面的幕。
+   */
+  function officeDueChapter(pack, year) {
+    if (!pack || !officeIntervalYears(pack)) return null;
+    const activeId = state.activeStoryPackId || DEFAULT_STORY_PACK_ID;
+    if (pack.id !== activeId) return null;
+    if ((state.fateYearIndex | 0) < 3) return null;
+    const pace = officePaceOf(pack.id);
+    if (!pace || pace.finished || officePackCleared(pack.id)) return null;
+    const chain = Array.isArray(pack.office_chain) ? pack.office_chain : [];
+    const idx = pace.next | 0;
+    const age = state.age | 0;
+    const interval = officeIntervalYears(pack);
+    if (idx > 0 && age >= baoanRetireAge(pack)) {
+      return officeNodeById(pack.baoan_retire_event || "EV_GB_RETIRE");
+    }
+    if (idx < 0 || idx >= chain.length) return null;
+    const due = idx === 0 || age >= paceAnchorAge(pace) + interval;
+    if (!due) return null;
+    return officeNodeById(chain[idx]);
+  }
+
+  function injectOfficeChapter(picked, year) {
+    const pack = storyPackById(state.activeStoryPackId || DEFAULT_STORY_PACK_ID);
+    const due = officeDueChapter(pack, year);
+    if (!due) return picked;
+    const out = (picked || []).slice();
+    if (out.some((e) => e && e.id === due.id)) return out;
+    let ri = Math.max(0, out.length - 1);
+    for (let i = out.length - 1; i >= 0; i--) {
+      if (out[i] && out[i].category !== "main") { ri = i; break; }
+    }
+    if (out.length) out[ri] = due;
+    else out.push(due);
+    return out.slice(0, 4);
+  }
+
   /*
    * t384：職種分岔（修「第 1 步揀茶記，但之後全部寫字樓」）。
    *
@@ -553,6 +682,8 @@
   function officeNodeView(node, run) {
     if (!node || !node.track_variants) return node;
     const pack = officePack(run);
+    /* 隔年推進的李步岸用改寫過的主稿，唔再用三條舊變體（變體仍係一次過演完的版本） */
+    if (officeIntervalYears(pack)) return node;
     const keys = Object.keys(node.track_variants);
     const dflt = (pack && pack.office_variant_default) || keys[0];
     const track = officeTrackOf(run) || dflt;
@@ -622,6 +753,35 @@
     return state.officeRun;
   }
 
+  /**
+   * 打開隔年故事的「這一幕」。
+   * 路線分數同已選紀錄由 officePace 帶過來，唔會重頭洗掉。
+   */
+  function officeOpenPacedChapter(packId, nodeId) {
+    const pack = storyPackById(packId) || officePack();
+    const node = officeNodeById(nodeId);
+    if (!pack || !node) return null;
+    const pace = officePaceOf(pack.id);
+    const route = officeEmptyRoute(pack);
+    Object.keys(pace.route || {}).forEach((k) => { route[k] = pace.route[k] | 0; });
+    state.officeRun = {
+      packId: pack.id,
+      nodeId: node.id,
+      step: (pace.next | 0) + 1,
+      startAge: state.age | 0,
+      route,
+      chosen: (Array.isArray(pace.chosen) ? pace.chosen : []).map((c) => ({
+        text: c.text || "",
+        track: c.track || "",
+      })),
+      reveal: null,
+      phase: "intro",
+      dlgPage: 0,
+      paced: true,
+    };
+    return state.officeRun;
+  }
+
   /** 分支鏈內的年齡（唔影響 state.age） */
   function officeAge(run) {
     const r = run || state.officeRun;
@@ -655,7 +815,7 @@
       choiceIdx: choiceIdx | 0,
       text: pick.text || "",
       // t384：記住職種（第 1 步的選擇），之後每一步都按佢揀變體
-      track: pick.track || null,
+      track: pick.track || officeChoiceTrack(pick) || null,
       // t406：記住該選擇的專屬後果，供回顧時顯示
       outcome: String(pick.outcome || "").trim(),
       // t408（§2.4）：寫入的人生旗標（口碑／疲勞／人情／風險）
@@ -689,6 +849,8 @@
       step: run.step | 0,
       /* t408（§2.4）：連同人生旗標一齊顯示，令「有後果」睇得到 */
       flags: Array.isArray(pick.flags) ? pick.flags.slice() : [],
+      /* 隔年故事：跟上一次選擇的賞／罰。入帳留到玩家確認返回。 */
+      relative: officeRelativePreview(pick, officePaceOf(run.packId)),
     };
     /*
      * t406：四拍流程的階段。
@@ -888,6 +1050,11 @@
      * { packId, nodeId, step, startAge, route: {rich,biz,flat,street,scam}, chosen: [...] }
      */
     officeRun: null,
+    /**
+     * 隔年才推進的故事包進度（李步岸每 7 年一幕）。
+     * { [packId]: { next, lastTrack, lastText, lastYear, finished, route, chosen } }
+     */
+    officePace: {},
     /** 分支結局達成時的分支年齡（只供結局面顯示） */
     officeEndAge: 0,
     /**
@@ -1517,7 +1684,11 @@
         .map((id) => (DATA.events || []).find((e) => e.id === id))
         .filter(Boolean);
       if (cached.length === 4 && (allowCommerce || !cached.some(isCommerceEvent))) {
-        return cached;
+        const withChapter = injectOfficeChapter(cached, y);
+        if (withChapter.some((e, i) => !cached[i] || e.id !== cached[i].id)) {
+          state.yearEventOffer = withChapter.map((e) => e.id);
+        }
+        return withChapter;
       }
       state.yearEventOffer = [];
       state.yearEventYear = 0;
@@ -1692,6 +1863,7 @@
      * 若同 category 找不到，才放寬到任何 category。
      */
     picked = dedupeEventArt(picked, all);
+    picked = injectOfficeChapter(picked, y);
     state.yearEventOffer = picked.map((e) => e.id);
     state.yearEventYear = y;
     return picked;
@@ -2690,6 +2862,7 @@
       cardShards: cloneObj(state.cardShards, {}),
       accountGear: cloneObj(state.accountGear, {}),
       accountStats: cloneObj(state.accountStats, { maxAgeReached: 0, equipStarsTotal: 0 }),
+      officePace: cloneObj(state.officePace, {}),
       daily: cloneObj(state.daily, null),
       pendingDefeat: cloneObj(state.pendingDefeat, null),
       lastResult: cloneObj(state.lastResult, null),
@@ -2818,6 +2991,30 @@
       state.yearEventYear = Math.max(0, num(data.yearEventYear, 0) | 0);
       state.softNote = typeof data.softNote === "string" ? data.softNote : "";
       state.lifeFlags = (data.lifeFlags && typeof data.lifeFlags === "object") ? data.lifeFlags : {};
+      state.officePace = {};
+      if (data.officePace && typeof data.officePace === "object") {
+        Object.keys(data.officePace).forEach((pid) => {
+          if (!storyPackById(pid)) return;
+          const p = data.officePace[pid] || {};
+          const route = {};
+          const srcRoute = (p.route && typeof p.route === "object") ? p.route : {};
+          Object.keys(srcRoute).forEach((k) => { route[k] = srcRoute[k] | 0; });
+          const chosen = (Array.isArray(p.chosen) ? p.chosen : []).slice(0, 12).map((c) => ({
+            text: String((c && c.text) || "").slice(0, 80),
+            track: String((c && c.track) || ""),
+          }));
+          state.officePace[pid] = {
+            next: Math.max(0, p.next | 0),
+            lastTrack: typeof p.lastTrack === "string" ? p.lastTrack : "",
+            lastText: typeof p.lastText === "string" ? p.lastText.slice(0, 80) : "",
+            lastYear: Math.max(0, p.lastYear | 0),
+            lastAge: Math.max(0, p.lastAge | 0),
+            finished: !!p.finished,
+            route,
+            chosen,
+          };
+        });
+      }
       state.factions = (data.factions && typeof data.factions === "object") ? data.factions : {};
       state.factionChoiceResult = null;
       state.minigame = null;
@@ -2955,6 +3152,7 @@
     state.yearEventYear = 0;
     state.softNote = "";
     state.lifeFlags = {};
+    state.officePace = {};
     state.factions = {};
     state.factionChoiceResult = null;
     state.minigame = null;
@@ -4812,6 +5010,10 @@
 
     // 分支包：結局一覽（未通關只顯示數量與提示，唔顯示 label／blurb）
     const actCount = Math.max(1, (pack.office_chain || []).length);
+    const intervalYears = officeIntervalYears(pack);
+    const chainNote = intervalYears
+      ? `唔會一次過演完。每 ${intervalYears} 年先再遇到李步岸。今次選擇會跟上一次比較：同一條路有賞，反口有罰。`
+      : `每一幕三個選擇，後果喺選擇之後才揭示。共 ${actCount} 幕，行到最後才見結局。本包不設中途獎賞、不設升級。`;
     const endingsHtml = isOfficeChain && Array.isArray(pack.office_endings)
       ? (officeCleared
           ? `<div class="pack-ev-title">${pack.office_endings.length} 個結局（已完成 ${pack.office_endings.filter((e) => !!(state.lifeFlags && state.lifeFlags["office_ending_" + e.id])).length} / ${pack.office_endings.length}）</div>
@@ -4826,14 +5028,14 @@
                </div>`;
              }).join("")}</div>
              <div class="pack-ev-title">${actCount} 幕分支</div>
-             <p class="of-chain-note">每一幕三個選擇，後果喺選擇之後才揭示。共 ${actCount} 幕，行到最後才見結局。本包不設中途獎賞、不設升級。</p>`
+             <p class="of-chain-note">${chainNote}</p>`
           : `<div class="pack-ev-title">${pack.office_endings.length} 個結局</div>
              <div class="of-locked-note" role="status">
                <span class="of-locked-ico">🔒</span>
                <span>結局一覽同場面回想，行完一次之後才會解鎖。<br/>首次遊玩時完全唔會劇透。</span>
              </div>
              <div class="pack-ev-title">${actCount} 幕分支</div>
-             <p class="of-chain-note">每一幕三個選擇，後果喺選擇之後才揭示。共 ${actCount} 幕，行到最後才見結局。本包不設中途獎賞、不設升級。</p>`)
+             <p class="of-chain-note">${chainNote}</p>`)
       : "";
     /* t406：beats 只喺通關後顯示（原本一次列出全部場面＝劇透） */
     const beatHtml = (Array.isArray(pack.beats) && pack.beats.length && (!isOfficeChain || officeCleared))
@@ -5368,12 +5570,22 @@
       const packId = ev.story_pack_id || state.activeStoryPackId || DEFAULT_STORY_PACK_ID;
       const pack = storyPackById(packId);
       const chain = (pack && Array.isArray(pack.office_chain)) ? pack.office_chain : [];
-      if (!state.officeRun || state.officeRun.packId !== packId) {
-        officeBeginRun(packId);
-      }
-      if (state.officeRun && state.officeRun.packId === packId && chain.indexOf(ev.id) >= 0) {
-        const fresh = !(state.officeRun.chosen || []).length && (state.officeRun.step | 0) <= 1;
-        if (fresh && ev.id === (pack && pack.office_entry)) state.officeRun.nodeId = ev.id;
+      if (officeIntervalYears(pack)) {
+        const due = officeDueChapter(pack, state.year);
+        if (!due || due.id !== ev.id) {
+          state.screen = "events";
+          render();
+          return;
+        }
+        officeOpenPacedChapter(packId, ev.id);
+      } else {
+        if (!state.officeRun || state.officeRun.packId !== packId) {
+          officeBeginRun(packId);
+        }
+        if (state.officeRun && state.officeRun.packId === packId && chain.indexOf(ev.id) >= 0) {
+          const fresh = !(state.officeRun.chosen || []).length && (state.officeRun.step | 0) <= 1;
+          if (fresh && ev.id === (pack && pack.office_entry)) state.officeRun.nodeId = ev.id;
+        }
       }
       state.screen = "office";
       render();
@@ -5584,12 +5796,22 @@
     let phase = run.phase || "intro";
     if (phase === "dialogue" && !pages.length) phase = "choose";
     if (phase === "outcome" && !(run.reveal && run.reveal.outcome)) phase = "choose";
+    if (node.baoan_retire && phase === "choose") phase = "dialogue";
     run.phase = phase;
 
     const reveal = (phase === "outcome") ? run.reveal : null;
+    const paced = !!(run.paced || officeIntervalYears(pack));
+    const intervalYears = officeIntervalYears(pack);
+    const paceNow = (pack && officePaceOf(pack.id)) || {};
+    const retiring = !!(node.baoan_retire);
+    const lifeAge = state.age | 0;
 
-    /* HUD：主線用「第 N 幕」，唔再顯示歲數（避免同正文對唔上） */
-    const hudLeft = `${esc(pack ? pack.name : "故事包")} · 第 ${actNo} 幕 / ${totalSteps}`;
+    /* 歲數跟今世畫面同一個數，唔另起一條故事年齡 */
+    const hudLeft = paced
+      ? (retiring
+        ? `${esc(pack ? pack.name : "故事包")} · ${lifeAge}歲 · 合法退休`
+        : `${esc(pack ? pack.name : "故事包")} · 第 ${actNo} 幕 · ${lifeAge}歲`)
+      : `${esc(pack ? pack.name : "故事包")} · 第 ${actNo} 幕 / ${totalSteps}`;
     /* 進場短敘（desc）— intro 階段只顯示這一段 */
     const introHtml = phase === "intro"
       ? `<div class="of-intro">
@@ -5608,7 +5830,7 @@
       return `<button type="button" class="of-choice" data-choice="${i}" aria-label="選項${label}：${esc(c.text)}">
         <span class="of-choice-tag">選項 ${label}</span>
         <span class="of-choice-text">${esc(c.text)}</span>
-        <span class="of-choice-unknown">後果未知 · 選後揭曉</span>
+        <span class="of-choice-unknown">${paced && paceNow.lastTrack ? "後果未知 · 會跟上一次比較" : "後果未知 · 選後揭曉"}</span>
       </button>`;
     }).join("") : "";
 
@@ -5625,11 +5847,29 @@
       return `<div class="of-outcome-flags" role="status">${chips}</div>`;
     })();
 
+    const rel = reveal && reveal.relative;
+    const relHtml = (() => {
+      if (!rel) return "";
+      const name = ATTR_LABEL[rel.attr] || "";
+      const soulTxt = (rel.soul | 0) > 0 ? `膠幣 +${rel.soul}` : `膠幣 ${rel.soul}`;
+      const attrTxt = name ? `${name} ${(rel.attrDelta | 0) > 0 ? "+" : ""}${rel.attrDelta}` : "";
+      const nums = [soulTxt, attrTxt].filter(Boolean).join(" · ");
+      const head = rel.same
+        ? `跟上一次「${rel.lastText}」同一條路。`
+        : `同你上次「${rel.lastText}」相反。`;
+      return `<div class="of-relative ${rel.same ? "reward" : "punish"}" role="status">
+        <div class="of-relative-tag">${rel.same ? "獎勵" : "懲罰"}</div>
+        <p>${esc(head)}</p>
+        <p class="of-relative-num">${esc(nums)}</p>
+      </div>`;
+    })();
+
     const outcomeHtml = reveal
       ? `<div class="of-outcome" role="status" data-step="${esc(String(reveal.step || stepNo))}">
            <div class="of-outcome-kicker">第 ${esc(String(reveal.step || stepNo))} 幕・你揀了</div>
            <p class="of-outcome-choice">「${esc(reveal.choiceText)}」</p>
            <div class="of-outcome-body">${esc(reveal.outcome)}</div>
+           ${relHtml}
            ${outcomeFlagsHtml}
          </div>`
       : "";
@@ -5640,14 +5880,21 @@
       cta = `<button class="btn gold of-cta-main" id="of-next" type="button">${pages.length ? "繼續" : "揀"}</button>`;
     } else if (phase === "dialogue") {
       const last = page >= pages.length - 1;
-      cta = `<button class="btn gold of-cta-main" id="of-next" type="button">${last ? "揀" : "下一句"}</button>`;
+      const dlgLabel = retiring ? (last ? "睇結局" : "下一句") : (last ? "揀" : "下一句");
+      cta = `<button class="btn gold of-cta-main" id="of-next" type="button">${dlgLabel}</button>`;
     } else if (phase === "choose") {
       cta = "";  /* 選擇用卡本身 */
     } else {
-      /* outcome：明確「繼續下一幕」，唔可以同其他地方共用點擊 */
-      const isFinal = stepNo >= totalSteps;
-      cta = `<button class="btn gold of-cta-main" id="of-next" type="button">${isFinal ? "睇結局" : `去第 ${stepNo + 1} 幕`}</button>`;
+      /* outcome：隔年故事返回人生；一次過的鏈先去下一幕 */
+      const isFinal = !paced && stepNo >= totalSteps;
+      const nextLabel = paced ? "返回人生" : (isFinal ? "睇結局" : `去第 ${stepNo + 1} 幕`);
+      cta = `<button class="btn gold of-cta-main" id="of-next" type="button">${nextLabel}</button>`;
     }
+    const paceNote = paced
+      ? (paceNow.lastTrack
+        ? "今次會跟上一次選擇比較。同一條路有賞，反口有罰。揀完就返回人生。"
+        : `揀完呢一幕就返回人生。每 ${intervalYears} 年先會再遇到李步岸，到時會按今次選擇賞或者罰。`)
+      : "此故事包不設獎賞與升級；行到最後才知道結果。";
 
     const trail = (run.chosen || []).map((c, i) =>
       `<li class="of-trail-item"><span class="of-trail-step">${i + 1}</span>${esc(c.text)}</li>`
@@ -5661,7 +5908,7 @@
         ${choiceHtml}
         ${outcomeHtml}
         ${trail && phase === "choose" ? `<details class="of-trail"><summary>已行過嘅路（${run.chosen.length}）</summary><ol>${trail}</ol></details>` : ""}
-        <p class="of-note">此故事包不設獎賞與升級；行到最後才知道結果。</p>
+        <p class="of-note">${esc(paceNote)}</p>
       </div>
       ${cta}
       <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
@@ -5695,6 +5942,9 @@
           if (page < pages.length - 1) {
             run.dlgPage = page + 1;
             render();
+          } else if (node.baoan_retire) {
+            officeAdvanceAfterChoice(null);
+            render();
           } else {
             run.phase = "choose";
             render();
@@ -5702,10 +5952,11 @@
           return;
         }
         if (run.phase === "outcome") {
+          const relNow = run.reveal && run.reveal.relative;
           run.reveal = null;
           run.phase = "intro";
           run.dlgPage = 0;
-          officeAdvanceAfterChoice();
+          officeAdvanceAfterChoice(relNow);
           render();
           return;
         }
@@ -5722,13 +5973,55 @@
    *  - 非最後節點 → 去下一個鏈節點
    *  - 最後節點 → 依 route 分數算出結局，入結局事件（soft 畫面，+50 膠幣）
    */
-  function officeAdvanceAfterChoice() {
+  function officeCommitPace(run, finished) {
+    const pace = officePaceOf(run && run.packId);
+    if (!pace || !run) return;
+    const last = (run.chosen || [])[run.chosen.length - 1] || {};
+    pace.next = (pace.next | 0) + 1;
+    pace.lastTrack = last.track || pace.lastTrack || "";
+    pace.lastText = last.text || pace.lastText || "";
+    pace.lastYear = state.year | 0;
+    pace.lastAge = state.age | 0;
+    pace.route = Object.assign({}, run.route || {});
+    pace.chosen = (run.chosen || []).map((c) => ({ text: c.text || "", track: c.track || "" }));
+    if (finished) pace.finished = true;
+  }
+
+  function officeReturnToLife() {
+    state.officeRun = null;
+    state.selectedEvent = null;
+    state.softNote = "";
+    advanceYear();
+    if (lifeDoneFlag()) {
+      state.lastResult = {
+        win: true,
+        reward: 0,
+        rewardBlurb: lifeEndBlurb(),
+        eventName: lifeEndName(),
+        deadNames: [],
+      };
+      state.screen = "result";
+    } else {
+      state.screen = "events";
+    }
+  }
+
+  function officeAdvanceAfterChoice(relative) {
     const run = state.officeRun;
     if (!run) return;
     const pack = officePack(run);
+    const paced = !!(run.paced || officeIntervalYears(pack));
+    const retiring = run.nodeId === (pack && (pack.baoan_retire_event || "EV_GB_RETIRE"));
     const chain = (pack && Array.isArray(pack.office_chain)) ? pack.office_chain : [];
     const idx = chain.indexOf(run.nodeId);
-    const isLast = idx >= 0 ? idx >= chain.length - 1 : true;
+    const isLast = retiring || (!paced && (idx < 0 || idx >= chain.length - 1));
+
+    if (paced && !retiring) {
+      applyOfficeRelative(relative);
+      officeCommitPace(run, false);
+      officeReturnToLife();
+      return;
+    }
 
     if (!isLast) {
       const nextNode = officeNodeById(chain[idx + 1]);
@@ -5738,6 +6031,11 @@
         // t365：分支鏈年齡由 officeAge() 推算，唔改 state.age（見 officeBeginRun 註解）
         return;
       }
+    }
+
+    if (paced) {
+      applyOfficeRelative(relative);
+      officeCommitPace(run, true);
     }
 
     // 走完鏈：算結局
@@ -7607,7 +7905,7 @@
       : "";
     root.innerHTML = `
       ${isEnding
-        ? `<div class="of-hud">${esc(packMeta ? packMeta.name : "故事包")} · 結局</div>`
+        ? `<div class="of-hud">${esc(packMeta ? packMeta.name : "故事包")} · ${officeIntervalYears(packMeta) ? `${state.age | 0}歲 · ` : ""}結局</div>`
         : lifeHudHtml()}
       <div class="ribbon">${isEnding
         ? "分支結局"
@@ -7623,7 +7921,9 @@
       </div>
       <div class="soft-cta">
         ${isEnding
-          ? `<p class="of-ending-note">故事包歲月獨立於人生歲數——返回人生後，你仍然係原本歲數。</p>
+          ? `<p class="of-ending-note">${officeIntervalYears(packMeta)
+            ? "李步岸冇死。佢只係到咗保安員合法退休年紀，喜劇收場。返回人生後，你照過你的歲數。"
+            : "故事包歲月獨立於人生歲數——返回人生後，你仍然係原本歲數。"}</p>
              <button class="btn gold of-ending-ok" id="btn-ok-ending" type="button">睇完，返回人生</button>`
           : autoAdvanceBarHtml(lifeDoneFlag() ? "結算今世" : `下一歲 ${state.age + 1}歲`)}
         <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
@@ -9619,6 +9919,8 @@
       const activeId = state.activeStoryPackId || DEFAULT_STORY_PACK_ID;
       if (ev.story_pack_id && ev.story_pack_id !== activeId) return true;
       const pack = storyPackById(ev.story_pack_id) || storyPackById(activeId);
+      /* 隔年推進的包（李步岸）唔入隨機池，只由「每 N 年」注入下一幕 */
+      if (officeIntervalYears(pack)) return true;
       const entry = pack && pack.office_entry;
       if (!entry || ev.id !== entry) return true;
       return officePackCleared(pack && pack.id);

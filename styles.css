@@ -10780,6 +10780,36 @@ html, body {
   line-height: 1.4;
   color: #fff;
 }
+.of-relative {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 2px solid #0a0610;
+  text-align: center;
+}
+.of-relative.reward {
+  background: rgba(184, 255, 74, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(184, 255, 74, 0.45);
+}
+.of-relative.punish {
+  background: rgba(255, 77, 106, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(255, 77, 106, 0.45);
+}
+.of-relative p { margin: 0; }
+.of-relative-tag {
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+.of-relative.reward .of-relative-tag { color: var(--neon-lime, #b8ff4a); }
+.of-relative.punish .of-relative-tag { color: #ff8fa3; }
+.of-relative-num {
+  margin-top: 4px !important;
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--neon-gold, #ffd36a);
+}
 .of-outcome-body {
   font-size: 0.82rem;
   line-height: 1.7;
