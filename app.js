@@ -5356,10 +5356,20 @@
     // t364：故事包分支鏈節點 → 分支選擇畫面（隱藏後果，選完才揭示）
     if (isOfficeChainEvent(ev)) {
       state.eventConfirmOpen = false;
-      if (!state.officeRun || state.officeRun.nodeId !== ev.id) {
-        // 玩家由事件卡直接點進某個節點（例如中途退出後再入）→ 由頭開始
-        officeBeginRun();
-        if (state.officeRun) state.officeRun.nodeId = ev.id;
+      /*
+       * 節點屬於邊個故事包，就開邊個包。
+       * 舊版 officeBeginRun() 跟「使用中的氣氛包」，再把 nodeId 硬改成剛點的事件，
+       * 於是《你的保安，李步岸》的標題會播《打工仔輓歌》的對白。
+       */
+      const packId = ev.story_pack_id || state.activeStoryPackId || DEFAULT_STORY_PACK_ID;
+      const pack = storyPackById(packId);
+      const chain = (pack && Array.isArray(pack.office_chain)) ? pack.office_chain : [];
+      if (!state.officeRun || state.officeRun.packId !== packId) {
+        officeBeginRun(packId);
+      }
+      if (state.officeRun && state.officeRun.packId === packId && chain.indexOf(ev.id) >= 0) {
+        const fresh = !(state.officeRun.chosen || []).length && (state.officeRun.step | 0) <= 1;
+        if (fresh && ev.id === (pack && pack.office_entry)) state.officeRun.nodeId = ev.id;
       }
       state.screen = "office";
       render();
@@ -5552,7 +5562,8 @@
       return;
     }
     if (!run) {
-      officeBeginRun();
+      const seeded = state.selectedEvent;
+      officeBeginRun((seeded && seeded.story_pack_id) || state.activeStoryPackId || DEFAULT_STORY_PACK_ID);
       render();
       return;
     }
@@ -9298,15 +9309,14 @@
     if (ev.office_ending) return true;
     if (ev.office_node) {
       /*
-       * t407：分支鏈節點只可以由「它自己所屬的故事包」鏈頭入池。
-       * 舊版用 `officePack()`（永遠係使用中的包）比對 entry，
-       * 多包之後會誤判——改成用事件自身的 story_pack_id。
+       * 年度四揀一只可以出現「而家使用中的故事包」的鏈頭。
+       * 其他包的分支（例如用緊李步岸，卻抽到打工仔輓歌「第一日返工」）一律排除。
        */
-      const pack = storyPackById(ev.story_pack_id) || officePack();
+      const activeId = state.activeStoryPackId || DEFAULT_STORY_PACK_ID;
+      if (ev.story_pack_id && ev.story_pack_id !== activeId) return true;
+      const pack = storyPackById(ev.story_pack_id) || storyPackById(activeId);
       const entry = pack && pack.office_entry;
-      // 非鏈頭 → 一律排除
       if (!entry || ev.id !== entry) return true;
-      // 鏈頭：該包已完成任何結局 → 唔再出（一個故事包只玩一次）
       return officePackCleared(pack && pack.id);
     }
     // t369：tale 鏈節點亦唔入年度池（同 office 一樣只由分支鏈觸發）
