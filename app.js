@@ -9264,14 +9264,16 @@
       ${lifeHudHtml()}
       <div class="ribbon">裝備</div>
       <div class="al-wrap gb-wrap">
-        <div class="al-top">
-          <span class="al-pill">全隊加乘 ${esc(formatTeamBonus(accountGearBonus()))}</span>
+        <div class="gb-scroll">
+          <div class="al-top">
+            <span class="al-pill">全隊加乘 ${esc(formatTeamBonus(accountGearBonus()))}</span>
+          </div>
+          <p class="al-hint">使用中的裝備加乘全隊。換上會取代同一槽。</p>
+          <div class="gb-label">使用中</div>
+          <div class="gb-slots">${slotRows}</div>
+          <div class="gb-label">已獲得</div>
+          <div class="gb-list">${ownedRows}</div>
         </div>
-        <p class="al-hint">使用中的裝備加乘全隊。換上會取代同一槽。</p>
-        <div class="gb-label">使用中</div>
-        <div class="gb-slots">${slotRows}</div>
-        <div class="gb-label">已獲得</div>
-        <div class="gb-list">${ownedRows}</div>
       </div>
       <div class="soft-cta">
         <button type="button" class="btn gold" id="btn-gear-back">返回</button>

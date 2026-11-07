@@ -8807,16 +8807,25 @@ html, body {
   color: var(--neon-cyan);
   padding: 2px 2px 0;
 }
+.gb-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 10px;
+}
 .gb-slots, .gb-list {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  flex: 0 0 auto;
 }
 .gb-list {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  padding-bottom: 4px;
+  overflow: visible;
+  padding-bottom: 2px;
 }
 .gb-slot, .gb-item {
   display: grid;
