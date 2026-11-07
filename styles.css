@@ -8799,6 +8799,53 @@ html, body {
   flex-shrink: 0;
   justify-content: center;
 }
+.gb-label {
+  flex-shrink: 0;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: var(--neon-cyan);
+  padding: 2px 2px 0;
+}
+.gb-slots, .gb-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.gb-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 4px;
+}
+.gb-slot, .gb-item {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 6px;
+  border-radius: 10px;
+  border: 2px solid #0a0610;
+  background: linear-gradient(180deg, rgba(28, 18, 40, 0.94), rgba(12, 8, 20, 0.96));
+  flex-shrink: 0;
+}
+.gb-slot.on, .gb-item.on { box-shadow: 0 0 0 2px rgba(255, 211, 106, 0.55); }
+.gb-slot-art {
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #120a1c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gb-slot-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gb-ph { font-size: 1.1rem; font-weight: 900; color: var(--muted); }
+.gb-slot-k { font-size: 0.58rem; font-weight: 800; color: var(--neon-gold); }
+.gb-slot-name { font-size: 0.82rem; font-weight: 900; color: var(--text); }
+.gb-slot-stat { font-size: 0.64rem; font-weight: 700; color: #c9b8d8; }
+.gb-act { padding: 4px 8px !important; font-size: 0.66rem !important; min-height: 0 !important; }
 .al-pill {
   font-size: 0.64rem;
   font-weight: 800;

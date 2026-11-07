@@ -4395,6 +4395,7 @@
       train: "bg-soft",
       revive: "bg-soft",
       allies: "bg-soft",
+      gearBag: "bg-soft",
       team: "bg-team",
       equip: "bg-team",
       prep: "bg-team",
@@ -4449,6 +4450,7 @@
       train: viewFighterTrain,
       revive: viewFighterRevive,
       allies: viewAlliesPanel,
+      gearBag: viewGearBag,
       prep: viewPrep,
       team: viewPrep,
       equip: viewPrep,
@@ -9211,6 +9213,99 @@
     render();
   }
 
+  function gearStatBits(item) {
+    const eff = effectiveEquipStats(item);
+    const bits = [];
+    if (eff.atk) bits.push("攻+" + eff.atk);
+    if (eff.def) bits.push("防+" + eff.def);
+    if (eff.hp) bits.push("血+" + eff.hp);
+    if (eff.spd) bits.push("速+" + eff.spd);
+    return bits.join(" ") || "無數值";
+  }
+
+  function viewGearBag(root) {
+    ensureGearShape();
+    albumEnsureState();
+    const byId = itemByIdLookup();
+    const equippedIds = new Set(GEAR_SLOTS.map((s) => state.accountGear[s.id]).filter(Boolean));
+    const slotRows = GEAR_SLOTS.map((slot) => {
+      const iid = state.accountGear[slot.id];
+      const it = iid ? byId[iid] : null;
+      const art = it && it.art
+        ? `<img src="${esc(it.art)}" alt="" />`
+        : `<span class="gb-ph">＋</span>`;
+      return `<div class="gb-slot${it ? " on" : ""}">
+        <div class="gb-slot-art">${art}</div>
+        <div class="gb-slot-body">
+          <div class="gb-slot-k">${esc(slot.label)}槽 · 使用中</div>
+          <div class="gb-slot-name">${esc(it ? (it.name || it.id) : "未裝備")}</div>
+          <div class="gb-slot-stat">${it ? esc(gearStatBits(it)) : esc(slot.hint)}</div>
+        </div>
+        ${it ? `<button type="button" class="btn small ghost gb-act" data-gear-id="${esc(it.id)}">卸下</button>` : ""}
+      </div>`;
+    }).join("");
+    const owned = equipItemList().filter((it) => it && it.id && albumCardCount(it.id) > 0);
+    const ownedRows = owned.map((it) => {
+      const slot = GEAR_SLOTS.find((s) => s.id === (it.slot || it.slot_id));
+      const on = equippedIds.has(it.id);
+      const art = it.art ? `<img src="${esc(it.art)}" alt="" />` : `<span class="gb-ph">裝</span>`;
+      return `<div class="gb-item${on ? " on" : ""}">
+        <div class="gb-slot-art">${art}</div>
+        <div class="gb-slot-body">
+          <div class="gb-slot-name">${esc(it.name || it.id)}</div>
+          <div class="gb-slot-stat">${esc(slot ? slot.label + "槽" : "未分槽")} · ${esc(gearStatBits(it))} · x${albumCardCount(it.id)}</div>
+        </div>
+        <button type="button" class="btn small ${on ? "ghost" : "gold"} gb-act" data-gear-id="${esc(it.id)}">${on ? "卸下" : "換上"}</button>
+      </div>`;
+    }).join("") || `<p class="ally-empty">未有裝備。扭蛋或事件可以得到。</p>`;
+    root.innerHTML = `
+      ${lifeHudHtml()}
+      <div class="ribbon">裝備</div>
+      <div class="al-wrap gb-wrap">
+        <div class="al-top">
+          <span class="al-pill">全隊加乘 ${esc(formatTeamBonus(accountGearBonus()))}</span>
+        </div>
+        <p class="al-hint">使用中的裝備加乘全隊。換上會取代同一槽。</p>
+        <div class="gb-label">使用中</div>
+        <div class="gb-slots">${slotRows}</div>
+        <div class="gb-label">已獲得</div>
+        <div class="gb-list">${ownedRows}</div>
+      </div>
+      <div class="soft-cta">
+        <button type="button" class="btn gold" id="btn-gear-back">返回</button>
+      </div>
+      ${storyDockHtml()}
+    `;
+    const toast = (msg) => storyToast(root, msg);
+    if (state.gearBagNote) {
+      const note = state.gearBagNote;
+      state.gearBagNote = "";
+      setTimeout(() => toast(note), 40);
+    }
+    root.querySelectorAll(".gb-act[data-gear-id]").forEach((btn) => {
+      btn.onclick = () => {
+        const id = btn.getAttribute("data-gear-id");
+        const ok = albumToggleGearEquip(id, (_r, msg) => { state.gearBagNote = msg; }, root);
+        if (ok) {
+          try { saveGame(); } catch (_) {}
+          render();
+        }
+      };
+    });
+    $("#btn-gear-back", root).onclick = () => {
+      state.screen = state.gearBagReturnScreen || "events";
+      state.gearBagReturnScreen = null;
+      render();
+    };
+    wireStoryDock(root);
+  }
+
+  function openGearBag() {
+    if (state.screen !== "gearBag") state.gearBagReturnScreen = state.screen || "events";
+    state.screen = "gearBag";
+    render();
+  }
+
   /** 故事流底欄 7 掣（港式名；對齊參考：盟友／冒險技能／戰鬥技能／裝備／道具／聲望／戰利品） */
   function storyDockHtml() {
     return `
@@ -9244,6 +9339,10 @@
         const k = btn.dataset.sd;
         if (k === "allies") {
           openAlliesPanel();
+          return;
+        }
+        if (k === "gear") {
+          openGearBag();
           return;
         }
         if (k === "fame") {
