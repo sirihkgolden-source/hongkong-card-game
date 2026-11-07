@@ -10213,14 +10213,14 @@
       const art = it && it.art
         ? `<img src="${esc(it.art)}" alt="" />`
         : `<span class="gb-ph">＋</span>`;
-      return `<div class="gb-slot${it ? " on" : ""}">
-        <div class="gb-slot-art">${art}</div>
-        <div class="gb-slot-body">
-          <div class="gb-slot-k">${esc(slot.label)}槽 · 使用中</div>
-          <div class="gb-slot-name">${esc(it ? (it.name || it.id) : "未裝備")}</div>
-          <div class="gb-slot-stat">${it ? esc(gearStatBits(it)) : esc(slot.hint)}</div>
-        </div>
-        ${it ? `<button type="button" class="btn small ghost gb-act" data-gear-id="${esc(it.id)}">卸下</button>` : ""}
+      const star = it ? equipStarOf(it) : 0;
+      const maxS = it ? (Number(it.max_star) || 5) : 0;
+      return `<div class="gb-cell${it ? " on" : " empty"}" data-gear-slot="${esc(slot.id)}">
+        <div class="gb-cell-part">${esc(slot.label)}</div>
+        <div class="gb-cell-art">${art}</div>
+        <div class="gb-cell-name">${esc(it ? (it.name || it.id) : "未裝備")}</div>
+        <div class="gb-cell-stat">${it ? `${"★".repeat(star)}${"☆".repeat(Math.max(0, maxS - star))} ${esc(gearStatBits(it))}` : esc(slot.hint)}</div>
+        ${it ? `<button type="button" class="gb-cell-off" data-gear-id="${esc(it.id)}">卸下</button>` : ""}
       </div>`;
     }).join("");
     const owned = equipItemList().filter((it) => it && it.id && albumCardCount(it.id) > 0);
@@ -10245,9 +10245,9 @@
           <div class="al-top">
             <span class="al-pill">全隊加乘 ${esc(formatTeamBonus(accountGearBonus()))}</span>
           </div>
-          <p class="al-hint">使用中的裝備加乘全隊。換上會取代同一槽。</p>
-          <div class="gb-label">使用中</div>
-          <div class="gb-slots">${slotRows}</div>
+          <p class="al-hint">六個部位。有裝的會顯示名字，空位是未裝備。</p>
+          <div class="gb-label">現時裝備</div>
+          <div class="gb-board" aria-label="六格裝備欄">${slotRows}</div>
           <div class="gb-label">已獲得</div>
           <div class="gb-list">${ownedRows}</div>
         </div>
@@ -10263,7 +10263,7 @@
       state.gearBagNote = "";
       setTimeout(() => toast(note), 40);
     }
-    root.querySelectorAll(".gb-act[data-gear-id]").forEach((btn) => {
+    root.querySelectorAll("[data-gear-id]").forEach((btn) => {
       btn.onclick = () => {
         const id = btn.getAttribute("data-gear-id");
         const ok = albumToggleGearEquip(id, (_r, msg) => { state.gearBagNote = msg; }, root);
