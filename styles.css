@@ -10273,50 +10273,69 @@ html, body {
 .mj-step-dot.used { background: rgba(255, 120, 140, 0.28); }
 
 .mj-hand {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 4px;
-  padding: 4px 2px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 6px 4px;
+  padding: 8px 4px 6px;
   flex: 0 0 auto;
   min-height: 0;
+  border-radius: 12px;
+  background:
+    radial-gradient(90% 80% at 50% 100%, rgba(18, 92, 48, 0.38), transparent 72%),
+    linear-gradient(180deg, rgba(70, 36, 18, 0.35), rgba(28, 16, 8, 0.2));
+  box-shadow: inset 0 0 0 1px rgba(255, 214, 140, 0.12);
 }
 .mj-tile {
   appearance: none;
-  border: 2px solid #20140c;
-  border-radius: 5px;
-  background: linear-gradient(180deg, #f6efdd 0%, #e2d5ba 62%, #cbb99a 100%);
+  width: calc((100% - 28px) / 7);
+  max-width: 54px;
+  aspect-ratio: 3 / 4.15;
+  border: 1.5px solid #6a4e32;
+  border-radius: 4px 4px 6px 6px;
+  background: linear-gradient(180deg, #fffefb 0%, #f8f1e3 46%, #ead9b8 100%);
   color: #1a1008;
-  padding: 3px 1px 2px;
+  padding: 2px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
-  gap: 0;
-  line-height: 1;
   cursor: pointer;
-  box-shadow: 0 2px 0 #120a06, 0 0 0 1px rgba(255, 255, 255, 0.35) inset;
+  box-shadow:
+    0 3px 0 #2a1a10,
+    0 5px 8px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 #fff;
   transition: transform 0.07s, box-shadow 0.12s;
-  min-height: 44px;
   touch-action: manipulation;
 }
-.mj-tile:active { transform: translateY(2px); box-shadow: 0 0 0 #120a06; }
-.mj-tile .mj-num { font-size: 0.92rem; font-weight: 900; letter-spacing: 0; }
-.mj-tile .mj-suit { font-size: 0.62rem; font-weight: 900; opacity: 0.78; }
-/* 萬／筒／條 用不同顏色區分（唔靠圖，靠色） */
-.mj-tile[data-mj-tile] .mj-suit { color: #1a1008; }
+.mj-tile:active { transform: translateY(2px); box-shadow: 0 1px 0 #2a1a10; }
+.mj-face {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #fffdf8 0%, #f4ead6 100%);
+  box-shadow: inset 0 0 0 1px rgba(120, 84, 40, 0.22);
+}
+.mj-face .mj-svg { width: 100%; height: 100%; display: block; }
 .mj-tile.drawn {
-  background: linear-gradient(180deg, #fff6c8 0%, #ffe08a 60%, #f0c45c 100%);
-  box-shadow: 0 2px 0 #120a06, 0 0 0 2px rgba(255, 200, 106, 0.8) inset, 0 0 10px rgba(255, 200, 106, 0.5);
+  background: linear-gradient(180deg, #fff8dc 0%, #ffe7a3 100%);
+  box-shadow:
+    0 3px 0 #2a1a10,
+    0 0 0 2px #e2b23a,
+    0 0 14px rgba(255, 200, 80, 0.65);
 }
 .mj-drawn {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 2px 4px;
   flex: 0 0 auto;
 }
 .mj-drawn-label { font-size: 0.6rem; font-weight: 900; color: #ffcc6a; letter-spacing: 0.06em; }
-.mj-drawn .mj-tile { width: 46px; }
+.mj-drawn .mj-tile { width: 54px; max-width: 54px; }
 .mj-hint {
   margin: 0;
   font-size: 0.6rem;
@@ -10422,10 +10441,9 @@ html, body {
 
 /* 橫屏：牌再細一號，確保一屏睇完 */
 @media (orientation: landscape) and (max-width: 1024px) {
-  .mj-hand { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
-  .mj-tile { min-height: 34px; padding: 2px 1px; }
-  .mj-tile .mj-num { font-size: 0.78rem; }
-  .mj-tile .mj-suit { font-size: 0.54rem; }
+  .mj-hand { gap: 4px 3px; padding: 4px 2px; }
+  .mj-tile { width: calc((100% - 36px) / 13); max-width: 42px; }
+  .mj-drawn .mj-tile { width: 42px; max-width: 42px; }
   .dice-dealer { height: 120px; }
   .dice-last { padding: 4px; }
   .dice-die { width: 44px; height: 44px; font-size: 1.9rem; }

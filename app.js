@@ -7796,6 +7796,156 @@
   }
   function mjKey(t) { return t.suit + t.num; }
 
+  /** 手牌按萬、筒、條再按點數排，先睇清花色 */
+  function mjSortHand(hand) {
+    const order = { wan: 0, tong: 1, tiao: 2 };
+    hand.sort((a, b) => (order[a.suit] - order[b.suit]) || ((a.num | 0) - (b.num | 0)));
+    return hand;
+  }
+
+  /**
+   * 牌面：象牙底上面畫真正嘅筒子、索子、萬子。
+   * 每張 SVG 用自己嘅 gradient id，避免同一頁多張牌搶同一個 id。
+   */
+  function mjFaceSvg(tile, uid) {
+    const id = "mj" + String(uid || "x").replace(/[^a-z0-9]/gi, "");
+    const n = tile.num | 0;
+    const defs = `
+      <defs>
+        <radialGradient id="${id}g" cx="32%" cy="28%" r="72%">
+          <stop offset="0%" stop-color="#e9fff0"/>
+          <stop offset="38%" stop-color="#2eae5c"/>
+          <stop offset="100%" stop-color="#0b5c2e"/>
+        </radialGradient>
+        <radialGradient id="${id}r" cx="32%" cy="28%" r="72%">
+          <stop offset="0%" stop-color="#ffe4dc"/>
+          <stop offset="40%" stop-color="#ef4b4a"/>
+          <stop offset="100%" stop-color="#8d141c"/>
+        </radialGradient>
+        <radialGradient id="${id}a" cx="32%" cy="28%" r="72%">
+          <stop offset="0%" stop-color="#fff6d2"/>
+          <stop offset="42%" stop-color="#e2b23a"/>
+          <stop offset="100%" stop-color="#8a5a0c"/>
+        </radialGradient>
+        <linearGradient id="${id}b" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#0c5a28"/>
+          <stop offset="42%" stop-color="#5ad484"/>
+          <stop offset="100%" stop-color="#083e1c"/>
+        </linearGradient>
+        <linearGradient id="${id}br" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#8a141c"/>
+          <stop offset="46%" stop-color="#ff8d86"/>
+          <stop offset="100%" stop-color="#6a1016"/>
+        </linearGradient>
+      </defs>`;
+    let body = "";
+    if (tile.suit === "tong") body = mjTongFace(n, id);
+    else if (tile.suit === "tiao") body = mjTiaoFace(n, id);
+    else body = mjWanFace(n);
+    return `<svg class="mj-svg" viewBox="0 0 60 82" aria-hidden="true">${defs}${body}</svg>`;
+  }
+
+  function mjDot(id, cx, cy, r, kind) {
+    const g = kind === "red" ? id + "r" : (kind === "gold" ? id + "a" : id + "g");
+    const stroke = kind === "red" ? "#6e1018" : (kind === "gold" ? "#6a4a08" : "#084422");
+    const hx = (cx - r * 0.32).toFixed(2);
+    const hy = (cy - r * 0.34).toFixed(2);
+    return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#${g})" stroke="${stroke}" stroke-width="0.7"/>
+      <circle cx="${hx}" cy="${hy}" r="${(r * 0.26).toFixed(2)}" fill="rgba(255,255,255,0.78)"/>`;
+  }
+
+  function mjTongFace(n, id) {
+    if (n === 1) {
+      return `<circle cx="30" cy="41" r="24" fill="none" stroke="#1a6f96" stroke-width="3.2"/>
+        <circle cx="30" cy="41" r="18.5" fill="none" stroke="#c4282e" stroke-width="2"/>
+        ${mjDot(id, 30, 41, 12, "jade")}
+        <circle cx="30" cy="41" r="4.2" fill="url(#${id}r)" stroke="#6e1018" stroke-width="0.5"/>`;
+    }
+    const redAt = new Set();
+    let pts = [];
+    let R = n >= 8 ? 6.2 : (n >= 6 ? 7.1 : 8.4);
+    if (n === 2) { pts = [[30, 26], [30, 56]]; R = 12; }
+    else if (n === 3) { pts = [[17, 20], [30, 41], [43, 62]]; R = 10; redAt.add(1); }
+    else if (n === 4) pts = [[16, 24], [44, 24], [16, 58], [44, 58]];
+    else if (n === 5) { pts = [[16, 22], [44, 22], [30, 41], [16, 60], [44, 60]]; redAt.add(2); }
+    else if (n === 6) {
+      pts = [[18, 18], [42, 18], [18, 41], [42, 41], [18, 64], [42, 64]];
+      redAt.add(2); redAt.add(3);
+    } else if (n === 7) {
+      pts = [[16, 14], [44, 14], [16, 32], [44, 32], [30, 46], [16, 66], [44, 66]];
+      redAt.add(4);
+    } else if (n === 8) {
+      pts = [[18, 12], [42, 12], [18, 30], [42, 30], [18, 52], [42, 52], [18, 70], [42, 70]];
+      redAt.add(2); redAt.add(3);
+    } else {
+      pts = [];
+      for (let row = 0; row < 3; row++) {
+        for (let col = 0; col < 3; col++) pts.push([14 + col * 16, 18 + row * 23]);
+      }
+      redAt.add(4);
+    }
+    return pts.map((p, i) => mjDot(id, p[0], p[1], R, redAt.has(i) ? "red" : "jade")).join("");
+  }
+
+  function mjStick(id, x, y, h, red) {
+    const w = Math.max(4.2, Math.min(7.2, h * 0.2));
+    const fill = red ? `url(#${id}br)` : `url(#${id}b)`;
+    const node = red ? "#5c1016" : "#06381a";
+    const top = y.toFixed(2);
+    const hh = h.toFixed(2);
+    return `<rect x="${(x - w / 2).toFixed(2)}" y="${top}" width="${w.toFixed(2)}" height="${hh}" rx="${(w / 2).toFixed(2)}" fill="${fill}" stroke="${node}" stroke-width="0.45"/>
+      <rect x="${(x - w / 2).toFixed(2)}" y="${(y + h * 0.32).toFixed(2)}" width="${w.toFixed(2)}" height="1.35" fill="${node}"/>
+      <rect x="${(x - w / 2).toFixed(2)}" y="${(y + h * 0.66).toFixed(2)}" width="${w.toFixed(2)}" height="1.35" fill="${node}"/>`;
+  }
+
+  function mjTiaoFace(n, id) {
+    if (n === 1) {
+      return `<path d="M24 50 C10 44 8 24 16 12" fill="none" stroke="#178a42" stroke-width="3.4" stroke-linecap="round"/>
+        <path d="M26 52 C14 38 18 16 28 8" fill="none" stroke="#3ec56a" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M28 54 C22 34 30 16 42 11" fill="none" stroke="#e2b23a" stroke-width="2.6" stroke-linecap="round"/>
+        ${mjDot(id, 15, 13, 3.1, "jade")}
+        ${mjDot(id, 27, 9, 3.1, "red")}
+        ${mjDot(id, 41, 13, 2.7, "gold")}
+        <ellipse cx="36" cy="52" rx="11" ry="8.5" fill="#14627c"/>
+        <ellipse cx="33" cy="50" rx="6" ry="4" fill="#2f93b0"/>
+        <circle cx="47" cy="44" r="6" fill="#14627c"/>
+        <circle cx="49" cy="42.4" r="1.25" fill="#fff"/>
+        <circle cx="49.3" cy="42.4" r="0.55" fill="#1a120c"/>
+        <path d="M52 45 L58 42.5 L52 48 Z" fill="#e23b45"/>
+        <path d="M32 60 L29 68 M33 60 L36 68" fill="none" stroke="#d4a017" stroke-width="1.3" stroke-linecap="round"/>`;
+    }
+    const sticks = [];
+    const add = (x, y, h, red) => sticks.push(mjStick(id, x, y, h, red));
+    if (n === 2) { add(22, 10, 62, false); add(38, 10, 62, false); }
+    else if (n === 3) { add(16, 10, 62, false); add(30, 10, 62, true); add(44, 10, 62, false); }
+    else if (n === 4) { add(22, 8, 30, false); add(38, 8, 30, false); add(22, 44, 30, true); add(38, 44, 30, true); }
+    else if (n === 5) { add(18, 8, 28, false); add(42, 8, 28, false); add(30, 30, 22, true); add(18, 50, 24, false); add(42, 50, 24, false); }
+    else if (n === 6) {
+      for (let i = 0; i < 3; i++) { add(20, 8 + i * 24, 20, i === 1); add(40, 8 + i * 24, 20, i === 1); }
+    } else if (n === 7) {
+      add(16, 8, 20, false); add(30, 8, 20, false); add(44, 8, 20, false);
+      add(30, 32, 18, true);
+      add(16, 54, 20, false); add(30, 54, 20, false); add(44, 54, 20, false);
+    } else if (n === 8) {
+      for (let i = 0; i < 4; i++) { add(20, 6 + i * 19, 16, i === 1 || i === 2); add(40, 6 + i * 19, 16, i === 1 || i === 2); }
+    } else {
+      for (let row = 0; row < 3; row++) {
+        for (let col = 0; col < 3; col++) add(14 + col * 16, 8 + row * 24, 18, row === 1 && col === 1);
+      }
+    }
+    return sticks.join("");
+  }
+
+  function mjWanFace(n) {
+    const num = MJ_NUM_CN[n] || String(n);
+    const redNum = n === 1 || n === 5 || n === 9;
+    const fill = redNum ? "#c4282e" : "#1c140e";
+    return `<rect x="6" y="6" width="48" height="70" rx="3" fill="none" stroke="#e7d3ae" stroke-width="1.2"/>
+      <text x="30" y="38" text-anchor="middle" font-family="Songti SC, STSong, PMingLiU, Noto Serif TC, serif" font-size="28" font-weight="900" fill="${fill}">${num}</text>
+      <path d="M18 46 H42" stroke="#c4282e" stroke-width="1.2" opacity="0.85"/>
+      <text x="30" y="68" text-anchor="middle" font-family="Songti SC, STSong, PMingLiU, Noto Serif TC, serif" font-size="22" font-weight="900" fill="#c4282e">萬</text>`;
+  }
+
   /** 13 張手牌 + 1 張摸牌 → 是否食糊（14 張） */
   function mjIsWin(hand14) {
     if (!Array.isArray(hand14) || hand14.length !== 14) return false;
@@ -7889,7 +8039,10 @@
       const drop = rand(full.length);
       const hand = full.slice(0, drop).concat(full.slice(drop + 1));
       if (hand.length !== 13) continue;
-      if (mjWaitingTiles(hand).length) return { hand, full };
+      if (mjWaitingTiles(hand).length) {
+        mjSortHand(hand);
+        return { hand, full };
+      }
     }
   }
 
@@ -7973,9 +8126,8 @@
       /* t390：結果階段鎖住牌面（唔可以再點，避免以為仲打得） */
       const cls = (extra ? " " + extra : "") + (isResult ? " locked" : "");
       const dis = isResult ? " disabled" : "";
-      return `<button type="button" class="mj-tile${cls}" data-mj-tile="${i}"${dis} aria-label="${esc(mjLabel(t))}">
-        <span class="mj-num">${esc(MJ_NUM_CN[t.num] || t.num)}</span>
-        <span class="mj-suit">${esc(MJ_SUITS.find((s) => s.id === t.suit).glyph)}</span>
+      return `<button type="button" class="mj-tile suit-${esc(t.suit)}${cls}" data-mj-tile="${i}"${dis} aria-label="${esc(mjLabel(t))}">
+        <span class="mj-face">${mjFaceSvg(t, "h" + i + t.suit + t.num)}</span>
       </button>`;
     };
 
@@ -7983,9 +8135,8 @@
     const drawnHtml = mj.drawn
       ? `<div class="mj-drawn">
            <span class="mj-drawn-label">摸到</span>
-           <button type="button" class="mj-tile drawn" data-mj-discard="1" aria-label="打出 ${esc(mjLabel(mj.drawn))}">
-             <span class="mj-num">${esc(MJ_NUM_CN[mj.drawn.num] || mj.drawn.num)}</span>
-             <span class="mj-suit">${esc(MJ_SUITS.find((s) => s.id === mj.drawn.suit).glyph)}</span>
+           <button type="button" class="mj-tile suit-${esc(mj.drawn.suit)} drawn" data-mj-discard="1" aria-label="打出 ${esc(mjLabel(mj.drawn))}">
+             <span class="mj-face">${mjFaceSvg(mj.drawn, "drawn" + mj.drawn.suit + mj.drawn.num)}</span>
            </button>
          </div>`
       : "";
@@ -8117,6 +8268,7 @@
         const pool = mjDrawPool(mj.hand);
         if (pool.length) mj.hand.push(pool[Math.floor(Math.random() * pool.length)]);
       }
+      mjSortHand(mj.hand);
       mj.stepsUsed += 1;
       /* 食糊檢查：13 張 + 1 張 = 14 */
       const testWin = () => {
