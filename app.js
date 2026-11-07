@@ -11594,6 +11594,7 @@
         <div class="album-grid-wrap">
           <div class="album-grid" id="album-grid">${cells || `<div class="album-empty">${esc(emptyMsg)}</div>`}</div>
         </div>
+        <button class="btn ghost dm-home-btn" id="btn-album-home" type="button">回主頁</button>
       </div>
       ${detailHtml}
       <div id="album-toast" class="prep-toast" hidden></div>
@@ -11610,12 +11611,15 @@
       }, 1600);
     };
 
-    $("#btn-album-back", root).onclick = () => {
+    const leaveAlbumHome = () => {
       state.albumDetailId = null;
       state.albumDetailKind = null;
       state.screen = "home";
       render();
     };
+    $("#btn-album-back", root).onclick = leaveAlbumHome;
+    const albumHome = $("#btn-album-home", root);
+    if (albumHome) albumHome.onclick = leaveAlbumHome;
     /* t390：殘頁橫幅 */
     wireShardPanel(root, toast);
 
