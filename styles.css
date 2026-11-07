@@ -9806,9 +9806,16 @@ html, body {
   .dm-summary { padding: 4px 8px; }
 }
 
-/* 差事清單底部留白：最後一項唔會貼住底欄 */
-.screen.bg-home.missions-screen .dm-list { padding-bottom: 12px !important; }
+/* 差事清單底部留白：最後一項唔會貼住「回主頁」 */
+.screen.bg-home.missions-screen .dm-list { padding-bottom: 4px !important; }
 .screen.bg-home.missions-screen { padding-bottom: 72px; }
+.dm-home-btn {
+  flex-shrink: 0;
+  width: 100%;
+  margin: 0;
+  padding: 8px 12px;
+  font-size: 0.92rem;
+}
 
 .dm-sum-note {
   font-size: 0.55rem;

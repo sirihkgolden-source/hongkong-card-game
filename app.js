@@ -4474,6 +4474,7 @@
       </div>
       ${claimable > 1 ? `<button class="btn gold" id="btn-dm-claim-all" type="button" style="flex-shrink:0;padding:6px;font-size:0.78rem;">一次領取 ${claimable} 項</button>` : ""}
       <div class="dm-list">${rows || "<div class='soft-panel'>未有任務模板</div>"}</div>
+      <button class="btn ghost dm-home-btn" id="btn-dm-home" type="button">回主頁</button>
       <nav class="tab-bar" aria-label="主選單">
         <button class="tab" type="button" id="tab-book" data-help="tab-book"><span class="ico">📖</span>卡冊</button>
         <button class="tab" type="button" id="tab-life" data-help="tab-life"><span class="ico">🏠</span>今世</button>
@@ -4513,6 +4514,8 @@
         render();
       };
     }
+    const dmHome = $("#btn-dm-home", root);
+    if (dmHome) dmHome.onclick = () => { state.screen = "home"; render(); };
     $("#tab-life", root).onclick = () => { state.screen = "home"; render(); };
     $("#tab-jobs", root).onclick = () => { ensureDaily(); state.screen = "missions"; render(); };
     const teaTabM = $("#tab-teahouse", root);
