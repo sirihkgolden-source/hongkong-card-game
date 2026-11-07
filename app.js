@@ -2364,11 +2364,12 @@
       if (!pick) return "";
       const inLife = new Set(state.lifeSkills || []);
       albumGainOne("skills", pick.id);
-      if (!inLife.has(pick.id) && (state.lifeSkills || []).length < LIFE_SKILLS_CAP) {
+      if (inLife.has(pick.id)) return "複本入卡冊";
+      if ((state.lifeSkills || []).includes(pick.id)) return "已加入技能口袋";
+      if ((state.lifeSkills || []).length < LIFE_SKILLS_CAP) {
         state.lifeSkills.push(pick.id);
         return "已加入技能口袋";
       }
-      if (inLife.has(pick.id)) return "複本入卡冊";
       return `技能口袋已滿（${LIFE_SKILLS_CAP}）——入卡冊`;
     }
     return "";
@@ -2414,7 +2415,7 @@
       const cur = state.loadout[fid];
       const pick = skills[Math.floor(Math.random() * skills.length)];
       albumGainOne("skills", pick.id);
-      if (!(state.lifeSkills || []).includes(pick.id) && (state.lifeSkills || []).length < LIFE_SKILLS_CAP) {
+      if (!(state.lifeSkills || []).includes(pick.id) && (state.lifePrepped || (state.lifeSkills || []).length < LIFE_SKILLS_CAP)) {
         state.lifeSkills.push(pick.id);
       }
       if (cur.length) {
@@ -4028,7 +4029,7 @@
     "btn-equip": "技能卡：今世最多帶入 10 張。點選面板／＋ →「選擇初始技能卡」由已獲得技能選入 lifeSkills；裝備／預設裝技只可用這 10 張。長按查看技能內容。",
     "btn-equip-next": "配技完成——有戰鬥就入遇敵，否則返今次遭遇（故事流）。",
     "btn-unequip": "卸下此格技能。",
-    "skill-pick": "今世技能口袋（最多 10）：點選更換在彈窗選取帶入人生的技能；之後出戰裝技只可以由這批選取。",
+    "skill-pick": "開局最多帶 10 張技能。開始人生後新得到的技能卡會加入口袋，戰鬥前可以裝上戰鬥卡。",
     "deploy-slot": "出戰位——第一次（或上場已不能打）先選卡。打贏之後沿用該次配置，唔使日日再揀。短按可改這一格；長按查看卡內容。",
     "origin-pick": "選擇身世——四揀一（2×2 有圖）。四張都係真嘅人生，唔會寫明邊張好、邊張差。揀完先見後果。",
     "fate-pick": "人生命運——四揀一。街頭巷尾會發生咩事，冇人預先話你知。揀完先見後果。",
@@ -6699,11 +6700,12 @@
       if (!pick) return "";
       const inLife = new Set(state.lifeSkills || []);
       albumGainOne("skills", pick.id);
-      if (!inLife.has(pick.id) && (state.lifeSkills || []).length < LIFE_SKILLS_CAP) {
+      if (inLife.has(pick.id)) return "複本入卡冊";
+      if ((state.lifeSkills || []).includes(pick.id)) return "已加入技能口袋";
+      if ((state.lifeSkills || []).length < LIFE_SKILLS_CAP) {
         state.lifeSkills.push(pick.id);
         return "已加入技能口袋";
       }
-      if (inLife.has(pick.id)) return "複本入卡冊";
       return `技能口袋已滿（${LIFE_SKILLS_CAP}）——入卡冊`;
     }
     if (kind === "gear") {
@@ -10003,10 +10005,23 @@
       if (albumCardCount(id) <= 0) continue;
       seen.add(id);
       next.push(id);
-      if (next.length >= LIFE_SKILLS_CAP) break;
     }
     state.lifeSkills = next;
     return state.lifeSkills;
+  }
+
+  /**
+   * 開始人生之後新得到的技能，要可以裝上戰鬥卡。
+   * 開局自選仍然最多 10 張；今世中途拿到的不再被這上限裁走。
+   */
+  function admitSkillIntoLife(sid) {
+    if (!state.lifePrepped) return false;
+    if (!sid || !skillById[sid]) return false;
+    if (albumCardCount(sid) <= 0) return false;
+    ensureLifeSkills();
+    if (state.lifeSkills.includes(sid)) return false;
+    state.lifeSkills.push(sid);
+    return true;
   }
 
   /** 裝備／預設裝技／遭遇詳情只睇今世 lifeSkills（唔係全 72）。 */
@@ -11755,7 +11770,10 @@
   function albumSetCount(id, n) {
     albumEnsureState();
     if (!id) return;
-    state.cardCounts[id] = Math.max(0, n | 0);
+    const before = Math.max(0, state.cardCounts[id] | 0);
+    const next = Math.max(0, n | 0);
+    state.cardCounts[id] = next;
+    if (next > before && skillById[id]) admitSkillIntoLife(id);
   }
 
   /**
