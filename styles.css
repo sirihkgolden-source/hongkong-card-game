@@ -9018,6 +9018,42 @@ html, body {
   border-radius: 4px;
   padding: 3px 6px;
 }
+.al-slots { display: flex; flex-wrap: wrap; gap: 4px; min-width: 0; }
+.al-slot {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  max-width: 100%;
+  border: 1.5px solid #0a0610;
+  border-radius: 6px;
+  background: #1a1028;
+  color: #efe6f8;
+  font: inherit;
+  font-size: 0.58rem;
+  font-weight: 800;
+  padding: 2px 5px;
+  min-height: 22px;
+}
+.al-slot.empty { color: var(--neon-gold); cursor: pointer; background: #2a1c18; }
+.al-slot.mute { color: var(--muted); }
+.al-slot.on b {
+  font-weight: 800;
+  max-width: 7.5em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.al-slot .al-off {
+  border: 0;
+  background: transparent;
+  color: var(--neon-pink);
+  font: inherit;
+  font-size: 0.56rem;
+  font-weight: 900;
+  padding: 0 2px;
+  cursor: pointer;
+}
 .al-skills { display: flex; flex-wrap: wrap; gap: 3px; }
 .al-skill {
   font-size: 0.55rem;

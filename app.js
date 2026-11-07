@@ -949,6 +949,8 @@
     enemyRosterCache: null,
     /** 盟友面板：按下時記住原本畫面，返回時回到該畫面 */
     alliesReturnScreen: null,
+    /** 盟友頁：正在為哪張戰鬥卡的哪一格揀技能 { fid, slot } */
+    alliesSkillPick: null,
     /** fighterId -> skillId[]（裝備中；同 ID 技能受帳號張數限制，demo 預設 1 張＝全隊唯一） */
     loadout: {},
     /** fighterId -> true：呢張卡今世已做過預設裝技；之後唔再 auto-fill（保留 null 格＝卸下） */
@@ -9595,10 +9597,17 @@
       const stars = albumFighterStar(fid);
       const rare = officialRarityLabel(f, "普通");
       const inField = deploySet.has(fid);
-      const load = (state.loadout[fid] || []).filter(Boolean).map((sid) => skillById[sid]).filter(Boolean);
-      const loadHtml = load.length
-        ? load.map((s) => `<span class="al-skill">${esc(s.name)}</span>`).join("")
-        : `<span class="al-skill empty">未裝技能</span>`;
+      const slotCap = raritySlots(f);
+      const slotIds = Array.from({ length: slotCap }, (_, i) => (state.loadout[fid] || [])[i] || null);
+      const slotsHtml = dead
+        ? `<span class="al-slot mute">陣亡後技能鎖定</span>`
+        : slotIds.map((sid, si) => {
+            const sk = sid ? skillById[sid] : null;
+            if (sk) {
+              return `<span class="al-slot on"><b>${esc(sk.name)}</b><button type="button" class="al-off" data-al-off="${esc(fid)}" data-al-slot="${si}">卸下</button></span>`;
+            }
+            return `<button type="button" class="al-slot empty" data-al-add="${esc(fid)}" data-al-slot="${si}">＋技能</button>`;
+          }).join("");
       const art = f.art
         ? `<img src="${esc(f.art)}" alt="${esc(f.name)}" loading="lazy" data-card-name="${esc(f.name)}" data-card-kind="fighter" />`
         : `<img src="${cardGlyphDataUrl(f.name, "fighter")}" alt="${esc(f.name)}" loading="lazy" />`;
@@ -9631,7 +9640,7 @@
             <div class="al-sub">${esc(rare)} · ${starsRowHtml(stars, ALBUM_MAX_STAR)}</div>
             <div class="al-stats">${statBits}</div>
             ${basic}${innate}
-            <div class="al-line"><span class="al-k">已裝</span><span class="al-skills">${loadHtml}</span></div>
+            <div class="al-line"><span class="al-k">技能</span><span class="al-slots">${slotsHtml}</span></div>
             ${blurb ? `<p class="al-blurb">${esc(blurb)}</p>` : ""}
           </div>
         </article>`;
@@ -9647,20 +9656,117 @@
           <span class="al-pill cyan">出戰上限 ${TEAM_SIZE} 張</span>
           <span class="al-pill ${deadCount ? "pink" : ""}">今世陣亡 ${deadCount}</span>
         </div>
-        <p class="al-hint">戰鬥只會派上場 3 張；按下方返回可繼續人生。</p>
+        <p class="al-hint">點「＋技能」為戰鬥卡裝上技能，已裝的可以卸下。同一技能同場只能裝一張卡。</p>
         <div class="al-list">${rows}</div>
       </div>
+      ${alliesSkillModalHtml()}
       <div class="soft-cta">
         <button type="button" class="btn gold" id="btn-allies-back">返回</button>
       </div>
       ${storyDockHtml()}
     `;
     $("#btn-allies-back", root).onclick = () => {
+      state.alliesSkillPick = null;
       state.screen = state.alliesReturnScreen || "events";
       state.alliesReturnScreen = null;
       render();
     };
+    root.querySelectorAll("[data-al-off]").forEach((btn) => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const fid = btn.getAttribute("data-al-off");
+        const si = Number(btn.getAttribute("data-al-slot"));
+        const f = fighterById[fid];
+        if (!f || isDeadFighter(fid)) return;
+        const capN = raritySlots(f);
+        const display = Array.from({ length: capN }, (_, i) => (state.loadout[fid] || [])[i] || null);
+        if (si >= 0 && si < display.length) display[si] = null;
+        state.loadout[fid] = display;
+        if (!state.loadoutInited) state.loadoutInited = {};
+        state.loadoutInited[fid] = true;
+        state.alliesSkillPick = null;
+        render();
+      };
+    });
+    root.querySelectorAll("[data-al-add]").forEach((btn) => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const fid = btn.getAttribute("data-al-add");
+        if (!fid || isDeadFighter(fid)) return;
+        state.alliesSkillPick = { fid, slot: Number(btn.getAttribute("data-al-slot")) };
+        render();
+      };
+    });
+    const spMask = $("#skill-pick-mask", root);
+    if (spMask) {
+      spMask.onclick = (e) => {
+        if (e.target !== spMask) return;
+        state.alliesSkillPick = null;
+        render();
+      };
+      const cancel = $("#fd-sp-cancel", root);
+      if (cancel) {
+        cancel.onclick = (e) => {
+          e.stopPropagation();
+          state.alliesSkillPick = null;
+          render();
+        };
+      }
+      root.querySelectorAll("[data-equip-sid]").forEach((btn) => {
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          const pick = state.alliesSkillPick;
+          if (!pick) return;
+          const sid = btn.getAttribute("data-equip-sid");
+          if (isBurnedSkill(sid) || skillFieldTaken(sid, pick.fid)) return;
+          claimSkillForFighter(pick.fid, sid, pick.slot);
+          if (!state.loadoutInited) state.loadoutInited = {};
+          state.loadoutInited[pick.fid] = true;
+          state.alliesSkillPick = null;
+          render();
+        };
+      });
+    }
     wireStoryDock(root);
+  }
+
+  function alliesSkillModalHtml() {
+    const pick = state.alliesSkillPick;
+    if (!pick || !pick.fid || !fighterById[pick.fid] || isDeadFighter(pick.fid)) {
+      state.alliesSkillPick = null;
+      return "";
+    }
+    const f = fighterById[pick.fid];
+    const equipped = new Set((state.loadout[pick.fid] || []).filter(Boolean));
+    const pool = openPocketSkills()
+      .filter((sk) => !isBurnedSkill(sk.id) && !equipped.has(sk.id) && skillOwnedCopies(sk.id) > 0)
+      .filter((sk) => skillCompatible(f, sk))
+      .sort((a, b) => {
+        const fa = skillFieldTaken(a.id, pick.fid) ? 1 : 0;
+        const fb = skillFieldTaken(b.id, pick.fid) ? 1 : 0;
+        return fa - fb || String(a.name || "").localeCompare(String(b.name || ""), "zh");
+      });
+    const rows = pool.length
+      ? pool.map((sk) => {
+          const locked = skillFieldTaken(sk.id, pick.fid);
+          const onName = locked ? skillEquippedOnName(sk.id, pick.fid) : null;
+          const ico = sk.art ? `<img src="${esc(sk.art)}" alt="" />` : `<span class="fd-pool-glyph">技</span>`;
+          if (locked) {
+            return `<div class="fd-pool-item locked" aria-disabled="true">${ico}<span>${esc(sk.name)}</span><small class="fd-pool-note">已裝於「${esc(onName || "其他戰鬥卡")}」</small></div>`;
+          }
+          return `<button type="button" class="fd-pool-item" data-equip-sid="${esc(sk.id)}">${ico}<span>${esc(sk.name)}</span></button>`;
+        }).join("")
+      : `<p class="ally-empty">沒有可裝技能</p>`;
+    return `
+      <div class="modal-mask skill-pick-mask" id="skill-pick-mask" role="dialog" aria-modal="true" aria-label="揀技能裝上">
+        <div class="modal-sheet skill-pick-sheet" id="fd-skill-pick">
+          <div class="modal-title">揀技能裝上</div>
+          <p class="modal-hint fd-sp-sub">裝去「${esc(f.name)}」</p>
+          <p class="modal-hint fd-sp-lock-hint">同一技能同場只能裝在一張戰鬥卡。</p>
+          <div class="fd-pool">${rows}</div>
+          <button type="button" class="btn ghost sm" id="fd-sp-cancel">關閉</button>
+        </div>
+      </div>`;
   }
 
   function openAlliesPanel() {
