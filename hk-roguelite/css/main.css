@@ -2814,7 +2814,25 @@ body {
   font-size: 0.86rem;
   line-height: 1.6;
   color: var(--ink-dim);
-  max-width: 30ch;
+  max-width: 42ch;
+}
+
+.boot-error pre,
+.boot-error code {
+  font-family: ui-monospace, Consolas, monospace;
+  color: var(--neon-cyan);
+}
+
+.boot-error pre {
+  margin: 0;
+  padding: 0.55rem 0.8rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(61, 224, 255, 0.25);
+}
+
+.boot-error a {
+  color: var(--neon-amber);
 }
 
 .boot-error button {

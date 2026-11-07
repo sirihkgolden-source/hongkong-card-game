@@ -13,7 +13,7 @@
     改用系統中文字體堆疊（見 css/main.css 嘅 --font-display／--font-body），
     中英文都夠睇，載入零延遲。
   -->
-  <link rel="stylesheet" href="css/main.css?v=24" />
+  <link rel="stylesheet" href="css/main.css?v=25" />
   <!-- 手機橫屏專用（主驗收尺寸）；只喺 landscape + 矮螢幕生效 -->
   <link rel="stylesheet" href="css/landscape.css?v=5" />
 </head>
@@ -33,26 +33,44 @@
     (function () {
       var booted = false;
       var KEY = "hk_boot_retry";
+      var isFile = location.protocol === "file:";
       window.__HK_BOOTED__ = function () {
         booted = true;
         try { sessionStorage.removeItem(KEY); } catch (e) {}
       };
+      function showBox(html) {
+        if (document.querySelector(".boot-error")) return;
+        var box = document.createElement("div");
+        box.className = "boot-error";
+        box.innerHTML = html;
+        document.body.appendChild(box);
+      }
       function fail(msg) {
         if (booted) return;
+        if (isFile) {
+          showBox(
+            "<h1>唔好雙擊檔案開</h1>" +
+              "<p>瀏覽器用 <code>file://</code> 會擋 ES module，所以 <code>main.js</code> 載入失敗。</p>" +
+              "<p>喺 <code>hk-roguelite</code> 資料夾開本機伺服器：</p>" +
+              "<pre>python -m http.server 8766</pre>" +
+              "<p>然後用瀏覽器開：</p>" +
+              '<p><a href="http://127.0.0.1:8766/">http://127.0.0.1:8766/</a></p>'
+          );
+          return;
+        }
         if (!sessionStorage.getItem(KEY)) {
           try { sessionStorage.setItem(KEY, "1"); } catch (e) {}
           location.replace(location.pathname + "?v=" + Date.now());
           return;
         }
-        var box = document.createElement("div");
-        box.className = "boot-error";
-        box.innerHTML =
+        showBox(
           "<h1>載入失敗</h1>" +
-          "<p>" + msg + "</p>" +
-          "<p>請按 <b>Ctrl + Shift + R</b> 強制重新載入。</p>" +
-          '<button onclick="location.replace(location.pathname + \'?v=\' + Date.now())">重新載入</button>';
-        document.body.appendChild(box);
+            "<p>" + msg + "</p>" +
+            "<p>請按 <b>Ctrl + Shift + R</b> 強制重新載入。</p>" +
+            '<button onclick="location.replace(location.pathname + \'?v=\' + Date.now())">重新載入</button>'
+        );
       }
+      if (isFile) fail("file");
       window.addEventListener("error", function (e) {
         if (e.target && e.target.tagName === "SCRIPT") fail("腳本載入出錯：" + (e.target.src || ""));
       }, true);
