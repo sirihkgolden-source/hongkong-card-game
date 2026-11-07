@@ -1715,7 +1715,10 @@
       const cached = state.yearEventOffer
         .map((id) => (DATA.events || []).find((e) => e.id === id))
         .filter(Boolean);
-      if (cached.length === 4 && (allowCommerce || !cached.some(isCommerceEvent))) {
+      if (cached.some((e) => e && (e.category === "gear_upgrade" || e.category === "star_up"))) {
+        state.yearEventOffer = [];
+        state.yearEventYear = 0;
+      } else if (cached.length === 4 && (allowCommerce || !cached.some(isCommerceEvent))) {
         const withChapter = injectOfficeChapter(cached, y);
         if (withChapter.some((e, i) => !cached[i] || e.id !== cached[i].id)) {
           state.yearEventOffer = withChapter.map((e) => e.id);
@@ -1870,9 +1873,7 @@
       };
       if (allowCommerce) {
         injectLifeSide("card_trade", 0.4);
-        injectLifeSide("star_up", 0.4);
-        // t366：養成事件（裝備強化／戰鬥卡練功／復活）
-        injectLifeSide("gear_upgrade", 0.45);
+        // 裝備升星只由廟街義氣滿貫回報開放；戰鬥卡升星只由城寨兄弟滿貫回報開放。
         injectLifeSide("fighter_train", 0.45);
         // 復活：只有「有陣亡卡」時才有意義，交畀 pick 時過濾
         injectLifeSide("fighter_revive", 0.5);
@@ -3339,6 +3340,7 @@
     state.officePace = {};
     state.factions = {};
     state.factionChoiceResult = null;
+    state.factionSkirmish = false;
     state.minigame = null;
     state.battle = null;
     state.lastResult = null;
@@ -4838,6 +4840,7 @@
       soft: viewSoft,
       minigame: viewMinigameEntry,
       faction: viewFaction,
+      factionStar: viewFactionStar,
       office: viewOffice,
       tale: viewTale,
       shop: viewShop,
@@ -5661,7 +5664,14 @@
     if (cat === "faction") {
       state.eventConfirmOpen = false;
       state.factionChoiceResult = null;
+      state.factionSkirmish = false;
       state.screen = "faction";
+      render();
+      return;
+    }
+    if (cat === "faction_gear_star" || cat === "faction_fighter_star") {
+      state.eventConfirmOpen = false;
+      state.screen = "factionStar";
       render();
       return;
     }
@@ -6434,6 +6444,131 @@
     wireStoryDock(root);
   }
 
+  function applyFactionPayout(ev, result) {
+    if (!result || result.rewardApplied) return;
+    state.soul += (result.soul | 0);
+    if ((result.xp | 0) > 0) gainXp(result.xp | 0);
+    if ((result.gold | 0) > 0) state.gold = (state.gold | 0) + (result.gold | 0);
+    if (result.attrs_delta && typeof result.attrs_delta === "object") {
+      if (!state.attrs) state.attrs = defaultAttrs();
+      Object.keys(result.attrs_delta).forEach((k) => {
+        state.attrs[k] = (state.attrs[k] | 0) + (result.attrs_delta[k] | 0);
+      });
+      if (state.team.length > pocketCap()) state.team = state.team.slice(0, pocketCap());
+    }
+    if (ev && ev.flag_on_complete) {
+      if (!state.lifeFlags || typeof state.lifeFlags !== "object") state.lifeFlags = {};
+      state.lifeFlags[ev.flag_on_complete] = 1;
+    }
+    result.rewardApplied = true;
+  }
+
+  function beginFactionSkirmish() {
+    state.factionSkirmish = true;
+    state.selectAllySlot = null;
+    state.fighterDetailId = null;
+    state.detailSkillPick = null;
+    const resumed = applyRememberedDeploy();
+    if (!resumed) state.deploy = [];
+    state.deployHint = "對方動了手。可換卡，準備好先按「開始戰鬥」。";
+    state.screen = "encounter";
+  }
+
+  function grantFreeEquipStar(itemId) {
+    albumEnsureState();
+    ensureGearShape();
+    const item = itemByIdLookup()[itemId];
+    if (!item || albumCardCount(itemId) <= 0) return 0;
+    const star = equipStarOf(item);
+    const maxS = Math.max(1, Number(item.max_star) || ALBUM_MAX_STAR);
+    if (star >= maxS) return 0;
+    state.equipStars[itemId] = star + 1;
+    bumpEquipStar(1);
+    return star + 1;
+  }
+
+  function grantFreeFighterStar(fighterId) {
+    albumEnsureState();
+    const f = fighterById[fighterId];
+    if (!f || albumCardCount(fighterId) <= 0) return 0;
+    const star = albumFighterStar(fighterId);
+    if (star >= ALBUM_MAX_STAR) return 0;
+    state.fighterStars[fighterId] = star + 1;
+    return star + 1;
+  }
+
+  function viewFactionStar(root) {
+    const ev = state.selectedEvent;
+    const kind = ev && ev.category;
+    if (!ev || (kind !== "faction_gear_star" && kind !== "faction_fighter_star")) {
+      state.screen = "events";
+      render();
+      return;
+    }
+    const gear = kind === "faction_gear_star";
+    const fname = factionName(ev.faction_id);
+    const cands = gear ? gearUpgradeCandidates() : starUpCandidates();
+    const cards = cands.map((it) => {
+      const id = it.id;
+      const star = gear ? equipStarOf(it) : albumFighterStar(id);
+      const maxS = gear ? Math.max(1, Number(it.max_star) || ALBUM_MAX_STAR) : ALBUM_MAX_STAR;
+      const slotMeta = gear ? GEAR_SLOTS.find((s) => s.id === it.slot) : null;
+      const where = gear ? `${(slotMeta && slotMeta.label) || ""}槽 · ` : "";
+      return `
+        <button type="button" class="shop-card" data-free-star="${esc(id)}">
+          <img src="${esc(it.art || "")}" alt="${esc(it.name || "")}" />
+          <div class="shop-card-body">
+            <div class="shop-card-name">${esc(it.name || id)}</div>
+            <div class="shop-card-rare">${esc(where)}★${star} → ★${star + 1}／${maxS}</div>
+            <div class="shop-price">免費</div>
+          </div>
+        </button>`;
+    }).join("") || `<div class="shop-empty">${gear ? "沒有可升星的裝備" : "沒有可升星的戰鬥卡"}</div>`;
+    root.innerHTML = `
+      ${lifeHudHtml()}
+      <div class="ribbon">${ageRibbon(esc(ev.name || "勢力回報"))}</div>
+      <div class="shop-wrap">
+        <div class="shop-gold-banner">${esc(fname)} ${factionFavor(ev.faction_id)}/${FACTION_FAVOR_MAX} · 今世免費升一星</div>
+        <p class="shop-sub">${gear ? "選一件裝備。今世只此一件，離開今世後可以再來。" : "選一張戰鬥卡。今世只此一張，離開今世後可以再來。"}</p>
+        <div class="shop-grid shop-grid-scroll">${cards}</div>
+      </div>
+      <div class="soft-cta">
+        <button type="button" class="btn ghost" id="btn-star-leave">${cands.length ? "這次不升" : "知道了"}</button>
+        <button class="btn ghost danger btn-abandon-compact" id="btn-abandon" data-help="btn-abandon">放棄今世</button>
+      </div>
+      ${storyDockHtml()}
+    `;
+    const finish = (note, consumed) => {
+      if (consumed && ev.flag_on_complete) {
+        if (!state.lifeFlags || typeof state.lifeFlags !== "object") state.lifeFlags = {};
+        state.lifeFlags[ev.flag_on_complete] = 1;
+      }
+      state.softNote = note;
+      state.shopLeftEmpty = !consumed;
+      state.screen = "soft";
+      render();
+    };
+    root.querySelectorAll("[data-free-star]").forEach((btn) => {
+      btn.onclick = () => {
+        const id = btn.getAttribute("data-free-star");
+        const next = gear ? grantFreeEquipStar(id) : grantFreeFighterStar(id);
+        if (!next) {
+          shopToast(root, "無法升星");
+          return;
+        }
+        const name = gear
+          ? ((itemByIdLookup()[id] && itemByIdLookup()[id].name) || id)
+          : ((fighterById[id] && fighterById[id].name) || id);
+        finish(`「${name}」免費升至 ★${next}`, true);
+      };
+    });
+    $("#btn-star-leave", root).onclick = () => {
+      finish(cands.length ? "這次沒有升星" : (gear ? "沒有可升星的裝備" : "沒有可升星的戰鬥卡"), !cands.length);
+    };
+    $("#btn-abandon", root).onclick = () => requestAbandonLife();
+    wireStoryDock(root);
+  }
+
   function viewFaction(root) {
     const ev = state.selectedEvent;
     if (!ev || ev.category !== "faction") {
@@ -6449,23 +6584,7 @@
 
     if (result) {
       // 結果畫面出現時頂欄已入帳（同 EV39 rewardApplied；唔等「繼續」）
-      if (!result.rewardApplied) {
-        state.soul += (result.soul | 0);
-        if ((result.xp | 0) > 0) gainXp(result.xp | 0);
-        if ((result.gold | 0) > 0) state.gold = (state.gold | 0) + (result.gold | 0);
-        if (result.attrs_delta && typeof result.attrs_delta === "object") {
-          if (!state.attrs) state.attrs = defaultAttrs();
-          Object.keys(result.attrs_delta).forEach((k) => {
-            state.attrs[k] = (state.attrs[k] | 0) + (result.attrs_delta[k] | 0);
-          });
-          if (state.team.length > pocketCap()) state.team = state.team.slice(0, pocketCap());
-        }
-        if (ev.flag_on_complete) {
-          if (!state.lifeFlags || typeof state.lifeFlags !== "object") state.lifeFlags = {};
-          state.lifeFlags[ev.flag_on_complete] = 1;
-        }
-        result.rewardApplied = true;
-      }
+      applyFactionPayout(ev, result);
       const curFavorNow = fid ? factionFavor(fid) : curFavor;
       // 好感句去重：favorNote 已喺 note／extra 出現則唔再單獨顯示
       const normPlus = (s) => String(s || "").replace(/＋/g, "+").replace(/−/g, "-");
@@ -6497,27 +6616,12 @@
     const settleFaction = () => {
         const r = state.factionChoiceResult;
         // 貨幣／經驗／attrs／flag 已喺結果畫面入帳；此處只兜底（舊存檔中途再開）
-        if (r && !r.rewardApplied) {
-          state.soul += (r.soul | 0);
-          if ((r.xp | 0) > 0) gainXp(r.xp | 0);
-          if ((r.gold | 0) > 0) state.gold = (state.gold | 0) + (r.gold | 0);
-          if (r.attrs_delta && typeof r.attrs_delta === "object") {
-            if (!state.attrs) state.attrs = defaultAttrs();
-            Object.keys(r.attrs_delta).forEach((k) => {
-              state.attrs[k] = (state.attrs[k] | 0) + (r.attrs_delta[k] | 0);
-            });
-            if (state.team.length > pocketCap()) state.team = state.team.slice(0, pocketCap());
-          }
-          if (ev.flag_on_complete) {
-            if (!state.lifeFlags || typeof state.lifeFlags !== "object") state.lifeFlags = {};
-            state.lifeFlags[ev.flag_on_complete] = 1;
-          }
-          r.rewardApplied = true;
-        }
+        if (r && !r.rewardApplied) applyFactionPayout(ev, r);
         trackEventMission(ev, { soft: true });
         advanceYear();
         state.selectedEvent = null;
         state.factionChoiceResult = null;
+        state.factionSkirmish = false;
         state.softNote = "";
         if (lifeDoneFlag()) {
           state.lastResult = {
@@ -6614,6 +6718,14 @@
           extraNotes: extraFiltered,
           rewardApplied: false,
         };
+        applyFactionPayout(ev, state.factionChoiceResult);
+        const chance = Number(ev.battle_chance);
+        const fight = !!(ev.battle && chance > 0 && Math.random() < chance);
+        if (fight) {
+          beginFactionSkirmish();
+          render();
+          return;
+        }
         render();
       };
     });
@@ -10247,6 +10359,8 @@
     }
     // t369：tale 鏈節點亦唔入年度池（同 office 一樣只由分支鏈觸發）
     if (ev.tale_node) return true;
+    /* 升星不再當普通遭遇。裝備升星＝廟街義氣回報；戰鬥卡升星＝城寨兄弟回報。 */
+    if (ev.category === "gear_upgrade" || ev.category === "star_up") return true;
     return false;
   }
 
@@ -13282,6 +13396,23 @@
       state.selectAllySlot = null;
       state.fighterDetailId = null;
       state.detailSkillPick = null;
+      if (state.factionSkirmish) {
+        state.factionSkirmish = false;
+        state.factionChoiceResult = null;
+        const evNow = state.selectedEvent;
+        if (evNow) trackEventMission(evNow, { soft: true });
+        advanceYear();
+        state.selectedEvent = null;
+        state.screen = lifeDoneFlag() ? "result" : afterFateOrEventScreen();
+        if (state.screen === "result") {
+          state.lastResult = {
+            win: true, reward: 0, rewardBlurb: lifeEndBlurb(),
+            eventName: lifeEndName(), deadNames: [],
+          };
+        }
+        render();
+        return;
+      }
       state.screen = "events";
       render();
     };
@@ -13552,7 +13683,7 @@
       timer: null,
       queue: [],
       // 幸運亦影響戰鬥結算魂焰（同軟事件公式）
-      reward: listedEventSoul(ev),
+      reward: state.factionSkirmish ? 0 : listedEventSoul(ev),
       lastHit: null,
     };
     state.pendingDefeat = {
@@ -14249,6 +14380,7 @@
       trackEventMission(ev, { battleWin: true });
     }
     state.battleFieldSnapshot = null;
+    state.factionSkirmish = false;
     if (tutorialLoss) {
       // 教學期敗：唔加歲／唔推遭遇；清選中事件，返回同年四揀一
       state.selectedEvent = null;

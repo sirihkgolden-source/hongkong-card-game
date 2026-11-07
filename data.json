@@ -7176,10 +7176,10 @@
       "id": "EV40",
       "name": "廟街夜檔人情",
       "type": "勢力",
-      "desc": "霓虹燈下，廟街義氣的阿哥招呼你：今晚檔口缺一對手，願意幫忙嗎？幫或不幫，皆可繼續人生。",
+      "desc": "霓虹燈下，廟街義氣的阿哥招呼你：今晚檔口缺一對手。幫或不幫都可以。有時對方會動手，那就得打一場。",
       "reward_blurb": "選邊站・改好感・人生不停",
       "art": "assets/bg/bg-dai-pai-dong-night.jpg",
-      "battle": null,
+      "battle": "E05",
       "reward_soul": 12,
       "reward_xp": 4,
       "category": "faction",
@@ -7216,16 +7216,17 @@
           "xp": 1,
           "note": "廟街義氣−1"
         }
-      ]
+      ],
+      "battle_chance": 0.4
     },
     {
       "id": "EV41",
       "name": "城寨巷口招呼",
       "type": "勢力",
-      "desc": "城寨鐵閘旁，兄弟遞來一袋雜務：送口信、看門口。願意接手嗎？拒絕也不會卡死人生。",
+      "desc": "城寨鐵閘旁，兄弟遞來一袋雜務：送口信、看門口。拒絕也不會卡死人生。有時巷口會起衝突，那就得打一場。",
       "reward_blurb": "選邊站・改好感・人生不停",
       "art": "assets/bg/bg-estate-corridor-long.jpg",
-      "battle": null,
+      "battle": "E04",
       "reward_soul": 12,
       "reward_xp": 4,
       "category": "faction",
@@ -7262,7 +7263,8 @@
           "xp": 1,
           "note": "城寨兄弟−1"
         }
-      ]
+      ],
+      "battle_chance": 0.4
     },
     {
       "id": "EV42",
@@ -7340,6 +7342,56 @@
           },
           "note": "城寨回報・城寨兄弟＋1・力量＋1"
         }
+      ]
+    },
+    {
+      "id": "EV72",
+      "name": "廟街滿貫",
+      "type": "勢力",
+      "desc": "廟街義氣把你當成自己人。阿哥打開鐵箱：今世你可以揀一件裝備，免費升一星。只此一件。離開今世之後，這份回報才會再來。",
+      "reward_blurb": "好感滿貫・免費裝備升星・只限一件",
+      "art": "assets/bg/bg-dai-pai-dong-night.jpg",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "category": "faction_gear_star",
+      "category_label": "勢力回報",
+      "faction_id": "miu_street",
+      "require_faction": {
+        "id": "miu_street",
+        "min": 5
+      },
+      "flag_on_complete": "faction_miu_gear_star",
+      "rewards_preview": [
+        "裝備＋1星",
+        "只限一件",
+        "今世一次"
+      ]
+    },
+    {
+      "id": "EV73",
+      "name": "城寨滿貫",
+      "type": "勢力",
+      "desc": "城寨兄弟認你是自己人。今世你可以揀一張戰鬥卡，免費升一星。只此一張。離開今世之後，這份回報才會再來。",
+      "reward_blurb": "好感滿貫・免費戰鬥卡升星・只限一張",
+      "art": "assets/bg/bg-estate-happiness.jpg",
+      "battle": null,
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "category": "faction_fighter_star",
+      "category_label": "勢力回報",
+      "faction_id": "kowloon_walled",
+      "require_faction": {
+        "id": "kowloon_walled",
+        "min": 5
+      },
+      "flag_on_complete": "faction_walled_fighter_star",
+      "rewards_preview": [
+        "戰鬥卡＋1星",
+        "只限一張",
+        "今世一次"
       ]
     },
     {
