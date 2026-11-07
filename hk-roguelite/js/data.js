@@ -479,6 +479,11 @@ export const CHARACTERS = {
     route: "搏命・攻擊",
     initial: "油",
     portrait: "assets/art/portraits/ayau.webp",
+    /** 橫版對打預設動作表：6×2，上排踢、下排出拳 */
+    sprite: "assets/art/sprites/oil_default.jpg",
+    spriteCols: 6,
+    spriteRows: 2,
+    spriteKey: "paper",
     maxHp: 68,
     energy: 3,
     passive: {
@@ -520,6 +525,11 @@ export const CHARACTERS = {
     route: "守住・擋回",
     initial: "珊",
     portrait: "assets/art/portraits/ashan.jpg",
+    /** 橫版對打預設動作表：6×2，上排踢、下排出拳（PNG 已去黑底） */
+    sprite: "assets/art/sprites/asan_default.png",
+    spriteCols: 6,
+    spriteRows: 2,
+    spriteKey: "alpha",
     maxHp: 78,
     energy: 3,
     passive: {

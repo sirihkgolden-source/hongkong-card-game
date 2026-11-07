@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#050810" />
+  <title>橫版對打 · 香江小風波</title>
+  <link rel="stylesheet" href="css/arena.css?v=4" />
+</head>
+<body>
+  <div class="arena" id="arena">
+    <a class="back" href="index.html">← 返</a>
+    <nav class="char-switch" aria-label="預設角色">
+      <a href="arena.html?char=oil" data-char="oil">阿油</a>
+      <a href="arena.html?char=asan" data-char="asan">阿珊</a>
+    </nav>
+    <button type="button" class="mute" id="btn-mute" aria-pressed="false">音效開</button>
+
+    <header class="hud" aria-label="血條">
+      <div class="hud-side is-player">
+        <strong id="player-name">阿油・後巷經紀</strong>
+        <div class="hp-track" aria-hidden="true">
+          <span class="hp-fill is-player" id="player-hp-fill"></span>
+        </div>
+        <span class="hp-num" id="player-hp-text">68/68</span>
+      </div>
+      <div class="hud-vs" aria-hidden="true">VS</div>
+      <div class="hud-side is-enemy">
+        <strong id="enemy-name">後巷影</strong>
+        <div class="hp-track" aria-hidden="true">
+          <span class="hp-fill is-enemy" id="enemy-hp-fill"></span>
+        </div>
+        <span class="hp-num" id="enemy-hp-text">32/32</span>
+      </div>
+    </header>
+
+    <section class="stage" id="stage" aria-label="橫版戰鬥場景">
+      <canvas id="fx-canvas"></canvas>
+      <div class="ground" aria-hidden="true"></div>
+      <div class="actor is-player" id="actor-player">
+        <canvas id="player-sprite" aria-label="阿油踢擊"></canvas>
+        <span class="actor-shadow"></span>
+      </div>
+      <div class="actor is-enemy" id="actor-enemy">
+        <img id="enemy-art" alt="後巷影" />
+        <span class="actor-shadow"></span>
+        <span class="hit-flash" id="enemy-flash"></span>
+      </div>
+      <p class="banner" id="banner" hidden></p>
+    </section>
+
+    <footer class="hand" id="hand" aria-label="手牌"></footer>
+  </div>
+
+  <!-- GSAP 本機 vendor，唔走 CDN -->
+  <script>
+    if (location.protocol === "file:") {
+      document.body.innerHTML =
+        '<div class="arena" style="display:flex;align-items:center;justify-content:center;padding:2rem;text-align:center">' +
+        "<div><p>唔好雙擊檔案開。ES module 喺 file:// 會被擋。</p>" +
+        "<p>用 <code>python -m http.server 8766</code> 之後開</p>" +
+        '<p><a href="http://127.0.0.1:8766/arena.html">http://127.0.0.1:8766/arena.html</a></p></div></div>';
+    }
+  </script>
+  <script src="js/vendor/gsap.min.js"></script>
+  <script type="module" src="js/arena.js?v=16"></script>
+</body>
+</html>
