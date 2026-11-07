@@ -11454,12 +11454,12 @@
             : "";
         // 只列已擁有；點擊卡圖／整格開詳情（唔掛 data-help，避免長按擋住 click）
         /*
-         * t393：橫圖卡（例：C255 雙節棍 16:9）喺 1:1 格用 cover 會切走主體，
+         * t393：橫圖卡（例：C255 雙節棍 16:9）喺直向格用 cover 會切走主體，
          * 改為 contain（CSS `.album-cell-art img.art-landscape`）。
          */
         const isLandscape = !!(e.item && e.item.art_landscape);
         const artHtml = albumArtHtml(e.art, e.name, null, e.kind);
-        return `<button type="button" class="album-cell ${rareCls}" data-album-id="${esc(e.id)}" data-album-kind="${esc(e.kind)}" aria-label="${esc(e.name)} x${count}">
+        return `<button type="button" class="album-cell album-kind-${esc(e.kind)} ${rareCls}" data-album-id="${esc(e.id)}" data-album-kind="${esc(e.kind)}" aria-label="${esc(e.name)} x${count}">
           <div class="album-cell-art" data-album-open="1">${isLandscape ? artHtml.replace("<img ", '<img class="art-landscape" ') : artHtml}${lvBadge}<div class="album-cell-stars">${albumStarsHtml(star, Math.min(maxS, 5))}</div></div>
           <div class="album-cell-name">${esc(e.name)} <span class="album-qty">x${count}</span></div>
         </button>`;
