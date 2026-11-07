@@ -180,7 +180,22 @@ for (const need of ["index.html", "css/main.css", "js/main.js", "js/data.js", "j
     /flex:\s*0\s+0\s+auto/.test(rewardFace[1]),
     ".reward-cell .card-face 要 flex: 0 0 auto（高度跟內容，唔鎖 118px）"
   );
-  assert(/height:\s*auto/.test(rewardFace[1]), ".reward-cell .card-face 要 height: auto");
+  assert(
+    /height:\s*max-content/.test(rewardFace[1]),
+    ".reward-cell .card-face 要 height: max-content（跟內容長高）"
+  );
+  assert(
+    /min-height:\s*max-content/.test(rewardFace[1]),
+    ".reward-cell .card-face 要 min-height: max-content（唔可被壓扁叠字）"
+  );
+  assert(
+    /overflow:\s*visible/.test(rewardFace[1]),
+    ".reward-cell .card-face 要 overflow: visible（hidden 會令數字同短述叠）"
+  );
+  assert(
+    /\.reward-cell\s+\.card-blurb[\s\S]{0,80}display:\s*none/.test(css),
+    ".reward-cell .card-blurb 要收埋（卡內 flavor 會同青字／橙金叠）"
+  );
   assert(
     /\.reward-why\s*\{[^}]*color:\s*var\(--neon-amber\)/s.test(css),
     ".reward-why 要保持橙金短述（var(--neon-amber)）"
@@ -298,6 +313,16 @@ for (const need of ["index.html", "css/main.css", "js/main.js", "js/data.js", "j
   assert(
     !/@media\s*\(orientation:\s*portrait\)/.test(land),
     "landscape.css 唔應該有 portrait 查詢（直版由 main.css 負責）"
+  );
+
+  // ⑨ 橫屏地圖四行 grid 只套地圖；選牌頁要獨立，否則獎卡被壓進 strip 行叠字
+  assert(
+    /\.screen-wide:has\(\.map-list\)\s*\{/.test(land),
+    "橫屏地圖 grid 要 .screen-wide:has(.map-list)，唔可以套晒所有 .screen-wide"
+  );
+  assert(
+    /\.screen-wide:has\(\.reward-grid\)\s*\{/.test(land),
+    "橫屏選牌頁要有獨立 .screen-wide:has(.reward-grid) 佈局"
   );
 }
 
