@@ -1720,7 +1720,7 @@
       const cached = state.yearEventOffer
         .map((id) => (DATA.events || []).find((e) => e.id === id))
         .filter(Boolean);
-      if (cached.some((e) => e && (e.category === "gear_upgrade" || e.category === "star_up"))) {
+      if (cached.some((e) => e && (e.category === "gear_upgrade" || e.category === "star_up" || (isGangEvent(e) && lifeGearAndSkillsFull())))) {
         state.yearEventOffer = [];
         state.yearEventYear = 0;
       } else if (cached.length === 4 && (allowCommerce || !cached.some(isCommerceEvent))) {
@@ -2542,8 +2542,31 @@
       .join(" · ");
   }
 
+  function isGangEvent(ev) {
+    if (!ev) return false;
+    const c = ev.category;
+    return c === "faction" || c === "faction_gear_star" || c === "faction_fighter_star";
+  }
+
+  /** 六個裝備槽都有裝備，而且每張未陣亡戰鬥卡的技能格都裝滿。 */
+  function lifeGearAndSkillsFull() {
+    if (!GEAR_SLOTS.every((slot) => state.accountGear && state.accountGear[slot.id])) return false;
+    const team = (state.team || []).filter((id) => fighterById[id] && !isDeadFighter(id));
+    if (!team.length) return false;
+    return team.every((fid) => {
+      const cap = raritySlots(fighterById[fid]);
+      const load = state.loadout[fid] || [];
+      for (let i = 0; i < cap; i++) {
+        const sid = load[i];
+        if (!sid || isBurnedSkill(sid)) return false;
+      }
+      return true;
+    });
+  }
+
   function eventFactionEligible(ev) {
     if (!ev) return false;
+    if (isGangEvent(ev) && lifeGearAndSkillsFull()) return false;
     if (ev.flag_on_complete) {
       if (!state.lifeFlags || typeof state.lifeFlags !== "object") state.lifeFlags = {};
       if (state.lifeFlags[ev.flag_on_complete]) return false;
