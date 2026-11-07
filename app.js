@@ -3902,14 +3902,48 @@
     }
   }
 
+  function effectiveSkillCd(unit) {
+    let cd = Math.max(1, (unit && unit.skill_cd) | 0 || 1);
+    if (hasStatus(unit, "spd_down")) cd += 1;
+    return cd;
+  }
+
+  function statusExplain(unit, s) {
+    const n = Math.max(0, s.turns | 0);
+    const baseCd = Math.max(1, (unit && unit.skill_cd) | 0 || 1);
+    switch (s.key) {
+      case "stun":
+        return `技能被凍結，剩 ${n} 回不能放技能。`;
+      case "spd_down":
+        return `冷卻被加長，技能 CD ${baseCd} → ${baseCd + 1}，剩 ${n} 回。`;
+      case "spd_up":
+        return `速度提高，出手更早，剩 ${n} 回。`;
+      case "atk_up":
+        return `攻擊提高，打出的傷害約增加 15%，剩 ${n} 回。`;
+      case "atk_down":
+        return `攻擊降低，打出的傷害約減少 15%，剩 ${n} 回。`;
+      case "shield":
+        return `護盾減傷，受到的傷害約減少 30%，剩 ${n} 回。`;
+      case "regen":
+        return `每回合回復少量生命，剩 ${n} 回。`;
+      case "oil":
+        return `被油濺到，受到的傷害約增加 10%，剩 ${n} 回。`;
+      default:
+        return `${s.name || "狀態"}，剩 ${n} 回。`;
+    }
+  }
+
   function statusesInspectHtml(unit) {
     const list = (unit.statuses || []).filter((s) => s.turns > 0);
     if (!list.length) return "";
     const items = list
-      .map(
-        (s) =>
-          `<span class="ci-st ${esc(s.kind)}" title="${esc(s.name)}">${s.icon} ${esc(s.name)} · ${s.turns}回</span>`
-      )
+      .map((s) => {
+        const note = statusExplain(unit, s);
+        return `<div class="ci-st-block">
+          <span class="ci-st ${esc(s.kind)}">${s.icon} ${esc(s.name)} · ${s.turns}回</span>
+          <p class="ci-st-note">${esc(note)}</p>
+        </div>`;
+      })
       .join("");
     return `<div class="ci-section"><div class="ci-label">狀態</div><div class="ci-statuses">${items}</div></div>`;
   }
@@ -14268,7 +14302,7 @@
     }
 
     actor.turnsTaken += 1;
-    const cd = Math.max(1, actor.skill_cd | 0);
+    const cd = effectiveSkillCd(actor);
     let useSkill = actor.turnsTaken % cd === 0;
     let moveName = useSkill ? actor.skill : actor.basic;
     let effectText = actor.skill_effect || "";
@@ -14855,7 +14889,9 @@
     const tags = cardRoleLabels(def);
     const basic = unit.basic || def.basic || "首通";
     const skill = unit.skill || def.skill || "自帶技";
-    const skillCd = unit.skill_cd || def.skill_cd || 3;
+    const skillCd = hasStatus(unit, "spd_down")
+      ? effectiveSkillCd(Object.assign({}, unit, { skill_cd: unit.skill_cd || def.skill_cd || 3 }))
+      : (unit.skill_cd || def.skill_cd || 3);
     const skillEffect = def.skill_effect || "";
     const flavor =
       def.flavor ||
