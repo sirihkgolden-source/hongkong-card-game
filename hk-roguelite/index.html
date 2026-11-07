@@ -2,86 +2,18 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#050810" />
-  <meta name="description" content="香江小風波——香港霓虹街頭卡牌 Rogue-lite（垂直切片）" />
-  <title>香江小風波</title>
-  <!--
-    字體：刻意唔用 Google Fonts（外部 CDN）。
-    原因：① 部署到 GitHub Pages 要離線可開；② 唔想玩家一入場等外部字體；
-          ③ 內地／公司網絡經常擋 fonts.googleapis.com，會閃 FOUT。
-    改用系統中文字體堆疊（見 css/main.css 嘅 --font-display／--font-body），
-    中英文都夠睇，載入零延遲。
-  -->
-  <link rel="stylesheet" href="css/main.css?v=25" />
-  <!-- 手機橫屏專用（主驗收尺寸）；只喺 landscape + 矮螢幕生效 -->
-  <link rel="stylesheet" href="css/landscape.css?v=5" />
+  <meta http-equiv="refresh" content="0; url=https://github.com/sirihkgolden-source/hk-roguelite" />
+  <link rel="canonical" href="https://github.com/sirihkgolden-source/hk-roguelite" />
+  <title>香江小風波已搬家</title>
+  <style>
+    body { font-family: "PingFang HK", "Microsoft JhengHei", sans-serif; background: #050810; color: #f4efe4; max-width: 36rem; margin: 20vh auto; padding: 1.5rem; line-height: 1.6; }
+    a { color: #ffb020; }
+  </style>
 </head>
 <body>
-  <div id="app" class="app" aria-live="polite">
-    <!-- 畫面由 js/main.js 掛載 -->
-  </div>
-  <div id="fx-root" aria-hidden="true"></div>
-  <noscript>
-    <p class="noscript">請啟用 JavaScript 以遊玩《香江小風波》。</p>
-  </noscript>
-  <!--
-    載入失敗兜底：module 若因「混合版本快取」（舊 feel.js 冇新 export）而整份失敗，
-    畫面會完全空白。呢段會偵測到並自動帶 cache-bust 重載一次，再失敗就顯示原因。
-  -->
-  <script>
-    (function () {
-      var booted = false;
-      var KEY = "hk_boot_retry";
-      var isFile = location.protocol === "file:";
-      window.__HK_BOOTED__ = function () {
-        booted = true;
-        try { sessionStorage.removeItem(KEY); } catch (e) {}
-      };
-      function showBox(html) {
-        if (document.querySelector(".boot-error")) return;
-        var box = document.createElement("div");
-        box.className = "boot-error";
-        box.innerHTML = html;
-        document.body.appendChild(box);
-      }
-      function fail(msg) {
-        if (booted) return;
-        if (isFile) {
-          showBox(
-            "<h1>唔好雙擊檔案開</h1>" +
-              "<p>瀏覽器用 <code>file://</code> 會擋 ES module，所以 <code>main.js</code> 載入失敗。</p>" +
-              "<p>喺 <code>hk-roguelite</code> 資料夾開本機伺服器：</p>" +
-              "<pre>python -m http.server 8766</pre>" +
-              "<p>然後用瀏覽器開：</p>" +
-              '<p><a href="http://127.0.0.1:8766/">http://127.0.0.1:8766/</a></p>'
-          );
-          return;
-        }
-        if (!sessionStorage.getItem(KEY)) {
-          try { sessionStorage.setItem(KEY, "1"); } catch (e) {}
-          location.replace(location.pathname + "?v=" + Date.now());
-          return;
-        }
-        showBox(
-          "<h1>載入失敗</h1>" +
-            "<p>" + msg + "</p>" +
-            "<p>請按 <b>Ctrl + Shift + R</b> 強制重新載入。</p>" +
-            '<button onclick="location.replace(location.pathname + \'?v=\' + Date.now())">重新載入</button>'
-        );
-      }
-      if (isFile) fail("file");
-      window.addEventListener("error", function (e) {
-        if (e.target && e.target.tagName === "SCRIPT") fail("腳本載入出錯：" + (e.target.src || ""));
-      }, true);
-      window.addEventListener("unhandledrejection", function (e) {
-        fail("啟動時發生錯誤：" + (e.reason && e.reason.message ? e.reason.message : e.reason));
-      });
-      setTimeout(function () {
-        if (!booted) fail("遊戲引擎超過 4 秒未啟動（多數係快取到舊版模組）。");
-      }, 4000);
-    })();
-  </script>
-  <script type="module" src="js/main.js?v=22"></script>
+  <h1>《香江小風波》已獨立成庫</h1>
+  <p>本目錄已從《香江 Card Game》倉庫清走。請到新倉庫：</p>
+  <p><a href="https://github.com/sirihkgolden-source/hk-roguelite">https://github.com/sirihkgolden-source/hk-roguelite</a></p>
+  <p>GitHub Pages：<a href="https://sirihkgolden-source.github.io/hk-roguelite/">https://sirihkgolden-source.github.io/hk-roguelite/</a></p>
 </body>
 </html>
