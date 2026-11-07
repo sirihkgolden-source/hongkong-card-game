@@ -11414,6 +11414,8 @@
    */
   function gachaEntryLocked() {
     if (state.lifePrepped) return true;
+    /* 開始人生後先去「準備出發」，這時 lifePrepped 尚未寫上，右上角仍會露出霓虹扭蛋 */
+    if (state.screen === "prep") return true;
     const inBattle = state.screen === "battle" && state.battle && state.battle.running;
     return !!inBattle;
   }
@@ -11433,8 +11435,8 @@
           e.stopPropagation();
         }
         if (gachaEntryLocked()) {
-          toastMsg(state.lifePrepped
-          ? "人生進行中唔可以抽扭蛋——完結今世先返主頁抽。"
+          toastMsg(state.lifePrepped || state.screen === "prep"
+          ? "開始人生後唔可以抽扭蛋——完結今世返主頁先抽。"
           : "戰鬥進行中唔可以抽扭蛋——打完先抽。");
           return;
         }
@@ -11447,14 +11449,15 @@
     ensureGachaPity();
     // t379：只有戰鬥進行中才擋（人生其他畫面都可以抽）
     if (gachaEntryLocked()) {
+      const startedLife = state.lifePrepped || state.screen === "prep";
       state.gachaReturnScreen = null;
       state.gachaResults = [];
       state.gachaReveal = false;
       state.gachaPhase = "idle";
-      state.screen = "home";
+      state.screen = startedLife && state.lifePrepped ? "home" : (state.screen === "prep" ? "prep" : "home");
       render();
-      toastMsg(state.lifePrepped
-          ? "人生進行中唔可以抽扭蛋——完結今世先返主頁抽。"
+      toastMsg(startedLife
+          ? "開始人生後唔可以抽扭蛋——完結今世返主頁先抽。"
           : "戰鬥進行中唔可以抽扭蛋——打完先抽。");
       return;
     }
