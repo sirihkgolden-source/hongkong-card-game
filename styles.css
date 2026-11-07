@@ -10267,8 +10267,43 @@ html, body {
   color: rgba(255, 236, 200, 0.5);
   border-style: dashed;
 }
-.dice-last .dice-faces { font-size: 1.5rem; letter-spacing: 2px; line-height: 1; }
-.dice-last .dice-sum { font-size: 1.12rem; font-weight: 900; color: #ffcc6a; }
+.dice-dealer {
+  display: block;
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  object-position: center 42%;
+  border-radius: 10px;
+  border: 2px solid #20140c;
+  flex: 0 0 auto;
+}
+.dice-last .dice-faces {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1;
+}
+.dice-die {
+  width: 58px;
+  height: 58px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.55rem;
+  line-height: 1;
+  color: #1a1008;
+  background: linear-gradient(180deg, #fffaf0 0%, #f0e2c4 100%);
+  border: 2px solid #20140c;
+  border-radius: 10px;
+  box-shadow: 0 3px 0 #120a06, inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+.dice-last .dice-sum { font-size: 1.45rem; font-weight: 900; color: #ffcc6a; }
+.dice-table .dice-dealer-line {
+  font-size: 1.08rem !important;
+  line-height: 1.45 !important;
+  padding: 10px 12px !important;
+  font-weight: 900 !important;
+}
 .dice-last .dice-side {
   font-size: 0.7rem; font-weight: 900;
   padding: 2px 8px; border-radius: 99px;
@@ -10311,8 +10346,10 @@ html, body {
   .mj-tile { min-height: 34px; padding: 2px 1px; }
   .mj-tile .mj-num { font-size: 0.78rem; }
   .mj-tile .mj-suit { font-size: 0.54rem; }
+  .dice-dealer { height: 120px; }
   .dice-last { padding: 4px; }
-  .dice-last .dice-faces { font-size: 1.15rem; }
+  .dice-die { width: 44px; height: 44px; font-size: 1.9rem; }
+  .dice-table .dice-dealer-line { font-size: 0.92rem !important; }
   .mj-hint { font-size: 0.54rem; }
 }
 

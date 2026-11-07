@@ -7751,6 +7751,9 @@
   function diceFacesText(dice) {
     return (dice || []).map((v) => DICE_LABELS[v] || String(v)).join(" ");
   }
+  function diceFacesHtml(dice) {
+    return (dice || []).map((v) => `<span class="dice-die">${esc(DICE_LABELS[v] || String(v))}</span>`).join("");
+  }
   function diceSumText(dice) {
     return (dice || []).reduce((a, b) => a + b, 0);
   }
@@ -8183,7 +8186,7 @@
 
     const lastHtml = dd.lastRoll
       ? `<div class="dice-last ${dd.lastSide}">
-           <span class="dice-faces">${esc(diceFacesText(dd.lastRoll))}</span>
+           <span class="dice-faces">${diceFacesHtml(dd.lastRoll)}</span>
            <span class="dice-sum">${esc(String(dd.lastRoll.reduce((a, b) => a + b, 0)))}</span>
            <span class="dice-side">${esc(dd.lastSide === "triple" ? "圍骰" : dd.lastSide === "big" ? "大" : "細")}</span>
          </div>`
@@ -8198,8 +8201,9 @@
             <span class="bm-mode">三粒骰・三局兩勝</span>
             <span class="dice-score">贏 ${dd.wins} · 輸 ${dd.losses}</span>
           </div>
+          <img class="dice-dealer" src="assets/events/ev-dice-dealer.jpg?v=t421-1" alt="骰寶莊家" />
           ${lastHtml}
-          <div class="bubble neon mg-msg">${esc(mg.message || "4–10 細，11–17 大。三粒同點做圍骰，莊家通殺。")}</div>
+          <div class="bubble neon mg-msg dice-dealer-line">${esc(mg.message || "4–10 細，11–17 大。三粒同點做圍骰，莊家通殺。")}</div>
           <div class="dice-history">${histHtml}</div>
           <p class="mj-hint">莊家會做手腳——留意前幾局。剩 ${dd.peeks} 次「睇莊」。</p>
         </div>
