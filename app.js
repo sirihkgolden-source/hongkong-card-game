@@ -1118,7 +1118,7 @@
   /*
    * t391：殘頁專屬卡（`shard_only: true`）唔可以從任何普通卡池掉落。
    *
-   * 佢只可以經「戰鬥卡殘頁 ×10」兌換得到。所有隨機來源
+   * 佢只可以經「戰鬥卡殘頁 ×50」兌換得到。所有隨機來源
    * （扭蛋／店鋪／送卡／抽卡／換卡／戰鬥掉落／事件獎勵）都要用
    * `poolFighters()` 而唔係直接讀 DATA.fighters。
    */
@@ -8807,7 +8807,7 @@
   /** 殘頁兌換面板（卡冊內彈出） */
   function shardRedeemHtml() {
     const cfg = DATA.shard_rewards || {};
-    const need = Math.max(1, (cfg.need | 0) || 10);
+    const need = Math.max(1, (cfg.need | 0) || 50);
     const pool = shardRewardPool();
     const rows = pool.map((id) => {
       const f = fighterById[id];
@@ -8895,11 +8895,11 @@
    */
   function shardBannerHtml() {
     const cfg = DATA.shard_rewards || {};
-    const need = Math.max(1, (cfg.need | 0) || 10);
+    const need = Math.max(1, (cfg.need | 0) || 50);
     const pool = shardRewardPool();
     if (!pool.length) return "";
     const total = shardTotal();
-    /* 計算有幾多個「完整 10 張」可以換 */
+    /* 計算有幾多個「完整 50 張」可以換 */
     const ready = pool.filter((id) => shardCountOf(id) >= need);
     const chipCls = ready.length ? "shard-banner ready" : (total > 0 ? "shard-banner" : "shard-banner empty");
     const summary = total > 0
@@ -8926,7 +8926,7 @@
 
   /** 兌換：滿 need 張 → 指定卡入冊 */
   function redeemShardCard(id, need) {
-    const n = need || ((DATA.shard_rewards && DATA.shard_rewards.need) | 0) || 10;
+    const n = need || ((DATA.shard_rewards && DATA.shard_rewards.need) | 0) || 50;
     if (shardCountOf(id) < n) return { ok: false, reason: `殘頁不足（${shardCountOf(id)}／${n}）` };
     state.cardShards[id] = (state.cardShards[id] | 0) - n;
     const f = fighterById[id];
@@ -9871,7 +9871,7 @@
   }
 
   function viewItemBag(root) {
-    const need = Math.max(1, ((DATA.shard_rewards && DATA.shard_rewards.need) | 0) || 10);
+    const need = Math.max(1, ((DATA.shard_rewards && DATA.shard_rewards.need) | 0) || 50);
     const total = shardTotal();
     const pool = shardRewardPool();
     const lines = pool.map((id) => {
