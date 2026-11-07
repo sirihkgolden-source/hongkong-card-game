@@ -8939,6 +8939,33 @@ button.bs-skill {
   font: inherit;
   cursor: pointer;
 }
+.set-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  border-radius: 10px;
+  border: 2px solid #0a0610;
+  background: linear-gradient(180deg, rgba(28, 18, 40, 0.94), rgba(12, 8, 20, 0.96));
+}
+.set-picks { display: flex; gap: 6px; }
+.set-pick {
+  flex: 1 1 0;
+  border: 2px solid #0a0610;
+  border-radius: 8px;
+  background: #1a1028;
+  color: #efe6f8;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 8px 6px;
+  cursor: pointer;
+}
+.set-pick.on {
+  color: #1a1008;
+  background: linear-gradient(180deg, #ffe08a, #e0a83a);
+  box-shadow: 0 0 0 2px #ffd36a;
+}
 .ib-item {
   display: grid;
   grid-template-columns: 52px minmax(0, 1fr);

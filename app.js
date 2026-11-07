@@ -1134,6 +1134,8 @@
      * 預設收起：玩家多數時間只關心膠幣／金幣，六維可隨時點開。
      */
     attrsCollapsed: true,
+    /** 戰鬥音效；設定頁可關。缺欄當開。 */
+    sfxOn: true,
   };
 
   /* 茶記特殊卡同屬戰鬥卡；合併入同一批卡池，卡冊／選卡／戰鬥都認得 */
@@ -2895,6 +2897,8 @@
       battlesThisLife: state.battlesThisLife | 0,
       /** 戰鬥播放速度偏好（1／2／4）；跨戰鬥、跨重開保留 */
       battleSpeed: normalizeBattleSpeed(state.speed),
+      sfxOn: state.sfxOn !== false,
+      attrsCollapsed: !!state.attrsCollapsed,
       team: Array.isArray(state.team) ? state.team.slice() : [],
       lastWinDeploy: Array.isArray(state.lastWinDeploy) ? state.lastWinDeploy.slice(0, TEAM_SIZE) : [],
       loadout: cloneObj(state.loadout, {}),
@@ -3008,6 +3012,9 @@
         .filter((id) => typeof id === "string" && id);
       state.battlesThisLife = Math.max(0, num(data.battlesThisLife, 0) | 0);
       state.speed = normalizeBattleSpeed(num(data.battleSpeed, 1));
+      state.sfxOn = data.sfxOn === false ? false : true;
+      if (data.attrsCollapsed === false) state.attrsCollapsed = false;
+      else if (data.attrsCollapsed === true) state.attrsCollapsed = true;
 
       const teamIn = Array.isArray(data.team) ? data.team : [];
       state.team = teamIn.filter((id) => id && fighterById[id]).slice(0, Math.max(TEAM_SIZE, 25));
@@ -4834,6 +4841,7 @@
       gearBag: "bg-soft",
       itemBag: "bg-soft",
       battleSkills: "bg-soft",
+      settings: "bg-soft",
       team: "bg-team",
       equip: "bg-team",
       prep: "bg-team",
@@ -4892,6 +4900,7 @@
       gearBag: viewGearBag,
       itemBag: viewItemBag,
       battleSkills: viewBattleSkills,
+      settings: viewSettings,
       prep: viewPrep,
       team: viewPrep,
       equip: viewPrep,
@@ -10376,6 +10385,85 @@
     render();
   }
 
+  function viewSettings(root) {
+    const speed = normalizeBattleSpeed(state.speed);
+    const sfx = state.sfxOn !== false;
+    const collapsed = !!state.attrsCollapsed;
+    const pick = (on, attrs, label) =>
+      `<button type="button" class="set-pick${on ? " on" : ""}" ${attrs}>${label}</button>`;
+    root.innerHTML = `
+      ${lifeHudHtml()}
+      <div class="ribbon">設定</div>
+      <div class="al-wrap gb-wrap">
+        <div class="gb-scroll">
+          <section class="set-row">
+            <div class="gb-slot-name">戰鬥速度</div>
+            <div class="gb-slot-stat">下一場戰鬥沿用這個速度。</div>
+            <div class="set-picks">
+              ${pick(speed === 1, 'data-set-speed="1"', "一倍")}
+              ${pick(speed === 2, 'data-set-speed="2"', "兩倍")}
+              ${pick(speed === 4, 'data-set-speed="4"', "四倍")}
+            </div>
+          </section>
+          <section class="set-row">
+            <div class="gb-slot-name">戰鬥音效</div>
+            <div class="gb-slot-stat">出手時的短音。關掉之後仍然會打。</div>
+            <div class="set-picks">
+              ${pick(sfx, 'data-set-sfx="1"', "開")}
+              ${pick(!sfx, 'data-set-sfx="0"', "關")}
+            </div>
+          </section>
+          <section class="set-row">
+            <div class="gb-slot-name">頂欄六維</div>
+            <div class="gb-slot-stat">收起之後，頂欄只留一顆六維按鈕。</div>
+            <div class="set-picks">
+              ${pick(collapsed, 'data-set-attrs="1"', "收起")}
+              ${pick(!collapsed, 'data-set-attrs="0"', "展開")}
+            </div>
+          </section>
+        </div>
+      </div>
+      <div class="soft-cta">
+        <button type="button" class="btn gold" id="btn-set-back">返回</button>
+      </div>
+      ${storyDockHtml()}
+    `;
+    const save = () => { try { saveGame(); } catch (_) {} };
+    root.querySelectorAll("[data-set-speed]").forEach((btn) => {
+      btn.onclick = () => {
+        state.speed = normalizeBattleSpeed(Number(btn.getAttribute("data-set-speed")));
+        save();
+        render();
+      };
+    });
+    root.querySelectorAll("[data-set-sfx]").forEach((btn) => {
+      btn.onclick = () => {
+        state.sfxOn = btn.getAttribute("data-set-sfx") === "1";
+        save();
+        render();
+      };
+    });
+    root.querySelectorAll("[data-set-attrs]").forEach((btn) => {
+      btn.onclick = () => {
+        state.attrsCollapsed = btn.getAttribute("data-set-attrs") === "1";
+        save();
+        render();
+      };
+    });
+    $("#btn-set-back", root).onclick = () => {
+      state.screen = state.settingsReturnScreen || "events";
+      state.settingsReturnScreen = null;
+      render();
+    };
+    wireStoryDock(root);
+  }
+
+  function openSettings() {
+    if (state.screen !== "settings") state.settingsReturnScreen = state.screen || "events";
+    state.screen = "settings";
+    render();
+  }
+
   /** 故事流底欄 7 掣（港式名；對齊參考：盟友／冒險技能／戰鬥技能／裝備／道具／聲望／戰利品） */
   function storyDockHtml() {
     return `
@@ -10386,7 +10474,7 @@
         <button type="button" class="sd-btn" data-sd="gear" data-help="sd-gear"><span class="ico">🛡️</span>裝備</button>
         <button type="button" class="sd-btn" data-sd="item" data-help="sd-item"><span class="ico">💊</span>道具</button>
         <button type="button" class="sd-btn" data-sd="fame" data-help="sd-fame"><span class="ico">📜</span>聲望</button>
-        <button type="button" class="sd-btn" data-sd="loot" data-help="sd-loot"><span class="ico">📦</span>戰利</button>
+        <button type="button" class="sd-btn" data-sd="settings" data-help="sd-settings"><span class="ico">⚙️</span>設定</button>
       </nav>
       <div id="story-toast" class="home-toast" hidden></div>`;
   }
@@ -10423,17 +10511,16 @@
           openBattleSkills();
           return;
         }
+        if (k === "settings") {
+          openSettings();
+          return;
+        }
         if (k === "fame") {
           storyToast(root, "聲望／勢力：" + (factionFavorLine() || "尚未結識"));
           return;
         }
         const labels = {
           adv: "奇遇技",
-          battle: "戰鬥技",
-          gear: "裝備",
-          item: "道具",
-          fame: "聲望",
-          loot: "戰利",
         };
         storyToast(root, (labels[k] || "功能") + " · 切片未開放");
       };
@@ -13855,6 +13942,7 @@
     return audioCtx;
   }
   function sfxHit(skill) {
+    if (state.sfxOn === false) return;
     const ctx = ensureAudio();
     if (!ctx) return;
     const t0 = ctx.currentTime;
