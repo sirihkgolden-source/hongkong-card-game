@@ -997,6 +997,15 @@
     prepGearFocusSlot: null,
     /** 今世是否已「準備出發」（帶入裝備／口袋／技能）；每世一次，遇敵唔再彈大介面 */
     lifePrepped: false,
+    /**
+     * 按下「準備好了」時的帳號快照。
+     * 今世途中得到的戰鬥卡／裝備卡／技能卡，離世時清回這個數量。
+     * 膠幣只有故事完結才領走；中途放棄則回到這裡的 soul。
+     * 殘頁不在此回滾。
+     */
+    lifePocket: null,
+    /** 最近一次離世的膠幣結算，主頁顯示一次直到再開新局 */
+    lastSoulSettle: null,
     /** 今世身世 id（origin screen 揀） */
     originId: null,
     /** events 畫面：遇敵確認彈窗 */
@@ -2890,6 +2899,20 @@
       lastResult: cloneObj(state.lastResult, null),
       gachaPityRare: Math.max(0, state.gachaPityRare | 0),
       gachaPityEpic: Math.max(0, state.gachaPityEpic | 0),
+      lifePocket: state.lifePocket ? {
+        soul: Math.max(0, state.lifePocket.soul | 0),
+        cardCounts: clonePositiveCounts(state.lifePocket.cardCounts),
+        accountGear: cloneGearSlots(state.lifePocket.accountGear),
+        teaShopBought: Array.isArray(state.lifePocket.teaShopBought) ? state.lifePocket.teaShopBought.slice() : [],
+        cardShards: clonePositiveCounts(state.lifePocket.cardShards),
+      } : null,
+      lastSoulSettle: state.lastSoulSettle ? {
+        before: state.lastSoulSettle.before | 0,
+        after: state.lastSoulSettle.after | 0,
+        delta: state.lastSoulSettle.delta | 0,
+        earned: state.lastSoulSettle.earned == null ? null : (state.lastSoulSettle.earned | 0),
+        kept: !!state.lastSoulSettle.kept,
+      } : null,
     };
   }
 
@@ -3075,6 +3098,28 @@
         });
         state.accountGear = g;
       }
+      state.lifePocket = null;
+      if (data.lifePocket && typeof data.lifePocket === "object" && data.lifePocket.cardCounts) {
+        const teaIn = Array.isArray(data.lifePocket.teaShopBought) ? data.lifePocket.teaShopBought : [];
+        state.lifePocket = {
+          soul: Math.max(0, num(data.lifePocket.soul, state.soul) | 0),
+          cardCounts: clonePositiveCounts(data.lifePocket.cardCounts),
+          accountGear: cloneGearSlots(data.lifePocket.accountGear),
+          teaShopBought: teaIn.filter((id) => typeof id === "string" && id),
+          cardShards: clonePositiveCounts(data.lifePocket.cardShards),
+        };
+      }
+      state.lastSoulSettle = null;
+      if (data.lastSoulSettle && typeof data.lastSoulSettle === "object") {
+        const earnedRaw = data.lastSoulSettle.earned;
+        state.lastSoulSettle = {
+          before: num(data.lastSoulSettle.before, 0) | 0,
+          after: num(data.lastSoulSettle.after, 0) | 0,
+          delta: num(data.lastSoulSettle.delta, 0) | 0,
+          earned: earnedRaw == null ? null : (num(earnedRaw, 0) | 0),
+          kept: !!data.lastSoulSettle.kept,
+        };
+      }
       if (data.accountStats && typeof data.accountStats === "object") {
         state.accountStats = {
           maxAgeReached: Math.max(0, num(data.accountStats.maxAgeReached, 0) | 0),
@@ -3143,23 +3188,134 @@
     window.addEventListener("pagehide", flush);
   }
 
-  /** 結算今世／放棄今世：重置今世進度返外層 hub（accountGear 保留） */
-  function abandonLife() {
-    /*
-     * t379：膠幣結算透明化（總導演：「統一放棄／結束分支同主存檔嘅膠幣結算，唔好隱形回滾」）。
-     *
-     * 原本：abandonLife() 直接 `state.soul = SOUL_START` → 今世賺到嘅膠幣**無聲消失**，
-     * 玩家只會見到個數字突然變返 260，完全唔知發生咩事。
-     * 現在：先計出「今世淨賺」並寫入 `state.lastSoulSettle`，
-     * 由 UI 喺放棄前／結算頁明確顯示，然後才重置。
-     */
+  function clonePositiveCounts(src) {
+    const out = {};
+    if (!src || typeof src !== "object") return out;
+    Object.keys(src).forEach((id) => {
+      const n = src[id] | 0;
+      if (n > 0) out[id] = n;
+    });
+    return out;
+  }
+
+  function cloneGearSlots(src) {
+    const g = { head: null, body: null, main: null, off: null, charm: null, feet: null };
+    if (!src || typeof src !== "object") return g;
+    Object.keys(g).forEach((slot) => { g[slot] = src[slot] || null; });
+    return g;
+  }
+
+  /** 按下「準備好了」：記住開局卡冊、身上裝備同膠幣。殘頁只記用來退還今世花掉的張數。 */
+  function captureLifePocket() {
+    state.lifePocket = {
+      soul: Math.max(0, state.soul | 0),
+      cardCounts: clonePositiveCounts(state.cardCounts),
+      accountGear: cloneGearSlots(state.accountGear),
+      teaShopBought: Array.isArray(state.teaShopBought) ? state.teaShopBought.slice() : [],
+      cardShards: clonePositiveCounts(state.cardShards),
+    };
+    state.lastSoulSettle = null;
+  }
+
+  function lifePocketSoul() {
+    const p = state.lifePocket;
+    if (!p || p.soul == null || !Number.isFinite(Number(p.soul))) return null;
+    return Math.max(0, p.soul | 0);
+  }
+
+  /**
+   * 離世時清走今世得到的戰鬥卡、裝備卡、技能卡。
+   * 開局已有的張數補回（升星燒掉的也算開局的卡）。
+   * 殘頁只會補回今世花掉的，新撿到的留低。
+   */
+  function revertLifeGains() {
+    const pocket = state.lifePocket;
+    if (!pocket || !pocket.cardCounts) return;
+    albumEnsureState();
+    ensureGearShape();
+    const base = pocket.cardCounts;
+    const ids = new Set(Object.keys(state.cardCounts || {}).concat(Object.keys(base)));
+    ids.forEach((id) => {
+      const had = Math.max(0, base[id] | 0);
+      const now = Math.max(0, state.cardCounts[id] | 0);
+      if (now === had) return;
+      state.cardCounts[id] = had;
+      if (had <= 0) {
+        delete state.fighterStars[id];
+        delete state.skillStars[id];
+        delete state.equipStars[id];
+        delete state.fighterLevels[id];
+        delete state.fighterXp[id];
+      }
+    });
+    const boughtThen = new Set(Array.isArray(pocket.teaShopBought) ? pocket.teaShopBought : []);
+    const keptTea = [];
+    (Array.isArray(state.teaShopBought) ? state.teaShopBought : []).forEach((id) => {
+      if (boughtThen.has(id)) {
+        keptTea.push(id);
+        return;
+      }
+      const card = teaShopList().find((c) => c && c.id === id);
+      state.fame = (state.fame | 0) + Math.max(0, (card && card.fame) | 0);
+    });
+    state.teaShopBought = keptTea;
+    const gearThen = pocket.accountGear || {};
+    ["head", "body", "main", "off", "charm", "feet"].forEach((slot) => {
+      const cur = state.accountGear[slot];
+      if (cur && (base[cur] | 0) > 0 && (state.cardCounts[cur] | 0) > 0) return;
+      const prev = gearThen[slot] || null;
+      state.accountGear[slot] = (prev && (state.cardCounts[prev] | 0) > 0) ? prev : null;
+    });
+    const shardsThen = pocket.cardShards || {};
+    if (!state.cardShards || typeof state.cardShards !== "object") state.cardShards = {};
+    Object.keys(shardsThen).forEach((id) => {
+      const had = shardsThen[id] | 0;
+      const now = Math.max(0, state.cardShards[id] | 0);
+      if (now < had) state.cardShards[id] = had;
+    });
+  }
+
+  function lifeSettleHomeHtml() {
+    const s = state.lastSoulSettle;
+    if (!s || state.lifePrepped) return "";
+    const earnedTxt = s.earned == null
+      ? ""
+      : `（今世 ${s.earned > 0 ? "+" : ""}${s.earned}）`;
+    const coin = s.kept
+      ? `故事完結，膠幣 ${s.after} 已領走${earnedTxt}。`
+      : `故事未完成，膠幣沒有領走，現在是 ${s.after}。`;
+    return `<div class="bubble">${coin}今世得到的戰鬥卡、裝備卡、技能卡已清走。開局帶入的卡牌同殘頁留低。</div>`;
+  }
+
+  function soulSettlePreview(keepSoul) {
     const soulNow = Math.max(0, state.soul | 0);
+    const start = lifePocketSoul();
+    const after = keepSoul ? soulNow : (start == null ? SOUL_START : start);
+    const delta = after - soulNow;
+    const deltaTxt = delta > 0 ? `+${delta}` : (delta < 0 ? String(delta) : "±0");
+    const earned = start == null ? null : soulNow - start;
+    return { soulNow, after, delta, deltaTxt, earned, start };
+  }
+
+  /**
+   * 結算今世／放棄今世：重置今世進度返外層 hub。
+   * keepSoul：故事已完結（壽命到、全軍覆沒，不論好壞）才把膠幣領走。
+   * 中途放棄不領走，膠幣回到開局。
+   * 兩種情況都會清走今世得到的卡。
+   */
+  function abandonLife(opts) {
+    const keepSoul = !!(opts && opts.keepSoul);
+    const preview = soulSettlePreview(keepSoul);
     state.lastSoulSettle = {
-      before: soulNow,
-      after: SOUL_START,
-      delta: SOUL_START - soulNow,
+      before: preview.soulNow,
+      after: preview.after,
+      delta: preview.delta,
+      earned: preview.earned,
+      kept: keepSoul,
       at: Date.now(),
     };
+    revertLifeGains();
+    state.lifePocket = null;
     state.year = 1;
     state.age = 10;
     state.lv = 1;
@@ -3167,7 +3323,7 @@
     state.xpToNext = 10;
     state.attrs = defaultAttrs();
     state.gold = 0;
-    state.soul = SOUL_START;
+    state.soul = preview.after;
     state.battlesThisLife = 0;
     state.selectedEvent = null;
     state.yearEventOffer = [];
@@ -3208,7 +3364,7 @@
     state.lifeWiped = false;
     state.equipFocus = null;
     state.equipSlot = null;
-    /* accountGear persists — 同「清晒」 */
+    /* 身上裝備已按開局快照收回；今世新裝的清走 */
     ensureLifeSkills();
     ensureDefaultLoadout(true);
     state.screen = "home";
@@ -3217,25 +3373,39 @@
   }
 
   function endLife() {
-    abandonLife();
+    abandonLife({ keepSoul: true });
   }
 
   /**
-   * t379：放棄今世確認 —— 明確列出膠幣會點變，唔好靜靜清走。
-   * 同時顯示今世淨賺，令玩家知道自己放低咗幾多。
+   * 放棄今世確認。故事未完結：膠幣不領走。
+   * 故事已經完結（壽命到或出戰卡死光）：跟結算一樣，膠幣領走。
+   * 兩種情況都清走今世得到的卡。
    */
   function requestAbandonLife() {
-    const soulNow = Math.max(0, state.soul | 0);
-    const delta = SOUL_START - soulNow;
-    const deltaTxt = delta > 0 ? `+${delta}` : (delta < 0 ? String(delta) : "±0");
-    const msg =
-      "確定放棄今世？\n\n" +
-      `．今世膠幣：${soulNow} → 新一世 ${SOUL_START}（${deltaTxt}）\n` +
-      "．戰鬥卡、技能、裝備收藏（卡冊）會保留\n" +
-      "．今世進度（年份、六維、事件、勢力好感）會重置\n\n" +
-      "放棄後會返主頁 hub。";
+    const done = lifeDoneFlag();
+    const preview = soulSettlePreview(done);
+    const cardLine =
+      "．開始人生後得到的戰鬥卡、裝備卡、技能卡會清走\n" +
+      "．開局帶進的卡牌會留低\n" +
+      "．殘頁這類收集品會留低\n";
+    const msg = done
+      ? (
+        "今世已經完結，結算並返回主頁？\n\n" +
+        `．膠幣會領走：${preview.soulNow}\n` +
+        cardLine +
+        "．今世進度（年份、六維、事件、勢力好感）會重置\n\n" +
+        "結算後會返主頁。"
+      )
+      : (
+        "確定放棄今世？\n\n" +
+        `．故事未完成，膠幣不會領走：${preview.soulNow} → ${preview.after}（${preview.deltaTxt}）\n` +
+        cardLine +
+        "．今世進度（年份、六維、事件、勢力好感）會重置\n\n" +
+        "放棄後會返主頁。"
+      );
     if (!confirm(msg)) return;
-    abandonLife();
+    if (done) endLife();
+    else abandonLife();
   }
 
   const $ = (sel, el = document) => el.querySelector(sel);
@@ -4020,7 +4190,7 @@
     "btn-story-pick": "以此包氣氛入故事——只記 active 故事包、提高該包主線出現機會；四揀一仍混其他類型。",
     "btn-back": "返回上一頁（故事內＝遇敵／準備出發等）；未確認的選擇不會保存。",
     "btn-ok": "結果會浮現顯示，睇完之後點畫面任何空白位置繼續（唔會自動跳走）。",
-    "btn-abandon": "放棄今世——確認後重置今世進度並返回外層主頁 hub。進入故事後不可以只返回主頁而保留進度。",
+    "btn-abandon": "放棄今世——故事未完成，膠幣不會領走。今世得到的戰鬥卡、裝備卡、技能卡會清走；開局帶進的卡牌同殘頁留低。進度重置並返回主頁。",
     "btn-reset": "清空今世戰鬥卡隊與帶入技能（lifeSkills 清空）；主人裝備不清空。要重新選取後再「準備好了」。",
     "btn-confirm": "確認口袋帶入（最少 1 張）；準備出發後再揀身世同人生命運。",
     "btn-ready": "準備出發——確認今世帶入的主人裝備＋戰鬥卡口袋＋技能（每世一次）。確認後先選身世，再進入人生命運（第1–3年），之後才一般遭遇。口袋最少 1 張。",
@@ -5181,6 +5351,7 @@
           <div class="cap">${packCap}</div>
         </div>
         <div class="bubble">${state.age}歲 · 第 ${state.year} 年——開始或繼續今世遭遇。${state.battlesThisLife ? "（今世已打 "+state.battlesThisLife+" 場）" : ""}${pack ? "（氣氛：" + esc(pack.name) + "）" : ""}</div>
+        ${lifeSettleHomeHtml()}
         <div class="home-side">
           <button class="side-icon" type="button" id="side-spin" data-help="side-spin"><span class="ico">🎰</span>轉盤</button>
           <button class="side-icon active" type="button" id="side-ledger" data-help="btn-go"><span class="ico">🌃</span>舊帳</button>
@@ -10525,6 +10696,7 @@
       </div>
       <div class="prep-cta">
         <button class="btn gold prep-ready" id="btn-ready" data-help="btn-ready" ${ready ? "" : "disabled"}>準備好了</button>
+        <p class="modal-hint">今世途中得到的戰鬥卡、裝備卡、技能卡，完結或放棄時都會清走。只有現在帶進的卡會留低。膠幣要完成故事（不論結局好壞）才領得走。殘頁會留低。</p>
         <div class="prep-cta-row">
           <button class="btn small ghost" id="btn-reset" data-help="btn-reset">清晒</button>
           <button class="btn small ghost" id="btn-back" data-help="btn-back">${esc(L["ui.cancel"] || "取消／返回")}</button>
@@ -10741,6 +10913,7 @@
       state.prepPickKind = null;
       state.prepPickQuery = "";
       state.prepGearFocusSlot = null;
+      captureLifePocket();
       state.lifePrepped = true;
       state.deploy = [];
       state.deployHint = "";
@@ -14430,11 +14603,11 @@
              * t379：結算前明確講清楚膠幣會點變（唔好隱形回滾）。
              * 放棄／結算後 soul 會重置為 SOUL_START，玩家應該事先知道。
              */
-            const cur = Math.max(0, state.soul | 0);
-            const dl = SOUL_START - cur;
-            const dlTxt = dl > 0 ? `+${dl}` : (dl < 0 ? String(dl) : "±0");
-            const tone = dl < 0 ? "var(--neon-pink)" : "var(--neon-lime)";
-            return `<br/><span style="color:${tone}">結算後膠幣：${cur} → 新一世 ${SOUL_START}（${dlTxt}）· 卡冊收藏保留</span>`;
+            const preview = soulSettlePreview(true);
+            const earnedTxt = preview.earned == null
+              ? ""
+              : `（今世 ${preview.earned > 0 ? "+" : ""}${preview.earned}）`;
+            return `<br/><span style="color:var(--neon-lime)">結算後膠幣 ${preview.soulNow} 會領走${earnedTxt}。今世得到的戰鬥卡、裝備卡、技能卡不會帶走；開局帶入的卡牌同殘頁會留低。</span>`;
           })() : ""}
         </div>
       </div>
