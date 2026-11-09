@@ -11462,3 +11462,22 @@ button.bs-skill {
 .gb-stair-step:nth-child(3) { bottom: 78px; transform: translateX(24%); animation: gbStep 1.6s ease-in-out .4s infinite; }
 @keyframes gbStep { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.25); } }
 .soft-panel.tiny { font-size: 12px; opacity: .85; }
+
+/* gbPrep：開局選卡可捲，避免下面卡點唔到 */
+.screen.bg-team[data-screen="gbPrep"] {
+  overflow: hidden;
+}
+.screen.bg-team[data-screen="gbPrep"] > .gb-prep-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+.screen.bg-team[data-screen="gbPrep"] > .hud,
+.screen.bg-team[data-screen="gbPrep"] > .ribbon,
+.screen.bg-team[data-screen="gbPrep"] > .bubble,
+.screen.bg-team[data-screen="gbPrep"] > .btn-row {
+  flex-shrink: 0;
+}

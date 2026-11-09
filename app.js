@@ -5777,6 +5777,7 @@
       </div>
       <div class="ribbon">海嵐峰卡冊 · 只帶入已選</div>
       <div class="bubble">挑選 ${bCap} 張戰鬥卡（＝當前統率）＋5 張技能卡。未選入本局的卡不會顯示或使用。</div>
+      <div class="gb-prep-scroll">
       <div class="soft-panel"><b>戰鬥卡</b></div>
       <div class="card-grid" id="gb-b-grid">
         ${battles.map((f) => `
@@ -5792,6 +5793,7 @@
             <img src="${esc(s.art || "")}" alt="" data-card-name="${esc(s.name)}" data-card-kind="skill" />
             <span>${esc(s.name)}</span>
           </button>`).join("")}
+      </div>
       </div>
       <div class="btn-row">
         <button class="btn ghost" id="gb-prep-back" type="button">返回</button>
