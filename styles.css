@@ -9033,7 +9033,8 @@ button.bs-skill {
   border: 2px solid #0a0610;
   background: linear-gradient(180deg, rgba(28, 18, 40, 0.94), rgba(12, 8, 20, 0.96));
 }
-.set-picks { display: flex; gap: 6px; }
+.set-picks { display: flex; flex-wrap: wrap; gap: 6px; }
+.set-picks .set-pick { min-width: 4.5em; }
 .set-pick {
   flex: 1 1 0;
   border: 2px solid #0a0610;
