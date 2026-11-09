@@ -11505,3 +11505,7 @@ button.bs-skill {
 .screen[data-screen="gbPrep"] > .btn-row {
   flex-shrink: 0;
 }
+
+.gb-stair-rules { margin: 8px 0 10px; font-size: 0.86rem; line-height: 1.45; }
+.gb-stair-rules ul { margin: 6px 0 0; padding-left: 1.15em; }
+.gb-stair-rules li { margin: 0 0 6px; }

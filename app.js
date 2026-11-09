@@ -3648,7 +3648,8 @@
   const ENEMY_SPECIAL_MULT = 1.05;
 
   function enemyScaleMult() {
-    const year = Math.max(1, (state.year | 0) || 1);
+    const tune = gbCombatTune();
+    const year = tune.lockYear ? 1 : Math.max(1, (state.year | 0) || 1);
     const t = year - 1;
     // 飽和曲線：前期近似線性，後期趨於上限
     let m = 1 + ENEMY_GROWTH_CAP * (1 - Math.exp(-t / ENEMY_GROWTH_K));
@@ -3715,6 +3716,25 @@
   }
 
   /** 同一場遇敵的敵方名單快取：確認視窗、編隊預覽、實際開打都用同一組 */
+  function gbAccidentCombat() {
+    return !!(state.gbRun && state.gbRun.packId === GB_PACK_ID);
+  }
+
+  /* 事故鏈戰鬥唔跟人生年份加乘；前期削弱敵人、玩家略為加成，後期逐步還原。 */
+  function gbCombatTune() {
+    if (!gbAccidentCombat()) {
+      return { active: false, hp: 1, atk: 1, def: 1, pierce: 1, playerHp: 1, playerAtk: 1, lockYear: false };
+    }
+    const idx = state.gbRun.chainIndex | 0;
+    if (idx <= 7) {
+      return { active: true, hp: 0.62, atk: 0.68, def: 0.62, pierce: 0.35, playerHp: 1.12, playerAtk: 1.10, lockYear: true };
+    }
+    if (idx <= 19) {
+      return { active: true, hp: 0.78, atk: 0.82, def: 0.78, pierce: 0.55, playerHp: 1.06, playerAtk: 1.05, lockYear: true };
+    }
+    return { active: true, hp: 0.92, atk: 0.94, def: 0.88, pierce: 0.75, playerHp: 1, playerAtk: 1, lockYear: true };
+  }
+
   function encounterEnemyRoster(ev) {
     if (!ev || !ev.battle) return [];
     const key = (ev.id || "") + "|" + (ev.battle || "") + "|" + (state.year | 0) + "|" + (state.age | 0);
@@ -3762,12 +3782,15 @@
   const ENEMY_ATK_PIERCE_DECAY = 0.4; // 每年遞減
 
   function enemyAtkPierce() {
-    const year = Math.max(1, (state.year | 0) || 1);
-    return Math.max(0, ENEMY_ATK_PIERCE_BASE - (year - 1) * ENEMY_ATK_PIERCE_DECAY);
+    const tune = gbCombatTune();
+    const year = tune.lockYear ? 1 : Math.max(1, (state.year | 0) || 1);
+    const raw = Math.max(0, ENEMY_ATK_PIERCE_BASE - (year - 1) * ENEMY_ATK_PIERCE_DECAY);
+    return raw * (tune.active ? tune.pierce : 1);
   }
 
   function enemyDefenceValue() {
-    const year = Math.max(1, (state.year | 0) || 1);
+    const tune = gbCombatTune();
+    const year = tune.lockYear ? 1 : Math.max(1, (state.year | 0) || 1);
     // t368：改用飽和曲線並加上硬上限，避免後期防禦高過玩家攻擊力
     const raw = ENEMY_DEF_BASE + (year - 1) * ENEMY_DEF_PER_YEAR;
     const soft = ENEMY_DEF_BASE + (ENEMY_DEF_CAP - ENEMY_DEF_BASE) * (1 - Math.exp(-(year - 1) / 18));
@@ -3832,6 +3855,15 @@
         alive: true,
         _scaleMult: mult,
       };
+    }).map((u) => {
+      const tune = gbCombatTune();
+      if (!tune.active) return u;
+      u.maxHp = Math.max(1, Math.round(u.maxHp * tune.hp));
+      u.hp = u.maxHp;
+      u.atk = Math.max(1, Math.round(u.atk * tune.atk));
+      u.def = Math.max(0, Math.round((u.def | 0) * tune.def));
+      u.mdef = Math.max(0, Math.round((u.mdef | 0) * tune.def));
+      return u;
     });
   }
 
@@ -5473,12 +5505,70 @@
     gbAdvanceChain();
   }
 
+  function gbMainsBefore(chain, idx) {
+    let n = 0;
+    const lim = Math.max(0, idx | 0);
+    for (let i = 0; i < lim && i < chain.length; i++) {
+      const node = gbAccidentNodeById(chain[i]);
+      if (node && node.accident_main) n += 1;
+    }
+    return n;
+  }
+
+  function gbMainShiftNumber(run, pack) {
+    const chain = (pack && pack.accident_chain) || [];
+    const idx = run ? (run.chainIndex | 0) : 0;
+    return gbMainsBefore(chain, idx) + 1;
+  }
+
+  function gbNodeHudTitle(run, node) {
+    if (!node) return "";
+    const pack = gbPack();
+    const chain = (pack && pack.accident_chain) || [];
+    const step = ((run && run.chainIndex) | 0) + 1;
+    const total = chain.length || 1;
+    if (gbIsTransNode(node)) {
+      return `第 ${step}/${total} 段 · 巡更日常 · ${node.name || ""}`;
+    }
+    const mainNo = gbMainShiftNumber(run, pack);
+    const raw = node.name || "";
+    const shown = (raw === "第一更") ? (mainNo === 1 ? "開更登記" : "當值") : raw;
+    return `第 ${mainNo} 更 · ${shown}`;
+  }
+
+  /* 舊存檔可能缺 chainIndex，或曾用 indexOf 對準重用嘅 T*。用「已完成主事故數＋nodeId」修復，唔用 indexOf。 */
+  function gbRepairChainIndex(run) {
+    if (!run || !run.nodeId) return run;
+    const pack = gbPack();
+    const chain = (pack && pack.accident_chain) || [];
+    if (!chain.length) return run;
+    const idx = run.chainIndex | 0;
+    if (chain[idx] === run.nodeId) return run;
+    const hits = [];
+    for (let i = 0; i < chain.length; i++) {
+      if (chain[i] === run.nodeId) hits.push(i);
+    }
+    if (!hits.length) return run;
+    const main = run.mainCount | 0;
+    const byMain = hits.filter((i) => gbMainsBefore(chain, i) === main);
+    if (byMain.length) {
+      // 若已有合理下標，揀不小於該下標嘅命中，避免跳回前兩格
+      const ahead = byMain.filter((i) => i >= idx);
+      run.chainIndex = (ahead.length ? ahead[0] : byMain[byMain.length - 1]) | 0;
+      return run;
+    }
+    const ahead = hits.filter((i) => i >= idx && (idx > 0 || chain[0] === run.nodeId || i > 0));
+    run.chainIndex = (ahead.length ? ahead[0] : hits[hits.length - 1]) | 0;
+    return run;
+  }
+
   function gbAdvanceChain() {
     const run = state.gbRun;
     const pack = gbPack();
     if (!run || !pack) return;
     const chain = pack.accident_chain || [];
     // 必須用 chainIndex 遞增。T* 會喺鏈上重用同一 event id，唔可以用 indexOf(nodeId)，否則會跳返第一次出現嘅位置造成循環。
+    gbRepairChainIndex(run);
     let next = (run.chainIndex | 0) + 1;
     run.chainIndex = next;
     if (next >= chain.length) {
@@ -5777,6 +5867,9 @@
         state.gbRun.stairStreak = 0;
       }
     } else if (state.gbRun) {
+      if (state.gbRun.phase && state.gbRun.phase !== "stair") {
+        state.gbRun.preStairPhase = state.gbRun.phase;
+      }
       state.gbRun.phase = "stair";
       state.gbRun.stairStreak = state.gbRun.stairStreak | 0;
     }
@@ -5939,10 +6032,10 @@
     }
     root.innerHTML = `
       <div class="hud">
-        <span class="chip year"><span class="dot"></span>${esc(node.name || "")}</span>
+        <span class="chip year"><span class="dot"></span>${esc(gbNodeHudTitle(run, node))}</span>
         <span class="chip soul"><span class="dot"></span>局內金幣 ${run.hidden ? (run.hidden.gold_run | 0) : 0}</span>
       </div>
-      <div class="ribbon">你的保安，李步岸</div>
+      <div class="ribbon">你的保安，李步岸 · 第 ${(run.chainIndex | 0) + 1}／${((gbPack() && gbPack().accident_chain) || []).length || 1} 段</div>
       ${body}
       <div class="btn-row">
         <button class="btn ghost" id="gb-stair" type="button">跳樓梯</button>
@@ -6065,7 +6158,15 @@
         <span class="chip soul"><span class="dot"></span>連跳 ${streak}</span>
       </div>
       <div class="ribbon">走火梯／後樓梯 · 不限時</div>
-      <div class="bubble">連續跳過 15 次即算成功。同一局連續 100 次可領一次 100 膠幣。</div>
+      <div class="soft-panel gb-stair-rules">
+        <b>玩法說明</b>
+        <ul>
+          <li>唔限時，亦冇倒數。由你自己撳「跳上」，一次跳一級。</li>
+          <li>同一局之內連續成功 15 次，即算通關。</li>
+          <li>隱藏獎勵：同一局之內連續成功 100 次，可獲 100 膠幣。每位玩家只可領取第一次。</li>
+          <li>踩空，或者離開，連跳次數都會歸零，要由頭再計。</li>
+        </ul>
+      </div>
       <div class="soft-panel" id="gb-stair-msg">準備起跳</div>
       <div class="gb-stair-stage" aria-hidden="true">
         <div class="gb-stair-step"></div>
@@ -6093,7 +6194,11 @@
     $("#gb-stair-leave", root).onclick = () => {
       if (run) run.stairStreak = 0;
       if (run && run.nodeId) {
-        run.phase = "choose";
+        const back = run.preStairPhase && run.preStairPhase !== "stair" && run.preStairPhase !== "battle"
+          ? run.preStairPhase
+          : "choose";
+        run.phase = back;
+        run.preStairPhase = null;
         state.screen = "gbAccident";
       } else {
         state.gbRun = null;
@@ -15441,7 +15546,8 @@
     const players = deployIds.map((id) => {
       const f = fighterById[id];
       const grow = fighterGrowthBonus(id);
-      const hp = Math.max(1, fighterHp(f) + (bonus.hp || 0) + (fb.hp | 0) + (a.str | 0) * 5 + (a.intel | 0) * 5 + (grow.hp | 0));
+      const gbTune = gbCombatTune();
+      const hp = Math.max(1, Math.round((fighterHp(f) + (bonus.hp || 0) + (fb.hp | 0) + (a.str | 0) * 5 + (a.intel | 0) * 5 + (grow.hp | 0)) * (gbTune.playerHp || 1)));
       const equipped = loadoutIds(id)
         .map((sid) => skillById[sid])
         .filter(Boolean)
@@ -15468,7 +15574,7 @@
         side: "player",
         id: f.id,
         name: f.name,
-        atk: f.atk + (bonus.atk || 0) + originAtk + (a.str | 0) + (fb.atk | 0) + (grow.atk | 0),
+        atk: Math.round((f.atk + (bonus.atk || 0) + originAtk + (a.str | 0) + (fb.atk | 0) + (grow.atk | 0)) * ((gbCombatTune().playerAtk) || 1)),
         matk: (a.intel | 0), // 魔攻：技能加成／顯示用
         level: fighterLevelOf(id),
         spd: f.spd + (bonus.spd || 0),
@@ -16812,6 +16918,25 @@
   ensureLifeSkills();
   ensureDefaultLoadout(state.lifePrepped ? false : true);
   if (state.gbRun && state.gbRun.packId === GB_PACK_ID) {
+    gbRepairChainIndex(state.gbRun);
+    if (state.gbRun.nodeId) {
+      const bootNode = gbAccidentNodeById(state.gbRun.nodeId);
+      if (bootNode) {
+        if (state.gbRun.phase === "battle" && state.gbRun.pendingBattle) {
+          state.selectedEvent = Object.assign({}, bootNode, {
+            id: bootNode.id + "_BATTLE",
+            battle: state.gbRun.pendingBattle,
+            name: bootNode.name || "現場衝突",
+            reward_soul: 0,
+            reward_gold: 0,
+            reward_xp: 0,
+            category: "adventure",
+          });
+        } else if (!state.selectedEvent) {
+          state.selectedEvent = bootNode;
+        }
+      }
+    }
     const ph = state.gbRun.phase;
     if (ph === "prep") state.screen = "gbPrep";
     else if (ph === "shop") state.screen = "gbShop";
