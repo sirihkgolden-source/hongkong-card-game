@@ -2,11 +2,15 @@
   "use strict";
 
   const DATA = window.HK_SLICE_DATA;
+  const I18N = window.HK_I18N || null;
   if (!DATA) {
+    const failMsg = (I18N && I18N.t("ui.load_fail")) ||
+      "載入資料失敗。請用本機伺服器打開，或確認 data.js 存在。";
     document.getElementById("screen").innerHTML =
-      "<p class='soft-panel'>載入資料失敗。請用本機伺服器打開，或確認 data.js 存在。</p>";
+      "<p class='soft-panel'>" + failMsg + "</p>";
     return;
   }
+  try { if (I18N && typeof I18N.init === "function") I18N.init(); } catch (_) {}
 
   const TEAM_SIZE = DATA.team_size || 3;
   /** 開局／新人生／重置預設魂焰（讀舊檔唔洗現有值） */
@@ -15,6 +19,18 @@
   /** 今世可帶入人生嘅技能卡上限 */
   const LIFE_SKILLS_CAP = 10;
   const L = DATA.locale || {};
+  function t(key, fallback) {
+    if (I18N && typeof I18N.t === "function") return I18N.t(key, fallback != null ? fallback : L[key]);
+    return (fallback != null ? fallback : L[key]) || "";
+  }
+  function tp(phrase) {
+    if (I18N && typeof I18N.tp === "function") return I18N.tp(phrase);
+    return phrase == null ? "" : String(phrase);
+  }
+  function ts(text) {
+    if (I18N && typeof I18N.ts === "function") return I18N.ts(text);
+    return text == null ? "" : String(text);
+  }
 
   document.addEventListener("error", (ev) => {
     const img = ev.target;
@@ -103,19 +119,30 @@
    */
   const ORIGINS = [
     { id: "tea_apprentice", name: "茶記學徒", kind: "buff", blurb: "幸運＋2 · 軟事件膠幣＋10%",
-      flavor: "由洗碗開始，聽盡半條街嘅是非。伙記教你：有啲嘢聽咗，要當冇聽過。",
+      flavor: "由洗碗開始，聽盡半條街的是非。伙記教你：有些話聽了，要當作沒聽過。",
+      flavor_yue: "由洗碗開始，聽盡半條街嘅是非。伙記教你：有啲嘢聽咗，要當冇聽過。",
       bonus_soul: 0.1, attrs: { luck: 2 }, art: "assets/events/ev-yum-cha.jpg" },
     { id: "walled_kid", name: "城寨細路", kind: "buff", blurb: "力量＋2 · 開戰物攻再＋1",
-      flavor: "天台、樓梯、後巷都係你屋企。打交唔使理由，但要有個講法。",
+      flavor: "天台、樓梯、後巷都是你家裡。打架不用理由，但要有個說法。",
+      flavor_yue: "天台、樓梯、後巷都係你屋企。打交唔使理由，但要有個講法。",
       bonus_atk: 1, attrs: { str: 2 }, art: "assets/events/ev-alley-wake.jpg" },
     { id: "rooftop_youth", name: "天台夜青", kind: "debuff", blurb: "敏捷－2 · 壽命－5 · 夜夜熬夜傷身",
-      flavor: "夜晚先係你嘅日頭。日頭嘅事，你一路都跟唔上。",
+      flavor: "夜晚才是你的白天。白天的事，你一直都跟不上。",
+      flavor_yue: "夜晚先係你嘅日頭。日頭嘅事，你一路都跟唔上。",
       attrs: { agi: -2, life: -5 }, art: "assets/events/ev-rooftop-night.jpg" },
     { id: "paper_stall_kid", name: "報紙檔細路", kind: "debuff", blurb: "幸運－1 · 統率－1 · 街邊叫賣沒有人聽",
-      flavor: "由細叫到大，練到聲都沙。但冇人記得你賣過咩。",
+      flavor: "由小叫到大，練到聲音都沙啞。但沒有人記得你賣過什麼。",
+      flavor_yue: "由細叫到大，練到聲都沙。但冇人記得你賣過咩。",
       attrs: { luck: -1, lead: -1 }, art: "assets/events/ev-mtr-crowd.jpg" },
   ];
   const originById = Object.fromEntries(ORIGINS.map((o) => [o.id, o]));
+  function originFlavor(o) {
+    if (!o) return "";
+    const lang = I18N && I18N.getLang ? I18N.getLang() : "zh-Hant";
+    if (lang === "yue" && o.flavor_yue) return o.flavor_yue;
+    if (lang === "zh-Hans") return ts(o.flavor);
+    return o.flavor || "";
+  }
 
   /** 30 種港式人生命運（data.fates；Y1–Y3 四揀一） */
   const FATES = (DATA.fates && DATA.fates.length) ? DATA.fates : [];
@@ -912,7 +939,13 @@
   }
 
   /** 六維公開名（UI 禁顯示 str／agi 等 key；t260） */
-  const ATTR_LABEL = { str: "力量", agi: "敏捷", intel: "智力", luck: "幸運", lead: "統率", life: "壽命" };
+  const ATTR_LABEL_HANT = { str: "力量", agi: "敏捷", intel: "智力", luck: "幸運", lead: "統率", life: "壽命" };
+  const ATTR_LABEL = new Proxy(ATTR_LABEL_HANT, {
+    get(target, prop) {
+      if (typeof prop !== "string") return undefined;
+      return t("attr." + prop, target[prop] || "");
+    },
+  });
   function formatAttrsDelta(delta) {
     if (!delta || typeof delta !== "object") return [];
     const bits = [];
@@ -2899,6 +2932,8 @@
       battleSpeed: normalizeBattleSpeed(state.speed),
       sfxOn: state.sfxOn !== false,
       attrsCollapsed: !!state.attrsCollapsed,
+      /** 語言偏好（與 hkcg-lang 同步；缺 key 以 localStorage／預設繁體字為準） */
+      lang: (I18N && I18N.getLang) ? I18N.getLang() : "zh-Hant",
       team: Array.isArray(state.team) ? state.team.slice() : [],
       lastWinDeploy: Array.isArray(state.lastWinDeploy) ? state.lastWinDeploy.slice(0, TEAM_SIZE) : [],
       loadout: cloneObj(state.loadout, {}),
@@ -3015,6 +3050,12 @@
       state.sfxOn = data.sfxOn === false ? false : true;
       if (data.attrsCollapsed === false) state.attrsCollapsed = false;
       else if (data.attrsCollapsed === true) state.attrsCollapsed = true;
+      /* 語言：localStorage 主源；存檔有值且 localStorage 缺 key 時作後備 */
+      if (I18N && typeof I18N.setLang === "function") {
+        let stored = null;
+        try { stored = localStorage.getItem(I18N.LANG_KEY || "hkcg-lang"); } catch (_) {}
+        if (!stored && data.lang) I18N.setLang(data.lang, { silent: true });
+      }
 
       const teamIn = Array.isArray(data.team) ? data.team : [];
       state.team = teamIn.filter((id) => id && fighterById[id]).slice(0, Math.max(TEAM_SIZE, 25));
@@ -4294,7 +4335,7 @@
     "tab-book": "卡冊（收藏／升星）——戰鬥卡／技能卡／裝備卡。",
     "tab-teahouse": "茶記：用聲望換特殊戰鬥卡；聲望由每日差事賺取。",
     "tab-jobs": "差事：每日任務板——宿敵／戰鬥／奇遇／升星等，每日重置。",
-    "tab-more": "更多：設定等。",
+    "tab-more": "更多：語言與設定。",
     /*
      * t386：獎勵與增減益一律不在「選擇前」顯示（總導演：顯示出來就失去選擇的樂趣）。
      * 說明只講「玩法與內容」，唔講獎勵數字、唔講增減益方向、唔講會唔會打。
@@ -4567,7 +4608,8 @@
     root.querySelectorAll("[data-help]").forEach((el) => {
       const key = el.getAttribute("data-help") || "";
       const custom = el.getAttribute("data-help-text");
-      const tip = (custom && custom.trim()) ? custom : (HELP_DEFAULT[key] || key);
+      const tipRaw = (custom && custom.trim()) ? custom : (HELP_DEFAULT[key] || t("help." + key, "") || "");
+      const tip = tipRaw ? ts(tipRaw) : "";
       const lpOpts = {};
       if (
         key === "enemy-card" ||
@@ -4876,6 +4918,7 @@
       itemBag: "bg-soft",
       battleSkills: "bg-soft",
       settings: "bg-soft",
+      more: "bg-soft",
       team: "bg-team",
       equip: "bg-team",
       prep: "bg-team",
@@ -4935,6 +4978,7 @@
       itemBag: viewItemBag,
       battleSkills: viewBattleSkills,
       settings: viewSettings,
+      more: viewMore,
       prep: viewPrep,
       team: viewPrep,
       equip: viewPrep,
@@ -4965,8 +5009,8 @@
       <div class="bubble">夜巷燈未熄——準備好未？</div>
       <p class="sub">直向切片 · 前幾年人生 run<br/>準備出發 · 身世 · 命運×3 · 遭遇 · 遇敵 · 自動戰 · 年紀＋1</p>
       <div class="spacer"></div>
-      <button class="btn gold" id="btn-start" data-help="btn-start">${esc(L["ui.start"] || "開始")}</button>
-      <button class="btn ghost" id="btn-hint" type="button" data-help="btn-hint">查看規則</button>
+      <button class="btn gold" id="btn-start" data-help="btn-start">${esc(t("ui.start", "開始"))}</button>
+      <button class="btn ghost" id="btn-hint" type="button" data-help="btn-hint">${esc(t("ui.hint_rules", "查看規則"))}</button>
     `;
     $("#btn-start", root).onclick = () => {
       state.screen = "home";
@@ -5039,7 +5083,7 @@
     root.innerHTML = `
       <div class="hud">
         <span class="chip year"><span class="dot"></span>差事 · ${esc(d.dateKey)}</span>
-        <span class="chip soul"><span class="dot"></span>${esc(L["ui.resource"] || "膠幣")} ${state.soul}</span>
+        <span class="chip soul"><span class="dot"></span>${esc(t("ui.resource", "膠幣"))} ${state.soul}</span>
         <span class="chip gold"><span class="dot"></span>金幣 ${state.gold | 0}</span>
         <span class="chip fame"><span class="dot"></span>聲望 ${state.fame | 0}</span>
       </div>
@@ -5056,11 +5100,11 @@
       <div class="dm-list">${rows || "<div class='soft-panel'>未有任務模板</div>"}</div>
       <button class="btn ghost dm-home-btn" id="btn-dm-home" type="button">回主頁</button>
       <nav class="tab-bar" aria-label="主選單">
-        <button class="tab" type="button" id="tab-book" data-help="tab-book"><span class="ico">📖</span>卡冊</button>
-        <button class="tab" type="button" id="tab-life" data-help="tab-life"><span class="ico">🏠</span>今世</button>
-        <button class="tab" type="button" id="tab-teahouse" data-help="tab-teahouse"><span class="ico">🍜</span>茶記</button>
-        <button class="tab on" type="button" id="tab-jobs" data-help="tab-jobs"><span class="ico">📋</span>差事</button>
-        <button class="tab" type="button" id="tab-more" aria-disabled="true" data-help="tab-more"><span class="ico">⋯</span>更多</button>
+        <button class="tab" type="button" id="tab-book" data-help="tab-book"><span class="ico">📖</span>${esc(t("ui.tab_book", "卡冊"))}</button>
+        <button class="tab" type="button" id="tab-life" data-help="tab-life"><span class="ico">🏠</span>${esc(t("ui.tab_life", "今世"))}</button>
+        <button class="tab" type="button" id="tab-teahouse" data-help="tab-teahouse"><span class="ico">🍜</span>${esc(t("ui.tab_teahouse", "茶記"))}</button>
+        <button class="tab on" type="button" id="tab-jobs" data-help="tab-jobs"><span class="ico">📋</span>${esc(t("ui.tab_jobs", "差事"))}</button>
+        <button class="tab" type="button" id="tab-more" data-help="tab-more"><span class="ico">⋯</span>${esc(t("ui.tab_more", "更多"))}</button>
       </nav>
       <div id="home-toast" class="home-toast" hidden></div>
     `;
@@ -5069,7 +5113,7 @@
       const el = $("#home-toast", root);
       if (!el) return;
       el.hidden = false;
-      el.textContent = msg;
+      el.textContent = ts(msg);
       clearTimeout(toast._t);
       toast._t = setTimeout(() => { el.hidden = true; }, 1800);
     };
@@ -5101,7 +5145,7 @@
     const teaTabM = $("#tab-teahouse", root);
     if (teaTabM) teaTabM.onclick = () => { state.screen = "teaHouse"; render(); };
     const moreTabM = $("#tab-more", root);
-    if (moreTabM) moreTabM.onclick = () => toast("這個位置尚未開放。");
+    if (moreTabM) moreTabM.onclick = () => openMore();
     const tabBookM = $("#tab-book", root);
     if (tabBookM) tabBookM.onclick = () => { state.screen = "album"; render(); };
   }
@@ -5431,7 +5475,7 @@
     root.innerHTML = `
       <div class="hud">
         <span class="chip year"><span class="dot"></span>${state.age}歲 · 第 ${state.year} 年</span>
-        <span class="chip soul"><span class="dot"></span>${esc(L["ui.resource"] || "膠幣")} ${state.soul}</span>
+        <span class="chip soul"><span class="dot"></span>${esc(t("ui.resource", "膠幣"))} ${state.soul}</span>
         ${gachaEntryHtml()}
       </div>
       <div class="ribbon">今世主頁</div>
@@ -5461,11 +5505,11 @@
         </div>
       </div>
       <nav class="tab-bar" aria-label="主選單">
-        <button class="tab" type="button" id="tab-book" data-help="tab-book"><span class="ico">📖</span>卡冊</button>
-        <button class="tab on" type="button" id="tab-life" data-help="tab-life"><span class="ico">🏠</span>今世</button>
-        <button class="tab" type="button" id="tab-teahouse" data-help="tab-teahouse"><span class="ico">🍜</span>茶記</button>
-        <button class="tab" type="button" id="tab-jobs" data-help="tab-jobs"><span class="ico">📋</span>差事</button>
-        <button class="tab" type="button" id="tab-more" aria-disabled="true" data-help="tab-more"><span class="ico">⋯</span>更多</button>
+        <button class="tab" type="button" id="tab-book" data-help="tab-book"><span class="ico">📖</span>${esc(t("ui.tab_book", "卡冊"))}</button>
+        <button class="tab on" type="button" id="tab-life" data-help="tab-life"><span class="ico">🏠</span>${esc(t("ui.tab_life", "今世"))}</button>
+        <button class="tab" type="button" id="tab-teahouse" data-help="tab-teahouse"><span class="ico">🍜</span>${esc(t("ui.tab_teahouse", "茶記"))}</button>
+        <button class="tab" type="button" id="tab-jobs" data-help="tab-jobs"><span class="ico">📋</span>${esc(t("ui.tab_jobs", "差事"))}</button>
+        <button class="tab" type="button" id="tab-more" data-help="tab-more"><span class="ico">⋯</span>${esc(t("ui.tab_more", "更多"))}</button>
       </nav>
       <div id="home-toast" class="home-toast" hidden></div>
     `;
@@ -5534,10 +5578,12 @@
         }
       };
     }
-    ["side-spin","side-welfare","side-path","tab-more"].forEach((id) => {
+    ["side-spin","side-welfare","side-path"].forEach((id) => {
       const el = $("#"+id, root);
       if (el) el.onclick = () => toast("這個位置尚未開放——請點選「舊帳」或「開始人生／繼續上次未完人生」繼續。");
     });
+    const moreTabHome = $("#tab-more", root);
+    if (moreTabHome) moreTabHome.onclick = () => openMore();
     const tabTea = $("#tab-teahouse", root);
     if (tabTea) {
       tabTea.removeAttribute("aria-disabled");
@@ -7678,11 +7724,11 @@
           })
         : ""}
       <nav class="tab-bar" aria-label="主選單">
-        <button class="tab" type="button" id="tab-book"><span class="ico">📖</span>卡冊</button>
-        <button class="tab" type="button" id="tab-life"><span class="ico">🏠</span>今世</button>
-        <button class="tab on" type="button" id="tab-teahouse"><span class="ico">🍜</span>茶記</button>
-        <button class="tab" type="button" id="tab-jobs"><span class="ico">📋</span>差事</button>
-        <button class="tab" type="button" id="tab-more" aria-disabled="true"><span class="ico">⋯</span>更多</button>
+        <button class="tab" type="button" id="tab-book"><span class="ico">📖</span>${esc(t("ui.tab_book", "卡冊"))}</button>
+        <button class="tab" type="button" id="tab-life"><span class="ico">🏠</span>${esc(t("ui.tab_life", "今世"))}</button>
+        <button class="tab on" type="button" id="tab-teahouse"><span class="ico">🍜</span>${esc(t("ui.tab_teahouse", "茶記"))}</button>
+        <button class="tab" type="button" id="tab-jobs"><span class="ico">📋</span>${esc(t("ui.tab_jobs", "差事"))}</button>
+        <button class="tab" type="button" id="tab-more" data-help="tab-more"><span class="ico">⋯</span>${esc(t("ui.tab_more", "更多"))}</button>
       </nav>
       <div id="home-toast" class="home-toast" hidden></div>
     `;
@@ -7691,7 +7737,7 @@
       const el = $("#home-toast", root);
       if (!el) return;
       el.hidden = false;
-      el.textContent = msg;
+      el.textContent = ts(msg);
       clearTimeout(toast._t);
       toast._t = setTimeout(() => { el.hidden = true; }, 1900);
     };
@@ -7763,7 +7809,7 @@
     const tb = $("#tab-book", root);
     if (tb) tb.onclick = () => { state.screen = "album"; render(); };
     const more = $("#tab-more", root);
-    if (more) more.onclick = () => toast("這個位置尚未開放。");
+    if (more) more.onclick = () => openMore();
   }
 
   function buyStarUp(fighterId) {
@@ -8189,7 +8235,7 @@
    * @param {Object} spec { soul, xp, gold, attrs:{str..}, temp:{atk,def,hp} }
    * @returns {string} 一串 <span class="srb-chip ...">
    */
-  const ATTR_SHORT = { str: "力量", agi: "敏捷", intel: "智力", luck: "幸運", lead: "統率", life: "壽命" };
+  const ATTR_SHORT = ATTR_LABEL;
 
   function rewardChipsHtml(spec) {
     const s = spec || {};
@@ -8266,9 +8312,9 @@
     const storyCloses = isEnding && officeIntervalYears(packMeta);
     const rewardLine = isEnding
       ? (endingClaimable
-          ? `結局達成 · 獲得 <b style="color:var(--neon-gold)">+${gain}</b> ${esc(L["ui.resource"] || "膠幣")}（一次性）${storyCloses ? " · 六十五歲，故事完結" : ""}`
+          ? `結局達成 · 獲得 <b style="color:var(--neon-gold)">+${gain}</b> ${esc(t("ui.resource", "膠幣"))}（一次性）${storyCloses ? " · 六十五歲，故事完結" : ""}`
           : `<span style="color:var(--muted)">此結局已領過 ${ev.reward_soul | 0} 膠幣——重玩唔再發</span>`)
-      : `今世賺了 <b style="color:var(--neon-gold)">+${gain}</b> ${esc(L["ui.resource"] || "膠幣")}${(ev.reward_xp|0) ? ` · 經驗 +${ev.reward_xp|0}` : ""}${goldGain ? ` · 金幣 +${goldGain}` : ""} · <span style="color:var(--neon-cyan)">下一歲 ${state.age + 1}歲（第 ${state.year + 1} 年）</span>`;
+      : `今世賺了 <b style="color:var(--neon-gold)">+${gain}</b> ${esc(t("ui.resource", "膠幣"))}${(ev.reward_xp|0) ? ` · 經驗 +${ev.reward_xp|0}` : ""}${goldGain ? ` · 金幣 +${goldGain}` : ""} · <span style="color:var(--neon-cyan)">下一歲 ${state.age + 1}歲（第 ${state.year + 1} 年）</span>`;
     /*
      * t406：結局要「全屏停住」——結語 + 角色一句 + 獎勵 + 明確按鈕。
      * 唔用 autoAdvanceBarHtml（點畫面即跳），改為單一確認掣。
@@ -10419,6 +10465,34 @@
     render();
   }
 
+  function wireLangPicks(root) {
+    root.querySelectorAll("[data-set-lang]").forEach((btn) => {
+      btn.onclick = () => {
+        const next = btn.getAttribute("data-set-lang");
+        if (!I18N || typeof I18N.setLang !== "function") return;
+        I18N.setLang(next);
+        try { saveGame(); } catch (_) {}
+        // 即時套用：只重繪目前畫面，唔整頁重載（避免白閃）
+        render();
+      };
+    });
+  }
+
+  function langSettingsSectionHtml() {
+    const cur = I18N && I18N.getLang ? I18N.getLang() : "zh-Hant";
+    const picks = I18N && I18N.langPickerHtml
+      ? I18N.langPickerHtml(cur)
+      : `<button type="button" class="set-pick on" data-set-lang="zh-Hant">繁體字</button>`;
+    return `
+      <section class="set-row">
+        <div class="gb-slot-name">${esc(t("ui.language", "語言"))}</div>
+        <div class="gb-slot-stat">${esc(t("ui.lang_hint", "即時套用，並記住你的選擇。"))}</div>
+        <div class="set-picks" role="group" aria-label="${esc(t("ui.language", "語言"))}">
+          ${picks}
+        </div>
+      </section>`;
+  }
+
   function viewSettings(root) {
     const speed = normalizeBattleSpeed(state.speed);
     const sfx = state.sfxOn !== false;
@@ -10427,50 +10501,52 @@
       `<button type="button" class="set-pick${on ? " on" : ""}" ${attrs}>${label}</button>`;
     root.innerHTML = `
       ${lifeHudHtml()}
-      <div class="ribbon">設定</div>
+      <div class="ribbon">${esc(t("ui.settings", "設定"))}</div>
       <div class="al-wrap gb-wrap">
         <div class="gb-scroll">
+          ${langSettingsSectionHtml()}
           <section class="set-row">
-            <div class="gb-slot-name">戰鬥速度</div>
-            <div class="gb-slot-stat">下一場戰鬥沿用這個速度。</div>
+            <div class="gb-slot-name">${esc(t("ui.battle_speed", "戰鬥速度"))}</div>
+            <div class="gb-slot-stat">${esc(t("ui.battle_speed_hint", "下一場戰鬥沿用這個速度。"))}</div>
             <div class="set-picks">
-              ${pick(speed === 1, 'data-set-speed="1"', "一倍")}
-              ${pick(speed === 2, 'data-set-speed="2"', "兩倍")}
-              ${pick(speed === 4, 'data-set-speed="4"', "四倍")}
+              ${pick(speed === 1, 'data-set-speed="1"', esc(t("ui.speed_1", "一倍")))}
+              ${pick(speed === 2, 'data-set-speed="2"', esc(t("ui.speed_2", "兩倍")))}
+              ${pick(speed === 4, 'data-set-speed="4"', esc(t("ui.speed_4", "四倍")))}
             </div>
           </section>
           <section class="set-row">
-            <div class="gb-slot-name">戰鬥音效</div>
-            <div class="gb-slot-stat">出手時的短音。關掉之後仍然會打。</div>
+            <div class="gb-slot-name">${esc(t("ui.sfx", "戰鬥音效"))}</div>
+            <div class="gb-slot-stat">${esc(t("ui.sfx_hint", "出手時的短音。關掉之後仍然會打。"))}</div>
             <div class="set-picks">
-              ${pick(sfx, 'data-set-sfx="1"', "開")}
-              ${pick(!sfx, 'data-set-sfx="0"', "關")}
+              ${pick(sfx, 'data-set-sfx="1"', esc(t("ui.on", "開")))}
+              ${pick(!sfx, 'data-set-sfx="0"', esc(t("ui.off", "關")))}
             </div>
           </section>
           <section class="set-row">
-            <div class="gb-slot-name">頂欄六維</div>
-            <div class="gb-slot-stat">收起之後，頂欄只留一顆六維按鈕。</div>
+            <div class="gb-slot-name">${esc(t("ui.attrs_bar", "頂欄六維"))}</div>
+            <div class="gb-slot-stat">${esc(t("ui.attrs_hint", "收起之後，頂欄只留一顆六維按鈕。"))}</div>
             <div class="set-picks">
-              ${pick(collapsed, 'data-set-attrs="1"', "收起")}
-              ${pick(!collapsed, 'data-set-attrs="0"', "展開")}
+              ${pick(collapsed, 'data-set-attrs="1"', esc(t("ui.collapse", "收起")))}
+              ${pick(!collapsed, 'data-set-attrs="0"', esc(t("ui.expand", "展開")))}
             </div>
           </section>
           <section class="set-row">
-            <div class="gb-slot-name">討論區</div>
-            <a class="set-link" href="https://forum.hkgolden.com/channel/NW" target="_blank" rel="noopener noreferrer">高登 NW 台</a>
+            <div class="gb-slot-name">${esc(t("ui.forum", "討論區"))}</div>
+            <a class="set-link" href="https://forum.hkgolden.com/channel/NW" target="_blank" rel="noopener noreferrer">${esc(t("ui.forum_link", "高登 NW 台"))}</a>
           </section>
           <section class="set-row">
-            <div class="gb-slot-name">電郵</div>
+            <div class="gb-slot-name">${esc(t("ui.email", "電郵"))}</div>
             <a class="set-link" href="mailto:sirihkgolden@gmail.com">sirihkgolden@gmail.com</a>
           </section>
         </div>
       </div>
       <div class="soft-cta">
-        <button type="button" class="btn gold" id="btn-set-back">返回</button>
+        <button type="button" class="btn gold" id="btn-set-back">${esc(t("ui.back", "返回"))}</button>
       </div>
       ${storyDockHtml()}
     `;
     const save = () => { try { saveGame(); } catch (_) {} };
+    wireLangPicks(root);
     root.querySelectorAll("[data-set-speed]").forEach((btn) => {
       btn.onclick = () => {
         state.speed = normalizeBattleSpeed(Number(btn.getAttribute("data-set-speed")));
@@ -10500,23 +10576,77 @@
     wireStoryDock(root);
   }
 
+  function viewMore(root) {
+    root.innerHTML = `
+      ${lifeHudHtml()}
+      <div class="ribbon">${esc(t("ui.more", "更多"))}</div>
+      <div class="al-wrap gb-wrap">
+        <div class="gb-scroll">
+          <p class="gb-slot-stat" style="margin:0 0 10px">${esc(t("ui.more_blurb", "語言與其他設定。與此處「設定」共用同一偏好。"))}</p>
+          ${langSettingsSectionHtml()}
+          <section class="set-row">
+            <div class="gb-slot-name">${esc(t("ui.settings", "設定"))}</div>
+            <button type="button" class="set-link" id="btn-more-settings">${esc(t("ui.open_settings", "開啟設定"))}</button>
+          </section>
+          <section class="set-row">
+            <div class="gb-slot-name">${esc(t("ui.forum", "討論區"))}</div>
+            <a class="set-link" href="https://forum.hkgolden.com/channel/NW" target="_blank" rel="noopener noreferrer">${esc(t("ui.forum_link", "高登 NW 台"))}</a>
+          </section>
+          <section class="set-row">
+            <div class="gb-slot-name">${esc(t("ui.email", "電郵"))}</div>
+            <a class="set-link" href="mailto:sirihkgolden@gmail.com">sirihkgolden@gmail.com</a>
+          </section>
+        </div>
+      </div>
+      <div class="soft-cta">
+        <button type="button" class="btn gold" id="btn-more-back">${esc(t("ui.back", "返回"))}</button>
+      </div>
+      <nav class="dock">
+        <button class="tab" type="button" id="tab-book" data-help="tab-book"><span class="ico">📖</span>${esc(t("ui.tab_book", "卡冊"))}</button>
+        <button class="tab" type="button" id="tab-life" data-help="tab-life"><span class="ico">🏠</span>${esc(t("ui.tab_life", "今世"))}</button>
+        <button class="tab" type="button" id="tab-teahouse" data-help="tab-teahouse"><span class="ico">🍜</span>${esc(t("ui.tab_teahouse", "茶記"))}</button>
+        <button class="tab" type="button" id="tab-jobs" data-help="tab-jobs"><span class="ico">📋</span>${esc(t("ui.tab_jobs", "差事"))}</button>
+        <button class="tab on" type="button" id="tab-more" data-help="tab-more"><span class="ico">⋯</span>${esc(t("ui.tab_more", "更多"))}</button>
+      </nav>
+    `;
+    wireLangPicks(root);
+    $("#btn-more-settings", root).onclick = () => openSettings();
+    $("#btn-more-back", root).onclick = () => {
+      state.screen = state.moreReturnScreen || "home";
+      state.moreReturnScreen = null;
+      render();
+    };
+    const go = (screen) => () => { state.screen = screen; render(); };
+    $("#tab-book", root).onclick = go("album");
+    $("#tab-life", root).onclick = go("home");
+    $("#tab-teahouse", root).onclick = go("teaHouse");
+    $("#tab-jobs", root).onclick = go("missions");
+    $("#tab-more", root).onclick = () => {};
+  }
+
   function openSettings() {
     if (state.screen !== "settings") state.settingsReturnScreen = state.screen || "events";
     state.screen = "settings";
     render();
   }
 
+  function openMore() {
+    if (state.screen !== "more") state.moreReturnScreen = state.screen || "home";
+    state.screen = "more";
+    render();
+  }
+
   /** 故事流底欄 7 掣（港式名；對齊參考：盟友／冒險技能／戰鬥技能／裝備／道具／聲望／戰利品） */
   function storyDockHtml() {
     return `
-      <nav class="story-dock" aria-label="故事功能">
-        <button type="button" class="sd-btn" data-sd="allies" data-help="sd-allies"><span class="ico">🤝</span>盟友</button>
-        <button type="button" class="sd-btn" data-sd="adv" data-help="sd-adv"><span class="ico">📗</span>奇遇技</button>
-        <button type="button" class="sd-btn" data-sd="battle" data-help="sd-battle"><span class="ico">🎒</span>戰鬥技</button>
-        <button type="button" class="sd-btn" data-sd="gear" data-help="sd-gear"><span class="ico">🛡️</span>裝備</button>
-        <button type="button" class="sd-btn" data-sd="item" data-help="sd-item"><span class="ico">💊</span>道具</button>
-        <button type="button" class="sd-btn" data-sd="fame" data-help="sd-fame"><span class="ico">📜</span>聲望</button>
-        <button type="button" class="sd-btn" data-sd="settings" data-help="sd-settings"><span class="ico">⚙️</span>設定</button>
+      <nav class="story-dock" aria-label="${esc(tp("故事功能"))}">
+        <button type="button" class="sd-btn" data-sd="allies" data-help="sd-allies"><span class="ico">🤝</span>${esc(t("dock.allies", "盟友"))}</button>
+        <button type="button" class="sd-btn" data-sd="adv" data-help="sd-adv"><span class="ico">📗</span>${esc(t("dock.adv", "奇遇技"))}</button>
+        <button type="button" class="sd-btn" data-sd="battle" data-help="sd-battle"><span class="ico">🎒</span>${esc(t("dock.battle", "戰鬥技"))}</button>
+        <button type="button" class="sd-btn" data-sd="gear" data-help="sd-gear"><span class="ico">🛡️</span>${esc(t("dock.gear", "裝備"))}</button>
+        <button type="button" class="sd-btn" data-sd="item" data-help="sd-item"><span class="ico">💊</span>${esc(t("dock.item", "道具"))}</button>
+        <button type="button" class="sd-btn" data-sd="fame" data-help="sd-fame"><span class="ico">📜</span>${esc(t("dock.fame", "聲望"))}</button>
+        <button type="button" class="sd-btn" data-sd="settings" data-help="sd-settings"><span class="ico">⚙️</span>${esc(t("dock.settings", "設定"))}</button>
       </nav>
       <div id="story-toast" class="home-toast" hidden></div>`;
   }
@@ -11072,7 +11202,7 @@
     root.innerHTML = `
       <div class="hud prep-hud">
         <span class="chip year"><span class="dot"></span>第 ${state.year} 年</span>
-        <span class="chip soul"><span class="dot"></span>${esc(L["ui.resource"] || "膠幣")} ${state.soul}</span>
+        <span class="chip soul"><span class="dot"></span>${esc(t("ui.resource", "膠幣"))} ${state.soul}</span>
         ${gachaEntryHtml()}
       </div>
       <div class="ribbon">今世準備出發</div>
@@ -11107,7 +11237,7 @@
         <p class="modal-hint">今世途中得到的戰鬥卡、裝備卡、技能卡，完結或放棄時都會清走。只有現在帶進的卡會留低。膠幣要完成故事（不論結局好壞）才領得走。殘頁會留低。</p>
         <div class="prep-cta-row">
           <button class="btn small ghost" id="btn-reset" data-help="btn-reset">清晒</button>
-          <button class="btn small ghost" id="btn-back" data-help="btn-back">${esc(L["ui.cancel"] || "取消／返回")}</button>
+          <button class="btn small ghost" id="btn-back" data-help="btn-back">${esc(t("ui.cancel", "取消／返回"))}</button>
         </div>
       </div>
       <div id="prep-toast" class="prep-toast" hidden></div>
@@ -12261,7 +12391,7 @@
       b1.onclick = () => {
         if (gachaPhaseIsBusy(state.gachaPhase)) return;
         if ((state.soul | 0) < gachaPriceSingle) {
-          toast("膠幣不足");
+          toast(t("ui.soul_short", "膠幣不足"));
           return;
         }
         doPull(1);
@@ -12272,7 +12402,7 @@
       b10.onclick = () => {
         if (gachaPhaseIsBusy(state.gachaPhase)) return;
         if ((state.soul | 0) < gachaPriceTen) {
-          toast("膠幣不足");
+          toast(t("ui.soul_short", "膠幣不足"));
           return;
         }
         doPull(10);
@@ -13097,7 +13227,7 @@
         <img src="${esc(art)}" alt="${esc(o.name)}" />
         <div class="label">
           <div class="ev-name">${esc(o.name)}</div>
-          <div class="ev-rewards"><span class="ev-reward fate-blurb-line">${esc(o.flavor || o.blurb || "")}</span></div>
+          <div class="ev-rewards"><span class="ev-reward fate-blurb-line">${esc(originFlavor(o) || o.blurb || "")}</span></div>
         </div>
       </button>`;
     }).join("");
@@ -13840,7 +13970,7 @@
 
   function speedButtonLabel(speed) {
     return speed === 1
-      ? (L["ui.speed2"] || "加速・兩倍")
+      ? (t("ui.speed2", "加速・兩倍"))
       : speed === 2
         ? "再快・四倍"
         : "回復・一倍";
@@ -14891,8 +15021,8 @@
 
     const def = lookupDef(unit) || {};
     const isEnemy = unit.side === "enemy";
-    const atkLabel = L["ui.atk"] || "攻";
-    const spdLabel = L["ui.spd"] || "速";
+    const atkLabel = t("ui.atk", "攻");
+    const spdLabel = t("ui.spd", "速");
     const rarity = officialRarityLabel(def, isEnemy ? "敵方" : "普通");
     const tags = cardRoleLabels(def);
     const basic = unit.basic || def.basic || "首通";
@@ -15100,7 +15230,7 @@
         </div>
         <div class="battle-actions">
           <button class="btn small cyan" id="btn-speed" data-help="btn-speed">${speedLabel}</button>
-          <button class="btn small danger" id="btn-forfeit" data-help="btn-forfeit">${esc(L["ui.forfeit"] || "放棄")}</button>
+          <button class="btn small danger" id="btn-forfeit" data-help="btn-forfeit">${esc(t("ui.forfeit", "放棄"))}</button>
         </div>
       </div>
     `;
@@ -15141,11 +15271,11 @@
     // 中途場次勝敗 ≠ 今世完結；「今世過關」只用於 lifeDone
     const banner = lifeDone
       ? (r.win
-          ? esc(L["ui.life_win"] || L["ui.win"] || "本世過關")
-          : esc(L["ui.life_lose"] || L["ui.lose"] || "謀生艱難。本世完結"))
+          ? esc(t("ui.life_win", "本世過關"))
+          : esc(t("ui.life_lose", "謀生艱難。本世完結")))
       : (r.win
-          ? esc(L["ui.battle_win"] || "這場勝利！")
-          : esc(L["ui.battle_lose"] || "這場未能取勝"));
+          ? esc(t("ui.battle_win", "這場勝利！"))
+          : esc(t("ui.battle_lose", "這場未能取勝")));
     const blurb = r.rewardBlurb
       ? esc(r.rewardBlurb)
       : r.win
