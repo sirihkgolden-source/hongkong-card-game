@@ -83,7 +83,15 @@ ok(app.includes("pack.engine === \"accident\""), "age gate");
 ok(!/if \(pack\.id === \"guard_baoan\"\) return 7/.test(app), "no hardcoded baoan interval 7");
 
 const idx = fs.readFileSync(path.join(root, "index.html"), "utf8");
-ok(idx.includes("t450-guard-baoan"), "cache bust");
+ok(/t45\d-/.test(idx), "cache bust");
+// t451 locks
+const appSrc = fs.readFileSync(path.join(root, "app.js"), "utf8");
+ok(appSrc.includes("lead: 5, life: 60") || /lead:\s*5,\s*life:\s*60/.test(appSrc), "default lead5 life60");
+ok(appSrc.includes("function effectiveLead"), "effectiveLead");
+ok(appSrc.includes("function effectiveLife"), "effectiveLife");
+ok(appSrc.includes("gbBattlePickCap"), "gbBattlePickCap");
+ok(!/lifeHudHtml[\s\S]{0,800}chip gold/.test(appSrc.replace(/\n/g, " ")), "no gold chip in lifeHud");
+ok(!/viewHome[\s\S]{0,1200}金幣 \$\{/.test(appSrc), "home has no gold template");
 
 console.log(fail ? `\n${fail} failures` : "\nALL PASS");
 process.exit(fail ? 1 : 0);

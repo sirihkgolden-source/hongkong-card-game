@@ -22450,7 +22450,7 @@
       "hp": 2,
       "spd": 0,
       "tag_boost": null,
-      "blurb": "海嵐峰裝備・職員證吊繩",
+      "blurb": "海嵐峰裝備・職員證吊繩（統率＋1）",
       "flavor": "夜班可用。",
       "art": "assets/story-packs/guard_baoan/cards/e09-zhengjian.jpg",
       "star": 1,
@@ -22463,7 +22463,8 @@
       },
       "source_id": "GB_E09",
       "pack_only": "guard_baoan",
-      "gb_card_id": "e09"
+      "gb_card_id": "e09",
+      "lead": 1
     },
     {
       "id": "GB_E10",
@@ -22475,7 +22476,7 @@
       "hp": 1,
       "spd": 0,
       "tag_boost": null,
-      "blurb": "海嵐峰裝備・反光背心",
+      "blurb": "海嵐峰裝備・反光背心（統率＋1）",
       "flavor": "夜班可用。",
       "art": "assets/story-packs/guard_baoan/cards/e10-fanguang.jpg",
       "star": 1,
@@ -22488,7 +22489,8 @@
       },
       "source_id": "GB_E10",
       "pack_only": "guard_baoan",
-      "gb_card_id": "e10"
+      "gb_card_id": "e10",
+      "lead": 1
     },
     {
       "id": "GB_E11",
@@ -22525,7 +22527,7 @@
       "hp": 2,
       "spd": 0,
       "tag_boost": null,
-      "blurb": "海嵐峰裝備・保溫杯",
+      "blurb": "海嵐峰裝備・保溫杯（壽命＋1）",
       "flavor": "夜班可用。",
       "art": "assets/story-packs/guard_baoan/cards/e12-baowenbei.jpg",
       "star": 1,
@@ -22538,7 +22540,8 @@
       },
       "source_id": "GB_E12",
       "pack_only": "guard_baoan",
-      "gb_card_id": "e12"
+      "gb_card_id": "e12",
+      "life": 1
     }
   ],
   "fates": [

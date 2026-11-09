@@ -13,7 +13,7 @@
   try { if (I18N && typeof I18N.init === "function") I18N.init(); } catch (_) {}
 
   const TEAM_SIZE = DATA.team_size || 3;
-  /** 開局／新人生／重置預設魂焰（讀舊檔唔洗現有值） */
+  /** 開局／新人生／重置預設膠幣（讀舊檔唔洗現有值） */
   const SOUL_START = 260;
   const MAX_TURNS = DATA.max_turns || 40;
   /** 今世可帶入人生嘅技能卡上限 */
@@ -194,12 +194,55 @@
   }
 
   /**
-   * 人生六維溫和 demo 預設（身世可 ±）。
-   * t368：壽命 70 → 100，配合新敵方曲線（飽和式成長 + 防禦上限），
-   * 實測可令玩家中位數達到 84 歲、38% 能活到 100 歲。
+   * 人生六維預設。
+   * t451：壽命預設 60；統率預設 5（＝戰鬥卡攜帶上限）。
+   * 壽命只可經物品／裝備提升；事件／戰鬥對統率、壽命的加成屬局內暫存，離局重置。
    */
   function defaultAttrs() {
-    return { str: 12, agi: 10, intel: 8, luck: 8, lead: 8, life: 100 };
+    return { str: 12, agi: 10, intel: 8, luck: 8, lead: 5, life: 60 };
+  }
+
+  function ensureRunAttrBonus() {
+    if (!state.runAttrBonus || typeof state.runAttrBonus !== "object") {
+      state.runAttrBonus = { lead: 0, life: 0 };
+    }
+    if (typeof state.runAttrBonus.lead !== "number") state.runAttrBonus.lead = 0;
+    if (typeof state.runAttrBonus.life !== "number") state.runAttrBonus.life = 0;
+    return state.runAttrBonus;
+  }
+
+  /** 裝備提供的統率／壽命（永久裝備欄；可帶離局的帳號裝備） */
+  function equipAttrBonus() {
+    ensureGearShape();
+    const byId = itemByIdLookup();
+    const bonus = { lead: 0, life: 0 };
+    GEAR_SLOTS.forEach((slot) => {
+      const iid = state.accountGear[slot.id];
+      const item = iid ? byId[iid] : null;
+      if (!item) return;
+      const eff = effectiveEquipStats(item);
+      bonus.lead += eff.lead | 0;
+      bonus.life += eff.life | 0;
+    });
+    return bonus;
+  }
+
+  /** 有效統率＝基礎 attrs + 局內暫存 + 裝備；硬頂 25 */
+  function effectiveLead() {
+    ensureRunAttrBonus();
+    const base = Math.max(0, (state.attrs && state.attrs.lead) | 0);
+    const run = state.runAttrBonus.lead | 0;
+    const gear = equipAttrBonus().lead | 0;
+    return Math.min(25, Math.max(1, base + run + gear));
+  }
+
+  /** 有效壽命＝基礎 attrs + 局內暫存 + 裝備 */
+  function effectiveLife() {
+    ensureRunAttrBonus();
+    const base = Math.max(0, (state.attrs && state.attrs.life) | 0);
+    const run = state.runAttrBonus.life | 0;
+    const gear = equipAttrBonus().life | 0;
+    return Math.max(1, base + run + gear);
   }
 
   /**
@@ -967,6 +1010,9 @@
     xp: 0,
     xpToNext: 10,
     attrs: defaultAttrs(),
+    /** 局內暫存：事件／命運對統率、壽命的加減；離局清零 */
+    runAttrBonus: { lead: 0, life: 0 },
+    /** 局內金幣（非 meta；主頁不顯示；離局清零） */
     gold: 0,
     soul: SOUL_START,
     /** 聲望：每日差事／任務賺取；只可在茶記買特殊卡；跨世保留 */
@@ -1096,7 +1142,7 @@
     softNote: "",
     /** 人生店鋪四選一（唔入存檔；買完／離開即清） */
     shop: null,
-    /** soft 無獎（離開店／交換／升星未買）→ 唔發事件魂焰／經驗／金幣 */
+    /** soft 無獎（離開店／交換／升星未買）→ 唔發事件膠幣／經驗／金幣 */
     shopLeftEmpty: false,
     /** 交換卡流程（唔入存檔）{ phase:"give"|"take", giveId, offers } */
     trade: null,
@@ -1152,7 +1198,7 @@
     storyPackUserPicked: false,
     /** 故事包詳情頁正睇邊包 */
     storyPackDetailId: null,
-    /** 魂焰扭蛋保底（帳號級跨世；persist） */
+    /** 膠幣扭蛋保底（帳號級跨世；persist） */
     gachaPityRare: 0,
     gachaPityEpic: 0,
     /** 最近一次扭蛋結果（唔入存檔） */
@@ -2191,8 +2237,16 @@
   function applyEventAttrsDelta(ev) {
     if (!ev || !ev.attrs_delta || typeof ev.attrs_delta !== "object") return;
     if (!state.attrs) state.attrs = defaultAttrs();
+    ensureRunAttrBonus();
     Object.keys(ev.attrs_delta).forEach((k) => {
-      state.attrs[k] = (state.attrs[k] | 0) + (ev.attrs_delta[k] | 0);
+      const v = ev.attrs_delta[k] | 0;
+      if (!v) return;
+      // 統率／壽命：事件加成只記局內暫存，離局重置；永久基礎只可由裝備／物品改
+      if (k === "lead" || k === "life") {
+        state.runAttrBonus[k] = (state.runAttrBonus[k] | 0) + v;
+        return;
+      }
+      state.attrs[k] = (state.attrs[k] | 0) + v;
     });
     if (state.team.length > pocketCap()) {
       state.team = state.team.slice(0, pocketCap());
@@ -2626,7 +2680,7 @@
   }
 
   function lifeOver() {
-    const life = (state.attrs && state.attrs.life) | 0;
+    const life = effectiveLife();
     return life > 0 && (state.age | 0) > life;
   }
 
@@ -2795,9 +2849,16 @@
     if (!fate || !fate.effects) return;
     const fx = fate.effects;
     if (!state.attrs) state.attrs = defaultAttrs();
+    ensureRunAttrBonus();
     if (fx.attrs && typeof fx.attrs === "object") {
       Object.keys(fx.attrs).forEach((k) => {
-        state.attrs[k] = (state.attrs[k] | 0) + (fx.attrs[k] | 0);
+        const v = fx.attrs[k] | 0;
+        if (!v) return;
+        if (k === "lead" || k === "life") {
+          state.runAttrBonus[k] = (state.runAttrBonus[k] | 0) + v;
+          return;
+        }
+        state.attrs[k] = (state.attrs[k] | 0) + v;
       });
     }
     if (typeof fx.soul === "number") state.soul = Math.max(0, (state.soul | 0) + fx.soul);
@@ -2925,7 +2986,9 @@
       xp: state.xp | 0,
       xpToNext: state.xpToNext | 0,
       attrs: cloneObj(state.attrs, defaultAttrs()),
-      gold: state.gold | 0,
+      runAttrBonus: cloneObj(state.runAttrBonus, { lead: 0, life: 0 }),
+      /* 金幣只在進行中人生入檔；未開局／已離局唔作 meta 持久化 */
+      gold: state.lifePrepped ? (state.gold | 0) : 0,
       soul: state.soul | 0,
       fame: state.fame | 0,
       teaShopBought: Array.isArray(state.teaShopBought) ? state.teaShopBought.slice() : [],
@@ -3043,7 +3106,11 @@
           life: num(a.life, base.life) | 0,
         };
       }
-      state.gold = Math.max(0, num(data.gold, 0) | 0);
+      {
+        const rb = (data.runAttrBonus && typeof data.runAttrBonus === "object") ? data.runAttrBonus : {};
+        state.runAttrBonus = { lead: num(rb.lead, 0) | 0, life: num(rb.life, 0) | 0 };
+      }
+      state.gold = state.lifePrepped ? Math.max(0, num(data.gold, 0) | 0) : 0;
       /* t324：讀檔跟舊值（可花光／歸零）；缺欄先用 SOUL_START。唔再 top-up ≥260 */
       state.soul = Math.max(0, num(data.soul, SOUL_START) | 0);
       state.fame = Math.max(0, num(data.fame, 0) | 0);
@@ -3423,7 +3490,8 @@
     state.xp = 0;
     state.xpToNext = 10;
     state.attrs = defaultAttrs();
-    state.gold = 0;
+    state.runAttrBonus = { lead: 0, life: 0 };
+    state.gold = 0; // 金幣只在局內，離局不帶離、不入 meta
     state.soul = preview.after;
     state.battlesThisLife = 0;
     state.selectedEvent = null;
@@ -4332,9 +4400,9 @@
     "btn-reset": "清空今世戰鬥卡隊與帶入技能（lifeSkills 清空）；主人裝備不清空。要重新選取後再「準備好了」。",
     "btn-confirm": "確認口袋帶入（最少 1 張）；準備出發後再揀身世同人生命運。",
     "btn-ready": "準備出發——確認今世帶入的主人裝備＋戰鬥卡口袋＋技能（每世一次）。確認後先選身世，再進入人生命運（第1–3年），之後才一般遭遇。口袋最少 1 張。",
-    "prep-fighter": "戰鬥卡：面板只顯示已選隊（大圖＋星）。點選面板／空位＋ →「選擇初始戰鬥卡」由已獲得戰鬥卡選入／剔出；上限＝統率（硬頂 25）。每場最多 3 張部署。長按查看卡內容。",
+    "prep-fighter": "戰鬥卡：面板只顯示已選隊（大圖＋星）。點選面板／空位＋ →「選擇初始戰鬥卡」由已獲得戰鬥卡選入／剔出；上限＝統率（預設 5，裝備可加，硬頂 25）。每場最多 3 張部署。長按查看卡內容。",
     "gear-slot": "帳號裝備（頭／身／武／副／飾／足）——點選槽位或「更換裝備」開啟「選擇初始裝備卡」；選擇裝上／取消卸下；數值加乘套用全體出戰卡。",
-    "attrs-toggle": "六維（力量／敏捷／智力／幸運／統率／壽命）——點擊展開或收起。收摺後頂欄只顯示膠幣／金幣／聲望，畫面留多啲位。",
+    "attrs-toggle": "六維（力量／敏捷／智力／幸運／統率／壽命）——點擊展開或收起。收摺後頂欄只顯示膠幣／聲望。金幣只在局內使用，主頁不顯示。統率＝戰鬥卡攜帶上限。",
     "btn-equip-star": "裝備升星只可在卡冊進行：卡冊 → 裝備卡 → 點卡 → 「升星」（消耗同名卡）。扭蛋抽到重複卡只會累積張數，唔會自動升星。",
     "btn-fight": "開始戰鬥——全自動戰，可加速／放棄。",
     "btn-speed": "切換 ×1／×2／×3 播放速度。",
@@ -5176,10 +5244,15 @@
     render();
   }
 
+  function gbBattlePickCap() {
+    return effectiveLead();
+  }
+
   function gbConfirmPrep() {
     const run = state.gbRun;
     if (!run) return;
-    if ((run.pickedBattle || []).length !== 5 || (run.pickedSkills || []).length !== 5) return;
+    const bCap = gbBattlePickCap();
+    if ((run.pickedBattle || []).length !== bCap || (run.pickedSkills || []).length !== 5) return;
     // only selected cards usable
     state.team = run.pickedBattle.slice();
     state.lifeSkills = run.pickedSkills.slice();
@@ -5684,14 +5757,15 @@
     const skills = gbOwnSkillIds().map((id) => skillById[id]).filter(Boolean);
     const pb = new Set(run.pickedBattle || []);
     const ps = new Set(run.pickedSkills || []);
-    const canGo = pb.size === 5 && ps.size === 5;
+    const bCap = gbBattlePickCap();
+    const canGo = pb.size === bCap && ps.size === 5;
     root.innerHTML = `
       <div class="hud">
         <span class="chip year"><span class="dot"></span>開局選卡</span>
-        <span class="chip soul"><span class="dot"></span>戰鬥 ${pb.size}/5 · 技能 ${ps.size}/5</span>
+        <span class="chip soul"><span class="dot"></span>戰鬥 ${pb.size}/${bCap} · 技能 ${ps.size}/5</span>
       </div>
       <div class="ribbon">海嵐峰卡冊 · 只帶入已選</div>
-      <div class="bubble">挑選 5 張戰鬥卡＋5 張技能卡。未選入本局的卡不會顯示或使用。</div>
+      <div class="bubble">挑選 ${bCap} 張戰鬥卡（＝當前統率）＋5 張技能卡。未選入本局的卡不會顯示或使用。</div>
       <div class="soft-panel"><b>戰鬥卡</b></div>
       <div class="card-grid" id="gb-b-grid">
         ${battles.map((f) => `
@@ -5719,7 +5793,7 @@
         const arr = run.pickedBattle || [];
         const i = arr.indexOf(id);
         if (i >= 0) arr.splice(i, 1);
-        else if (arr.length < 5) arr.push(id);
+        else if (arr.length < bCap) arr.push(id);
         run.pickedBattle = arr;
         render();
       };
@@ -6285,7 +6359,6 @@
       <div class="hud">
         <span class="chip year"><span class="dot"></span>差事 · ${esc(d.dateKey)}</span>
         <span class="chip soul"><span class="dot"></span>${esc(t("ui.resource", "膠幣"))} ${state.soul}</span>
-        <span class="chip gold"><span class="dot"></span>金幣 ${state.gold | 0}</span>
         <span class="chip fame"><span class="dot"></span>聲望 ${state.fame | 0}</span>
       </div>
       <div class="ribbon">每日差事</div>
@@ -11149,7 +11222,7 @@
 
   /** effective = base + star_bonus_per_level * (star - 1) */
   function effectiveEquipStats(item) {
-    if (!item) return { atk: 0, def: 0, hp: 0, spd: 0 };
+    if (!item) return { atk: 0, def: 0, hp: 0, spd: 0, lead: 0, life: 0 };
     const star = equipStarOf(item);
     const bonus = item.star_bonus_per_level || {};
     const levels = Math.max(0, star - 1);
@@ -11158,6 +11231,8 @@
       def: (Number(item.def) || 0) + (Number(bonus.def) || 0) * levels,
       hp: (Number(item.hp) || 0) + (Number(bonus.hp) || 0) * levels,
       spd: (Number(item.spd) || 0) + (Number(bonus.spd) || 0) * levels,
+      lead: (Number(item.lead) || 0) + (Number(bonus.lead) || 0) * levels,
+      life: (Number(item.life) || 0) + (Number(bonus.life) || 0) * levels,
     };
   }
 
@@ -11283,15 +11358,14 @@
               <span class="lh-a" role="listitem" title="敏捷：每 1 點＝所有戰鬥卡 +1 物防、+1 魔防">⚡${a.agi}</span>
               <span class="lh-a" role="listitem" title="智力：每 1 點＝所有戰鬥卡 +1 魔攻、+5 HP">🧠${a.intel}</span>
               <span class="lh-a" role="listitem" title="幸運：用於人生事件或奇遇事件獎勵">🍀${a.luck}</span>
-              <span class="lh-a" role="listitem" title="統率：今世戰鬥卡數量上限">👑${a.lead}</span>
-              <span class="lh-a" role="listitem" title="壽命：今次人生歲數上限">⏳${a.life}</span>
+              <span class="lh-a" role="listitem" title="統率：今世戰鬥卡攜帶上限（含裝備／局內暫存）">👑${effectiveLead()}</span>
+              <span class="lh-a" role="listitem" title="壽命：今次人生歲數上限（基礎 60；物品／裝備可加；局內暫存離局重置）">⏳${effectiveLife()}</span>
             </div>
           </div>`;
         })()}
         <div class="lh-right">
           <span class="chip soul" title="膠幣"><span class="dot"></span>${state.soul}</span>
           <span class="chip fame" title="聲望（茶記買特殊卡）"><span class="dot"></span>聲望 ${state.fame | 0}</span>
-          <span class="chip gold" title="金幣"><span class="dot"></span>${state.gold | 0}</span>
           ${gachaEntryHtml()}
         </div>
         <div class="lh-factions" title="今世勢力好感（0–5；隨人生重置）">${esc(factionFavorLine() || "勢力好感未開")}</div>
@@ -12033,9 +12107,8 @@
   }
 
   function fighterPocketCap() {
-    // 統率＝人生內戰鬥卡數量上限；硬上限 25
-    const lead = Math.max(1, (state.attrs && state.attrs.lead) | 0);
-    return Math.min(25, lead);
+    // 統率＝人生內戰鬥卡攜帶上限（含裝備加乘、局內暫存）；硬上限 25
+    return effectiveLead();
   }
 
   /** 戰鬥卡／技能卡口袋唔隨年擴張（t236）。戰鬥卡可見／可帶入上限＝統率（硬上限 25）。 */
@@ -12320,8 +12393,8 @@
       <span class="psa" title="敏捷">⚡${attrs.agi | 0}</span>
       <span class="psa" title="智力">🧠${attrs.intel | 0}</span>
       <span class="psa" title="幸運">🍀${attrs.luck | 0}</span>
-      <span class="psa" title="統率">👑${attrs.lead | 0}</span>
-      <span class="psa" title="壽命">⏳${attrs.life | 0}</span>
+      <span class="psa" title="統率（戰鬥卡上限）">👑${effectiveLead()}</span>
+      <span class="psa" title="壽命">⏳${effectiveLife()}</span>
     </div>`;
 
     const closePick = () => {
@@ -12736,7 +12809,7 @@
    * 現在升星只有一個入口：卡冊 → 點裝備卡 → 「升星」（燒同名卡）。
    */
 
-  /* ---------- 魂焰扭蛋：廟街霓虹扭蛋機（t318） ---------- */
+  /* ---------- 膠幣扭蛋：廟街霓虹扭蛋機（t318） ---------- */
   const gachaPriceSingle = 1;
   const gachaPriceTen = 10;
   const GACHA_PITY_RARE = 20;
@@ -13328,7 +13401,7 @@
           b.classList.toggle("is-broke", broke);
           b.classList.toggle("disabled", broke);
         } else {
-          // 魂焰不足：唔用 disabled 屬性，保留 click → toast「膠幣不足」
+          // 膠幣不足：唔用 disabled 屬性，保留 click → toast「膠幣不足」
           b.removeAttribute("disabled");
           b.classList.toggle("is-broke", broke);
           b.classList.toggle("disabled", broke);
@@ -15339,7 +15412,7 @@
       inspectOpen: false,
       timer: null,
       queue: [],
-      // 幸運亦影響戰鬥結算魂焰（同軟事件公式）
+      // 幸運亦影響戰鬥結算膠幣（同軟事件公式）
       reward: state.factionSkirmish ? 0 : listedEventSoul(ev),
       lastHit: null,
     };
