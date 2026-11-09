@@ -11454,7 +11454,18 @@ button.bs-skill {
 .card-grid .card-mini img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; }
 .card-grid .card-mini span { font-size: 11px; line-height: 1.2; }
 .choice-col { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
-.choice-col .btn.choice { text-align: left; white-space: normal; height: auto; padding: 12px; }
+.choice-col .btn.choice {
+  text-align: left;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  height: auto;
+  max-height: none;
+  padding: 12px;
+  line-height: 1.45;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
 .gb-stair-stage { height: 120px; margin: 12px 0; background: linear-gradient(180deg, #1a2230, #0b1018); border-radius: 8px; position: relative; overflow: hidden; }
 .gb-stair-step { position: absolute; left: 10%; right: 10%; height: 14px; background: #6b5a45; border: 1px solid #3e3428; }
 .gb-stair-step:nth-child(1) { bottom: 18px; transform: translateX(0); animation: gbStep 1.6s ease-in-out infinite; }
@@ -11463,7 +11474,7 @@ button.bs-skill {
 @keyframes gbStep { 0%,100% { filter: brightness(1); } 50% { filter: brightness(1.25); } }
 .soft-panel.tiny { font-size: 12px; opacity: .85; }
 
-/* gbPrep：開局選卡可捲，避免下面卡點唔到 */
+/* gbPrep：開局選卡可捲，揀卡後保持捲動位置，避免下面卡點唔到 */
 .screen.bg-team[data-screen="gbPrep"] {
   overflow: hidden;
 }

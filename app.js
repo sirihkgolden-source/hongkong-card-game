@@ -5289,6 +5289,45 @@
     return gbAccidentNodeById(run.nodeId);
   }
 
+  function gbIsTransNode(node) {
+    return !!(node && node.accident_node === "trans");
+  }
+
+  function gbTransDeltaSafe(delta) {
+    const d = delta || {};
+    if (d.flag_noted) return false;
+    if ((d.boss | 0) < 0) return false;
+    if ((d.pressure | 0) > 0) return false;
+    return true;
+  }
+
+  function gbApplyTransDaily() {
+    const run = state.gbRun;
+    const node = gbCurrentNode();
+    if (!run || !node) return;
+    const choices = Array.isArray(node.accident_choices) ? node.accident_choices : [];
+    // 預設用第一選項；若要變化，只在「唔降上司／唔加壓力／唔記名」嘅選項裡隨機，避免日常浪把結局提早引爆
+    const safe = [];
+    choices.forEach((c, i) => {
+      if (c && gbTransDeltaSafe(c.hidden_delta)) safe.push(i);
+    });
+    const idx = safe.length
+      ? safe[Math.floor(Math.random() * safe.length)]
+      : 0;
+    const pick = choices[idx];
+    if (pick) {
+      run.pendingChoice = { idx, pick };
+      applyHiddenDelta(node.id, "c" + idx, { delta: pick.hidden_delta || {} });
+      run.pendingBattle = pick.battle || null;
+      run.wantShop = !!pick.night_shop;
+    } else {
+      run.pendingChoice = null;
+      run.pendingBattle = null;
+    }
+    run.phase = "outcome";
+    render();
+  }
+
   function gbChoiceOrder(node) {
     const run = state.gbRun;
     const choices = (node && Array.isArray(node.accident_choices)) ? node.accident_choices : [];
@@ -5375,6 +5414,12 @@
       // ensure deploy from picked only
       state.team = (run.pickedBattle || []).filter((id) => !isDeadFighter(id));
       if (!state.deploy || !state.deploy.length) state.deploy = state.team.slice(0, TEAM_SIZE);
+      const deployIds = (state.deploy || []).filter((id) => id && !isDeadFighter(id));
+      if (deployIds.length) {
+        // 事故鏈：選項已有戰鬥時盡量直接開打，減少「進入現場／開始戰鬥」空點
+        startBattle();
+        return;
+      }
       state.screen = "encounter";
       render();
       return;
@@ -5403,10 +5448,13 @@
     if (!run) return;
     if (node && node.accident_main) run.mainCount = (run.mainCount | 0) + 1;
 
-    const endKey = gbCheckEnding();
-    if (endKey) {
-      gbTriggerEnding(endKey);
-      return;
+    // 日常／過渡唔喺呢一步結案：避免 T* 把下一宗主事故（戰鬥）跳過。結局只喺主事件之後檢查。
+    if (!gbIsTransNode(node)) {
+      const endKey = gbCheckEnding();
+      if (endKey) {
+        gbTriggerEnding(endKey);
+        return;
+      }
     }
 
     if (run.wantShop) {
@@ -5430,6 +5478,7 @@
     const pack = gbPack();
     if (!run || !pack) return;
     const chain = pack.accident_chain || [];
+    // 必須用 chainIndex 遞增。T* 會喺鏈上重用同一 event id，唔可以用 indexOf(nodeId)，否則會跳返第一次出現嘅位置造成循環。
     let next = (run.chainIndex | 0) + 1;
     run.chainIndex = next;
     if (next >= chain.length) {
@@ -5764,6 +5813,7 @@
   /* ----- Views ----- */
   function viewGbPrep(root) {
     const run = state.gbRun || gbBeginFreshRun();
+    const savedScroll = (typeof state._gbPrepScroll === "number") ? state._gbPrepScroll : 0;
     const battles = gbOwnBattleIds().map((id) => fighterById[id]).filter(Boolean);
     const skills = gbOwnSkillIds().map((id) => skillById[id]).filter(Boolean);
     const pb = new Set(run.pickedBattle || []);
@@ -5825,6 +5875,14 @@
     $("#gb-prep-back", root).onclick = () => { state.gbRun = null; state.screen = "storyPackDetail"; state.storyPackDetailId = GB_PACK_ID; render(); };
     const go = $("#gb-prep-go", root);
     if (go) go.onclick = () => gbConfirmPrep();
+    const sc = root.querySelector(".gb-prep-scroll");
+    if (sc) {
+      sc.scrollTop = savedScroll;
+      sc.onscroll = () => { state._gbPrepScroll = sc.scrollTop; };
+      if (typeof requestAnimationFrame === "function") {
+        requestAnimationFrame(() => { sc.scrollTop = savedScroll; });
+      }
+    }
   }
 
   function viewGbAccident(root) {
@@ -5845,9 +5903,11 @@
         <button class="btn pink" id="gb-next" type="button">繼續</button>`;
     } else if (phase === "dialogue") {
       const line = dlg[run.dlgPage | 0] || { speaker: "", line: "……" };
+      const lastDlg = (run.dlgPage | 0) + 1 >= dlg.length;
+      const nextLbl = lastDlg ? (gbIsTransNode(node) ? "繼續／經過" : "面對選擇") : "下一句";
       body = `
         <div class="soft-panel"><b>${esc(line.speaker || "")}</b><div>${esc(line.line || "")}</div></div>
-        <button class="btn pink" id="gb-next" type="button">${(run.dlgPage | 0) + 1 >= dlg.length ? "面對選擇" : "下一句"}</button>`;
+        <button class="btn pink" id="gb-next" type="button">${nextLbl}</button>`;
     } else if (phase === "choose") {
       const ordered = gbChoiceOrder(node);
       body = `
@@ -5859,11 +5919,12 @@
     } else if (phase === "outcome") {
       const pick = run.pendingChoice && run.pendingChoice.pick;
       const note = run.postBattleNote || "";
+      const transDaily = gbIsTransNode(node) && !run.pendingBattle;
       body = `
-        <div class="ribbon">戰後／後果</div>
-        <div class="bubble">${esc((pick && pick.outcome) || note || "結案。")}</div>
+        <div class="ribbon">${transDaily ? "巡更日常" : "戰後／後果"}</div>
+        <div class="bubble">${esc((pick && pick.outcome) || note || (transDaily ? "這一更平靜過去。" : "結案。"))}</div>
         ${note && pick ? `<div class="soft-panel">${esc(note)}</div>` : ""}
-        <button class="btn gold" id="gb-next" type="button">${run.pendingBattle ? "進入現場" : "結案繼續"}</button>`;
+        <button class="btn gold" id="gb-next" type="button">${run.pendingBattle ? "進入現場" : (transDaily ? "繼續／經過" : "結案繼續")}</button>`;
     } else {
       body = `<div class="bubble">…</div><button class="btn" id="gb-next" type="button">繼續</button>`;
     }
@@ -5883,11 +5944,25 @@
     if (next) {
       next.onclick = () => {
         if (phase === "intro") {
-          run.phase = dlg.length ? "dialogue" : "choose";
-          run.dlgPage = 0;
+          if (dlg.length) {
+            run.phase = "dialogue";
+            run.dlgPage = 0;
+          } else if (gbIsTransNode(node)) {
+            gbApplyTransDaily();
+            return;
+          } else {
+            run.phase = "choose";
+          }
         } else if (phase === "dialogue") {
-          if ((run.dlgPage | 0) + 1 >= dlg.length) run.phase = "choose";
-          else run.dlgPage = (run.dlgPage | 0) + 1;
+          if ((run.dlgPage | 0) + 1 >= dlg.length) {
+            if (gbIsTransNode(node)) {
+              gbApplyTransDaily();
+              return;
+            }
+            run.phase = "choose";
+          } else {
+            run.dlgPage = (run.dlgPage | 0) + 1;
+          }
         } else if (phase === "outcome") {
           gbAfterOutcomeContinue();
           return;
@@ -6629,7 +6704,7 @@
     const actCount = Math.max(1, ((pack.accident_chain || pack.office_chain) || []).length);
     const intervalYears = officeIntervalYears(pack);
     const chainNote = isAccidentChain
-      ? "事故鏈循環：三選一→戰鬥→戰後→結案。本包不使用今生歲數；達隱藏門檻可提前結案。"
+      ? "事故鏈節奏：主事故（三選一→戰鬥→戰後→結案）之後會有巡更日常過渡，再接下一宗主事故。本包不使用今生歲數；達隱藏門檻可提前結案。"
       : (intervalYears
       ? `唔會一次過演完。每過 ${intervalYears} 年再遇到李步岸。到六十五歲揭曉他的人生，故事就在那天結束，沒有後續。完美的一條，是在海嵐峰退休。`
       : `每一幕三個選擇，後果喺選擇之後才揭示。共 ${actCount} 幕，行到最後才見結局。本包不設中途獎賞、不設升級。`);
@@ -6701,7 +6776,7 @@
         </div>
         <div class="bubble">${esc(pack.blurb || "")}</div>
         <div class="soft-panel pack-detail-note">${isAccidentPack(pack)
-          ? "事故鏈：三選一→戰鬥→戰後→結案。本包不使用今生歲數。開局須選 5 戰鬥＋5 技能。完成任一結局後才解鎖回想。"
+          ? "事故鏈：主事故（三選一→戰鬥→戰後→結案）之間穿插巡更日常。本包不使用今生歲數。開局須選戰鬥卡與技能卡。完成任一結局後才解鎖回想。"
           : (isChainPack
           ? "多分支故事：每步 2–3 個選擇，人物關係會影響對白與結局。中途不設獎賞，行到最後才知道結果。"
           : "故事包只是氣氛模組；進入故事後仍是命運／四揀一混其他類型，不會變成單一條直線劇。")}</div>
@@ -6717,7 +6792,6 @@
         <button class="btn ghost" id="btn-pack-list" type="button" data-help="btn-back">返列表</button>
         <button class="btn pink" id="btn-pack-use" type="button" data-help="btn-story-pick">${active ? "已用此包氣氛" : "以此包氣氛入故事"}</button>
         ${isChainPack ? `<button class="btn gold" id="btn-pack-start-chain" type="button">${isAccidentPack(pack) ? "開始事故鏈（不計今生歲數）" : (isTaleChain ? "由第一步開始（故事）" : `開始（${esc(pack.name)}）`)}</button>` : ""}
-        ${isAccidentPack(pack) ? `<button class="btn ghost" id="btn-pack-stair" type="button">跳樓梯</button>` : ""}
       </div>
       <button class="btn ghost" id="btn-pack-home" type="button" data-help="btn-back">返主頁</button>
       <div id="home-toast" class="home-toast" hidden></div>
@@ -6731,8 +6805,6 @@
       el._t = setTimeout(() => { el.hidden = true; }, 1600);
     };
     $("#btn-pack-list", root).onclick = () => { state.screen = "storyPacks"; render(); };
-    const stairBtn = $("#btn-pack-stair", root);
-    if (stairBtn) stairBtn.onclick = () => { state.activeStoryPackId = pack.id; gbOpenStair(); };
     $("#btn-pack-home", root).onclick = () => { state.screen = "home"; render(); };
     const startChain = $("#btn-pack-start-chain", root);
     if (startChain) {
@@ -6865,6 +6937,11 @@
     };
     const hasUnfinishedLife = () => !!(state.lifePrepped);
     $("#btn-go", root).onclick = () => {
+      if (isAccidentPack(pack)) {
+        state.storyPackDetailId = pack.id;
+        gbEnterPackFromSelect();
+        return;
+      }
       if (hasUnfinishedLife()) {
         toast("現在有未完人生——請點選「繼續上次未完人生」，或先「放棄今世」再開新局。");
         return;
@@ -15139,6 +15216,10 @@
     });
 
     $("#btn-fight", root).onclick = () => startBattle();
+    if (state.gbRun && state.gbRun.packId === GB_PACK_ID && state.gbRun.phase === "battle"
+        && canFight && !state.selectAllySlot && !state.fighterDetailId) {
+      startBattle();
+    }
     $("#btn-back", root).onclick = () => {
       state.deploy = [];
       state.deployHint = "";
