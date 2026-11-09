@@ -6259,6 +6259,1016 @@ window.HK_SLICE_DATA = {
       "target": "aoe",
       "power": "phys",
       "shard_only": true
+    },
+    {
+      "id": "GB_B01",
+      "name": "好言相勸",
+      "rarity": "普通",
+      "slots": 4,
+      "tags": [
+        "秩序",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 11,
+      "spd": 12,
+      "basic": "勸導",
+      "skill": "局面緩和",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b01-hao-yan.jpg",
+      "flavor": "海嵐峰當值卡・勸導",
+      "blurb": "勸導・好言相勸",
+      "skill_effect": "勸導系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 1.2,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "pack_only": "guard_baoan",
+      "gb_verb": "勸導",
+      "gb_card_id": "b01"
+    },
+    {
+      "id": "GB_B02",
+      "name": "講明屋苑規定",
+      "rarity": "普通",
+      "slots": 5,
+      "tags": [
+        "秩序",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 12,
+      "spd": 12,
+      "basic": "勸導",
+      "skill": "局面緩和",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b02-gui-ding.jpg",
+      "flavor": "海嵐峰當值卡・勸導",
+      "blurb": "勸導・講明屋苑規定",
+      "skill_effect": "勸導系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 1.2,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "pack_only": "guard_baoan",
+      "gb_verb": "勸導",
+      "gb_card_id": "b02"
+    },
+    {
+      "id": "GB_B03",
+      "name": "請你配合一下",
+      "rarity": "稀有",
+      "slots": 6,
+      "tags": [
+        "秩序",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 13,
+      "spd": 13,
+      "basic": "勸導",
+      "skill": "局面緩和",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b03-pei-he.jpg",
+      "flavor": "海嵐峰當值卡・勸導",
+      "blurb": "勸導・請你配合一下",
+      "skill_effect": "勸導系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 1.2,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "pack_only": "guard_baoan",
+      "gb_verb": "勸導",
+      "gb_card_id": "b03"
+    },
+    {
+      "id": "GB_B04",
+      "name": "冷靜傾",
+      "rarity": "史詩",
+      "slots": 6,
+      "tags": [
+        "秩序",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 14,
+      "spd": 13,
+      "basic": "勸導",
+      "skill": "局面緩和",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b04-leng-jing.jpg",
+      "flavor": "海嵐峰當值卡・勸導",
+      "blurb": "勸導・冷靜傾",
+      "skill_effect": "勸導系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 1.2,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "pack_only": "guard_baoan",
+      "gb_verb": "勸導",
+      "gb_card_id": "b04"
+    },
+    {
+      "id": "GB_B05",
+      "name": "護住通道",
+      "rarity": "普通",
+      "slots": 4,
+      "tags": [
+        "護盾",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 10,
+      "spd": 9,
+      "basic": "護住",
+      "skill": "守線",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b05-hu-tong.jpg",
+      "flavor": "海嵐峰當值卡・護住",
+      "blurb": "護住・護住通道",
+      "skill_effect": "護住系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 0,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "pack_only": "guard_baoan",
+      "gb_verb": "護住",
+      "gb_card_id": "b05",
+      "support": true
+    },
+    {
+      "id": "GB_B06",
+      "name": "護住同事",
+      "rarity": "普通",
+      "slots": 5,
+      "tags": [
+        "護盾",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 11,
+      "spd": 9,
+      "basic": "護住",
+      "skill": "守線",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b06-hu-tongshi.jpg",
+      "flavor": "海嵐峰當值卡・護住",
+      "blurb": "護住・護住同事",
+      "skill_effect": "護住系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 0,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "pack_only": "guard_baoan",
+      "gb_verb": "護住",
+      "gb_card_id": "b06",
+      "support": true
+    },
+    {
+      "id": "GB_B07",
+      "name": "人牆",
+      "rarity": "稀有",
+      "slots": 6,
+      "tags": [
+        "護盾",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 12,
+      "spd": 10,
+      "basic": "護住",
+      "skill": "守線",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b07-ren-qiang.jpg",
+      "flavor": "海嵐峰當值卡・護住",
+      "blurb": "護住・人牆",
+      "skill_effect": "護住系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 0,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "pack_only": "guard_baoan",
+      "gb_verb": "護住",
+      "gb_card_id": "b07",
+      "support": true
+    },
+    {
+      "id": "GB_B08",
+      "name": "守住閘口",
+      "rarity": "史詩",
+      "slots": 6,
+      "tags": [
+        "護盾",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 13,
+      "spd": 10,
+      "basic": "護住",
+      "skill": "守線",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b08-shou-zha.jpg",
+      "flavor": "海嵐峰當值卡・護住",
+      "blurb": "護住・守住閘口",
+      "skill_effect": "護住系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 0,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "pack_only": "guard_baoan",
+      "gb_verb": "護住",
+      "gb_card_id": "b08",
+      "support": true
+    },
+    {
+      "id": "GB_B09",
+      "name": "核對證件",
+      "rarity": "普通",
+      "slots": 4,
+      "tags": [
+        "證據",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 13,
+      "spd": 11,
+      "basic": "核對",
+      "skill": "身份確認",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b09-he-dui.jpg",
+      "flavor": "海嵐峰當值卡・核對",
+      "blurb": "核對・核對證件",
+      "skill_effect": "核對系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 1.3,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "pack_only": "guard_baoan",
+      "gb_verb": "核對",
+      "gb_card_id": "b09"
+    },
+    {
+      "id": "GB_B10",
+      "name": "核對單位",
+      "rarity": "普通",
+      "slots": 5,
+      "tags": [
+        "證據",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 14,
+      "spd": 11,
+      "basic": "核對",
+      "skill": "身份確認",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b10-he-danwei.jpg",
+      "flavor": "海嵐峰當值卡・核對",
+      "blurb": "核對・核對單位",
+      "skill_effect": "核對系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 1.3,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "pack_only": "guard_baoan",
+      "gb_verb": "核對",
+      "gb_card_id": "b10"
+    },
+    {
+      "id": "GB_B11",
+      "name": "核對訪客目的",
+      "rarity": "稀有",
+      "slots": 6,
+      "tags": [
+        "證據",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 15,
+      "spd": 12,
+      "basic": "核對",
+      "skill": "身份確認",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b11-he-fangke.jpg",
+      "flavor": "海嵐峰當值卡・核對",
+      "blurb": "核對・核對訪客目的",
+      "skill_effect": "核對系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 1.3,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "pack_only": "guard_baoan",
+      "gb_verb": "核對",
+      "gb_card_id": "b11"
+    },
+    {
+      "id": "GB_B12",
+      "name": "身份核對完成",
+      "rarity": "史詩",
+      "slots": 6,
+      "tags": [
+        "證據",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 16,
+      "spd": 12,
+      "basic": "核對",
+      "skill": "身份確認",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b12-shenfen-wan.jpg",
+      "flavor": "海嵐峰當值卡・核對",
+      "blurb": "核對・身份核對完成",
+      "skill_effect": "核對系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 1.3,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "pack_only": "guard_baoan",
+      "gb_verb": "核對",
+      "gb_card_id": "b12"
+    },
+    {
+      "id": "GB_B13",
+      "name": "臨時封鎖",
+      "rarity": "普通",
+      "slots": 4,
+      "tags": [
+        "護盾",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 11,
+      "spd": 8,
+      "basic": "封鎖",
+      "skill": "封口",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b13-feng-suo.jpg",
+      "flavor": "海嵐峰當值卡・封鎖",
+      "blurb": "封鎖・臨時封鎖",
+      "skill_effect": "封鎖系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 0.8,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "pack_only": "guard_baoan",
+      "gb_verb": "封鎖",
+      "gb_card_id": "b13",
+      "support": true
+    },
+    {
+      "id": "GB_B14",
+      "name": "拉起警戒帶",
+      "rarity": "普通",
+      "slots": 5,
+      "tags": [
+        "護盾",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 12,
+      "spd": 8,
+      "basic": "封鎖",
+      "skill": "封口",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b14-jingjie-dai.jpg",
+      "flavor": "海嵐峰當值卡・封鎖",
+      "blurb": "封鎖・拉起警戒帶",
+      "skill_effect": "封鎖系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 0.8,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "pack_only": "guard_baoan",
+      "gb_verb": "封鎖",
+      "gb_card_id": "b14",
+      "support": true
+    },
+    {
+      "id": "GB_B15",
+      "name": "封樓層口",
+      "rarity": "稀有",
+      "slots": 6,
+      "tags": [
+        "護盾",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 13,
+      "spd": 9,
+      "basic": "封鎖",
+      "skill": "封口",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b15-feng-louceng.jpg",
+      "flavor": "海嵐峰當值卡・封鎖",
+      "blurb": "封鎖・封樓層口",
+      "skill_effect": "封鎖系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 0.8,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "pack_only": "guard_baoan",
+      "gb_verb": "封鎖",
+      "gb_card_id": "b15",
+      "support": true
+    },
+    {
+      "id": "GB_B16",
+      "name": "全面封鎖",
+      "rarity": "史詩",
+      "slots": 6,
+      "tags": [
+        "護盾",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 14,
+      "spd": 9,
+      "basic": "封鎖",
+      "skill": "封口",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b16-quanmian.jpg",
+      "flavor": "海嵐峰當值卡・封鎖",
+      "blurb": "封鎖・全面封鎖",
+      "skill_effect": "封鎖系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 0.8,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "pack_only": "guard_baoan",
+      "gb_verb": "封鎖",
+      "gb_card_id": "b16",
+      "support": true
+    },
+    {
+      "id": "GB_B17",
+      "name": "拍照存證",
+      "rarity": "普通",
+      "slots": 4,
+      "tags": [
+        "證據",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 12,
+      "spd": 10,
+      "basic": "存證",
+      "skill": "封存",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b17-pai-zhao.jpg",
+      "flavor": "海嵐峰當值卡・存證",
+      "blurb": "存證・拍照存證",
+      "skill_effect": "存證系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 1.4,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "pack_only": "guard_baoan",
+      "gb_verb": "存證",
+      "gb_card_id": "b17"
+    },
+    {
+      "id": "GB_B18",
+      "name": "錄下經過",
+      "rarity": "普通",
+      "slots": 5,
+      "tags": [
+        "證據",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 13,
+      "spd": 10,
+      "basic": "存證",
+      "skill": "封存",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b18-lu-xia.jpg",
+      "flavor": "海嵐峰當值卡・存證",
+      "blurb": "存證・錄下經過",
+      "skill_effect": "存證系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 1.4,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "pack_only": "guard_baoan",
+      "gb_verb": "存證",
+      "gb_card_id": "b18"
+    },
+    {
+      "id": "GB_B19",
+      "name": "封存證物",
+      "rarity": "稀有",
+      "slots": 6,
+      "tags": [
+        "證據",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 14,
+      "spd": 11,
+      "basic": "存證",
+      "skill": "封存",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b19-fengcun.jpg",
+      "flavor": "海嵐峰當值卡・存證",
+      "blurb": "存證・封存證物",
+      "skill_effect": "存證系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 1.4,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "pack_only": "guard_baoan",
+      "gb_verb": "存證",
+      "gb_card_id": "b19"
+    },
+    {
+      "id": "GB_B20",
+      "name": "證據齊全",
+      "rarity": "史詩",
+      "slots": 6,
+      "tags": [
+        "證據",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 15,
+      "spd": 11,
+      "basic": "存證",
+      "skill": "封存",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b20-zhengju-qi.jpg",
+      "flavor": "海嵐峰當值卡・存證",
+      "blurb": "存證・證據齊全",
+      "skill_effect": "存證系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 1.4,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "pack_only": "guard_baoan",
+      "gb_verb": "存證",
+      "gb_card_id": "b20"
+    },
+    {
+      "id": "GB_B21",
+      "name": "引導改道",
+      "rarity": "普通",
+      "slots": 4,
+      "tags": [
+        "秩序",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 12,
+      "spd": 13,
+      "basic": "引導",
+      "skill": "帶離",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b21-gai-dao.jpg",
+      "flavor": "海嵐峰當值卡・引導",
+      "blurb": "引導・引導改道",
+      "skill_effect": "引導系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 0.9,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "pack_only": "guard_baoan",
+      "gb_verb": "引導",
+      "gb_card_id": "b21",
+      "support": true
+    },
+    {
+      "id": "GB_B22",
+      "name": "帶離現場",
+      "rarity": "普通",
+      "slots": 5,
+      "tags": [
+        "秩序",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 13,
+      "spd": 13,
+      "basic": "引導",
+      "skill": "帶離",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b22-dai-li.jpg",
+      "flavor": "海嵐峰當值卡・引導",
+      "blurb": "引導・帶離現場",
+      "skill_effect": "引導系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 0.9,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "pack_only": "guard_baoan",
+      "gb_verb": "引導",
+      "gb_card_id": "b22",
+      "support": true
+    },
+    {
+      "id": "GB_B23",
+      "name": "疏散通道",
+      "rarity": "稀有",
+      "slots": 6,
+      "tags": [
+        "秩序",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 14,
+      "spd": 14,
+      "basic": "引導",
+      "skill": "帶離",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b23-shu-san.jpg",
+      "flavor": "海嵐峰當值卡・引導",
+      "blurb": "引導・疏散通道",
+      "skill_effect": "引導系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 0.9,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "pack_only": "guard_baoan",
+      "gb_verb": "引導",
+      "gb_card_id": "b23",
+      "support": true
+    },
+    {
+      "id": "GB_B24",
+      "name": "安全路線",
+      "rarity": "史詩",
+      "slots": 6,
+      "tags": [
+        "秩序",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 15,
+      "spd": 14,
+      "basic": "引導",
+      "skill": "帶離",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b24-anquan-luxian.jpg",
+      "flavor": "海嵐峰當值卡・引導",
+      "blurb": "引導・安全路線",
+      "skill_effect": "引導系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 0.9,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "pack_only": "guard_baoan",
+      "gb_verb": "引導",
+      "gb_card_id": "b24",
+      "support": true
+    },
+    {
+      "id": "GB_B25",
+      "name": "通知管理處",
+      "rarity": "普通",
+      "slots": 4,
+      "tags": [
+        "證據",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 14,
+      "spd": 12,
+      "basic": "通報",
+      "skill": "支援",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b25-tongzhi-guan.jpg",
+      "flavor": "海嵐峰當值卡・通報",
+      "blurb": "通報・通知管理處",
+      "skill_effect": "通報系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 1.5,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "pack_only": "guard_baoan",
+      "gb_verb": "通報",
+      "gb_card_id": "b25"
+    },
+    {
+      "id": "GB_B26",
+      "name": "通知同事到場",
+      "rarity": "普通",
+      "slots": 5,
+      "tags": [
+        "證據",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 15,
+      "spd": 12,
+      "basic": "通報",
+      "skill": "支援",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b26-tongzhi-tongshi.jpg",
+      "flavor": "海嵐峰當值卡・通報",
+      "blurb": "通報・通知同事到場",
+      "skill_effect": "通報系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 1.5,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "pack_only": "guard_baoan",
+      "gb_verb": "通報",
+      "gb_card_id": "b26"
+    },
+    {
+      "id": "GB_B27",
+      "name": "報警求助",
+      "rarity": "稀有",
+      "slots": 6,
+      "tags": [
+        "證據",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 16,
+      "spd": 13,
+      "basic": "通報",
+      "skill": "支援",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b27-bao-jing.jpg",
+      "flavor": "海嵐峰當值卡・通報",
+      "blurb": "通報・報警求助",
+      "skill_effect": "通報系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 1.5,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "pack_only": "guard_baoan",
+      "gb_verb": "通報",
+      "gb_card_id": "b27"
+    },
+    {
+      "id": "GB_B28",
+      "name": "支援已到",
+      "rarity": "史詩",
+      "slots": 6,
+      "tags": [
+        "證據",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 17,
+      "spd": 13,
+      "basic": "通報",
+      "skill": "支援",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b28-zhiyuan.jpg",
+      "flavor": "海嵐峰當值卡・通報",
+      "blurb": "通報・支援已到",
+      "skill_effect": "通報系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 1.5,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "pack_only": "guard_baoan",
+      "gb_verb": "通報",
+      "gb_card_id": "b28"
+    },
+    {
+      "id": "GB_B29",
+      "name": "清走障礙",
+      "rarity": "普通",
+      "slots": 4,
+      "tags": [
+        "秩序",
+        "護盾",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 11,
+      "spd": 12,
+      "basic": "清理",
+      "skill": "清場",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b29-qing-zou.jpg",
+      "flavor": "海嵐峰當值卡・清理",
+      "blurb": "清理・清走障礙",
+      "skill_effect": "清理系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 1.0,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "pack_only": "guard_baoan",
+      "gb_verb": "清理",
+      "gb_card_id": "b29",
+      "support": true
+    },
+    {
+      "id": "GB_B30",
+      "name": "清理現場",
+      "rarity": "普通",
+      "slots": 5,
+      "tags": [
+        "秩序",
+        "護盾",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 12,
+      "spd": 12,
+      "basic": "清理",
+      "skill": "清場",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b30-qingli-xian.jpg",
+      "flavor": "海嵐峰當值卡・清理",
+      "blurb": "清理・清理現場",
+      "skill_effect": "清理系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 1.0,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "pack_only": "guard_baoan",
+      "gb_verb": "清理",
+      "gb_card_id": "b30",
+      "support": true
+    },
+    {
+      "id": "GB_B31",
+      "name": "清理完畢",
+      "rarity": "稀有",
+      "slots": 6,
+      "tags": [
+        "秩序",
+        "護盾",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 13,
+      "spd": 13,
+      "basic": "清理",
+      "skill": "清場",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b31-qingli-wan.jpg",
+      "flavor": "海嵐峰當值卡・清理",
+      "blurb": "清理・清理完畢",
+      "skill_effect": "清理系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 1.0,
+      "hits": 1,
+      "target": "single",
+      "power": "phys",
+      "pack_only": "guard_baoan",
+      "gb_verb": "清理",
+      "gb_card_id": "b31",
+      "support": true
+    },
+    {
+      "id": "GB_B32",
+      "name": "安撫住戶",
+      "rarity": "普通",
+      "slots": 4,
+      "tags": [
+        "秩序",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 10,
+      "spd": 11,
+      "basic": "安撫",
+      "skill": "回穩",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b32-anfu-zhu.jpg",
+      "flavor": "海嵐峰當值卡・安撫",
+      "blurb": "安撫・安撫住戶",
+      "skill_effect": "安撫系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 0,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "pack_only": "guard_baoan",
+      "gb_verb": "安撫",
+      "gb_card_id": "b32",
+      "support": true,
+      "heal_mult": 0.6
+    },
+    {
+      "id": "GB_B33",
+      "name": "安撫情緒",
+      "rarity": "普通",
+      "slots": 5,
+      "tags": [
+        "秩序",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 11,
+      "spd": 11,
+      "basic": "安撫",
+      "skill": "回穩",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b33-anfu-qingxu.jpg",
+      "flavor": "海嵐峰當值卡・安撫",
+      "blurb": "安撫・安撫情緒",
+      "skill_effect": "安撫系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 0,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "pack_only": "guard_baoan",
+      "gb_verb": "安撫",
+      "gb_card_id": "b33",
+      "support": true,
+      "heal_mult": 0.6
+    },
+    {
+      "id": "GB_B34",
+      "name": "局面回穩",
+      "rarity": "稀有",
+      "slots": 6,
+      "tags": [
+        "秩序",
+        "海嵐峰",
+        "保安"
+      ],
+      "atk": 12,
+      "spd": 12,
+      "basic": "安撫",
+      "skill": "回穩",
+      "skill_cd": 3,
+      "art": "assets/story-packs/guard_baoan/cards/b34-jumian.jpg",
+      "flavor": "海嵐峰當值卡・安撫",
+      "blurb": "安撫・局面回穩",
+      "skill_effect": "安撫系效果（沿用本體同級結算）",
+      "rarity_slang": "保安卡",
+      "tod": "夜更閘口",
+      "dmg_mult": 0,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "pack_only": "guard_baoan",
+      "gb_verb": "安撫",
+      "gb_card_id": "b34",
+      "support": true,
+      "heal_mult": 0.6
     }
   ],
   "enemies": [
@@ -6428,6 +7438,113 @@ window.HK_SLICE_DATA = {
         "C241",
         "C01"
       ]
+    },
+    {
+      "id": "E_GB01",
+      "name": "拒檢訪客",
+      "stage": "閘口衝突",
+      "hp": 90,
+      "atk": 11,
+      "spd": 10,
+      "slots": 3,
+      "notes": "秩序／證據",
+      "art": "assets/enemies/E01.jpg",
+      "flavor": "冇證件硬闖。",
+      "blurb": "拒檢。",
+      "event_type": "閘口",
+      "rarity": "敵方",
+      "rarity_slang": "現場對手",
+      "tags": [
+        "證據",
+        "秩序"
+      ],
+      "basic_power": "phys",
+      "pack_only": "guard_baoan"
+    },
+    {
+      "id": "E_GB02",
+      "name": "鄰居爭執",
+      "stage": "大堂紛爭",
+      "hp": 100,
+      "atk": 12,
+      "spd": 11,
+      "slots": 3,
+      "notes": "秩序",
+      "art": "assets/enemies/E02.jpg",
+      "flavor": "兩戶要你表態。",
+      "blurb": "爭執。",
+      "event_type": "人情",
+      "rarity": "敵方",
+      "rarity_slang": "現場對手",
+      "tags": [
+        "秩序"
+      ],
+      "basic_power": "magic",
+      "pack_only": "guard_baoan"
+    },
+    {
+      "id": "E_GB03",
+      "name": "後巷陰影",
+      "stage": "後巷",
+      "hp": 110,
+      "atk": 13,
+      "spd": 12,
+      "slots": 3,
+      "notes": "護盾",
+      "art": "assets/enemies/E03.jpg",
+      "flavor": "通道唔可以塞。",
+      "blurb": "後巷。",
+      "event_type": "巡邏",
+      "rarity": "敵方",
+      "rarity_slang": "現場對手",
+      "tags": [
+        "護盾"
+      ],
+      "basic_power": "phys",
+      "pack_only": "guard_baoan"
+    },
+    {
+      "id": "E_GB04",
+      "name": "投訴現場",
+      "stage": "見證",
+      "hp": 120,
+      "atk": 12,
+      "spd": 10,
+      "slots": 3,
+      "notes": "證據",
+      "art": "assets/enemies/E04.jpg",
+      "flavor": "只見證，不裁決。",
+      "blurb": "投訴。",
+      "event_type": "文書",
+      "rarity": "敵方",
+      "rarity_slang": "現場對手",
+      "tags": [
+        "證據"
+      ],
+      "basic_power": "magic",
+      "pack_only": "guard_baoan"
+    },
+    {
+      "id": "E_GB05",
+      "name": "失控場面",
+      "stage": "衝突升級",
+      "hp": 140,
+      "atk": 14,
+      "spd": 11,
+      "slots": 3,
+      "notes": "秩序／護盾",
+      "art": "assets/enemies/E05.jpg",
+      "flavor": "先護住通道。",
+      "blurb": "失控。",
+      "event_type": "衝突",
+      "rarity": "敵方",
+      "rarity_slang": "現場對手",
+      "tags": [
+        "秩序",
+        "護盾"
+      ],
+      "basic_power": "phys",
+      "pack_only": "guard_baoan"
     }
   ],
   "events": [
@@ -15849,2218 +16966,100 @@ window.HK_SLICE_DATA = {
       }
     },
     {
-      "id": "EV_GB_01",
-      "name": "面試夜",
-      "type": "主線",
-      "category": "main",
-      "category_label": "主線",
-      "desc": "海嵐峰請保安。李步岸坐在風扇前面，把這份工講得很清楚：要守規矩，也要認得人。",
+      "id": "EV_GB_M01",
+      "name": "第一更",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "海嵐峰大堂燈光好靚，保安室電風扇好嘈。隊長李步岸把登記簿推到你面前：上樓前，必須先登記證件。",
       "dialogue": [
         {
           "speaker": "李步岸",
-          "text": "保安不是坐著等。你要記得邊一戶會亂泊車，哪個會凌晨叫外賣。"
-        },
-        {
-          "speaker": "李步岸",
-          "text": "今天先選一件事做起：把名單記熟，先去幫人，或者先去認識樓下的店。"
-        },
-        {
-          "speaker": "邱得根",
-          "text": "聽隊長的就好。他不喜歡別人問他還能做多久。"
+          "line": "第一更。規矩同人情都要揀。記住：冇登記，唔放人上樓。"
         },
         {
           "speaker": "你",
-          "text": "（三條路都是普通的工作。你知道這份工會做很多年。）"
+          "line": "明白。先登記，後上樓。"
         }
       ],
       "art": "assets/events/ev-gb-corridor-t409.jpg",
       "battle": null,
       "story_pack_id": "guard_baoan",
       "pack": "guard_baoan",
-      "reward_soul": 3,
+      "reward_soul": 0,
       "reward_xp": 0,
       "reward_gold": 0,
-      "rewards_preview": [
-        "+3 膠幣"
-      ],
-      "reward_blurb": "你的保安，李步岸 · 面試夜",
-      "office_node": "hire",
-      "office_choices": [
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "main",
+      "accident_main": true,
+      "accident_choices": [
         {
-          "text": "把住客名單記熟，按規矩做",
-          "delta": {
-            "duty": 3
-          },
-          "outcome": "他遞你一本備忘。收工時他說：名單熟了，樓才管得住。你開始覺得，做好這份工，就是把每件事寫清楚。"
+          "text": "把守則抄進筆記本，反覆核對流程",
+          "outcome": "你把「先登記後上樓」寫在頁首。李步岸瞄一眼，沒誇你，只把印章往你那邊推。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": -1,
+            "boss": 1,
+            "procedure": 2,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
         },
         {
-          "text": "先去幫一位提不動菜的婆婆",
-          "delta": {
-            "rapport": 3
-          },
-          "outcome": "你送到她家門口。她記住了你的姓，也記住了李步岸常叫人來幫忙。他沒稱讚你，只說：人記得住你，樓就安靜。"
+          "text": "先跟畢好彩打聲招呼，問今晚要注意邊戶",
+          "outcome": "畢好彩塞你一粒糖：「擋小人。」你記住幾戶難搞單位，人情先欠一筆。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 0,
+            "procedure": 0,
+            "favor": 1,
+            "renqing": 1,
+            "gold_run": 0
+          }
         },
         {
-          "text": "先去樓下商店，弄清誰在做什麼生意",
-          "delta": {
-            "venture": 3
-          },
-          "outcome": "飯堂老闆請你喝一杯茶，問你以後忙不忙。李步岸在門口等你，說認識店家有用，但崗位不能空太久。"
+          "text": "笑住應承，心想現場再睇",
+          "outcome": "李步岸沒再多講。風扇轉了一圈，你覺得登記簿突然好重。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 1,
+            "boss": -1,
+            "procedure": 0,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
         }
       ],
+      "office_node": null,
+      "office_choices": null,
       "office_final": false,
       "tale_cast": [
         {
           "id": "baoan",
           "name": "李步岸",
-          "role": "隊長",
-          "line": "隊長",
-          "arc_lines": {
-            "warm": "隊長（他點了頭）",
-            "neutral": "隊長",
-            "cold": "隊長（他不再看你）"
-          }
-        },
-        {
-          "id": "lucky",
-          "name": "畢好彩",
-          "role": "同事",
-          "line": "同事",
-          "arc_lines": {
-            "warm": "同事（他信你今天轉運）",
-            "neutral": "同事",
-            "cold": "同事（他不敢多講）"
-          }
-        },
-        {
-          "id": "bee",
-          "name": "麥峰",
-          "role": "同事",
-          "line": "同事",
-          "arc_lines": {
-            "warm": "同事（他今日冇走開）",
-            "neutral": "同事",
-            "cold": "同事（他望住別處）"
-          }
+          "line": "記清楚。寫清楚。交清楚。"
         }
       ]
     },
     {
-      "id": "EV_GB_02",
-      "name": "雨夜門卡",
-      "type": "主線",
-      "category": "main",
-      "category_label": "主線",
-      "desc": "七年後的雨夜。有人沒有門卡，要進大廈。李步岸站在你後面，等你決定開不開閘。",
+      "id": "EV_GB_M02",
+      "name": "無證訪客",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "有人說門卡壞了，急住要上樓取藥。證件卻沒有。閘口燈光把他影子拉得很長。",
       "dialogue": [
         {
           "speaker": "訪客",
-          "text": "我住十五樓，門卡壞了，你通融一下。"
+          "line": "通融下啦，我住十五樓，卡壞咗。"
         },
         {
           "speaker": "李步岸",
-          "text": "開一次，以後就會有人說你偏心。不開，他又要在雨裡等。"
-        },
-        {
-          "speaker": "畢好彩",
-          "text": "他的樣子不像壞人。要不要先問一問樓上？"
-        },
-        {
-          "speaker": "你",
-          "text": "（雨打在玻璃上。這不是大事，但處理方式會被人記住。）"
-        }
-      ],
-      "art": "assets/events/ev-gb-lobby-t409.jpg",
-      "battle": null,
-      "story_pack_id": "guard_baoan",
-      "pack": "guard_baoan",
-      "reward_soul": 2,
-      "reward_xp": 0,
-      "reward_gold": 0,
-      "rewards_preview": [
-        "+2 膠幣"
-      ],
-      "reward_blurb": "你的保安，李步岸 · 雨夜門卡",
-      "office_node": "desk",
-      "office_choices": [
-        {
-          "text": "不開閘，請住戶下來接",
-          "delta": {
-            "duty": 3,
-            "friction": 1
-          },
-          "outcome": "訪客走了，傘骨撞在閘上。李步岸說你合格。後來大業主聽說有人被擋在雨裡，只回了一句：保安就是該這樣。你不知道這句是稱讚，還是記了一筆。"
-        },
-        {
-          "text": "用對講機確認，確認了才放行",
-          "delta": {
-            "rapport": 2,
-            "duty": 1
-          },
-          "outcome": "多等了八分鐘。住戶在鏡頭裡道謝，還說下次帶水果。李步岸在紀錄上寫：已核實。沒有罵你，也沒有誇你。"
-        },
-        {
-          "text": "先讓他進去，回頭再補登記",
-          "delta": {
-            "rapport": 1,
-            "venture": 1
-          },
-          "outcome": "他真是十五樓的女婿。麥峰說你做人圓滑。李步岸把補登記的表拍在你面前：例外可以有，但不能沒有紀錄。"
-        }
-      ],
-      "office_final": false,
-      "tale_cast": [
-        {
-          "id": "baoan",
-          "name": "李步岸",
-          "role": "隊長",
-          "line": "隊長",
-          "arc_lines": {
-            "warm": "隊長（他點了頭）",
-            "neutral": "隊長",
-            "cold": "隊長（他不再看你）"
-          }
-        },
-        {
-          "id": "lucky",
-          "name": "畢好彩",
-          "role": "同事",
-          "line": "同事",
-          "arc_lines": {
-            "warm": "同事（他信你今天轉運）",
-            "neutral": "同事",
-            "cold": "同事（他不敢多講）"
-          }
-        },
-        {
-          "id": "bee",
-          "name": "麥峰",
-          "role": "同事",
-          "line": "同事",
-          "arc_lines": {
-            "warm": "同事（他今日冇走開）",
-            "neutral": "同事",
-            "cold": "同事（他望住別處）"
-          }
-        }
-      ],
-      "track_variants": {
-        "strict": {
-          "desc": "雨夜，有人無通行證明要入內。對講機嘈住，步岸站你後面。你把住客備忘翻到十五樓那一頁，頁邊有步岸的鉛筆字。",
-          "dialogue": [
-            {
-              "speaker": "訪客",
-              "text": "我住十五樓，門卡壞了，你通融下。"
-            },
-            {
-              "speaker": "李步岸",
-              "text": "通融是例外。例外一開，就會開第二次。"
-            },
-            {
-              "speaker": "畢好彩",
-              "text": "他面相不似壞人……定是我眼鏡花？"
-            },
-            {
-              "speaker": "你",
-              "text": "（雨打在大堂玻璃上，訪客的鞋一直在滴水）"
-            },
-            {
-              "speaker": "你",
-              "text": "（你摸一摸口袋裡那本備忘）"
-            }
-          ],
-          "office_choices": [
-            {
-              "text": "照章拒絕，請聯絡住戶下來",
-              "delta": {
-                "pro": 5,
-                "warm": 0,
-                "chaos": 1,
-                "out": 1
-              },
-              "outcome": "你按本子做事。訪客罵了幾句走了，傘骨撞在閘上。步岸只講兩個字：「合格。」你手心全是汗，握筆時筆尖在表格上戳出一個洞。"
-            },
-            {
-              "text": "請住戶視像確認後放行",
-              "delta": {
-                "pro": 2,
-                "warm": 4,
-                "chaos": 0,
-                "out": 0
-              },
-              "outcome": "你按本子做事。多花八分鐘，對講機前前後後響了五次。住戶在鏡頭裡道謝，還說下次會帶生果。步岸沒稱讚，也沒罵，只在紀錄上寫了一句「已核實」。"
-            },
-            {
-              "text": "先放行，再補登記",
-              "delta": {
-                "pro": 0,
-                "warm": 2,
-                "chaos": 5,
-                "out": 1
-              },
-              "outcome": "你按本子做事。後來證明訪客講真，他是十五樓單位的女婿。麥峰豎起拇指；步岸把補登表格拍在你面前，紙角壓住你的手背，一分鐘沒拿開。"
-            }
-          ]
-        },
-        "human": {
-          "desc": "雨夜，有人無通行證明要入內。對講機嘈住，步岸站你後面。你想起白天那位提菜的婆婆，她說她住十五樓。",
-          "dialogue": [
-            {
-              "speaker": "訪客",
-              "text": "我住十五樓，門卡壞了，你通融下。"
-            },
-            {
-              "speaker": "李步岸",
-              "text": "通融是例外。例外一開，就會開第二次。"
-            },
-            {
-              "speaker": "畢好彩",
-              "text": "他面相不似壞人……定是我眼鏡花？"
-            },
-            {
-              "speaker": "你",
-              "text": "（雨打在大堂玻璃上，訪客的鞋一直在滴水）"
-            },
-            {
-              "speaker": "你",
-              "text": "（你想起婆婆說，她個仔好少回來）"
-            }
-          ],
-          "office_choices": [
-            {
-              "text": "照章拒絕，請聯絡住戶下來",
-              "delta": {
-                "pro": 5,
-                "warm": 0,
-                "chaos": 1,
-                "out": 1
-              },
-              "outcome": "你先看人，再看規矩。訪客罵了幾句走了，傘骨撞在閘上。步岸只講兩個字：「合格。」你手心全是汗，握筆時筆尖在表格上戳出一個洞。"
-            },
-            {
-              "text": "請住戶視像確認後放行",
-              "delta": {
-                "pro": 2,
-                "warm": 4,
-                "chaos": 0,
-                "out": 0
-              },
-              "outcome": "你先看人，再看規矩。多花八分鐘，對講機前前後後響了五次。住戶在鏡頭裡道謝，還說下次會帶生果。步岸沒稱讚，也沒罵，只在紀錄上寫了一句「已核實」。"
-            },
-            {
-              "text": "先放行，再補登記",
-              "delta": {
-                "pro": 0,
-                "warm": 2,
-                "chaos": 5,
-                "out": 1
-              },
-              "outcome": "你先看人，再看規矩。後來證明訪客講真，他是十五樓單位的女婿。麥峰豎起拇指；步岸把補登表格拍在你面前，紙角壓住你的手背，一分鐘沒拿開。"
-            }
-          ]
-        },
-        "slack": {
-          "desc": "雨夜，有人無通行證明要入內。對講機嘈住，步岸站你後面。麥峰在你耳邊講了一句，然後退到閉路影不到的位置。",
-          "dialogue": [
-            {
-              "speaker": "訪客",
-              "text": "我住十五樓，門卡壞了，你通融下。"
-            },
-            {
-              "speaker": "李步岸",
-              "text": "通融是例外。例外一開，就會開第二次。"
-            },
-            {
-              "speaker": "畢好彩",
-              "text": "他面相不似壞人……定是我眼鏡花？"
-            },
-            {
-              "speaker": "你",
-              "text": "（雨打在大堂玻璃上，訪客的鞋一直在滴水）"
-            },
-            {
-              "speaker": "麥峰",
-              "text": "（細聲）這個位，不要站太前。"
-            }
-          ],
-          "office_choices": [
-            {
-              "text": "照章拒絕，請聯絡住戶下來",
-              "delta": {
-                "pro": 5,
-                "warm": 0,
-                "chaos": 1,
-                "out": 1
-              },
-              "outcome": "你挑了最省事那條。訪客罵了幾句走了，傘骨撞在閘上。步岸只講兩個字：「合格。」你手心全是汗，握筆時筆尖在表格上戳出一個洞。"
-            },
-            {
-              "text": "請住戶視像確認後放行",
-              "delta": {
-                "pro": 2,
-                "warm": 4,
-                "chaos": 0,
-                "out": 0
-              },
-              "outcome": "你挑了最省事那條。多花八分鐘，對講機前前後後響了五次。住戶在鏡頭裡道謝，還說下次會帶生果。步岸沒稱讚，也沒罵，只在紀錄上寫了一句「已核實」。"
-            },
-            {
-              "text": "先放行，再補登記",
-              "delta": {
-                "pro": 0,
-                "warm": 2,
-                "chaos": 5,
-                "out": 1
-              },
-              "outcome": "你挑了最省事那條。後來證明訪客講真，他是十五樓單位的女婿。麥峰豎起拇指；步岸把補登表格拍在你面前，紙角壓住你的手背，一分鐘沒拿開。"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "EV_GB_03",
-      "name": "飯堂的位子",
-      "type": "主線",
-      "category": "main",
-      "category_label": "主線",
-      "desc": "又過了幾年。你巡樓時總會經過地下那間飯堂。老闆已經認得李步岸的更表。",
-      "dialogue": [
-        {
-          "speaker": "老闆",
-          "text": "步岸哥，今晚的叉燒留了你一份。你那位新人呢？"
-        },
-        {
-          "speaker": "李步岸",
-          "text": "吃完就回去。崗位不能變成茶座。"
-        },
-        {
-          "speaker": "老闆",
-          "text": "我這盤生意也靠這座樓。你們要是有空，幫我看一看門口。"
-        },
-        {
-          "speaker": "你",
-          "text": "（他沒有坐下。你看得出，老闆是把你們當成可以商量的人。）"
-        }
-      ],
-      "art": "assets/events/ev-gb-corridor-t409.jpg",
-      "battle": null,
-      "story_pack_id": "guard_baoan",
-      "pack": "guard_baoan",
-      "reward_soul": 2,
-      "reward_xp": 0,
-      "reward_gold": 0,
-      "rewards_preview": [
-        "+2 膠幣"
-      ],
-      "reward_blurb": "你的保安，李步岸 · 飯堂的位子",
-      "office_node": "shift",
-      "office_choices": [
-        {
-          "text": "吃完就回崗位，不多留",
-          "delta": {
-            "duty": 3
-          },
-          "outcome": "你把盒飯帶回保安室。李步岸說這樣就對。老闆在後面揮手，沒有不高興。這份工還是這份工。"
-        },
-        {
-          "text": "留下來聽老闆講住客的事",
-          "delta": {
-            "rapport": 2,
-            "venture": 1
-          },
-          "outcome": "老闆說三樓的婆婆最近少了下來吃飯，叫你們順路看一看。李步岸聽完，把這句寫進行程。飯堂和住客，在他嘴裡是同一件事。"
-        },
-        {
-          "text": "答應忙完之後幫他看舖",
-          "delta": {
-            "venture": 3
-          },
-          "outcome": "老闆很高興，說以後有好事會先想到你們。李步岸沒有反對，只說：幫店可以，別把制服穿去談生意。"
-        }
-      ],
-      "office_final": false,
-      "tale_cast": [
-        {
-          "id": "baoan",
-          "name": "李步岸",
-          "role": "隊長",
-          "line": "隊長",
-          "arc_lines": {
-            "warm": "隊長（他點了頭）",
-            "neutral": "隊長",
-            "cold": "隊長（他不再看你）"
-          }
-        },
-        {
-          "id": "lucky",
-          "name": "畢好彩",
-          "role": "同事",
-          "line": "同事",
-          "arc_lines": {
-            "warm": "同事（他信你今天轉運）",
-            "neutral": "同事",
-            "cold": "同事（他不敢多講）"
-          }
-        },
-        {
-          "id": "bee",
-          "name": "麥峰",
-          "role": "同事",
-          "line": "同事",
-          "arc_lines": {
-            "warm": "同事（他今日冇走開）",
-            "neutral": "同事",
-            "cold": "同事（他望住別處）"
-          }
-        }
-      ],
-      "track_variants": {
-        "strict": {
-          "desc": "有人請病假。你撞破對方其實在茶餐廳看波。名額只剩一個。你先翻更表，再翻紀錄簿，兩份對不上。",
-          "dialogue": [
-            {
-              "speaker": "麥峰",
-              "text": "這個位我申請了好耐。"
-            },
-            {
-              "speaker": "邱得根",
-              "text": "以我資歷，應優先。"
-            },
-            {
-              "speaker": "李步岸",
-              "text": "你見到什麼，就決定站哪邊。"
-            },
-            {
-              "speaker": "你",
-              "text": "（茶餐廳電視的光，隔著玻璃照過來）"
-            },
-            {
-              "speaker": "你",
-              "text": "（更表上的空格，比名字多）"
-            }
-          ],
-          "office_choices": [
-            {
-              "text": "向隊長報告實情",
-              "delta": {
-                "pro": 6,
-                "warm": 0,
-                "chaos": 1,
-                "out": 1
-              },
-              "outcome": "你照紀錄講。病假取消。隊裡安靜了一整天，有人在茶水間見到你就轉身。步岸把你的名字寫進下個月的好更，卻沒解釋原因——你發現自己寧願他解釋。"
-            },
-            {
-              "text": "私下勸對方取消，不公開",
-              "delta": {
-                "pro": 2,
-                "warm": 4,
-                "chaos": 1,
-                "out": 0
-              },
-              "outcome": "你照紀錄講。對方第二天撤回病假，儲物櫃多了兩罐啤酒。你多了一個人情，也多了一個把柄——他臨走時說「你知我知」，你點頭，心裡不太舒服。"
-            },
-            {
-              "text": "當沒看見，繼續巡邏",
-              "delta": {
-                "pro": 0,
-                "warm": 1,
-                "chaos": 5,
-                "out": 1
-              },
-              "outcome": "你照紀錄講。排更不公的事後來傳開，連住客都聽過版本。步岸自己查到，收更時問你為何沉默。你答不上，他也不再問，只在紀錄簿上寫了很久。"
-            }
-          ]
-        },
-        "human": {
-          "desc": "有人請病假。你撞破對方其實在茶餐廳看波。名額只剩一個。你想起茶餐廳裡那個人，平日幫過你兩次。",
-          "dialogue": [
-            {
-              "speaker": "麥峰",
-              "text": "這個位我申請了好耐。"
-            },
-            {
-              "speaker": "邱得根",
-              "text": "以我資歷，應優先。"
-            },
-            {
-              "speaker": "李步岸",
-              "text": "你見到什麼，就決定站哪邊。"
-            },
-            {
-              "speaker": "你",
-              "text": "（茶餐廳電視的光，隔著玻璃照過來）"
-            },
-            {
-              "speaker": "你",
-              "text": "（你想起他上次幫你頂了半更）"
-            }
-          ],
-          "office_choices": [
-            {
-              "text": "向隊長報告實情",
-              "delta": {
-                "pro": 6,
-                "warm": 0,
-                "chaos": 1,
-                "out": 1
-              },
-              "outcome": "你留了一條路給人。病假取消。隊裡安靜了一整天，有人在茶水間見到你就轉身。步岸把你的名字寫進下個月的好更，卻沒解釋原因——你發現自己寧願他解釋。"
-            },
-            {
-              "text": "私下勸對方取消，不公開",
-              "delta": {
-                "pro": 2,
-                "warm": 4,
-                "chaos": 1,
-                "out": 0
-              },
-              "outcome": "你留了一條路給人。對方第二天撤回病假，儲物櫃多了兩罐啤酒。你多了一個人情，也多了一個把柄——他臨走時說「你知我知」，你點頭，心裡不太舒服。"
-            },
-            {
-              "text": "當沒看見，繼續巡邏",
-              "delta": {
-                "pro": 0,
-                "warm": 1,
-                "chaos": 5,
-                "out": 1
-              },
-              "outcome": "你留了一條路給人。排更不公的事後來傳開，連住客都聽過版本。步岸自己查到，收更時問你為何沉默。你答不上，他也不再問，只在紀錄簿上寫了很久。"
-            }
-          ]
-        },
-        "slack": {
-          "desc": "有人請病假。你撞破對方其實在茶餐廳看波。名額只剩一個。麥峰把更表推遠一點，像是在示範什麼叫不關我事。",
-          "dialogue": [
-            {
-              "speaker": "麥峰",
-              "text": "這個位我申請了好耐。"
-            },
-            {
-              "speaker": "邱得根",
-              "text": "以我資歷，應優先。"
-            },
-            {
-              "speaker": "李步岸",
-              "text": "你見到什麼，就決定站哪邊。"
-            },
-            {
-              "speaker": "你",
-              "text": "（茶餐廳電視的光，隔著玻璃照過來）"
-            },
-            {
-              "speaker": "麥峰",
-              "text": "（他把椅子轉向另一邊）"
-            }
-          ],
-          "office_choices": [
-            {
-              "text": "向隊長報告實情",
-              "delta": {
-                "pro": 6,
-                "warm": 0,
-                "chaos": 1,
-                "out": 1
-              },
-              "outcome": "你選擇不進場。病假取消。隊裡安靜了一整天，有人在茶水間見到你就轉身。步岸把你的名字寫進下個月的好更，卻沒解釋原因——你發現自己寧願他解釋。"
-            },
-            {
-              "text": "私下勸對方取消，不公開",
-              "delta": {
-                "pro": 2,
-                "warm": 4,
-                "chaos": 1,
-                "out": 0
-              },
-              "outcome": "你選擇不進場。對方第二天撤回病假，儲物櫃多了兩罐啤酒。你多了一個人情，也多了一個把柄——他臨走時說「你知我知」，你點頭，心裡不太舒服。"
-            },
-            {
-              "text": "當沒看見，繼續巡邏",
-              "delta": {
-                "pro": 0,
-                "warm": 1,
-                "chaos": 5,
-                "out": 1
-              },
-              "outcome": "你選擇不進場。排更不公的事後來傳開，連住客都聽過版本。步岸自己查到，收更時問你為何沉默。你答不上，他也不再問，只在紀錄簿上寫了很久。"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "EV_GB_04",
-      "name": "公司來巡樓",
-      "type": "主線",
-      "category": "main",
-      "category_label": "主線",
-      "desc": "物業公司的人來了。他們要看這座樓管得怎麼樣，也在看李步岸能不能帶人。",
-      "dialogue": [
-        {
-          "speaker": "公司職員",
-          "text": "步岸，你帶我們走一圈。我們想知道，這座樓是靠規矩，還是靠你的面子。"
-        },
-        {
-          "speaker": "李步岸",
-          "text": "兩樣都要。你們想先看哪一樣，問他。"
-        },
-        {
-          "speaker": "你",
-          "text": "（這次巡樓會寫進報告。報告決定他以後是繼續當隊長，還是被另眼相看。）"
-        }
-      ],
-      "art": "assets/events/ev-gb-room-t409.jpg",
-      "battle": null,
-      "story_pack_id": "guard_baoan",
-      "pack": "guard_baoan",
-      "reward_soul": 2,
-      "reward_xp": 0,
-      "reward_gold": 0,
-      "rewards_preview": [
-        "+2 膠幣"
-      ],
-      "reward_blurb": "你的保安，李步岸 · 公司來巡樓",
-      "office_node": "fridge",
-      "office_choices": [
-        {
-          "text": "帶他們走全樓，對一遍紀錄",
-          "delta": {
-            "duty": 3
-          },
-          "outcome": "職員對著紀錄點頭，說很少見到這麼齊的更表。他們臨走說：這種人，應該讓他管更多人。李步岸只說：先把這座樓管好。"
-        },
-        {
-          "text": "帶他們去看行動不便的住客",
-          "delta": {
-            "rapport": 3
-          },
-          "outcome": "婆婆拉著職員的手，說保安會幫她提菜。職員把這句寫進報告，標題是「住戶關是良好」。李步岸在旁邊站得很直，沒有搶著說話。"
-        },
-        {
-          "text": "帶他們去飯堂，聽老闆怎麼說",
-          "delta": {
-            "venture": 3
-          },
-          "outcome": "老闆請他們喝茶，說保安肯照應店家，樓就旺。職員笑了笑，沒寫進正式報告。李步岸事後說：人情有用，但報告只認白紙黑字。"
-        }
-      ],
-      "office_final": false,
-      "tale_cast": [
-        {
-          "id": "baoan",
-          "name": "李步岸",
-          "role": "隊長",
-          "line": "隊長",
-          "arc_lines": {
-            "warm": "隊長（他點了頭）",
-            "neutral": "隊長",
-            "cold": "隊長（他不再看你）"
-          }
-        },
-        {
-          "id": "lucky",
-          "name": "畢好彩",
-          "role": "同事",
-          "line": "同事",
-          "arc_lines": {
-            "warm": "同事（他信你今天轉運）",
-            "neutral": "同事",
-            "cold": "同事（他不敢多講）"
-          }
-        },
-        {
-          "id": "bee",
-          "name": "麥峰",
-          "role": "同事",
-          "line": "同事",
-          "arc_lines": {
-            "warm": "同事（他今日冇走開）",
-            "neutral": "同事",
-            "cold": "同事（他望住別處）"
-          }
-        }
-      ],
-      "track_variants": {
-        "strict": {
-          "desc": "好彩為新人準備的飯盒消失。嫌疑名單包括半個保安室。備忘第一頁寫明：雪櫃屬公用地方，遺失自負。",
-          "dialogue": [
-            {
-              "speaker": "畢好彩",
-              "text": "我擺了名字貼紙！還寫了個「勿動」！"
-            },
-            {
-              "speaker": "邱得根",
-              "text": "誤食無罪，古已有之。"
-            },
-            {
-              "speaker": "麥峰",
-              "text": "不要望我，我今日叫外賣。"
-            },
-            {
-              "speaker": "李步岸",
-              "text": "雪櫃是公共地方，但不代表沒有規矩。"
-            },
-            {
-              "speaker": "你",
-              "text": "（那一行被人用紅筆畫過）"
-            }
-          ],
-          "office_choices": [
-            {
-              "text": "查閉路，公開結果",
-              "delta": {
-                "pro": 6,
-                "warm": 1,
-                "chaos": 1,
-                "out": 1
-              },
-              "outcome": "你照規矩查。真相尷尬但清楚：是夜更那位做的，他以為是沒人認領的。好彩消了氣，雪櫃第二天多了鎖。隊裡有兩三天沒人敢在休息室吃飯。"
-            },
-            {
-              "text": "買多一盒和解，不追究",
-              "delta": {
-                "pro": 1,
-                "warm": 5,
-                "chaos": 1,
-                "out": 0
-              },
-              "outcome": "你照規矩查。你自己掏錢買了兩盒飯，一盒放回雪櫃，一盒給好彩。氣氛緩和了。步岸說你「用錢買安靜」，語氣聽不出褒貶，但他把這件事寫進了月度簡報。"
-            },
-            {
-              "text": "設局等對方再犯",
-              "delta": {
-                "pro": 1,
-                "warm": 0,
-                "chaos": 6,
-                "out": 1
-              },
-              "outcome": "你照規矩查。你在飯盒上做了記號，卻認錯了人，差點牽連一位清潔姐姐。烏龍擴大到要寫報告。你連夜寫了三頁，最後一頁反覆改了四次。"
-            }
-          ]
-        },
-        "human": {
-          "desc": "好彩為新人準備的飯盒消失。嫌疑名單包括半個保安室。好彩的飯盒上，貼紙寫著一個新人的名字。",
-          "dialogue": [
-            {
-              "speaker": "畢好彩",
-              "text": "我擺了名字貼紙！還寫了個「勿動」！"
-            },
-            {
-              "speaker": "邱得根",
-              "text": "誤食無罪，古已有之。"
-            },
-            {
-              "speaker": "麥峰",
-              "text": "不要望我，我今日叫外賣。"
-            },
-            {
-              "speaker": "李步岸",
-              "text": "雪櫃是公共地方，但不代表沒有規矩。"
-            },
-            {
-              "speaker": "畢好彩",
-              "text": "（他盯住雪櫃，像在等一個答案）"
-            }
-          ],
-          "office_choices": [
-            {
-              "text": "查閉路，公開結果",
-              "delta": {
-                "pro": 6,
-                "warm": 1,
-                "chaos": 1,
-                "out": 1
-              },
-              "outcome": "你先顧人的感受。真相尷尬但清楚：是夜更那位做的，他以為是沒人認領的。好彩消了氣，雪櫃第二天多了鎖。隊裡有兩三天沒人敢在休息室吃飯。"
-            },
-            {
-              "text": "買多一盒和解，不追究",
-              "delta": {
-                "pro": 1,
-                "warm": 5,
-                "chaos": 1,
-                "out": 0
-              },
-              "outcome": "你先顧人的感受。你自己掏錢買了兩盒飯，一盒放回雪櫃，一盒給好彩。氣氛緩和了。步岸說你「用錢買安靜」，語氣聽不出褒貶，但他把這件事寫進了月度簡報。"
-            },
-            {
-              "text": "設局等對方再犯",
-              "delta": {
-                "pro": 1,
-                "warm": 0,
-                "chaos": 6,
-                "out": 1
-              },
-              "outcome": "你先顧人的感受。你在飯盒上做了記號，卻認錯了人，差點牽連一位清潔姐姐。烏龍擴大到要寫報告。你連夜寫了三頁，最後一頁反覆改了四次。"
-            }
-          ]
-        },
-        "slack": {
-          "desc": "好彩為新人準備的飯盒消失。嫌疑名單包括半個保安室。麥峰已經把椅子轉向另一邊，外賣袋還在手上。",
-          "dialogue": [
-            {
-              "speaker": "畢好彩",
-              "text": "我擺了名字貼紙！還寫了個「勿動」！"
-            },
-            {
-              "speaker": "邱得根",
-              "text": "誤食無罪，古已有之。"
-            },
-            {
-              "speaker": "麥峰",
-              "text": "不要望我，我今日叫外賣。"
-            },
-            {
-              "speaker": "李步岸",
-              "text": "雪櫃是公共地方，但不代表沒有規矩。"
-            },
-            {
-              "speaker": "麥峰",
-              "text": "（他把外賣袋收到桌下）"
-            }
-          ],
-          "office_choices": [
-            {
-              "text": "查閉路，公開結果",
-              "delta": {
-                "pro": 6,
-                "warm": 1,
-                "chaos": 1,
-                "out": 1
-              },
-              "outcome": "你不想把事情搞大。真相尷尬但清楚：是夜更那位做的，他以為是沒人認領的。好彩消了氣，雪櫃第二天多了鎖。隊裡有兩三天沒人敢在休息室吃飯。"
-            },
-            {
-              "text": "買多一盒和解，不追究",
-              "delta": {
-                "pro": 1,
-                "warm": 5,
-                "chaos": 1,
-                "out": 0
-              },
-              "outcome": "你不想把事情搞大。你自己掏錢買了兩盒飯，一盒放回雪櫃，一盒給好彩。氣氛緩和了。步岸說你「用錢買安靜」，語氣聽不出褒貶，但他把這件事寫進了月度簡報。"
-            },
-            {
-              "text": "設局等對方再犯",
-              "delta": {
-                "pro": 1,
-                "warm": 0,
-                "chaos": 6,
-                "out": 1
-              },
-              "outcome": "你不想把事情搞大。你在飯盒上做了記號，卻認錯了人，差點牽連一位清潔姐姐。烏龍擴大到要寫報告。你連夜寫了三頁，最後一頁反覆改了四次。"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "EV_GB_05",
-      "name": "面朝下的信",
-      "type": "主線",
-      "category": "main",
-      "category_label": "主線",
-      "desc": "七年又過去了。又有一封信，正面朝下。李步岸說，明天就知道誰還在。沒有人敢把它翻開。",
-      "dialogue": [
-        {
-          "speaker": "李步岸",
-          "text": "明天之後，不要問我去了哪裡。"
-        },
-        {
-          "speaker": "麥峰",
-          "text": "我聽你的。"
-        },
-        {
-          "speaker": "畢好彩",
-          "text": "這次不要靠運氣。那個整歲快到了。"
-        },
-        {
-          "speaker": "李步岸",
-          "text": "你第一晚怎麼答我，明天就怎麼答自己。"
-        },
-        {
-          "speaker": "你",
-          "text": "（信角露出「通知」兩個字。他按住。你已經在想，花圈上該寫什麼。）"
-        }
-      ],
-      "art": "assets/events/ev-gb-lobby-t409.jpg",
-      "battle": null,
-      "story_pack_id": "guard_baoan",
-      "pack": "guard_baoan",
-      "reward_soul": 2,
-      "reward_xp": 0,
-      "reward_gold": 0,
-      "rewards_preview": [
-        "+2 膠幣"
-      ],
-      "reward_blurb": "你的保安，李步岸 · 第 5 幕",
-      "office_node": "lost",
-      "office_choices": [
-        {
-          "text": "留下，把這些年的紀錄整理好",
-          "delta": {
-            "pro": 5,
-            "warm": 0,
-            "chaos": 1,
-            "out": 1
-          },
-          "outcome": "你通宵把紀錄重新排了一遍。他說如果明天人不在了，紀錄一定要在。你問「人」是誰。他沒有答。信仍然正面朝下。你蓋上筆帽的聲音，自己聽著都像在蓋上什麼。"
-        },
-        {
-          "text": "先問住客，想不想把他留下",
-          "delta": {
-            "pro": 1,
-            "warm": 5,
-            "chaos": 1,
-            "out": 1
-          },
-          "outcome": "住客說，不想失去那個很兇的保安。李步岸聽到「失去」，耳朵紅了。他說大家誤會了，他只是會去一個不用打卡的地方。你以為那個地方很遠。他沒有再解釋。"
-        },
-        {
-          "text": "開始收拾東西，準備交接",
-          "delta": {
-            "pro": 2,
-            "warm": 3,
-            "chaos": 4,
-            "out": 0
-          },
-          "outcome": "你收拾儲物櫃。他沒有攔你。麥峰幫你抬箱子，問你是不是也覺得大限到了。李步岸在後面說：大限這個詞用錯了。你們都沒有追問。信還是正面朝下。"
-        }
-      ],
-      "office_final": false,
-      "tale_cast": [
-        {
-          "id": "baoan",
-          "name": "李步岸",
-          "role": "隊長",
-          "line": "隊長",
-          "arc_lines": {
-            "warm": "隊長（他點了頭）",
-            "neutral": "隊長",
-            "cold": "隊長（他不再看你）"
-          }
-        },
-        {
-          "id": "lucky",
-          "name": "畢好彩",
-          "role": "同事",
-          "line": "同事",
-          "arc_lines": {
-            "warm": "同事（他信你今天轉運）",
-            "neutral": "同事",
-            "cold": "同事（他不敢多講）"
-          }
-        },
-        {
-          "id": "bee",
-          "name": "麥峰",
-          "role": "同事",
-          "line": "同事",
-          "arc_lines": {
-            "warm": "同事（他今日冇走開）",
-            "neutral": "同事",
-            "cold": "同事（他望住別處）"
-          }
-        }
-      ],
-      "track_variants": {
-        "strict": {
-          "desc": "孫婆婆說孫仔不見了。你以為是人，結果是一隻龜。規程寫「非緊急勿離崗」。規程第三條：非緊急勿離崗。你記得編號。",
-          "dialogue": [
-            {
-              "speaker": "孫婆婆",
-              "text": "他識應「婆婆」。我叫一聲，他會伸個頭出來。"
-            },
-            {
-              "speaker": "李步岸",
-              "text": "崗位不能空。"
-            },
-            {
-              "speaker": "畢好彩",
-              "text": "龜都有緣分。"
-            },
-            {
-              "speaker": "你",
-              "text": "（婆婆的手一直在抖，抓著一張龜的相）"
-            },
-            {
-              "speaker": "你",
-              "text": "（你望一望牆上的規程，再望一望婆婆）"
-            }
-          ],
-          "office_choices": [
-            {
-              "text": "堅守崗位，報失物登記",
-              "delta": {
-                "pro": 5,
-                "warm": 0,
-                "chaos": 1,
-                "out": 1
-              },
-              "outcome": "你守住那個位。龜在天亮後於花槽自己走出來，慢得像是故意的。婆婆道謝很淡，只說了句「麻煩你」。步岸說你沒犯錯，語氣像在讀紀錄。"
-            },
-            {
-              "text": "請假兩小時協助尋找",
-              "delta": {
-                "pro": 1,
-                "warm": 5,
-                "chaos": 1,
-                "out": 1
-              },
-              "outcome": "你守住那個位。你在花槽的排水口找到牠，殼上黏著一片枯葉。婆婆硬塞你兩個橙，皮都還是涼的。日誌上多了一筆「離崗」，你簽名的時候看了那兩個字很久。"
-            },
-            {
-              "text": "發動全隊當任務",
-              "delta": {
-                "pro": 2,
-                "warm": 3,
-                "chaos": 4,
-                "out": 0
-              },
-              "outcome": "你守住那個位。大堂一時變成搜救現場，對講機沒停過。有住客投訴嘈音，管理處的評分單當晚就送來了。龜救回了，好彩說牠是「好彩頭」，抱著不肯放。"
-            }
-          ]
-        },
-        "human": {
-          "desc": "孫婆婆說孫仔不見了。你以為是人，結果是一隻龜。規程寫「非緊急勿離崗」。婆婆又喚了一聲，聲音很輕，大堂沒有人應。",
-          "dialogue": [
-            {
-              "speaker": "孫婆婆",
-              "text": "他識應「婆婆」。我叫一聲，他會伸個頭出來。"
-            },
-            {
-              "speaker": "李步岸",
-              "text": "崗位不能空。"
-            },
-            {
-              "speaker": "畢好彩",
-              "text": "龜都有緣分。"
-            },
-            {
-              "speaker": "你",
-              "text": "（婆婆的手一直在抖，抓著一張龜的相）"
-            },
-            {
-              "speaker": "孫婆婆",
-              "text": "（她再喚一次）阿寶……"
-            }
-          ],
-          "office_choices": [
-            {
-              "text": "堅守崗位，報失物登記",
-              "delta": {
-                "pro": 5,
-                "warm": 0,
-                "chaos": 1,
-                "out": 1
-              },
-              "outcome": "你先應了那聲呼唤。龜在天亮後於花槽自己走出來，慢得像是故意的。婆婆道謝很淡，只說了句「麻煩你」。步岸說你沒犯錯，語氣像在讀紀錄。"
-            },
-            {
-              "text": "請假兩小時協助尋找",
-              "delta": {
-                "pro": 1,
-                "warm": 5,
-                "chaos": 1,
-                "out": 1
-              },
-              "outcome": "你先應了那聲呼唤。你在花槽的排水口找到牠，殼上黏著一片枯葉。婆婆硬塞你兩個橙，皮都還是涼的。日誌上多了一筆「離崗」，你簽名的時候看了那兩個字很久。"
-            },
-            {
-              "text": "發動全隊當任務",
-              "delta": {
-                "pro": 2,
-                "warm": 3,
-                "chaos": 4,
-                "out": 0
-              },
-              "outcome": "你先應了那聲呼唤。大堂一時變成搜救現場，對講機沒停過。有住客投訴嘈音，管理處的評分單當晚就送來了。龜救回了，好彩說牠是「好彩頭」，抱著不肯放。"
-            }
-          ]
-        },
-        "slack": {
-          "desc": "孫婆婆說孫仔不見了。你以為是人，結果是一隻龜。規程寫「非緊急勿離崗」。電風扇轉到第三格，大堂靜得只剩下它的聲音。",
-          "dialogue": [
-            {
-              "speaker": "孫婆婆",
-              "text": "他識應「婆婆」。我叫一聲，他會伸個頭出來。"
-            },
-            {
-              "speaker": "李步岸",
-              "text": "崗位不能空。"
-            },
-            {
-              "speaker": "畢好彩",
-              "text": "龜都有緣分。"
-            },
-            {
-              "speaker": "你",
-              "text": "（婆婆的手一直在抖，抓著一張龜的相）"
-            },
-            {
-              "speaker": "你",
-              "text": "（你望一望鐘，再望一望門口）"
-            }
-          ],
-          "office_choices": [
-            {
-              "text": "堅守崗位，報失物登記",
-              "delta": {
-                "pro": 5,
-                "warm": 0,
-                "chaos": 1,
-                "out": 1
-              },
-              "outcome": "你把事情推給程序。龜在天亮後於花槽自己走出來，慢得像是故意的。婆婆道謝很淡，只說了句「麻煩你」。步岸說你沒犯錯，語氣像在讀紀錄。"
-            },
-            {
-              "text": "請假兩小時協助尋找",
-              "delta": {
-                "pro": 1,
-                "warm": 5,
-                "chaos": 1,
-                "out": 1
-              },
-              "outcome": "你把事情推給程序。你在花槽的排水口找到牠，殼上黏著一片枯葉。婆婆硬塞你兩個橙，皮都還是涼的。日誌上多了一筆「離崗」，你簽名的時候看了那兩個字很久。"
-            },
-            {
-              "text": "發動全隊當任務",
-              "delta": {
-                "pro": 2,
-                "warm": 3,
-                "chaos": 4,
-                "out": 0
-              },
-              "outcome": "你把事情推給程序。大堂一時變成搜救現場，對講機沒停過。有住客投訴嘈音，管理處的評分單當晚就送來了。龜救回了，好彩說牠是「好彩頭」，抱著不肯放。"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "EV_GB_06",
-      "name": "五樓的氣味",
-      "type": "主線",
-      "category": "main",
-      "category_label": "主線",
-      "desc": "五樓兩戶為了煮食的氣味吵起來，都要保安表態。李步岸把告示紙放在你面前。",
-      "dialogue": [
-        {
-          "speaker": "住客甲",
-          "text": "再不管，我就停交管理費。"
-        },
-        {
-          "speaker": "住客乙",
-          "text": "請你出告示，寫清楚是誰不對。"
-        },
-        {
-          "speaker": "李步岸",
-          "text": "告示是用來說明的。寫得太硬，兩戶都會記你一輩子。"
-        },
-        {
-          "speaker": "你",
-          "text": "（這不是兇案。這是鄰居。處理完，他們明天還要在電梯裡見面。）"
-        }
-      ],
-      "art": "assets/events/ev-gb-lobby-t409.jpg",
-      "battle": null,
-      "story_pack_id": "guard_baoan",
-      "pack": "guard_baoan",
-      "reward_soul": 2,
-      "reward_xp": 0,
-      "reward_gold": 0,
-      "rewards_preview": [
-        "+2 膠幣"
-      ],
-      "reward_blurb": "你的保安，李步岸 · 五樓的氣味",
-      "office_node": "neighbor",
-      "office_choices": [
-        {
-          "text": "出一張不點名的告示，叫雙方收斂",
-          "delta": {
-            "duty": 3
-          },
-          "outcome": "告示貼出去，兩戶都來罵了一句，然後安靜了。李步岸說：罵完還肯照做，就是規矩有用。"
-        },
-        {
-          "text": "請兩戶到大堂，當面說清楚",
-          "delta": {
-            "rapport": 3
-          },
-          "outcome": "他們吵完，一起說你多管閒事，然後各自回家。第二天卻有人留了一盒水果在保安室。李步岸說：水果比告示誠實。"
-        },
-        {
-          "text": "寫信給公司，指這件事業主也有責任",
-          "delta": {
-            "friction": 3,
-            "duty": 1
-          },
-          "outcome": "信送出去了。大業主的回覆很短：保安管秩序，不要管業主的家事。李步岸把信收好，說有些話一寫出去，就收不回來。"
-        }
-      ],
-      "office_final": false,
-      "tale_cast": [
-        {
-          "id": "baoan",
-          "name": "李步岸",
-          "role": "隊長",
-          "line": "隊長",
-          "arc_lines": {
-            "warm": "隊長（他點了頭）",
-            "neutral": "隊長",
-            "cold": "隊長（他不再看你）"
-          }
-        },
-        {
-          "id": "lucky",
-          "name": "畢好彩",
-          "role": "同事",
-          "line": "同事",
-          "arc_lines": {
-            "warm": "同事（他信你今天轉運）",
-            "neutral": "同事",
-            "cold": "同事（他不敢多講）"
-          }
-        },
-        {
-          "id": "bee",
-          "name": "麥峰",
-          "role": "同事",
-          "line": "同事",
-          "arc_lines": {
-            "warm": "同事（他今日冇走開）",
-            "neutral": "同事",
-            "cold": "同事（他望住別處）"
-          }
-        }
-      ],
-      "track_variants": {
-        "strict": {
-          "desc": "5 樓氣味問題對上愛發通告的校長戶。兩邊要你表態。你翻出管理處的告示範本，措辭冷得像公文。",
-          "dialogue": [
-            {
-              "speaker": "住客A",
-              "text": "再不處理我就停管理費。"
-            },
-            {
-              "speaker": "住戶B",
-              "text": "請發告示，寫清楚。"
-            },
-            {
-              "speaker": "李步岸",
-              "text": "告示是工具，不是武器。"
-            },
-            {
-              "speaker": "邱得根",
-              "text": "古人云：和為貴。（他說的「古人」查不到）"
-            },
-            {
-              "speaker": "你",
-              "text": "（範本第三段，有一句永遠用不上）"
-            }
-          ],
-          "office_choices": [
-            {
-              "text": "發中立告示，雙方各退一步",
-              "delta": {
-                "pro": 4,
-                "warm": 2,
-                "chaos": 3,
-                "out": 0
-              },
-              "outcome": "你用文件處理。告示貼出去不到兩小時，就被人截圖上載，還加了幾句你沒寫過的話。戰線更長了。你學會改第二版，措辭冷得像公文。"
-            },
-            {
-              "text": "上門斡旋，請雙方見面",
-              "delta": {
-                "pro": 2,
-                "warm": 6,
-                "chaos": 1,
-                "out": 0
-              },
-              "outcome": "你用文件處理。兩戶在你面前吵了四十分鐘，最後簽了一份臨時約定，紙還是你跑去影印的。步岸看完只說一句：「可以。」這是他第一次這樣講。"
-            },
-            {
-              "text": "向上呈報，洗手不幹",
-              "delta": {
-                "pro": 1,
-                "warm": 0,
-                "chaos": 4,
-                "out": 2
-              },
-              "outcome": "你用文件處理。上層拖了兩星期。兩邊都怪保安，走廊上有人當面叫你「廢柴」。邱副說早知如此，還補了一句「程序上你沒有錯」。"
-            }
-          ]
-        },
-        "human": {
-          "desc": "5 樓氣味問題對上愛發通告的校長戶。兩邊要你表態。兩戶的門都開了一條縫，都在等你先開口。",
-          "dialogue": [
-            {
-              "speaker": "住客A",
-              "text": "再不處理我就停管理費。"
-            },
-            {
-              "speaker": "住戶B",
-              "text": "請發告示，寫清楚。"
-            },
-            {
-              "speaker": "李步岸",
-              "text": "告示是工具，不是武器。"
-            },
-            {
-              "speaker": "邱得根",
-              "text": "古人云：和為貴。（他說的「古人」查不到）"
-            },
-            {
-              "speaker": "你",
-              "text": "（兩條門縫，兩對眼睛）"
-            }
-          ],
-          "office_choices": [
-            {
-              "text": "發中立告示，雙方各退一步",
-              "delta": {
-                "pro": 4,
-                "warm": 2,
-                "chaos": 3,
-                "out": 0
-              },
-              "outcome": "你走過去敲門。告示貼出去不到兩小時，就被人截圖上載，還加了幾句你沒寫過的話。戰線更長了。你學會改第二版，措辭冷得像公文。"
-            },
-            {
-              "text": "上門斡旋，請雙方見面",
-              "delta": {
-                "pro": 2,
-                "warm": 6,
-                "chaos": 1,
-                "out": 0
-              },
-              "outcome": "你走過去敲門。兩戶在你面前吵了四十分鐘，最後簽了一份臨時約定，紙還是你跑去影印的。步岸看完只說一句：「可以。」這是他第一次這樣講。"
-            },
-            {
-              "text": "向上呈報，洗手不幹",
-              "delta": {
-                "pro": 1,
-                "warm": 0,
-                "chaos": 4,
-                "out": 2
-              },
-              "outcome": "你走過去敲門。上層拖了兩星期。兩邊都怪保安，走廊上有人當面叫你「廢柴」。邱副說早知如此，還補了一句「程序上你沒有錯」。"
-            }
-          ]
-        },
-        "slack": {
-          "desc": "5 樓氣味問題對上愛發通告的校長戶。兩邊要你表態。邱副已經站在樓梯口，等你表態，手裡拿著一張表格。",
-          "dialogue": [
-            {
-              "speaker": "住客A",
-              "text": "再不處理我就停管理費。"
-            },
-            {
-              "speaker": "住戶B",
-              "text": "請發告示，寫清楚。"
-            },
-            {
-              "speaker": "李步岸",
-              "text": "告示是工具，不是武器。"
-            },
-            {
-              "speaker": "邱得根",
-              "text": "古人云：和為貴。（他說的「古人」查不到）"
-            },
-            {
-              "speaker": "邱得根",
-              "text": "（他把表格遞過來）程序上，你簽個名就得。"
-            }
-          ],
-          "office_choices": [
-            {
-              "text": "發中立告示，雙方各退一步",
-              "delta": {
-                "pro": 4,
-                "warm": 2,
-                "chaos": 3,
-                "out": 0
-              },
-              "outcome": "你把球踢上去。告示貼出去不到兩小時，就被人截圖上載，還加了幾句你沒寫過的話。戰線更長了。你學會改第二版，措辭冷得像公文。"
-            },
-            {
-              "text": "上門斡旋，請雙方見面",
-              "delta": {
-                "pro": 2,
-                "warm": 6,
-                "chaos": 1,
-                "out": 0
-              },
-              "outcome": "你把球踢上去。兩戶在你面前吵了四十分鐘，最後簽了一份臨時約定，紙還是你跑去影印的。步岸看完只說一句：「可以。」這是他第一次這樣講。"
-            },
-            {
-              "text": "向上呈報，洗手不幹",
-              "delta": {
-                "pro": 1,
-                "warm": 0,
-                "chaos": 4,
-                "out": 2
-              },
-              "outcome": "你把球踢上去。上層拖了兩星期。兩邊都怪保安，走廊上有人當面叫你「廢柴」。邱副說早知如此，還補了一句「程序上你沒有錯」。"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "EV_GB_07",
-      "name": "業主會那一晚",
-      "type": "主線",
-      "category": "main",
-      "category_label": "主線",
-      "desc": "業主會要保安列席。會上有人提出，閘口太嚴，客人覺得大廈不近人情。李步岸看著你。",
-      "dialogue": [
-        {
-          "speaker": "大業主",
-          "text": "步岸，你的人把我的客人也擋了。這座樓要的是體面，不是衙門。"
-        },
-        {
-          "speaker": "李步岸",
-          "text": "體面和隨便放人，不是同一件事。你想他怎麼答，你先想好。"
-        },
-        {
-          "speaker": "你",
-          "text": "（會議室很靜。你答完，這座樓以後怎麼看保安，就定了。）"
-        }
-      ],
-      "art": "assets/events/ev-gb-room-t409.jpg",
-      "battle": null,
-      "story_pack_id": "guard_baoan",
-      "pack": "guard_baoan",
-      "reward_soul": 2,
-      "reward_xp": 0,
-      "reward_gold": 0,
-      "rewards_preview": [
-        "+2 膠幣"
-      ],
-      "reward_blurb": "你的保安，李步岸 · 業主會那一晚",
-      "office_node": "secret",
-      "office_choices": [
-        {
-          "text": "當面說：客人也要登記，這是規矩",
-          "delta": {
-            "duty": 2,
-            "friction": 3
-          },
-          "outcome": "大業主的臉沉下來。他沒有當場趕人，只說：你們保安，很有原則。散會後，邱得根小聲說：這句話通常不是稱讚。"
-        },
-        {
-          "text": "說會再提醒同事，也請業主的客人帶門卡",
-          "delta": {
-            "rapport": 2,
-            "duty": 1
-          },
-          "outcome": "大業主哼了一聲，沒有再追。李步岸會後說：你把兩邊都留住了。這種做法不風光，但樓不會裂。"
-        },
-        {
-          "text": "不多話，散會後去飯堂把這晚說給老闆聽",
-          "delta": {
-            "venture": 3
-          },
-          "outcome": "老闆聽完，說做保安做到這一步，不如出來做事。他沒有開條件。李步岸知道你去了，只說：想清楚再答他。"
-        }
-      ],
-      "office_final": false,
-      "tale_cast": [
-        {
-          "id": "baoan",
-          "name": "李步岸",
-          "role": "隊長",
-          "line": "隊長",
-          "arc_lines": {
-            "warm": "隊長（他點了頭）",
-            "neutral": "隊長",
-            "cold": "隊長（他不再看你）"
-          }
-        },
-        {
-          "id": "lucky",
-          "name": "畢好彩",
-          "role": "同事",
-          "line": "同事",
-          "arc_lines": {
-            "warm": "同事（他信你今天轉運）",
-            "neutral": "同事",
-            "cold": "同事（他不敢多講）"
-          }
-        },
-        {
-          "id": "bee",
-          "name": "麥峰",
-          "role": "同事",
-          "line": "同事",
-          "arc_lines": {
-            "warm": "同事（他今日冇走開）",
-            "neutral": "同事",
-            "cold": "同事（他望住別處）"
-          }
-        }
-      ],
-      "track_variants": {
-        "strict": {
-          "desc": "你發現同事阿律的背包裡有管理公司內部名冊——他可能不是「普通新人」。他求你保密一週。你想起步岸那句：團隊最怕不是懶，是瞞。",
-          "dialogue": [
-            {
-              "speaker": "阿律",
-              "text": "我不想害人，我只是想證明自己做得起。"
-            },
-            {
-              "speaker": "李步岸",
-              "text": "團隊最怕不是懶，是瞞。"
-            },
-            {
-              "speaker": "畢好彩",
-              "text": "秘密好重，你攞得起嗎？"
-            },
-            {
-              "speaker": "你",
-              "text": "（名冊第一頁，有你的名字，被圈了起來）"
-            },
-            {
-              "speaker": "你",
-              "text": "（那句話，他講的時候在看紀錄簿）"
-            }
-          ],
-          "office_choices": [
-            {
-              "text": "立即告知隊長",
-              "delta": {
-                "pro": 6,
-                "warm": 0,
-                "chaos": 2,
-                "out": 1
-              },
-              "outcome": "你選擇不隱瞞。調查第二天就展開。阿律被調去另一座，走時沒跟任何人道別。步岸說你護了隊，也撕了一層信任，說完自己沉默了整個鐘。"
-            },
-            {
-              "text": "給他七天，暗中盯住",
-              "delta": {
-                "pro": 2,
-                "warm": 5,
-                "chaos": 1,
-                "out": 0
-              },
-              "outcome": "你選擇不隱瞞。第五天他自己走來坦白：名冊是他從舊公司帶來的，只想核對名單有沒有漏。你多了一個盟友，也多了一個秘密。他把名冊交給你那次，手是抖的。"
-            },
-            {
-              "text": "幫忙藏住，當沒發生",
-              "delta": {
-                "pro": 0,
-                "warm": 3,
-                "chaos": 6,
-                "out": 2
-              },
-              "outcome": "你選擇不隱瞞。紙包不住火。兩星期後事發，你被視為知情不報；調查人員問你話時，你記得自己答得很慢。阿律最後沒有怪你，這令你更難受。"
-            }
-          ]
-        },
-        "human": {
-          "desc": "你發現同事阿律的背包裡有管理公司內部名冊——他可能不是「普通新人」。他求你保密一週。阿律說那句話時，眼睛沒有閃。",
-          "dialogue": [
-            {
-              "speaker": "阿律",
-              "text": "我不想害人，我只是想證明自己做得起。"
-            },
-            {
-              "speaker": "李步岸",
-              "text": "團隊最怕不是懶，是瞞。"
-            },
-            {
-              "speaker": "畢好彩",
-              "text": "秘密好重，你攞得起嗎？"
-            },
-            {
-              "speaker": "你",
-              "text": "（名冊第一頁，有你的名字，被圈了起來）"
-            },
-            {
-              "speaker": "阿律",
-              "text": "（他把背包抱得更緊）我不會害人。"
-            }
-          ],
-          "office_choices": [
-            {
-              "text": "立即告知隊長",
-              "delta": {
-                "pro": 6,
-                "warm": 0,
-                "chaos": 2,
-                "out": 1
-              },
-              "outcome": "你給了他一點時間。調查第二天就展開。阿律被調去另一座，走時沒跟任何人道別。步岸說你護了隊，也撕了一層信任，說完自己沉默了整個鐘。"
-            },
-            {
-              "text": "給他七天，暗中盯住",
-              "delta": {
-                "pro": 2,
-                "warm": 5,
-                "chaos": 1,
-                "out": 0
-              },
-              "outcome": "你給了他一點時間。第五天他自己走來坦白：名冊是他從舊公司帶來的，只想核對名單有沒有漏。你多了一個盟友，也多了一個秘密。他把名冊交給你那次，手是抖的。"
-            },
-            {
-              "text": "幫忙藏住，當沒發生",
-              "delta": {
-                "pro": 0,
-                "warm": 3,
-                "chaos": 6,
-                "out": 2
-              },
-              "outcome": "你給了他一點時間。紙包不住火。兩星期後事發，你被視為知情不報；調查人員問你話時，你記得自己答得很慢。阿律最後沒有怪你，這令你更難受。"
-            }
-          ]
-        },
-        "slack": {
-          "desc": "你發現同事阿律的背包裡有管理公司內部名冊——他可能不是「普通新人」。他求你保密一週。你把背包放回原位，手停了一秒。",
-          "dialogue": [
-            {
-              "speaker": "阿律",
-              "text": "我不想害人，我只是想證明自己做得起。"
-            },
-            {
-              "speaker": "李步岸",
-              "text": "團隊最怕不是懶，是瞞。"
-            },
-            {
-              "speaker": "畢好彩",
-              "text": "秘密好重，你攞得起嗎？"
-            },
-            {
-              "speaker": "你",
-              "text": "（名冊第一頁，有你的名字，被圈了起來）"
-            },
-            {
-              "speaker": "你",
-              "text": "（拉鍊聲在大堂迴響了很久）"
-            }
-          ],
-          "office_choices": [
-            {
-              "text": "立即告知隊長",
-              "delta": {
-                "pro": 6,
-                "warm": 0,
-                "chaos": 2,
-                "out": 1
-              },
-              "outcome": "你當作沒看見。調查第二天就展開。阿律被調去另一座，走時沒跟任何人道別。步岸說你護了隊，也撕了一層信任，說完自己沉默了整個鐘。"
-            },
-            {
-              "text": "給他七天，暗中盯住",
-              "delta": {
-                "pro": 2,
-                "warm": 5,
-                "chaos": 1,
-                "out": 0
-              },
-              "outcome": "你當作沒看見。第五天他自己走來坦白：名冊是他從舊公司帶來的，只想核對名單有沒有漏。你多了一個盟友，也多了一個秘密。他把名冊交給你那次，手是抖的。"
-            },
-            {
-              "text": "幫忙藏住，當沒發生",
-              "delta": {
-                "pro": 0,
-                "warm": 3,
-                "chaos": 6,
-                "out": 2
-              },
-              "outcome": "你當作沒看見。紙包不住火。兩星期後事發，你被視為知情不報；調查人員問你話時，你記得自己答得很慢。阿律最後沒有怪你，這令你更難受。"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "EV_GB_08",
-      "name": "信還沒有拆",
-      "type": "主線",
-      "category": "main",
-      "category_label": "主線",
-      "desc": "又過了幾年。公司來信，正面朝下。李步岸還沒有拆。他問你，這些年你站在哪一邊。",
-      "dialogue": [
-        {
-          "speaker": "李步岸",
-          "text": "我不是要你選我還是選公司。我是要你看，你這些年到底在做哪一種保安。"
-        },
-        {
-          "speaker": "麥峰",
-          "text": "我聽你的。"
-        },
-        {
-          "speaker": "畢好彩",
-          "text": "這次不要靠猜。你做過的事，自己記得。"
-        },
-        {
-          "speaker": "你",
-          "text": "（信還沒拆。你知道，真正要算的不是這封信，是你已經做過的選擇。）"
-        }
-      ],
-      "art": "assets/events/ev-gb-corridor-t409.jpg",
-      "battle": null,
-      "story_pack_id": "guard_baoan",
-      "pack": "guard_baoan",
-      "reward_soul": 2,
-      "reward_xp": 0,
-      "reward_gold": 0,
-      "rewards_preview": [
-        "+2 膠幣"
-      ],
-      "reward_blurb": "你的保安，李步岸 · 信還沒有拆",
-      "office_node": "crisis",
-      "office_choices": [
-        {
-          "text": "把這些年的紀錄整理好，交給公司",
-          "delta": {
-            "duty": 3
-          },
-          "outcome": "你交上一疊更表。李步岸看了很久，說：這些紙會替你說話。他仍然沒有拆那封信。"
-        },
-        {
-          "text": "去問住客，他們記得保安做過什麼",
-          "delta": {
-            "rapport": 3
-          },
-          "outcome": "婆婆說，沒有你們她下不了樓。幾個住客把話寫在紙上。李步岸讀的時候沒有出聲，把紙夾進備忘裡。"
-        },
-        {
-          "text": "去飯堂，聽老闆把以後的打算說完",
-          "delta": {
-            "venture": 3
-          },
-          "outcome": "老闆說舖位可以一起做，制服可以脫下來。你沒有立刻答應。李步岸在門口抽完一根煙，說：第二份人生，也是人生。"
-        }
-      ],
-      "office_final": false,
-      "tale_cast": [
-        {
-          "id": "baoan",
-          "name": "李步岸",
-          "role": "隊長",
-          "line": "隊長",
-          "arc_lines": {
-            "warm": "隊長（他點了頭）",
-            "neutral": "隊長",
-            "cold": "隊長（他不再看你）"
-          }
-        },
-        {
-          "id": "lucky",
-          "name": "畢好彩",
-          "role": "同事",
-          "line": "同事",
-          "arc_lines": {
-            "warm": "同事（他信你今天轉運）",
-            "neutral": "同事",
-            "cold": "同事（他不敢多講）"
-          }
-        },
-        {
-          "id": "bee",
-          "name": "麥峰",
-          "role": "同事",
-          "line": "同事",
-          "arc_lines": {
-            "warm": "同事（他今日冇走開）",
-            "neutral": "同事",
-            "cold": "同事（他望住別處）"
-          }
-        }
-      ],
-      "track_variants": {
-        "strict": {
-          "desc": "珍誠管理要空降新團隊。簽名信在傳，有人勸你「識做」。最後一更，步岸問你站哪邊。你打開那本被翻薄的備忘，最後一頁還是空白。",
-          "dialogue": [
-            {
-              "speaker": "邱得根",
-              "text": "識時務者為俊傑。"
-            },
-            {
-              "speaker": "麥峰",
-              "text": "我聽你。"
-            },
-            {
-              "speaker": "畢好彩",
-              "text": "今次不要靠幸運。"
-            },
-            {
-              "speaker": "李步岸",
-              "text": "你第一夜怎樣答我，現在就怎樣答自己。"
-            },
-            {
-              "speaker": "你",
-              "text": "（簽名信傳到你手上，紙邊已經軟了）"
-            },
-            {
-              "speaker": "李步岸",
-              "text": "（他把自己的筆遞給你）寫。"
-            }
-          ],
-          "office_choices": [
-            {
-              "text": "聯署留隊，按專業標準自查",
-              "delta": {
-                "pro": 8,
-                "warm": 0,
-                "chaos": 0,
-                "out": 0
-              },
-              "outcome": "你用紀錄說話。你通宵整理缺失報告，把八個月的紀錄重新排了一次。簽名信有了重量。天亮時你的手在抖，但報告上每一頁都有你的簽名。"
-            },
-            {
-              "text": "聯署留隊，但先答應住客人情訴求",
-              "delta": {
-                "pro": 0,
-                "warm": 8,
-                "chaos": 0,
-                "out": 0
-              },
-              "outcome": "你用紀錄說話。你逐戶走訪，把住客的簽名一併附上。幾位平時不說話的住戶站了出來。規條冊被你翻得起毛，邊角都捲了。"
-            },
-            {
-              "text": "不聯署，準備交接",
-              "delta": {
-                "pro": 0,
-                "warm": 0,
-                "chaos": 4,
-                "out": 30
-              },
-              "outcome": "你用紀錄說話。你開始清儲物櫃，把三年來的更表一張張撕掉。風扇還在轉，但名單換了人抄。麥峰幫你把最後一箱抬到門口，沒問你去哪。"
-            }
-          ]
-        },
-        "human": {
-          "desc": "珍誠管理要空降新團隊。簽名信在傳，有人勸你「識做」。最後一更，步岸問你站哪邊。大堂有幾位住客站在電梯口，沒有走，也沒有出聲。",
-          "dialogue": [
-            {
-              "speaker": "邱得根",
-              "text": "識時務者為俊傑。"
-            },
-            {
-              "speaker": "麥峰",
-              "text": "我聽你。"
-            },
-            {
-              "speaker": "畢好彩",
-              "text": "今次不要靠幸運。"
-            },
-            {
-              "speaker": "李步岸",
-              "text": "你第一夜怎樣答我，現在就怎樣答自己。"
-            },
-            {
-              "speaker": "你",
-              "text": "（簽名信傳到你手上，紙邊已經軟了）"
-            },
-            {
-              "speaker": "住客",
-              "text": "（其中一位）你們會不會留低？"
-            }
-          ],
-          "office_choices": [
-            {
-              "text": "聯署留隊，按專業標準自查",
-              "delta": {
-                "pro": 8,
-                "warm": 0,
-                "chaos": 0,
-                "out": 0
-              },
-              "outcome": "你把住客擺在前面。你通宵整理缺失報告，把八個月的紀錄重新排了一次。簽名信有了重量。天亮時你的手在抖，但報告上每一頁都有你的簽名。"
-            },
-            {
-              "text": "聯署留隊，但先答應住客人情訴求",
-              "delta": {
-                "pro": 0,
-                "warm": 8,
-                "chaos": 0,
-                "out": 0
-              },
-              "outcome": "你把住客擺在前面。你逐戶走訪，把住客的簽名一併附上。幾位平時不說話的住戶站了出來。規條冊被你翻得起毛，邊角都捲了。"
-            },
-            {
-              "text": "不聯署，準備交接",
-              "delta": {
-                "pro": 0,
-                "warm": 0,
-                "chaos": 4,
-                "out": 30
-              },
-              "outcome": "你把住客擺在前面。你開始清儲物櫃，把三年來的更表一張張撕掉。風扇還在轉，但名單換了人抄。麥峰幫你把最後一箱抬到門口，沒問你去哪。"
-            }
-          ]
-        },
-        "slack": {
-          "desc": "珍誠管理要空降新團隊。簽名信在傳，有人勸你「識做」。最後一更，步岸問你站哪邊。麥峰把儲物櫃鑰匙放在你桌上，什麼都沒說。",
-          "dialogue": [
-            {
-              "speaker": "邱得根",
-              "text": "識時務者為俊傑。"
-            },
-            {
-              "speaker": "麥峰",
-              "text": "我聽你。"
-            },
-            {
-              "speaker": "畢好彩",
-              "text": "今次不要靠幸運。"
-            },
-            {
-              "speaker": "李步岸",
-              "text": "你第一夜怎樣答我，現在就怎樣答自己。"
-            },
-            {
-              "speaker": "你",
-              "text": "（簽名信傳到你手上，紙邊已經軟了）"
-            },
-            {
-              "speaker": "麥峰",
-              "text": "（他拍一拍你的櫃門）早些清，不要趕。"
-            }
-          ],
-          "office_choices": [
-            {
-              "text": "聯署留隊，按專業標準自查",
-              "delta": {
-                "pro": 8,
-                "warm": 0,
-                "chaos": 0,
-                "out": 0
-              },
-              "outcome": "你開始收拾。你通宵整理缺失報告，把八個月的紀錄重新排了一次。簽名信有了重量。天亮時你的手在抖，但報告上每一頁都有你的簽名。"
-            },
-            {
-              "text": "聯署留隊，但先答應住客人情訴求",
-              "delta": {
-                "pro": 0,
-                "warm": 8,
-                "chaos": 0,
-                "out": 0
-              },
-              "outcome": "你開始收拾。你逐戶走訪，把住客的簽名一併附上。幾位平時不說話的住戶站了出來。規條冊被你翻得起毛，邊角都捲了。"
-            },
-            {
-              "text": "不聯署，準備交接",
-              "delta": {
-                "pro": 0,
-                "warm": 0,
-                "chaos": 4,
-                "out": 30
-              },
-              "outcome": "你開始收拾。你開始清儲物櫃，把三年來的更表一張張撕掉。風扇還在轉，但名單換了人抄。麥峰幫你把最後一箱抬到門口，沒問你去哪。"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "EV_GB_09",
-      "name": "婆婆的菜",
-      "type": "主線",
-      "category": "main",
-      "category_label": "主線",
-      "desc": "巡樓時你遇見三樓的婆婆。菜籃太重，她站在電梯口歇了兩次。李步岸在對講機裡等你回崗位。",
-      "dialogue": [
-        {
-          "speaker": "婆婆",
-          "text": "不用了，我慢慢走。你們要看更。"
-        },
-        {
-          "speaker": "李步岸",
-          "text": "（對講機）崗位有沒有人？你自己看情況。"
-        },
-        {
-          "speaker": "你",
-          "text": "（菜籃不重，但她的手在抖。這件事很小，小到不會寫進更表。）"
-        }
-      ],
-      "art": "assets/events/ev-gb-lobby-t409.jpg",
-      "battle": null,
-      "story_pack_id": "guard_baoan",
-      "pack": "guard_baoan",
-      "reward_soul": 2,
-      "reward_xp": 0,
-      "reward_gold": 0,
-      "rewards_preview": [
-        "+2 膠幣"
-      ],
-      "reward_blurb": "你的保安，李步岸 · 婆婆的菜",
-      "office_node": "granny",
-      "office_choices": [
-        {
-          "text": "送到她家門口，再回崗位",
-          "delta": {
-            "rapport": 3
-          },
-          "outcome": "她一定要你喝口水。李步岸沒有記你遲到，只在對講機裡說：人送到了就好。第二天她在大堂跟每個住客講這件事。"
-        },
-        {
-          "text": "叫她的家人下來接，你留守崗位",
-          "delta": {
-            "duty": 3
-          },
-          "outcome": "家人很快下來了。李步岸說你分得清輕重。婆婆走的時候還是謝了你，只是沒有再講第二句。"
-        },
-        {
-          "text": "扶她到飯堂坐下，請老闆照看",
-          "delta": {
-            "venture": 2,
-            "rapport": 1
-          },
-          "outcome": "老闆給她盛了湯，說以後她可以在店裡歇。李步岸點頭：店家肯幫，樓裡的事就少一件。你和老闆因此熟了一點。"
-        }
-      ],
-      "office_final": false
-    },
-    {
-      "id": "EV_GB_10",
-      "name": "大業主的車",
-      "type": "主線",
-      "category": "main",
-      "category_label": "主線",
-      "desc": "大業主的車停在閘口，擋住了救護車要過的位置。他在車上打電話，叫你先不要管。",
-      "dialogue": [
-        {
-          "speaker": "大業主",
-          "text": "我馬上走。你不要寫。寫了，大家都難看。"
-        },
-        {
-          "speaker": "李步岸",
-          "text": "救護車不等人。你現在寫不寫，是你的更。"
-        },
-        {
-          "speaker": "你",
-          "text": "（引擎還開著。後面已經有人在按喇叭。）"
-        }
-      ],
-      "art": "assets/events/ev-gb-corridor-t409.jpg",
-      "battle": null,
-      "story_pack_id": "guard_baoan",
-      "pack": "guard_baoan",
-      "reward_soul": 2,
-      "reward_xp": 0,
-      "reward_gold": 0,
-      "rewards_preview": [
-        "+2 膠幣"
-      ],
-      "reward_blurb": "你的保安，李步岸 · 大業主的車",
-      "office_node": "car",
-      "office_choices": [
-        {
-          "text": "照規矩登記，請他把車開走",
-          "delta": {
-            "duty": 2,
-            "friction": 3
-          },
-          "outcome": "車開走了，救護車過去了。大業主第二天讓人傳話：這個保安，不懂得看人。李步岸說：看人之前，先看路通不通。"
-        },
-        {
-          "text": "請他馬上開走，這次不寫進紀錄",
-          "delta": {
-            "rapport": 2,
-            "duty": 1
-          },
-          "outcome": "他走得很快，臨走說算你懂事。李步岸看了你一眼：路通了，人也不用結怨。紀錄可以少一行，事情不能少做。"
-        },
-        {
-          "text": "讓他先把電話打完，你去疏導後面的車",
-          "delta": {
-            "venture": 2,
-            "rapport": 1
-          },
-          "outcome": "後面的車繞開了。大業主收線後說，以後有事可以找他。李步岸沒有稱讚，說：人情留下了，危險是你自己扛的。"
-        }
-      ],
-      "office_final": false
-    },
-    {
-      "id": "EV_GB_11",
-      "name": "老闆的提議",
-      "type": "主線",
-      "category": "main",
-      "category_label": "主線",
-      "desc": "飯堂老闆把你和李步岸留下。他說舖位可以分一份，問你們要不要脫下制服，一起做。",
-      "dialogue": [
-        {
-          "speaker": "老闆",
-          "text": "步岸哥，你對這座樓熟。我對吃的熟。一起做，比值夜班穩。"
-        },
-        {
-          "speaker": "李步岸",
-          "text": "我聽過這種話。答之前，先想你想守的是樓，還是想開的是店。"
-        },
-        {
-          "speaker": "你",
-          "text": "（茶是熱的。這不是命令，是一個可以離開的門口。）"
-        }
-      ],
-      "art": "assets/events/ev-gb-room-t409.jpg",
-      "battle": null,
-      "story_pack_id": "guard_baoan",
-      "pack": "guard_baoan",
-      "reward_soul": 2,
-      "reward_xp": 0,
-      "reward_gold": 0,
-      "rewards_preview": [
-        "+2 膠幣"
-      ],
-      "reward_blurb": "你的保安，李步岸 · 老闆的提議",
-      "office_node": "offer",
-      "office_choices": [
-        {
-          "text": "謝絕。這份保安的工作還要做下去",
-          "delta": {
-            "duty": 3
-          },
-          "outcome": "老闆沒有勉強。李步岸把茶杯推回你面前：拒絕也要拒絕得乾淨。你們回到崗位時，更表還攤在桌上。"
-        },
-        {
-          "text": "說可以幫他帶住客來光顧，人仍留在保安室",
-          "delta": {
-            "rapport": 2,
-            "venture": 1
-          },
-          "outcome": "老闆說這樣也很好。李步岸補了一句：介紹可以，不要把住客當成客人來拉。你晚上還是在寫紀錄。"
-        },
-        {
-          "text": "認真聽完條件，說你會考慮",
-          "delta": {
-            "venture": 3
-          },
-          "outcome": "老闆把鑰匙的備用那條放在桌上，又收回去，說想好了再來拿。李步岸送你回保安室，一路沒有勸你留，也沒有叫你走。"
-        }
-      ],
-      "office_final": false
-    },
-    {
-      "id": "EV_GB_RETIRE",
-      "name": "六十五歲",
-      "type": "主線",
-      "category": "main",
-      "category_label": "主線",
-      "desc": "你六十五歲這一年，李步岸把大家叫齊。信要在今天揭開。揭開之後，他的故事就結束，沒有下一章。",
-      "dialogue": [
-        {
-          "speaker": "李步岸",
-          "text": "今天我六十五歲。保安員到這個年紀，就要停當值。"
-        },
-        {
-          "speaker": "李步岸",
-          "text": "我沒有病，也沒有出事。這封信是結局，不是下一章。"
-        },
-        {
-          "speaker": "麥峰",
-          "text": "所以沒有後續了？"
-        },
-        {
-          "speaker": "你",
-          "text": "（他揭開信。不管裡面寫什麼，他的故事都在今天結束。）"
+          "line": "（對講機）先問清楚。唔好自己發明規矩。"
         }
       ],
       "art": "assets/events/ev-gb-lobby-t409.jpg",
@@ -18070,267 +17069,2292 @@ window.HK_SLICE_DATA = {
       "reward_soul": 0,
       "reward_xp": 0,
       "reward_gold": 0,
-      "rewards_preview": [],
-      "reward_blurb": "你的保安，李步岸 · 六十五歲",
-      "office_node": "retire",
-      "baoan_retire": true,
-      "office_choices": [],
-      "office_final": true
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "main",
+      "accident_main": true,
+      "accident_choices": [
+        {
+          "text": "請住戶下來或視像確認，並完成登記後才放行",
+          "outcome": "你按程序聯絡單位，登記完成才放行。訪客嘟嘴，但日誌乾淨。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 1,
+            "boss": 1,
+            "procedure": 2,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "好言相勸，請他等同事核對閉路片段",
+          "outcome": "你把語氣放軟，對方願意等。畢好彩跑來幫忙看畫面。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 0,
+            "procedure": 1,
+            "favor": 1,
+            "renqing": 1,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "先放行再補登記，省得嘈",
+          "outcome": "他匆匆進升降機。半小時後管理處來電問名冊——你的名字也被記下一筆。",
+          "hidden_delta": {
+            "flag_noted": true,
+            "pressure": 2,
+            "boss": -2,
+            "procedure": -2,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          },
+          "battle": "E_GB01"
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
     },
     {
-      "id": "EV_GB_E0",
-      "name": "結局：六十五歲退休",
-      "type": "主線",
-      "category": "main",
-      "category_label": "結局",
-      "desc": "李步岸六十五歲。按保安員的規矩，他今天退休。沒有調令，沒有新店，也沒有更高的頭銜。他在海嵐峰的大堂交還制服。故事停在這一天，他人還在。",
+      "id": "EV_GB_M03",
+      "name": "送餐趕時間",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "外賣騎手／送餐員在閘口拍門：訂單逾時會被扣錢。他催你快啲放行。",
       "dialogue": [
         {
-          "speaker": "李步岸",
-          "text": "六十五歲，該停當值。不是我出事，是規矩寫到了。今天之後，沒有我的更。"
+          "speaker": "送餐員",
+          "line": "大哥通融下，超時要罰。"
         },
         {
           "speaker": "你",
-          "text": "（更表上他的名字劃在「退休」。大堂沒有橫額，只有幾個住客來握手。）"
-        },
-        {
-          "speaker": "婆婆",
-          "text": "步岸哥，今天就送到這裡。"
-        },
-        {
-          "speaker": "李步岸",
-          "text": "送到這裡就好。我的故事完了。"
-        },
-        {
-          "speaker": "麥峰",
-          "text": "那我們呢？"
-        },
-        {
-          "speaker": "李步岸",
-          "text": "樓還在，你們照舊巡。我這份，到今天為止。"
+          "line": "一定要臨時登記，唔可以省略證件核對。"
         }
       ],
       "art": "assets/events/ev-gb-lobby-t409.jpg",
       "battle": null,
       "story_pack_id": "guard_baoan",
       "pack": "guard_baoan",
-      "reward_soul": 60,
+      "reward_soul": 0,
       "reward_xp": 0,
       "reward_gold": 0,
-      "rewards_preview": [
-        "+60 膠幣",
-        "結局達成"
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "main",
+      "accident_main": true,
+      "accident_choices": [
+        {
+          "text": "完成臨時登記，核對送達單位後放行",
+          "outcome": "你寫下暫留時間。送餐員走時對你點頭，大堂恢復安靜。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 0,
+            "procedure": 2,
+            "favor": 1,
+            "renqing": 0,
+            "gold_run": 1
+          }
+        },
+        {
+          "text": "請住戶到大堂領取，並在告示欄旁說明",
+          "outcome": "住戶下樓取餐。你沒有省略登記，也沒有用廣播。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 1,
+            "procedure": 1,
+            "favor": 1,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "省略證件，只記單位號碼",
+          "outcome": "事後抽查發現缺頁。副隊長邱得根搖頭：「按程序，呢頁唔合格。」",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 1,
+            "boss": -1,
+            "procedure": -2,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        }
       ],
-      "reward_blurb": "結局 · 六十五歲退休",
-      "office_ending": "retire",
-      "office_ending_label": "六十五歲退休",
-      "office_ending_blurb": "盡責和人情都夠。他在海嵐峰做到六十五歲，平安退休。故事在這一天結束。",
-      "voice_id": "baoan",
-      "voice_name": "李步岸",
-      "voice_line": "我退休。人還在。故事到今天為止。",
-      "life_summary": "盡責和人情都走到了。他沒有升官，沒有改行，也沒有被調走。六十五歲，他在海嵐峰退休。故事在這一天結束。",
-      "ending_note": "這是他的完美結局。他沒有死，只是在六十五歲停當值。故事到此結束，沒有後續。",
-      "flag_on_complete": "office_ending_retire"
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
     },
     {
-      "id": "EV_GB_E1",
-      "name": "結局：海嵐峰的主管",
-      "type": "主線",
-      "category": "main",
-      "category_label": "結局",
-      "desc": "公司的評核在他六十五歲這天送到：紀錄齊、巡樓穩、能帶新人，要升他做海嵐峰的主管。可是保安員年滿六十五歲，必須停當值。主管這個名，是他最後一天的頭銜，不是六十五歲之後的工作。",
+      "id": "EV_GB_M04",
+      "name": "排更風波",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "有人稱病請假，卻有人在茶水間說他在外看波。更表就放在你手邊。",
       "dialogue": [
         {
-          "speaker": "公司職員",
-          "text": "步岸，評核要升你做這座樓的主管。"
-        },
-        {
-          "speaker": "李步岸",
-          "text": "主管從今天算起，也從今天結束。六十五歲，我停當值。"
-        },
-        {
-          "speaker": "你",
-          "text": "（名牌別上去的時候，他已經在交更表。沒有下一更。）"
-        },
-        {
           "speaker": "麥峰",
-          "text": "升了又即刻走？"
+          "line": "我當冇聽見啦……你想點？"
         },
         {
-          "speaker": "李步岸",
-          "text": "規矩寫到六十五歲。升職改不了這一行字。故事到這裡。"
+          "speaker": "邱得根",
+          "line": "報告管理處？定私下勸退？"
         }
       ],
       "art": "assets/events/ev-gb-lobby-t409.jpg",
       "battle": null,
       "story_pack_id": "guard_baoan",
       "pack": "guard_baoan",
-      "reward_soul": 60,
+      "reward_soul": 0,
       "reward_xp": 0,
       "reward_gold": 0,
-      "rewards_preview": [
-        "+60 膠幣",
-        "結局達成"
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "main",
+      "accident_main": true,
+      "accident_choices": [
+        {
+          "text": "書面記錄並報告管理處",
+          "outcome": "你把時間、證言寫清楚上呈。李步岸說：交更要乾淨。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 2,
+            "procedure": 2,
+            "favor": -1,
+            "renqing": -1,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "私下勸退，請他下次老實請假",
+          "outcome": "對方臉紅，答應補更。人情保住，日誌只寫「已跟進」。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 0,
+            "procedure": 0,
+            "favor": 1,
+            "renqing": 2,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "裝作不見，當更照舊",
+          "outcome": "風波暫時過去。你胸口卻像壓住一本空白的登記簿。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 2,
+            "boss": -1,
+            "procedure": 0,
+            "favor": 0,
+            "renqing": 1,
+            "gold_run": 0
+          }
+        }
       ],
-      "reward_blurb": "結局 · 海嵐峰的主管",
-      "office_ending": "captain",
-      "office_ending_label": "海嵐峰的主管",
-      "office_ending_blurb": "盡責一直走在前面。六十五歲這天公司給他主管的名，他同一天停當值。",
-      "voice_id": "baoan",
-      "voice_name": "李步岸",
-      "voice_line": "他們叫我主管。我六十五歲，今天收工，沒有明天的更。",
-      "flag_on_complete": "office_ending_captain",
-      "life_summary": "盡責一路比人情高。公司在他退休這天給了主管的名。這個名不往六十五歲後面延。故事在這一天結束。",
-      "ending_note": "他沒有死。主管是六十五歲這天的頭銜，他沒有留低繼續做。故事到此結束，沒有後續。"
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
     },
     {
-      "id": "EV_GB_E2",
-      "name": "結局：屋邨送行",
-      "type": "主線",
-      "category": "main",
-      "category_label": "結局",
-      "desc": "李步岸六十五歲，按規矩退休。大堂裡不是公司的橫額，是住客送來的花。婆婆把一封信塞到他手裡，上面都是這座樓的人簽的名。送到這裡，故事就完。",
+      "id": "EV_GB_M05",
+      "name": "雪櫃風雲",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "職員雪櫃裡的飯盒失蹤。有人要翻袋，有人要查閉路。基層同事站在一旁，氣氛刺耳。",
       "dialogue": [
-        {
-          "speaker": "婆婆",
-          "text": "步岸哥，這束花是送你收工的。送到今天為止。"
-        },
-        {
-          "speaker": "李步岸",
-          "text": "收到了。我六十五歲，這份工到今天結束。"
-        },
-        {
-          "speaker": "你",
-          "text": "（花很多。他一束都沒有推開，也沒有說以後再來。）"
-        },
         {
           "speaker": "畢好彩",
-          "text": "今天不用再算。人到齊了，故事可以收。"
-        }
-      ],
-      "art": "assets/events/ev-gb-lobby-t409.jpg",
-      "battle": null,
-      "story_pack_id": "guard_baoan",
-      "pack": "guard_baoan",
-      "reward_soul": 60,
-      "reward_xp": 0,
-      "reward_gold": 0,
-      "rewards_preview": [
-        "+60 膠幣",
-        "結局達成"
-      ],
-      "reward_blurb": "結局 · 屋邨送行",
-      "office_ending": "neighbors",
-      "office_ending_label": "屋邨送行",
-      "office_ending_blurb": "人情一直走在前面。六十五歲退休那天，住客帶著花來送他。故事送到這一天為止。",
-      "voice_id": "lucky",
-      "voice_name": "畢好彩",
-      "voice_line": "今天這個日子，住客自己記得。送到這裡，就完了。",
-      "flag_on_complete": "office_ending_neighbors",
-      "life_summary": "人情一路比盡責高。公司沒有給他更高的職位。六十五歲這天，住客來送他收工。故事在這一天結束。",
-      "ending_note": "他沒有死。他是在六十五歲退休，被這座樓送到最後一天。故事到此結束，沒有後續。"
-    },
-    {
-      "id": "EV_GB_E3",
-      "name": "結局：飯堂的第二份人生",
-      "type": "主線",
-      "category": "main",
-      "category_label": "結局",
-      "desc": "六十五歲這天，李步岸把制服摺好，放進保安室的櫃裡，走進地下那間飯堂。門在他身後關上。故事停在這扇門，沒有寫他之後的日子。",
-      "dialogue": [
-        {
-          "speaker": "老闆",
-          "text": "步岸哥，圍裙在這裡。你今天就脫那套制服。"
+          "line": "唔好羞辱人啦……查閉路得唔得？"
         },
         {
           "speaker": "李步岸",
-          "text": "脫了。六十五歲，保安這份到今天為止。故事也到今天為止。"
-        },
-        {
-          "speaker": "你",
-          "text": "（保安室的風扇還在轉。他的名字已經不在更表上。門關上之後，沒有下一幕。）"
-        },
-        {
-          "speaker": "麥峰",
-          "text": "就這樣走了？"
-        },
-        {
-          "speaker": "李步岸",
-          "text": "就這樣。不要跟著我寫下去。"
+          "line": "查就查。唔好當笑點。"
         }
       ],
       "art": "assets/events/ev-gb-room-t409.jpg",
       "battle": null,
       "story_pack_id": "guard_baoan",
       "pack": "guard_baoan",
-      "reward_soul": 60,
+      "reward_soul": 0,
       "reward_xp": 0,
       "reward_gold": 0,
-      "rewards_preview": [
-        "+60 膠幣",
-        "結局達成"
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "main",
+      "accident_main": true,
+      "accident_choices": [
+        {
+          "text": "覆看閉路、書面記錄，不作公開羞辱",
+          "outcome": "畫面顯示誤取。你請雙方私下和解，日誌寫明經過。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 1,
+            "procedure": 2,
+            "favor": 1,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "請雙方茶水間和解，保溫人情",
+          "outcome": "飯盒找回來。沒人當眾被嘲。麥峰遞你一杯水。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": -1,
+            "boss": 0,
+            "procedure": 0,
+            "favor": 2,
+            "renqing": 1,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "設局試探，把人當笑料",
+          "outcome": "笑聲很大，士氣很小。李步岸只說：下次唔好咁做。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 1,
+            "boss": -1,
+            "procedure": 0,
+            "favor": -2,
+            "renqing": -1,
+            "gold_run": 0
+          }
+        }
       ],
-      "reward_blurb": "結局 · 飯堂的第二份人生",
-      "office_ending": "canteen",
-      "office_ending_label": "飯堂的第二份人生",
-      "office_ending_blurb": "他跟飯堂走得太近。六十五歲這天脫下制服，故事停在飯堂門口。",
-      "voice_id": "baoan",
-      "voice_name": "李步岸",
-      "voice_line": "制服我摺好了。六十五歲，故事停在這扇門。",
-      "flag_on_complete": "office_ending_canteen",
-      "life_summary": "機緣這些年蓋過了崗位。六十五歲這天，他脫下制服，走進樓下的飯堂。故事停在門口，沒有後續。",
-      "ending_note": "他沒有死。他在六十五歲離開保安崗位。故事到此結束，沒有寫他之後的日子。"
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
     },
     {
-      "id": "EV_GB_E4",
-      "name": "結局：調去別的屋苑",
-      "type": "主線",
-      "category": "main",
-      "category_label": "結局",
-      "desc": "調令在他六十五歲這天送到。公司寫得很客氣：經驗豐富，調往另一個屋苑。他交完海嵐峰的鑰匙就離開。故事沒有跟著他去新的地方。",
+      "id": "EV_GB_M06",
+      "name": "尋物夜",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "孫婆婆說孫仔不見了。全大堂亂起來——結果是一隻龜。規程寫：非緊急勿離崗。",
       "dialogue": [
         {
-          "speaker": "公司職員",
-          "text": "步岸，調令今天生效。這裡的更，我們另派人。"
+          "speaker": "孫婆婆",
+          "line": "佢識行……會唔會跌落去？"
         },
         {
           "speaker": "李步岸",
-          "text": "鑰匙我交完再走。六十五歲，這座樓的故事完。"
+          "line": "失物登記。通知同事。唔好成個崗位走晒。"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "main",
+      "accident_main": true,
+      "accident_choices": [
+        {
+          "text": "失物登記，對講機請同事分層協助",
+          "outcome": "龜在花槽旁。你沒離崗亂跑，書面與通知都齊。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 1,
+            "procedure": 2,
+            "favor": 2,
+            "renqing": 0,
+            "gold_run": 1
+          }
         },
         {
-          "speaker": "你",
-          "text": "（他把鑰匙按順序排在桌上。門在他出去之後關上，沒有人再寫他。）"
+          "text": "安撫婆婆，請她在大堂等，你守閘兼聯絡",
+          "outcome": "她坐下飲水。你守住閘口，人情與崗位兩樣都在。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": -1,
+            "boss": 0,
+            "procedure": 1,
+            "favor": 2,
+            "renqing": 0,
+            "gold_run": 0
+          }
         },
+        {
+          "text": "自行離崗四處尋，閘口無人",
+          "outcome": "龜找回來，但閘口空檔被投訴。壓力上來。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 2,
+            "boss": -1,
+            "procedure": -1,
+            "favor": 1,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_M07",
+      "name": "鄰居氣味",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "兩戶要你表態邊邊啱。告示是工具不是武器；通知只能用告示欄或上門口頭，沒有廣播。",
+      "dialogue": [
+        {
+          "speaker": "住戶甲",
+          "line": "你話句公道話！"
+        },
+        {
+          "speaker": "住戶乙",
+          "line": "佢先唔啱！"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "main",
+      "accident_main": true,
+      "accident_choices": [
+        {
+          "text": "張貼中性告示，並按樓層口頭知會相關單位",
+          "outcome": "你沒選邊站。告示欄多了一張紙，走廊安靜了一點。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 1,
+            "procedure": 2,
+            "favor": 1,
+            "renqing": 0,
+            "gold_run": 0
+          },
+          "night_shop": true
+        },
+        {
+          "text": "帶雙方到大堂冷靜傾，嘗試調停",
+          "outcome": "聲音降下來。你記下雙方陳述，不上廣播。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 1,
+            "boss": 0,
+            "procedure": 0,
+            "favor": 2,
+            "renqing": 1,
+            "gold_run": 0
+          },
+          "battle": "E_GB02"
+        },
+        {
+          "text": "偏幫大聲嗰邊，省得嘈",
+          "outcome": "短期安靜，長期投訴。管理處留言要你解釋。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 2,
+            "boss": -2,
+            "procedure": 0,
+            "favor": -1,
+            "renqing": -1,
+            "gold_run": 0
+          },
+          "battle": "E_GB02"
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_M08",
+      "name": "閉路失靈",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "控制室故障。螢幕一片雪花。假裝沒事，不是選項。",
+      "dialogue": [
+        {
+          "speaker": "邱得根",
+          "line": "可以……寫「系統維護中」頂住？"
+        },
+        {
+          "speaker": "李步岸",
+          "line": "記錄。報告管理處。閘口加人。"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "main",
+      "accident_main": true,
+      "accident_choices": [
+        {
+          "text": "書面記錄故障、報告管理處，並加強閘口人手",
+          "outcome": "你把時間與範圍寫清楚。閘口加一人，漏洞收窄。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 1,
+            "boss": 2,
+            "procedure": 2,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "請同事幫手輪更監看閘口，人情換人手",
+          "outcome": "畢好彩願意頂更。你欠他一頓宵夜。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 1,
+            "boss": 1,
+            "procedure": 1,
+            "favor": 1,
+            "renqing": 1,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "假裝正常，等下一更發現",
+          "outcome": "翌日抽查。日誌空白處像一塊疤。",
+          "hidden_delta": {
+            "flag_noted": true,
+            "pressure": 2,
+            "boss": -3,
+            "procedure": -2,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_M09",
+      "name": "後巷怪聲",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "後巷有聲——可能是貓，也可能是堆放的雜物。規程：護住通道、雙人當值，勿單獨莽闖。",
+      "dialogue": [
         {
           "speaker": "麥峰",
-          "text": "你還去那個新屋苑？"
+          "line": "一齊去？定我喺度頂住？"
         },
         {
           "speaker": "李步岸",
-          "text": "去不去，都不是這個故事了。今天收在這裡。"
+          "line": "兩人。通道唔可以塞。"
         }
       ],
       "art": "assets/events/ev-gb-corridor-t409.jpg",
       "battle": null,
       "story_pack_id": "guard_baoan",
       "pack": "guard_baoan",
-      "reward_soul": 60,
+      "reward_soul": 0,
       "reward_xp": 0,
       "reward_gold": 0,
-      "rewards_preview": [
-        "+60 膠幣",
-        "結局達成"
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "main",
+      "accident_main": true,
+      "accident_choices": [
+        {
+          "text": "兩人同行檢查，清走障礙並記錄",
+          "outcome": "是被吹倒的紙箱。通道恢復，日誌有頁。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": -1,
+            "boss": 1,
+            "procedure": 2,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 1
+          },
+          "night_shop": true
+        },
+        {
+          "text": "先封鎖後巷口，再通知同事到場",
+          "outcome": "你護住通道。支援到了才入內。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 1,
+            "procedure": 1,
+            "favor": 1,
+            "renqing": 0,
+            "gold_run": 0
+          },
+          "battle": "E_GB03"
+        },
+        {
+          "text": "自己衝入查看，圖快",
+          "outcome": "腳下差點絆倒。 Alone 的代價是壓力與責備。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 3,
+            "boss": -1,
+            "procedure": -1,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          },
+          "battle": "E_GB03"
+        }
       ],
-      "reward_blurb": "結局 · 調去別的屋苑",
-      "office_ending": "transfer",
-      "office_ending_label": "調去別的屋苑",
-      "office_ending_blurb": "他太剛直，得罪了大業主。六十五歲這天調離海嵐峰。故事沒有往後寫。",
-      "voice_id": "root",
-      "voice_name": "邱得根",
-      "voice_line": "鑰匙我交了。六十五歲，這座樓的故事完。",
-      "flag_on_complete": "office_ending_transfer",
-      "life_summary": "剛直這些年壓過了人情。六十五歲這天，調令把他送出海嵐峰。故事沒有跟著他去，到此結束。",
-      "ending_note": "他沒有死，也沒有失業。他在六十五歲離開海嵐峰。故事到此結束，沒有後續。"
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_M10",
+      "name": "裝修逾時",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "打鑽聲超過許可時段。核對裝修紙、勸停、書面記錄——三樣都要。",
+      "dialogue": [
+        {
+          "speaker": "裝修師傅",
+          "line": "再半小時就完。"
+        },
+        {
+          "speaker": "你",
+          "line": "逾時要停，我要寫單。"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "main",
+      "accident_main": true,
+      "accident_choices": [
+        {
+          "text": "核對許可、勸停打鑽、書面記錄並報告管理處",
+          "outcome": "鑽聲停下。紙上有時間、單位與跟進。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 2,
+            "procedure": 3,
+            "favor": -1,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "好言相勸，給十分鐘收工，再寫記錄",
+          "outcome": "對方收工。你仍寫單，語氣留有餘地。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 1,
+            "procedure": 1,
+            "favor": 1,
+            "renqing": 1,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "當作聽唔到，等投訴先算",
+          "outcome": "投訴上來。你的名字出現在「當值未處理」。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 2,
+            "boss": -2,
+            "procedure": -2,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_M11",
+      "name": "停車場刮車",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "兩車相刮。你只見證存證，不裁決。拍照、錄下經過、封存記錄。",
+      "dialogue": [
+        {
+          "speaker": "車主甲",
+          "line": "你話邊個錯！"
+        },
+        {
+          "speaker": "李步岸",
+          "line": "我哋唔判。只記錄。"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "main",
+      "accident_main": true,
+      "accident_choices": [
+        {
+          "text": "拍照存證、記車牌時間，請雙方自行報保險",
+          "outcome": "你封存記錄。雙方仍嘈，但程序站得住。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 1,
+            "procedure": 2,
+            "favor": 1,
+            "renqing": 0,
+            "gold_run": 2
+          }
+        },
+        {
+          "text": "安撫雙方到大堂冷靜，再補書面",
+          "outcome": "聲音降下。印台蓋下去的一刻，大家都安靜。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": -1,
+            "boss": 0,
+            "procedure": 1,
+            "favor": 2,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "試圖裁決對錯，令場面更亂",
+          "outcome": "兩人都怪你。壓力與上司分數一齊跌。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 2,
+            "boss": -2,
+            "procedure": 0,
+            "favor": -1,
+            "renqing": 0,
+            "gold_run": 0
+          },
+          "battle": "E_GB04"
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_M12",
+      "name": "渠塞水浸",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "低層走廊見水。臨時封鎖、引導改道、報告管理處召喚維修。",
+      "dialogue": [
+        {
+          "speaker": "住戶",
+          "line": "我對鞋濕晒！"
+        },
+        {
+          "speaker": "你",
+          "line": "先封路，改道，再叫維修。"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "main",
+      "accident_main": true,
+      "accident_choices": [
+        {
+          "text": "封鎖範圍、放置告示與路障，報告管理處",
+          "outcome": "水勢受控。維修單已開。你沒有只口頭答應。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 1,
+            "boss": 2,
+            "procedure": 3,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 1
+          },
+          "night_shop": true
+        },
+        {
+          "text": "引導住戶改道並安撫，同時請同事幫手",
+          "outcome": "人情與程序並行。水聲變小。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 0,
+            "procedure": 1,
+            "favor": 2,
+            "renqing": 1,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "口頭說會跟進，未寫單也未封路",
+          "outcome": "水擴展到電梯大堂。記名風險上升。",
+          "hidden_delta": {
+            "flag_noted": true,
+            "pressure": 3,
+            "boss": -2,
+            "procedure": -3,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_M13",
+      "name": "惡劣天氣",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "掛波前後。加固雨擋、渠口、懸掛物。按樓層口頭提醒收回花盆；告示欄補充。無廣播。",
+      "dialogue": [
+        {
+          "speaker": "畢好彩",
+          "line": "我幫你行高層？"
+        },
+        {
+          "speaker": "李步岸",
+          "line": "告示欄。口頭。唔好幻想有廣播。"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "main",
+      "accident_main": true,
+      "accident_choices": [
+        {
+          "text": "分層口頭提醒，告示欄補充，並檢查天台門",
+          "outcome": "花盆收回來。日誌寫滿風雨準備。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 1,
+            "boss": 2,
+            "procedure": 2,
+            "favor": 1,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "請同事幫手分樓，人情換效率",
+          "outcome": "你們走完半座。風開始大。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 1,
+            "procedure": 1,
+            "favor": 1,
+            "renqing": 1,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "只在大堂喊幾句，圖快",
+          "outcome": "高層無人知。事後投訴：點解唔通知。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 2,
+            "boss": -2,
+            "procedure": -1,
+            "favor": -1,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_M14",
+      "name": "身份裂縫",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "同事包內露出內部名冊。立即告知隊長、限期盯住，或幫忙隱瞞——後者可被記名。",
+      "dialogue": [
+        {
+          "speaker": "同事",
+          "line": "……你當冇見過得唔得？"
+        },
+        {
+          "speaker": "你",
+          "line": "名冊唔可以流出閘口。"
+        }
+      ],
+      "art": "assets/events/ev-gb-room-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "main",
+      "accident_main": true,
+      "accident_choices": [
+        {
+          "text": "立即告知隊長李步岸，並書面記錄",
+          "outcome": "他收下名冊。你的手乾淨，程序站得住。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 3,
+            "procedure": 3,
+            "favor": -1,
+            "renqing": -1,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "限期盯住，要求對方交回並見證",
+          "outcome": "對方交回。你做人留線，亦冇隱瞞到底。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 1,
+            "boss": 1,
+            "procedure": 1,
+            "favor": 1,
+            "renqing": 1,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "幫忙隱瞞，當無其事",
+          "outcome": "抽查時名冊對不上。記名蓋在你頁上。",
+          "hidden_delta": {
+            "flag_noted": true,
+            "pressure": 2,
+            "boss": -3,
+            "procedure": -2,
+            "favor": 0,
+            "renqing": 2,
+            "gold_run": 0
+          }
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_M15",
+      "name": "大堂紛爭",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "醉酒爭吵堵住閘口。先安撫與護住通道，必要時報警求助。",
+      "dialogue": [
+        {
+          "speaker": "醉客",
+          "line": "你阻住我！"
+        },
+        {
+          "speaker": "李步岸",
+          "line": "通道。先護住。"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "main",
+      "accident_main": true,
+      "accident_choices": [
+        {
+          "text": "護住通道，安撫降溫，必要時報警",
+          "outcome": "支援到場。大堂恢復通行。你的報告寫得很短、很清楚。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 1,
+            "boss": 2,
+            "procedure": 2,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 2
+          },
+          "battle": "E_GB05"
+        },
+        {
+          "text": "好言相勸，請同事到場雙人當值",
+          "outcome": "人牆成形。對方坐下喝水。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 0,
+            "procedure": 1,
+            "favor": 2,
+            "renqing": 1,
+            "gold_run": 0
+          },
+          "battle": "E_GB05"
+        },
+        {
+          "text": "硬碰硬推人，場面失控",
+          "outcome": "投訴與壓力一齊來。上司語氣冷。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 3,
+            "boss": -2,
+            "procedure": 0,
+            "favor": -2,
+            "renqing": 0,
+            "gold_run": 0
+          },
+          "battle": "E_GB05"
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_M16",
+      "name": "不審徘徊",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "閘口外有人反覆徘徊。閘口意識、核對證件、通知同事到場。",
+      "dialogue": [
+        {
+          "speaker": "徘徊者",
+          "line": "我等朋友咋。"
+        },
+        {
+          "speaker": "你",
+          "line": "請出示證件，並說明來訪單位。"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "main",
+      "accident_main": true,
+      "accident_choices": [
+        {
+          "text": "核對證件與目的，記錄並通知同事",
+          "outcome": "對方出示證件後離開。閉路與書面都齊。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 1,
+            "procedure": 2,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          },
+          "battle": "E_GB01"
+        },
+        {
+          "text": "保持距離觀察，對講機呼叫支援",
+          "outcome": "支援到了。沒有單獨莽上。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 1,
+            "procedure": 1,
+            "favor": 1,
+            "renqing": 0,
+            "gold_run": 0
+          },
+          "battle": "E_GB01"
+        },
+        {
+          "text": "喝令驅趕，不登記經過",
+          "outcome": "人走了，紀錄也空了。管理處問細節時你答不出。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 2,
+            "boss": -1,
+            "procedure": -2,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_M17",
+      "name": "垃圾房隱患",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "垃圾房走火路被雜物擋住。清走障礙、檢查走火路；嚴重則封鎖並報告管理處。",
+      "dialogue": [
+        {
+          "speaker": "麥峰",
+          "line": "呢堆野……我當睇唔到？"
+        },
+        {
+          "speaker": "你",
+          "line": "走火通道唔可以塞。"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "main",
+      "accident_main": true,
+      "accident_choices": [
+        {
+          "text": "清走障礙，檢查走火路，書面報告管理處",
+          "outcome": "通道重開。你手套弄髒，日誌卻乾淨。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 1,
+            "boss": 2,
+            "procedure": 3,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 1
+          },
+          "night_shop": true
+        },
+        {
+          "text": "臨時封鎖並請同事幫手清理",
+          "outcome": "雙人當值，清理完畢。人情與安全都在。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 1,
+            "procedure": 2,
+            "favor": 1,
+            "renqing": 1,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "挪開一點就當完成",
+          "outcome": "巡查指出仍阻塞。壓力上升。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 2,
+            "boss": -2,
+            "procedure": -2,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_M18",
+      "name": "突擊巡查",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "上司與管理公司突查日誌與登記簿。書面清楚者加分；缺頁者加壓力。",
+      "dialogue": [
+        {
+          "speaker": "巡查",
+          "line": "呢頁邊個簽？"
+        },
+        {
+          "speaker": "李步岸",
+          "line": "你自己答。"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "main",
+      "accident_main": true,
+      "accident_choices": [
+        {
+          "text": "呈上完整登記與巡邏日誌，逐項對答",
+          "outcome": "書面清楚。上司點頭，按程序分數上升。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": -1,
+            "boss": 3,
+            "procedure": 3,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "請隊長同席說明，補述人情脈絡",
+          "outcome": "李步岸替你補一句。你仍交出原件。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 2,
+            "procedure": 1,
+            "favor": 1,
+            "renqing": 1,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "含糊其詞，把缺頁推給上一更",
+          "outcome": "卸責被看穿。上司分數下跌。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 2,
+            "boss": -3,
+            "procedure": -1,
+            "favor": -1,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_M19",
+      "name": "投訴升級",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "住戶揚言停管理費。引導、書面、上呈；勿代管理處承諾。",
+      "dialogue": [
+        {
+          "speaker": "住戶",
+          "line": "你哋再唔處理我就停管理費！"
+        },
+        {
+          "speaker": "邱得根",
+          "line": "千祈唔好代人承諾豁免。"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "main",
+      "accident_main": true,
+      "accident_choices": [
+        {
+          "text": "書面清楚記錄，引導至管理處，不上廣播",
+          "outcome": "你沒有代承諾。投訴單連同時間線一併上呈。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 2,
+            "procedure": 3,
+            "favor": 1,
+            "renqing": 0,
+            "gold_run": 0
+          },
+          "battle": "E_GB04"
+        },
+        {
+          "text": "先安撫情緒，再請住戶坐下寫陳述",
+          "outcome": "聲音降下。人情保住，程序亦在。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": -1,
+            "boss": 0,
+            "procedure": 1,
+            "favor": 2,
+            "renqing": 1,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "代管理處說可以通融豁免",
+          "outcome": "對方錄音。你越權的話被呈上——記名邊緣。",
+          "hidden_delta": {
+            "flag_noted": true,
+            "pressure": 2,
+            "boss": -3,
+            "procedure": -2,
+            "favor": 1,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_M20",
+      "name": "換場之夜",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "管理公司空降傳聞。簽名信在茶水間傳。此節權重較高，但仍經隱藏門檻結算。",
+      "dialogue": [
+        {
+          "speaker": "畢好彩",
+          "line": "簽唔簽？"
+        },
+        {
+          "speaker": "李步岸",
+          "line": "你自己揀。後果自己擔。"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "main",
+      "accident_main": true,
+      "accident_choices": [
+        {
+          "text": "拒絕傳謠，按程序交更並報告管理處已知事實",
+          "outcome": "你把傳聞與事實分開寫。大門仍在，日誌也在。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 1,
+            "boss": 3,
+            "procedure": 3,
+            "favor": -1,
+            "renqing": 0,
+            "gold_run": 0
+          },
+          "night_shop": true
+        },
+        {
+          "text": "安撫同事情緒，但不簽名、不承諾",
+          "outcome": "茶水間安靜下來。人情海嵐，程序未拆。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 1,
+            "procedure": 1,
+            "favor": 3,
+            "renqing": 2,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "帶頭簽名施壓，場面失控",
+          "outcome": "信出了閘口。你的名字在最前——亦在記名欄。",
+          "hidden_delta": {
+            "flag_noted": true,
+            "pressure": 3,
+            "boss": -3,
+            "procedure": -2,
+            "favor": 2,
+            "renqing": 2,
+            "gold_run": 0
+          },
+          "battle": "E_GB05"
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_T01",
+      "name": "交更",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "交接簿在燈光下發白。寫清楚本更閘口、巡邏與未完事項。",
+      "dialogue": [
+        {
+          "speaker": "李步岸",
+          "line": "過渡亦要寫清楚。"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "trans",
+      "accident_main": false,
+      "accident_choices": [
+        {
+          "text": "逐項寫明，字跡清楚移交",
+          "outcome": "下一更點頭接收。上司喜歡清楚的頁。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 1,
+            "procedure": 1,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "請同事幫忙覆核一遍",
+          "outcome": "雙人過目，漏項少了。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 0,
+            "procedure": 1,
+            "favor": 1,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "草草幾句交差",
+          "outcome": "字跡含糊，被要求重寫。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 1,
+            "boss": -1,
+            "procedure": -1,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_T02",
+      "name": "告示欄",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "告示欄是海嵐峰的喉嚨。這裡沒有廣播系統。",
+      "dialogue": [
+        {
+          "speaker": "李步岸",
+          "line": "過渡亦要寫清楚。"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "trans",
+      "accident_main": false,
+      "accident_choices": [
+        {
+          "text": "更新告示，並把副本放入各層信箱位",
+          "outcome": "通知到位，無需廣播。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 0,
+            "procedure": 1,
+            "favor": 1,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "只更新大堂告示，口頭提醒經過住戶",
+          "outcome": "有人知道，有人不知道。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 0,
+            "procedure": 0,
+            "favor": 1,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "懶得換紙，舊告示留住",
+          "outcome": "過期告示被投訴。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 1,
+            "boss": -1,
+            "procedure": 0,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_T03",
+      "name": "對講機測試",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "對講機雜音大。備用電池可能在夜班商店。",
+      "dialogue": [
+        {
+          "speaker": "李步岸",
+          "line": "過渡亦要寫清楚。"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "trans",
+      "accident_main": false,
+      "accident_choices": [
+        {
+          "text": "測試各樓層頻道並記錄結果",
+          "outcome": "雜音位置寫進日誌。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 1,
+            "procedure": 1,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          },
+          "battle": true
+        },
+        {
+          "text": "向同事借電，答應稍後還",
+          "outcome": "人情＋1，機器暫時醒。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 0,
+            "procedure": 0,
+            "favor": 1,
+            "renqing": 1,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "當壞機，唔報",
+          "outcome": "關鍵時刻無聲。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 1,
+            "boss": 0,
+            "procedure": -1,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_T04",
+      "name": "茶水間",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "熱水瓶響。閒話與休息只隔一張檯。",
+      "dialogue": [
+        {
+          "speaker": "李步岸",
+          "line": "過渡亦要寫清楚。"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "trans",
+      "accident_main": false,
+      "accident_choices": [
+        {
+          "text": "靜靜飲水休息，降壓",
+          "outcome": "風扇聲變遠。壓力下降。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": -1,
+            "boss": 0,
+            "procedure": 0,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "聽閒話但唔傳，守住人情",
+          "outcome": "你知道多一點，嘴仍緊。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 0,
+            "procedure": 0,
+            "favor": 1,
+            "renqing": 1,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "加入議論某人私事",
+          "outcome": "笑聲換來隔閡。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 1,
+            "boss": 0,
+            "procedure": 0,
+            "favor": -1,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_T05",
+      "name": "大堂燈光",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "玻璃大門把霓虹折進來。氣氛過渡，變動宜小。",
+      "dialogue": [
+        {
+          "speaker": "李步岸",
+          "line": "過渡亦要寫清楚。"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "trans",
+      "accident_main": false,
+      "accident_choices": [
+        {
+          "text": "巡視大堂角落，確認通道暢通",
+          "outcome": "角落乾淨。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 0,
+            "procedure": 1,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "跟住戶點頭打招呼",
+          "outcome": "有人記得你的姓。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 0,
+            "procedure": 0,
+            "favor": 1,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "發呆到下一更",
+          "outcome": "沒事發生，也沒長進。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 0,
+            "procedure": 0,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_T06",
+      "name": "巡邏日誌",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "由低層行到天台。熟樓層的人走得較穩。",
+      "dialogue": [
+        {
+          "speaker": "李步岸",
+          "line": "過渡亦要寫清楚。"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "trans",
+      "accident_main": false,
+      "accident_choices": [
+        {
+          "text": "按層記錄異常並口頭知會",
+          "outcome": "日誌與人情都有。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 0,
+            "procedure": 1,
+            "favor": 1,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "重點檢查走火通道",
+          "outcome": "通道暢通。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 1,
+            "procedure": 1,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "抄舊日誌充數",
+          "outcome": "被抽查時露餡。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 1,
+            "boss": -1,
+            "procedure": -1,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_T07",
+      "name": "凌晨靜更",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "鐘指住三點。夜巡習慣在腳步聲裡。",
+      "dialogue": [
+        {
+          "speaker": "李步岸",
+          "line": "過渡亦要寫清楚。"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "trans",
+      "accident_main": false,
+      "accident_choices": [
+        {
+          "text": "按路線夜巡，保持清醒",
+          "outcome": "靜更平安。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": -1,
+            "boss": 0,
+            "procedure": 1,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          },
+          "battle": true
+        },
+        {
+          "text": "跟雙人當值的同事一齊行",
+          "outcome": "兩人影並排。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 0,
+            "procedure": 0,
+            "favor": 1,
+            "renqing": 1,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "偷睡一小時",
+          "outcome": "對講機響時你慢半拍。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 1,
+            "boss": -1,
+            "procedure": 0,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_T08",
+      "name": "管理處留言",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "信封上寫：請當值閱後簽名。書面指示是加按程序的機會。",
+      "dialogue": [
+        {
+          "speaker": "李步岸",
+          "line": "過渡亦要寫清楚。"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "trans",
+      "accident_main": false,
+      "accident_choices": [
+        {
+          "text": "細讀、簽名、按指示執行",
+          "outcome": "程序分數微升。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 1,
+            "procedure": 2,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "請隊長一齊看過再簽",
+          "outcome": "雙人確認，穩妥。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 1,
+            "procedure": 1,
+            "favor": 1,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "未讀先丟一旁",
+          "outcome": "翌日被問進度。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 1,
+            "boss": -1,
+            "procedure": -1,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_T09",
+      "name": "雨夜閘口",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "海嵐峰事故",
+      "desc": "雨把訪客與送餐員都趕進大堂。閘口要更快，也要更準。",
+      "dialogue": [
+        {
+          "speaker": "李步岸",
+          "line": "過渡亦要寫清楚。"
+        }
+      ],
+      "art": "assets/events/ev-gb-lobby-t409.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "後果未知",
+      "reward_blurb": "隱藏數值於結案結算",
+      "accident_node": "trans",
+      "accident_main": false,
+      "accident_choices": [
+        {
+          "text": "加快臨時登記，仍核對證件",
+          "outcome": "濕傘與名冊排成一行。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 0,
+            "boss": 0,
+            "procedure": 1,
+            "favor": 1,
+            "renqing": 0,
+            "gold_run": 1
+          }
+        },
+        {
+          "text": "請送餐員排隊，安撫住戶",
+          "outcome": "秩序尚在。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": -1,
+            "boss": 0,
+            "procedure": 0,
+            "favor": 1,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        },
+        {
+          "text": "雨大就放寬核對",
+          "outcome": "事後抽查缺頁。",
+          "hidden_delta": {
+            "flag_noted": false,
+            "pressure": 1,
+            "boss": -1,
+            "procedure": -1,
+            "favor": 0,
+            "renqing": 0,
+            "gold_run": 0
+          }
+        }
+      ],
+      "office_node": null,
+      "office_choices": null,
+      "office_final": false,
+      "tale_cast": [
+        {
+          "id": "baoan",
+          "name": "李步岸",
+          "line": "記清楚。寫清楚。交清楚。"
+        }
+      ]
+    },
+    {
+      "id": "EV_GB_END_A",
+      "name": "模範保安",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "結局",
+      "desc": "程序站得住，人情未把規矩拆掉。李步岸只說：交更清楚，就夠。",
+      "dialogue": [
+        {
+          "speaker": "李步岸",
+          "line": "做到呢步，已經唔簡單。"
+        }
+      ],
+      "art": "assets/story-packs/guard_baoan/portrait.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "通關結算",
+      "reward_blurb": "膠幣與殘頁於結局畫面發放",
+      "accident_ending": "ending_a",
+      "accident_node": "ending",
+      "office_node": null,
+      "office_ending": "ending_a",
+      "voice_line": "做到呢步，已經唔簡單。",
+      "life_summary": "程序站得住，人情未把規矩拆掉。李步岸只說：交更清楚，就夠。"
+    },
+    {
+      "id": "EV_GB_END_B",
+      "name": "人情海嵐",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "結局",
+      "desc": "告示少了，打招呼多了；規矩未必最工整，但人還在。",
+      "dialogue": [
+        {
+          "speaker": "李步岸",
+          "line": "海嵐峰記得你個姓。"
+        }
+      ],
+      "art": "assets/story-packs/guard_baoan/portrait.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "通關結算",
+      "reward_blurb": "膠幣與殘頁於結局畫面發放",
+      "accident_ending": "ending_b",
+      "accident_node": "ending",
+      "office_node": null,
+      "office_ending": "ending_b",
+      "voice_line": "海嵐峰記得你個姓。",
+      "life_summary": "告示少了，打招呼多了；規矩未必最工整，但人還在。"
+    },
+    {
+      "id": "EV_GB_END_C",
+      "name": "被記名／失職",
+      "type": "story",
+      "category": "story_pack",
+      "category_label": "結局",
+      "desc": "大門或許仍在，但日誌上有你的名字，或壓力把判斷壓垮，或上司不再撐你。",
+      "dialogue": [
+        {
+          "speaker": "李步岸",
+          "line": "……下次，寫清楚。"
+        }
+      ],
+      "art": "assets/story-packs/guard_baoan/portrait.jpg",
+      "battle": null,
+      "story_pack_id": "guard_baoan",
+      "pack": "guard_baoan",
+      "reward_soul": 0,
+      "reward_xp": 0,
+      "reward_gold": 0,
+      "rewards_preview": "通關結算",
+      "reward_blurb": "膠幣與殘頁於結局畫面發放",
+      "accident_ending": "ending_c",
+      "accident_node": "ending",
+      "office_node": null,
+      "office_ending": "ending_c",
+      "voice_line": "……下次，寫清楚。",
+      "life_summary": "大門或許仍在，但日誌上有你的名字，或壓力把判斷壓垮，或上司不再撐你。"
     }
   ],
   "locale": {
@@ -19971,6 +20995,270 @@ window.HK_SLICE_DATA = {
       "power": "phys",
       "support": true,
       "rarity": "最高級"
+    },
+    {
+      "id": "GB_S01",
+      "name": "熟樓層",
+      "tag": "保安",
+      "tags": [
+        "保安",
+        "海嵐峰"
+      ],
+      "cd": 3,
+      "effect": "巡邏、尋人、分層通知較有利。",
+      "kind": "招式",
+      "blurb": "巡邏、尋人、分層通知較有利。",
+      "art": "assets/story-packs/guard_baoan/cards/s01-shu-louceng.jpg",
+      "dmg_mult": 0.4,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "rarity": "稀有",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "s01",
+      "passive": true
+    },
+    {
+      "id": "GB_S02",
+      "name": "按程序",
+      "tag": "保安",
+      "tags": [
+        "保安",
+        "海嵐峰"
+      ],
+      "cd": 3,
+      "effect": "程序類結算與相關戰鬥較有利。",
+      "kind": "招式",
+      "blurb": "程序類結算與相關戰鬥較有利。",
+      "art": "assets/story-packs/guard_baoan/cards/s02-an-chengxu.jpg",
+      "dmg_mult": 0.4,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "rarity": "稀有",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "s02",
+      "passive": true
+    },
+    {
+      "id": "GB_S03",
+      "name": "人情援護",
+      "tag": "保安",
+      "tags": [
+        "保安",
+        "海嵐峰"
+      ],
+      "cd": 3,
+      "effect": "人情選項或同事支援較有利。",
+      "kind": "招式",
+      "blurb": "人情選項或同事支援較有利。",
+      "art": "assets/story-packs/guard_baoan/cards/s03-renqing.jpg",
+      "dmg_mult": 0.4,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "rarity": "稀有",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "s03",
+      "passive": true
+    },
+    {
+      "id": "GB_S04",
+      "name": "抗壓",
+      "tag": "保安",
+      "tags": [
+        "保安",
+        "海嵐峰"
+      ],
+      "cd": 3,
+      "effect": "減輕壓力上升或失利懲罰。",
+      "kind": "招式",
+      "blurb": "減輕壓力上升或失利懲罰。",
+      "art": "assets/story-packs/guard_baoan/cards/s04-kang-ya.jpg",
+      "dmg_mult": 0.4,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "rarity": "稀有",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "s04",
+      "passive": true
+    },
+    {
+      "id": "GB_S05",
+      "name": "調停",
+      "tag": "保安",
+      "tags": [
+        "保安",
+        "海嵐峰"
+      ],
+      "cd": 3,
+      "effect": "安撫／鄰居衝突較有利。",
+      "kind": "招式",
+      "blurb": "安撫／鄰居衝突較有利。",
+      "art": "assets/story-packs/guard_baoan/cards/s05-tiaoting.jpg",
+      "dmg_mult": 0.4,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "rarity": "稀有",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "s05",
+      "passive": true
+    },
+    {
+      "id": "GB_S06",
+      "name": "見證人",
+      "tag": "保安",
+      "tags": [
+        "保安",
+        "海嵐峰"
+      ],
+      "cd": 3,
+      "effect": "存證、刮車、投訴見證較有利。",
+      "kind": "招式",
+      "blurb": "存證、刮車、投訴見證較有利。",
+      "art": "assets/story-packs/guard_baoan/cards/s06-jianzheng.jpg",
+      "dmg_mult": 0.4,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "rarity": "稀有",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "s06",
+      "passive": true
+    },
+    {
+      "id": "GB_S07",
+      "name": "閘口意識",
+      "tag": "保安",
+      "tags": [
+        "保安",
+        "海嵐峰"
+      ],
+      "cd": 3,
+      "effect": "核對、拒檢、徘徊較有利。",
+      "kind": "招式",
+      "blurb": "核對、拒檢、徘徊較有利。",
+      "art": "assets/story-packs/guard_baoan/cards/s07-zhakou.jpg",
+      "dmg_mult": 0.4,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "rarity": "稀有",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "s07",
+      "passive": true
+    },
+    {
+      "id": "GB_S08",
+      "name": "夜巡習慣",
+      "tag": "保安",
+      "tags": [
+        "保安",
+        "海嵐峰"
+      ],
+      "cd": 3,
+      "effect": "夜巷、凌晨、後巷較有利。",
+      "kind": "招式",
+      "blurb": "夜巷、凌晨、後巷較有利。",
+      "art": "assets/story-packs/guard_baoan/cards/s08-yexun.jpg",
+      "dmg_mult": 0.4,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "rarity": "稀有",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "s08",
+      "passive": true
+    },
+    {
+      "id": "GB_S09",
+      "name": "冷靜判斷",
+      "tag": "保安",
+      "tags": [
+        "保安",
+        "海嵐峰"
+      ],
+      "cd": 3,
+      "effect": "降低選錯或混亂場額外壓力。",
+      "kind": "招式",
+      "blurb": "降低選錯或混亂場額外壓力。",
+      "art": "assets/story-packs/guard_baoan/cards/s09-lengjing-panduan.jpg",
+      "dmg_mult": 0.4,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "rarity": "稀有",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "s09",
+      "passive": true
+    },
+    {
+      "id": "GB_S10",
+      "name": "雙人當值",
+      "tag": "保安",
+      "tags": [
+        "保安",
+        "海嵐峰"
+      ],
+      "cd": 3,
+      "effect": "需同事在場的選項較穩。",
+      "kind": "招式",
+      "blurb": "需同事在場的選項較穩。",
+      "art": "assets/story-packs/guard_baoan/cards/s10-shuangren.jpg",
+      "dmg_mult": 0.4,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "rarity": "稀有",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "s10",
+      "passive": true
+    },
+    {
+      "id": "GB_S11",
+      "name": "書面清楚",
+      "tag": "保安",
+      "tags": [
+        "保安",
+        "海嵐峰"
+      ],
+      "cd": 3,
+      "effect": "日誌、投訴、突擊巡查較有利。",
+      "kind": "招式",
+      "blurb": "日誌、投訴、突擊巡查較有利。",
+      "art": "assets/story-packs/guard_baoan/cards/s11-shumian.jpg",
+      "dmg_mult": 0.4,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "rarity": "稀有",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "s11",
+      "passive": true
+    },
+    {
+      "id": "GB_S12",
+      "name": "危急優先",
+      "tag": "保安",
+      "tags": [
+        "保安",
+        "海嵐峰"
+      ],
+      "cd": 3,
+      "effect": "水浸、火警隱患、報警較有利。",
+      "kind": "招式",
+      "blurb": "水浸、火警隱患、報警較有利。",
+      "art": "assets/story-packs/guard_baoan/cards/s12-weiji.jpg",
+      "dmg_mult": 0.4,
+      "hits": 1,
+      "target": "single",
+      "power": "magic",
+      "rarity": "稀有",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "s12",
+      "passive": true
     }
   ],
   "year_pools": {
@@ -20951,6 +22239,306 @@ window.HK_SLICE_DATA = {
         "spd": 2
       },
       "source_id": "EQP120"
+    },
+    {
+      "id": "GB_E01",
+      "name": "手電筒",
+      "slot": "hand",
+      "rarity": "common",
+      "atk": 1,
+      "def": 0,
+      "hp": 1,
+      "spd": 0,
+      "tag_boost": null,
+      "blurb": "海嵐峰裝備・手電筒",
+      "flavor": "夜班可用。",
+      "art": "assets/story-packs/guard_baoan/cards/e01-shoudian.jpg",
+      "star": 1,
+      "max_star": 5,
+      "star_bonus_per_level": {
+        "atk": 0,
+        "def": 1,
+        "hp": 1,
+        "spd": 0
+      },
+      "source_id": "GB_E01",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "e01"
+    },
+    {
+      "id": "GB_E02",
+      "name": "對講機",
+      "slot": "hand",
+      "rarity": "common",
+      "atk": 0,
+      "def": 1,
+      "hp": 1,
+      "spd": 0,
+      "tag_boost": null,
+      "blurb": "海嵐峰裝備・對講機",
+      "flavor": "夜班可用。",
+      "art": "assets/story-packs/guard_baoan/cards/e02-duijiang.jpg",
+      "star": 1,
+      "max_star": 5,
+      "star_bonus_per_level": {
+        "atk": 0,
+        "def": 1,
+        "hp": 1,
+        "spd": 0
+      },
+      "source_id": "GB_E02",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "e02"
+    },
+    {
+      "id": "GB_E03",
+      "name": "防水膠袋",
+      "slot": "bag",
+      "rarity": "common",
+      "atk": 0,
+      "def": 0,
+      "hp": 2,
+      "spd": 0,
+      "tag_boost": null,
+      "blurb": "海嵐峰裝備・防水膠袋",
+      "flavor": "夜班可用。",
+      "art": "assets/story-packs/guard_baoan/cards/e03-fangshui.jpg",
+      "star": 1,
+      "max_star": 5,
+      "star_bonus_per_level": {
+        "atk": 0,
+        "def": 1,
+        "hp": 1,
+        "spd": 0
+      },
+      "source_id": "GB_E03",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "e03"
+    },
+    {
+      "id": "GB_E04",
+      "name": "臨時路障牌",
+      "slot": "bag",
+      "rarity": "common",
+      "atk": 1,
+      "def": 0,
+      "hp": 1,
+      "spd": 0,
+      "tag_boost": null,
+      "blurb": "海嵐峰裝備・臨時路障牌",
+      "flavor": "夜班可用。",
+      "art": "assets/story-packs/guard_baoan/cards/e04-luzhang.jpg",
+      "star": 1,
+      "max_star": 5,
+      "star_bonus_per_level": {
+        "atk": 0,
+        "def": 1,
+        "hp": 1,
+        "spd": 0
+      },
+      "source_id": "GB_E04",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "e04"
+    },
+    {
+      "id": "GB_E05",
+      "name": "急救貼",
+      "slot": "body",
+      "rarity": "common",
+      "atk": 0,
+      "def": 1,
+      "hp": 1,
+      "spd": 0,
+      "tag_boost": null,
+      "blurb": "海嵐峰裝備・急救貼",
+      "flavor": "夜班可用。",
+      "art": "assets/story-packs/guard_baoan/cards/e05-jijiu.jpg",
+      "star": 1,
+      "max_star": 5,
+      "star_bonus_per_level": {
+        "atk": 0,
+        "def": 1,
+        "hp": 1,
+        "spd": 0
+      },
+      "source_id": "GB_E05",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "e05"
+    },
+    {
+      "id": "GB_E06",
+      "name": "筆記本",
+      "slot": "hand",
+      "rarity": "common",
+      "atk": 0,
+      "def": 0,
+      "hp": 2,
+      "spd": 0,
+      "tag_boost": null,
+      "blurb": "海嵐峰裝備・筆記本",
+      "flavor": "夜班可用。",
+      "art": "assets/story-packs/guard_baoan/cards/e06-bijiben.jpg",
+      "star": 1,
+      "max_star": 5,
+      "star_bonus_per_level": {
+        "atk": 0,
+        "def": 1,
+        "hp": 1,
+        "spd": 0
+      },
+      "source_id": "GB_E06",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "e06"
+    },
+    {
+      "id": "GB_E07",
+      "name": "印台",
+      "slot": "hand",
+      "rarity": "common",
+      "atk": 1,
+      "def": 0,
+      "hp": 1,
+      "spd": 0,
+      "tag_boost": null,
+      "blurb": "海嵐峰裝備・印台",
+      "flavor": "夜班可用。",
+      "art": "assets/story-packs/guard_baoan/cards/e07-yintai.jpg",
+      "star": 1,
+      "max_star": 5,
+      "star_bonus_per_level": {
+        "atk": 0,
+        "def": 1,
+        "hp": 1,
+        "spd": 0
+      },
+      "source_id": "GB_E07",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "e07"
+    },
+    {
+      "id": "GB_E08",
+      "name": "乾淨手套",
+      "slot": "hand",
+      "rarity": "common",
+      "atk": 0,
+      "def": 1,
+      "hp": 1,
+      "spd": 0,
+      "tag_boost": null,
+      "blurb": "海嵐峰裝備・乾淨手套",
+      "flavor": "夜班可用。",
+      "art": "assets/story-packs/guard_baoan/cards/e08-shoutao.jpg",
+      "star": 1,
+      "max_star": 5,
+      "star_bonus_per_level": {
+        "atk": 0,
+        "def": 1,
+        "hp": 1,
+        "spd": 0
+      },
+      "source_id": "GB_E08",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "e08"
+    },
+    {
+      "id": "GB_E09",
+      "name": "職員證吊繩",
+      "slot": "body",
+      "rarity": "common",
+      "atk": 0,
+      "def": 0,
+      "hp": 2,
+      "spd": 0,
+      "tag_boost": null,
+      "blurb": "海嵐峰裝備・職員證吊繩",
+      "flavor": "夜班可用。",
+      "art": "assets/story-packs/guard_baoan/cards/e09-zhengjian.jpg",
+      "star": 1,
+      "max_star": 5,
+      "star_bonus_per_level": {
+        "atk": 0,
+        "def": 1,
+        "hp": 1,
+        "spd": 0
+      },
+      "source_id": "GB_E09",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "e09"
+    },
+    {
+      "id": "GB_E10",
+      "name": "反光背心",
+      "slot": "body",
+      "rarity": "common",
+      "atk": 1,
+      "def": 0,
+      "hp": 1,
+      "spd": 0,
+      "tag_boost": null,
+      "blurb": "海嵐峰裝備・反光背心",
+      "flavor": "夜班可用。",
+      "art": "assets/story-packs/guard_baoan/cards/e10-fanguang.jpg",
+      "star": 1,
+      "max_star": 5,
+      "star_bonus_per_level": {
+        "atk": 0,
+        "def": 1,
+        "hp": 1,
+        "spd": 0
+      },
+      "source_id": "GB_E10",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "e10"
+    },
+    {
+      "id": "GB_E11",
+      "name": "哨子",
+      "slot": "hand",
+      "rarity": "common",
+      "atk": 0,
+      "def": 1,
+      "hp": 1,
+      "spd": 0,
+      "tag_boost": null,
+      "blurb": "海嵐峰裝備・哨子",
+      "flavor": "夜班可用。",
+      "art": "assets/story-packs/guard_baoan/cards/e11-shaoyi.jpg",
+      "star": 1,
+      "max_star": 5,
+      "star_bonus_per_level": {
+        "atk": 0,
+        "def": 1,
+        "hp": 1,
+        "spd": 0
+      },
+      "source_id": "GB_E11",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "e11"
+    },
+    {
+      "id": "GB_E12",
+      "name": "保溫杯",
+      "slot": "bag",
+      "rarity": "common",
+      "atk": 0,
+      "def": 0,
+      "hp": 2,
+      "spd": 0,
+      "tag_boost": null,
+      "blurb": "海嵐峰裝備・保溫杯",
+      "flavor": "夜班可用。",
+      "art": "assets/story-packs/guard_baoan/cards/e12-baowenbei.jpg",
+      "star": 1,
+      "max_star": 5,
+      "star_bonus_per_level": {
+        "atk": 0,
+        "def": 1,
+        "hp": 1,
+        "spd": 0
+      },
+      "source_id": "GB_E12",
+      "pack_only": "guard_baoan",
+      "gb_card_id": "e12"
     }
   ],
   "fates": [
@@ -21625,160 +23213,434 @@ window.HK_SLICE_DATA = {
     {
       "id": "guard_baoan",
       "name": "你的保安，李步岸",
-      "blurb": "海嵐峰的大堂很亮，保安室的風扇很吵。李步岸只是一個保安。他這些年怎麼巡樓、怎麼待人，會在六十五歲收成一種人生。最好的一種，是在這裡退休。故事在那天結束，沒有後續。",
-      "cover": "assets/story-packs/guard-baoan-t409.jpg",
+      "blurb": "海嵐峰大堂燈光好靚，保安室電風扇好嘈。隊長李步岸記齊住客樣貌，記唔齊自己幾時笑過。你第一更開始，規矩同人情就要揀邊邊。",
+      "cover": "assets/story-packs/guard_baoan/cover.jpg",
+      "portrait": "assets/story-packs/guard_baoan/portrait.jpg",
       "status": "available",
+      "engine": "accident",
+      "no_life_age": true,
       "event_ids": [
-        "EV_GB_01",
-        "EV_GB_02",
-        "EV_GB_03",
-        "EV_GB_04",
-        "EV_GB_05",
-        "EV_GB_06",
-        "EV_GB_07",
-        "EV_GB_08",
-        "EV_GB_RETIRE",
-        "EV_GB_E1",
-        "EV_GB_E2",
-        "EV_GB_E3",
-        "EV_GB_E4",
-        "EV_GB_09",
-        "EV_GB_10",
-        "EV_GB_11",
-        "EV_GB_E0"
+        "EV_GB_M01",
+        "EV_GB_T01",
+        "EV_GB_M02",
+        "EV_GB_M03",
+        "EV_GB_T09",
+        "EV_GB_M04",
+        "EV_GB_T04",
+        "EV_GB_M05",
+        "EV_GB_M06",
+        "EV_GB_T02",
+        "EV_GB_M07",
+        "EV_GB_M08",
+        "EV_GB_T03",
+        "EV_GB_M09",
+        "EV_GB_M10",
+        "EV_GB_T06",
+        "EV_GB_M11",
+        "EV_GB_M12",
+        "EV_GB_T05",
+        "EV_GB_M13",
+        "EV_GB_M14",
+        "EV_GB_T07",
+        "EV_GB_M15",
+        "EV_GB_M16",
+        "EV_GB_T08",
+        "EV_GB_M17",
+        "EV_GB_M18",
+        "EV_GB_M19",
+        "EV_GB_M20",
+        "EV_GB_END_A",
+        "EV_GB_END_B",
+        "EV_GB_END_C"
       ],
-      "office_chain": [
-        "EV_GB_01",
-        "EV_GB_02",
-        "EV_GB_09",
-        "EV_GB_03",
-        "EV_GB_10",
-        "EV_GB_04",
-        "EV_GB_06",
-        "EV_GB_11",
-        "EV_GB_07",
-        "EV_GB_08"
+      "accident_chain": [
+        "EV_GB_M01",
+        "EV_GB_T01",
+        "EV_GB_M02",
+        "EV_GB_M03",
+        "EV_GB_T09",
+        "EV_GB_M04",
+        "EV_GB_T04",
+        "EV_GB_M05",
+        "EV_GB_M06",
+        "EV_GB_T02",
+        "EV_GB_M07",
+        "EV_GB_M08",
+        "EV_GB_T03",
+        "EV_GB_M09",
+        "EV_GB_M10",
+        "EV_GB_T06",
+        "EV_GB_M11",
+        "EV_GB_M12",
+        "EV_GB_T05",
+        "EV_GB_M13",
+        "EV_GB_M14",
+        "EV_GB_T07",
+        "EV_GB_M15",
+        "EV_GB_M16",
+        "EV_GB_T08",
+        "EV_GB_M17",
+        "EV_GB_M18",
+        "EV_GB_M19",
+        "EV_GB_M20"
       ],
-      "office_entry": "EV_GB_01",
-      "office_interval_years": 5,
-      "office_route_keys": [
-        "duty",
-        "rapport",
-        "venture",
-        "friction"
-      ],
-      "office_ending_by_route": {
-        "retire": "retire",
-        "captain": "captain",
-        "neighbors": "neighbors",
-        "canteen": "canteen",
-        "transfer": "transfer"
-      },
-      "office_variant_default": "strict",
-      "office_endings": [
+      "accident_entry": "EV_GB_M01",
+      "accident_endings": [
         {
-          "id": "retire",
-          "label": "六十五歲退休",
-          "blurb": "盡責和人情都夠。他在海嵐峰做到六十五歲，平安退休。故事在這一天結束。"
+          "id": "ending_a",
+          "event": "EV_GB_END_A",
+          "label": "模範保安",
+          "blurb": "程序站得住，人情未把規矩拆掉。"
         },
         {
-          "id": "captain",
-          "label": "海嵐峰的主管",
-          "blurb": "盡責一直走在前面。六十五歲這天，公司給他主管的名，他同一天停當值。沒有後續。"
+          "id": "ending_b",
+          "event": "EV_GB_END_B",
+          "label": "人情海嵐",
+          "blurb": "告示少了，打招呼多了。"
         },
         {
-          "id": "neighbors",
-          "label": "屋邨送行",
-          "blurb": "人情一直走在前面。六十五歲退休那天，住客帶著花來送他。故事送到這一天為止。"
-        },
-        {
-          "id": "canteen",
-          "label": "飯堂的第二份人生",
-          "blurb": "他跟飯堂走得太近。六十五歲這天脫下制服，故事停在飯堂門口，沒有寫之後的日子。"
-        },
-        {
-          "id": "transfer",
-          "label": "調去別的屋苑",
-          "blurb": "他太剛直，得罪了大業主。六十五歲這天調離海嵐峰。故事沒有跟著他去。"
+          "id": "ending_c",
+          "event": "EV_GB_END_C",
+          "label": "被記名／失職",
+          "blurb": "日誌上有你的名字，或壓力把判斷壓垮。"
         }
       ],
-      "office_ending_voice": {
-        "retire": "我退休。人還在。故事到今天為止。",
-        "captain": "他們叫我主管。我六十五歲，今天收工，沒有明天的更。",
-        "neighbors": "今天這個日子，住客自己記得。送到這裡，就完了。",
-        "canteen": "制服我摺好了。六十五歲，故事停在這扇門。",
-        "transfer": "鑰匙我交了。六十五歲，這座樓的故事完。"
-      },
+      "accident_shop": [
+        {
+          "id": "shop_flash_batt",
+          "name": "手電筒電池",
+          "price": 8,
+          "grant": [
+            "GB_E01"
+          ],
+          "temp": true
+        },
+        {
+          "id": "shop_walkie_spare",
+          "name": "對講機備用電池",
+          "price": 10,
+          "grant": [
+            "GB_E02"
+          ],
+          "temp": true
+        },
+        {
+          "id": "shop_drybag",
+          "name": "防水膠袋",
+          "price": 6,
+          "grant": [
+            "GB_E03"
+          ],
+          "temp": false
+        },
+        {
+          "id": "shop_barrier",
+          "name": "臨時路障牌",
+          "price": 12,
+          "grant": [
+            "GB_E04"
+          ],
+          "temp": false
+        },
+        {
+          "id": "shop_colleague",
+          "name": "請同事幫手",
+          "price": 15,
+          "grant": [
+            "support"
+          ],
+          "need_renqing": 1,
+          "consume_renqing": 1
+        },
+        {
+          "id": "shop_plaster",
+          "name": "急救貼",
+          "price": 5,
+          "grant": [
+            "GB_E05"
+          ],
+          "temp": false
+        },
+        {
+          "id": "shop_note_stamp",
+          "name": "筆記本與印台",
+          "price": 9,
+          "grant": [
+            "GB_E06",
+            "GB_E07"
+          ],
+          "temp": false
+        },
+        {
+          "id": "shop_coffee",
+          "name": "熱咖啡",
+          "price": 3,
+          "grant": [
+            "coffee"
+          ],
+          "night_limit": 1,
+          "pressure": -1
+        },
+        {
+          "id": "shop_gloves",
+          "name": "乾淨手套",
+          "price": 4,
+          "grant": [
+            "GB_E08"
+          ],
+          "temp": false
+        }
+      ],
+      "accident_starter_battle": [
+        "GB_B01",
+        "GB_B02",
+        "GB_B05",
+        "GB_B09",
+        "GB_B13",
+        "GB_B17",
+        "GB_B21",
+        "GB_B25",
+        "GB_B29",
+        "GB_B32"
+      ],
+      "accident_starter_skill": [
+        "GB_S01",
+        "GB_S02",
+        "GB_S03",
+        "GB_S04",
+        "GB_S05",
+        "GB_S06",
+        "GB_S07",
+        "GB_S08"
+      ],
+      "minigame": "stair_jump",
+      "roster_duties": [
+        {
+          "id": "duty_gate",
+          "name": "閘口當值",
+          "pool": "both",
+          "weight": 8,
+          "reward": {
+            "soul": 2,
+            "fame": 2
+          },
+          "desc": "大堂閘口核對訪客證件、單位與來訪目的，完成書面登記後才可放行上樓。"
+        },
+        {
+          "id": "duty_delivery",
+          "name": "送餐臨時登記",
+          "pool": "routine",
+          "weight": 7,
+          "reward": {
+            "soul": 1,
+            "fame": 1
+          },
+          "desc": "為外賣騎手／送餐員辦理臨時登記，核對送達單位與暫留時間。"
+        },
+        {
+          "id": "duty_parcel",
+          "name": "速遞暫存",
+          "pool": "routine",
+          "weight": 6,
+          "reward": {
+            "soul": 1,
+            "fame": 1
+          },
+          "desc": "登記速遞件、核對收件單位與暫存櫃位置，請住戶到大堂領取。"
+        },
+        {
+          "id": "duty_renovation",
+          "name": "裝修許可核對",
+          "pool": "both",
+          "weight": 5,
+          "reward": {
+            "soul": 2,
+            "fame": 1
+          },
+          "desc": "核對裝修紙、施工時段與保護墊。逾時打鑽須勸停，並書面記錄。"
+        },
+        {
+          "id": "duty_patrol_floor",
+          "name": "分層巡邏",
+          "pool": "both",
+          "weight": 8,
+          "reward": {
+            "soul": 2,
+            "fame": 1
+          },
+          "desc": "由低層步行至天台，按樓層口頭知會當層異常，並寫入巡邏日誌。屋苑沒有廣播系統。"
+        },
+        {
+          "id": "duty_carpark",
+          "name": "停車場巡更",
+          "pool": "routine",
+          "weight": 6,
+          "reward": {
+            "soul": 1,
+            "fame": 2
+          },
+          "desc": "核對車牌、處理阻路車輛，查看閉路死角。"
+        },
+        {
+          "id": "duty_backlane",
+          "name": "後巷與垃圾房",
+          "pool": "both",
+          "weight": 6,
+          "reward": {
+            "soul": 2,
+            "fame": 1
+          },
+          "desc": "檢查後巷走火通道、垃圾房與擋鼠閘，清走障礙。"
+        },
+        {
+          "id": "duty_lift",
+          "name": "升降機大堂駐守",
+          "pool": "routine",
+          "weight": 5,
+          "reward": {
+            "soul": 1,
+            "fame": 2
+          },
+          "desc": "駐守升降機大堂，協助長者及訪客，留意困梯警號。"
+        },
+        {
+          "id": "duty_cctv",
+          "name": "控制室監看",
+          "pool": "both",
+          "weight": 6,
+          "reward": {
+            "soul": 1,
+            "fame": 2
+          },
+          "desc": "覆看閉路片段，標記可疑徘徊與閘口漏登記。"
+        },
+        {
+          "id": "duty_notice",
+          "name": "更新告示欄",
+          "pool": "routine",
+          "weight": 6,
+          "reward": {
+            "soul": 1,
+            "fame": 1
+          },
+          "desc": "張貼於大堂告示欄；如須讓各層知悉，按樓層口頭通知。禁止以廣播代替告示。"
+        },
+        {
+          "id": "duty_complaint",
+          "name": "住戶投訴紀錄",
+          "pool": "both",
+          "weight": 5,
+          "reward": {
+            "soul": 2,
+            "fame": 2
+          },
+          "desc": "以書面清楚記下投訴，並報告管理處。不得代管理處承諾豁免規定。"
+        },
+        {
+          "id": "duty_lost",
+          "name": "失物登記",
+          "pool": "routine",
+          "weight": 5,
+          "reward": {
+            "soul": 1,
+            "fame": 2
+          },
+          "desc": "為拾獲物品做暫存與書面登記。非緊急不得離崗四處尋物。"
+        },
+        {
+          "id": "duty_log",
+          "name": "交更日誌",
+          "pool": "routine",
+          "weight": 7,
+          "reward": {
+            "soul": 1,
+            "fame": 1
+          },
+          "desc": "把本更閘口、巡邏、投訴與未完事項寫清楚，移交下一更。"
+        },
+        {
+          "id": "duty_fire",
+          "name": "消防設備點檢",
+          "pool": "both",
+          "weight": 4,
+          "reward": {
+            "soul": 2,
+            "fame": 2
+          },
+          "desc": "點檢滅火筒、走火路、警鐘與緊急照明。此項不是廣播測試。"
+        },
+        {
+          "id": "duty_typhoon",
+          "name": "惡劣天氣加固",
+          "pool": "extra",
+          "weight": 3,
+          "reward": {
+            "soul": 3,
+            "fame": 2
+          },
+          "desc": "掛波前後檢查雨擋與天台門。逐層口頭提醒收回花盆，告示欄補充，不用廣播。"
+        },
+        {
+          "id": "duty_water",
+          "name": "渠塞或水浸初報",
+          "pool": "extra",
+          "weight": 3,
+          "reward": {
+            "soul": 3,
+            "fame": 2
+          },
+          "desc": "先封路、放置告示與臨時路障牌，記錄範圍並報告管理處召喚維修。"
+        },
+        {
+          "id": "duty_scrape",
+          "name": "停車場刮車見證",
+          "pool": "extra",
+          "weight": 3,
+          "reward": {
+            "soul": 2,
+            "fame": 3
+          },
+          "desc": "協助雙方拍攝現況。保安只見證與記錄，不裁決責任。"
+        }
+      ],
       "tale_cast_profiles": [
         {
           "id": "baoan",
           "name": "李步岸",
           "role": "隊長",
-          "blurb": "制服永遠筆直。記得每一戶的車牌、寵物名、垃圾回收日，記不住自己上次放假是幾時。罵人時不看人，看紀錄簿。",
-          "arc_stages": [
-            "面試你的隊長",
-            "開始放心交更",
-            "親自改你的報告",
-            "拍你膊頭一下"
-          ]
+          "blurb": "古板盡責，毒舌有心。"
         },
         {
           "id": "lucky",
           "name": "畢好彩",
           "role": "同事",
-          "blurb": "做每件事之前都要問一次黃曆。轉運貼紙貼滿儲物櫃，失物卻總是在他當更那晚出現。",
-          "arc_stages": [
-            "塞你糖果擋小人",
-            "開始問你意見",
-            "信你多過信風水",
-            "話你「今次唔關風水事」"
-          ]
+          "blurb": "迷信轉運，常幫倒忙。"
         },
         {
           "id": "bee",
           "name": "麥峰",
           "role": "同事",
-          "blurb": "能把任何工作推遲十分鐘的人。看上去什麼都不做，但每次真的出事，他總在場。",
-          "arc_stages": [
-            "教你避開最吵那更",
-            "推掉一件麻煩事",
-            "意外幫你頂了一次",
-            "話「我聽你」"
-          ]
+          "blurb": "能避則避，偶爾意外立功。"
         },
         {
           "id": "root",
           "name": "邱得根",
           "role": "副隊長",
-          "blurb": "講話總有典故，但沒有一句能查到出處。最擅長把責任寫成「按程序」。",
-          "arc_stages": [
-            "引經據典指點你",
-            "把報告推給你",
-            "開始稱呼你「師兄」",
-            "話「當我冇講」"
-          ]
+          "blurb": "引經據典，擅長卸責。"
         },
         {
           "id": "plaza",
           "name": "海嵐峰",
           "role": "舞台",
-          "blurb": "大堂玻璃亮得反不出保安室的風扇。這裡有三千戶人、兩部升降機，和一條永遠有人想走捷徑的走廊。",
-          "arc_stages": [
-            "光鮮大門",
-            "後巷的垃圾站",
-            "告示欄",
-            "換了制服的大門"
-          ]
+          "blurb": "光鮮大門，狼狽後巷。"
         }
       ],
       "beats": [
-        "面試、雨夜、婆婆的菜、飯堂、大業主的車，都是普通的保安日常。",
-        "他可以變得很盡責，也可以把人放在規矩前面。",
-        "飯堂老闆的提議，和業主會上的一句話，會把人生帶去別處。",
-        "六十五歲揭曉。最好的一條，是他仍在海嵐峰退休。"
-      ],
-      "baoan_retire_age": 65,
-      "baoan_retire_event": "EV_GB_RETIRE"
+        "只有從故事包選擇頁開始，才進入海嵐峰事故鏈。",
+        "本包不使用今生歲數。開局挑選 5 戰鬥＋5 技能。",
+        "循環：三選一→戰鬥→戰後→結案。隱藏數值全程結算。",
+        "帶離只有卡冊擁有、殘頁、膠幣。首次通關 20，其後 5。"
+      ]
     },
     {
       "id": "chu_ru_xiang_jiang",
@@ -23791,5 +25653,23 @@ window.HK_SLICE_DATA = {
         "story_packs.id:office_ballad.tale_cast_profiles.id:partner.name": "嗰個人"
       }
     }
+  },
+  "guard_baoan_meta": {
+    "daily_soul_cap": 8,
+    "daily_fame_cap": 10,
+    "clear_soul_first": 20,
+    "clear_soul_replay": 5,
+    "wheel_prizes": [
+      "fame5",
+      "shards2",
+      "battle1",
+      "skill1",
+      "equip1",
+      "thanks"
+    ],
+    "welfare_makeup_cost": 2,
+    "stair_success": 15,
+    "stair_hidden": 100,
+    "stair_hidden_soul": 100
   }
-}
+};
