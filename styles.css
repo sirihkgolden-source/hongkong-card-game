@@ -11475,10 +11475,19 @@ button.bs-skill {
 .soft-panel.tiny { font-size: 12px; opacity: .85; }
 
 /* gbPrep：開局選卡可捲，揀卡後保持捲動位置，避免下面卡點唔到 */
-.screen.bg-team[data-screen="gbPrep"] {
+.screen.bg-team[data-screen="gbPrep"],
+.screen[data-screen="gbPrep"] {
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
-.screen.bg-team[data-screen="gbPrep"] > .gb-prep-scroll {
+.screen.bg-team {
+  display: flex;
+  flex-direction: column;
+}
+.screen.bg-team[data-screen="gbPrep"] > .gb-prep-scroll,
+.screen.bg-team .gb-prep-scroll,
+.screen[data-screen="gbPrep"] .gb-prep-scroll {
   flex: 1 1 auto;
   min-height: 0;
   overflow-x: hidden;
@@ -11489,6 +11498,10 @@ button.bs-skill {
 .screen.bg-team[data-screen="gbPrep"] > .hud,
 .screen.bg-team[data-screen="gbPrep"] > .ribbon,
 .screen.bg-team[data-screen="gbPrep"] > .bubble,
-.screen.bg-team[data-screen="gbPrep"] > .btn-row {
+.screen.bg-team[data-screen="gbPrep"] > .btn-row,
+.screen[data-screen="gbPrep"] > .hud,
+.screen[data-screen="gbPrep"] > .ribbon,
+.screen[data-screen="gbPrep"] > .bubble,
+.screen[data-screen="gbPrep"] > .btn-row {
   flex-shrink: 0;
 }

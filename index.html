@@ -7,8 +7,8 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>香江 Card Game · 直向切片</title>
-  <!-- t452-fate-no-midrun-coins-1：逼 GitHub Pages 重佈（#339 三語已合但未部署） -->
-  <link rel="stylesheet" href="styles.css?v=t452-fate-no-midrun-coins-1" id="app-css" />
+  <!-- ?v=baoan-mix-20261110a：保安事故鏈交雜戰鬥／巡更日常／UX；bust 舊快取 -->
+  <link rel="stylesheet" href="styles.css?v=baoan-mix-20261110a" id="app-css" />
 </head>
 <body>
   <div class="page">
@@ -17,9 +17,9 @@
     </div>
   </div>
   <script src="vendor/zhconver.js"></script>
-  <script src="data.js?v=t452-fate-no-midrun-coins-1"></script>
-  <script src="i18n.js?v=t452-fate-no-midrun-coins-1"></script>
-  <script src="app.js?v=t452-fate-no-midrun-coins-1"></script>
+  <script src="data.js?v=baoan-mix-20261110a"></script>
+  <script src="i18n.js?v=baoan-mix-20261110a"></script>
+  <script src="app.js?v=baoan-mix-20261110a"></script>
   <script>
     /* t362：舊快取自癒守衛
        問題：瀏覽器留著舊 styles.css（指向已搬到 assets/ui/_legacy-svg/ 的 bg-*.svg），
@@ -84,7 +84,7 @@
           mark(K_CSS);
           var link = document.getElementById("app-css");
           if (link) {
-            link.setAttribute("href", "styles.css?v=t452-fate-no-midrun-coins-1-r" + Date.now());
+            link.setAttribute("href", "styles.css?v=baoan-mix-20261110a-r" + Date.now());
             setTimeout(function () { heal(); }, 500);
             return;
           }

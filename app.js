@@ -5850,8 +5850,13 @@
         <button class="btn gold" id="gb-prep-go" type="button" ${canGo ? "" : "disabled"}>開始第一更</button>
       </div>
     `;
+    const savePrepScroll = () => {
+      const el = root.querySelector(".gb-prep-scroll");
+      if (el) state._gbPrepScroll = el.scrollTop;
+    };
     root.querySelectorAll("[data-bid]").forEach((btn) => {
       btn.onclick = () => {
+        savePrepScroll();
         const id = btn.getAttribute("data-bid");
         const arr = run.pickedBattle || [];
         const i = arr.indexOf(id);
@@ -5863,6 +5868,7 @@
     });
     root.querySelectorAll("[data-sid]").forEach((btn) => {
       btn.onclick = () => {
+        savePrepScroll();
         const id = btn.getAttribute("data-sid");
         const arr = run.pickedSkills || [];
         const i = arr.indexOf(id);
@@ -5920,8 +5926,11 @@
       const pick = run.pendingChoice && run.pendingChoice.pick;
       const note = run.postBattleNote || "";
       const transDaily = gbIsTransNode(node) && !run.pendingBattle;
+      const outcomeRibbon = run.pendingBattle
+        ? "選擇後果"
+        : (transDaily ? "巡更日常" : (note ? "戰後／後果" : "結案"));
       body = `
-        <div class="ribbon">${transDaily ? "巡更日常" : "戰後／後果"}</div>
+        <div class="ribbon">${outcomeRibbon}</div>
         <div class="bubble">${esc((pick && pick.outcome) || note || (transDaily ? "這一更平靜過去。" : "結案。"))}</div>
         ${note && pick ? `<div class="soft-panel">${esc(note)}</div>` : ""}
         <button class="btn gold" id="gb-next" type="button">${run.pendingBattle ? "進入現場" : (transDaily ? "繼續／經過" : "結案繼續")}</button>`;
