@@ -7754,7 +7754,7 @@ button.side-icon {
   opacity: 0.55;
   pointer-events: none;
 }
-/* 魂焰不足：視覺灰但保留 pointer-events → toast */
+/* 膠幣不足：視覺灰但保留 pointer-events → toast */
 .gacha-actions .btn.is-broke,
 .gacha-actions .btn.disabled:not(:disabled) {
   opacity: 0.5;
