@@ -2861,8 +2861,19 @@
         state.attrs[k] = (state.attrs[k] | 0) + v;
       });
     }
-    if (typeof fx.soul === "number") state.soul = Math.max(0, (state.soul | 0) + fx.soul);
-    if (typeof fx.gold === "number") state.gold = Math.max(0, (state.gold | 0) + fx.gold);
+    /*
+     * t452：命運嚴禁動 meta 膠幣（只可在故事包結局結算發放）。
+     * 金幣只可局內增減；扣金幣時若局內為 0 則略過，永不扣穿。
+     */
+    if (typeof fx.gold === "number") {
+      const g = fx.gold | 0;
+      if (g < 0) {
+        const have = state.gold | 0;
+        if (have > 0) state.gold = Math.max(0, have + g);
+      } else if (g > 0) {
+        state.gold = (state.gold | 0) + g;
+      }
+    }
     if (typeof fx.xp === "number") {
       if (fx.xp >= 0) gainXp(fx.xp);
       else state.xp = Math.max(0, (state.xp | 0) + fx.xp);
@@ -14635,10 +14646,16 @@
     }
     const f = pend.fate;
     const fx = f.effects || {};
+    // 命運結果不展示膠幣（即使舊存檔／舊資料殘留 soul 欄）
+    const goldShow = (() => {
+      const g = fx.gold | 0;
+      if (g < 0 && (state.gold | 0) <= 0) return 0; // 無金幣可扣時不顯示扣款
+      return fx.gold;
+    })();
     const chips = rewardChipsHtml({
-      soul: fx.soul,
+      soul: 0,
       xp: fx.xp,
-      gold: fx.gold,
+      gold: goldShow,
       attrs: fx.attrs,
       temp: fx.temp,
     });
