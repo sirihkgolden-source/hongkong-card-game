@@ -23425,7 +23425,7 @@
         "GB_S07",
         "GB_S08"
       ],
-      "minigame": "stair_jump",
+      "minigame": null,
       "roster_duties": [
         {
           "id": "duty_gate",
