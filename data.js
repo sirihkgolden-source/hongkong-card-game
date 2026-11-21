@@ -7443,8 +7443,8 @@ window.HK_SLICE_DATA = {
       "id": "E_GB01",
       "name": "拒檢訪客",
       "stage": "閘口衝突",
-      "hp": 62,
-      "atk": 8,
+      "hp": 90,
+      "atk": 11,
       "spd": 10,
       "slots": 3,
       "notes": "秩序／證據",
@@ -7465,8 +7465,8 @@ window.HK_SLICE_DATA = {
       "id": "E_GB02",
       "name": "鄰居爭執",
       "stage": "大堂紛爭",
-      "hp": 72,
-      "atk": 9,
+      "hp": 100,
+      "atk": 12,
       "spd": 11,
       "slots": 3,
       "notes": "秩序",
@@ -7486,8 +7486,8 @@ window.HK_SLICE_DATA = {
       "id": "E_GB03",
       "name": "後巷陰影",
       "stage": "後巷",
-      "hp": 84,
-      "atk": 10,
+      "hp": 110,
+      "atk": 13,
       "spd": 12,
       "slots": 3,
       "notes": "護盾",
@@ -7507,8 +7507,8 @@ window.HK_SLICE_DATA = {
       "id": "E_GB04",
       "name": "投訴現場",
       "stage": "見證",
-      "hp": 96,
-      "atk": 11,
+      "hp": 120,
+      "atk": 12,
       "spd": 10,
       "slots": 3,
       "notes": "證據",
@@ -7528,8 +7528,8 @@ window.HK_SLICE_DATA = {
       "id": "E_GB05",
       "name": "失控場面",
       "stage": "衝突升級",
-      "hp": 118,
-      "atk": 13,
+      "hp": 140,
+      "atk": 14,
       "spd": 11,
       "slots": 3,
       "notes": "秩序／護盾",
@@ -16978,10 +16978,6 @@ window.HK_SLICE_DATA = {
           "line": "第一更。規矩同人情都要揀。記住：冇登記，唔放人上樓。"
         },
         {
-          "speaker": "李步岸",
-          "line": "旁邊那位是畢好彩，夜更同事。她在海嵐峰當了多年，哪一戶麻煩，她心裡有數。"
-        },
-        {
           "speaker": "你",
           "line": "明白。先登記，後上樓。"
         }
@@ -17009,8 +17005,7 @@ window.HK_SLICE_DATA = {
             "favor": 0,
             "renqing": 0,
             "gold_run": 0
-          },
-          "battle": "E_GB01"
+          }
         },
         {
           "text": "先跟畢好彩打聲招呼，問今晚要注意邊戶",
@@ -17023,8 +17018,7 @@ window.HK_SLICE_DATA = {
             "favor": 1,
             "renqing": 1,
             "gold_run": 0
-          },
-          "battle": "E_GB01"
+          }
         },
         {
           "text": "笑住應承，心想現場再睇",
@@ -17037,8 +17031,7 @@ window.HK_SLICE_DATA = {
             "favor": 0,
             "renqing": 0,
             "gold_run": 0
-          },
-          "battle": "E_GB01"
+          }
         }
       ],
       "office_node": null,
@@ -17092,8 +17085,7 @@ window.HK_SLICE_DATA = {
             "favor": 0,
             "renqing": 0,
             "gold_run": 0
-          },
-          "battle": "E_GB01"
+          }
         },
         {
           "text": "好言相勸，請他等同事核對閉路片段",
@@ -17106,8 +17098,7 @@ window.HK_SLICE_DATA = {
             "favor": 1,
             "renqing": 1,
             "gold_run": 0
-          },
-          "battle": "E_GB01"
+          }
         },
         {
           "text": "先放行再補登記，省得嘈",
@@ -17175,8 +17166,7 @@ window.HK_SLICE_DATA = {
             "favor": 1,
             "renqing": 0,
             "gold_run": 1
-          },
-          "battle": "E_GB01"
+          }
         },
         {
           "text": "請住戶到大堂領取，並在告示欄旁說明",
@@ -17189,8 +17179,7 @@ window.HK_SLICE_DATA = {
             "favor": 1,
             "renqing": 0,
             "gold_run": 0
-          },
-          "battle": "E_GB01"
+          }
         },
         {
           "text": "省略證件，只記單位號碼",
@@ -17203,8 +17192,7 @@ window.HK_SLICE_DATA = {
             "favor": 0,
             "renqing": 0,
             "gold_run": 0
-          },
-          "battle": "E_GB01"
+          }
         }
       ],
       "office_node": null,
@@ -17258,8 +17246,7 @@ window.HK_SLICE_DATA = {
             "favor": -1,
             "renqing": -1,
             "gold_run": 0
-          },
-          "battle": "E_GB02"
+          }
         },
         {
           "text": "私下勸退，請他下次老實請假",
@@ -17272,8 +17259,7 @@ window.HK_SLICE_DATA = {
             "favor": 1,
             "renqing": 2,
             "gold_run": 0
-          },
-          "battle": "E_GB02"
+          }
         },
         {
           "text": "裝作不見，當更照舊",
@@ -17286,8 +17272,7 @@ window.HK_SLICE_DATA = {
             "favor": 0,
             "renqing": 1,
             "gold_run": 0
-          },
-          "battle": "E_GB02"
+          }
         }
       ],
       "office_node": null,
@@ -17341,8 +17326,7 @@ window.HK_SLICE_DATA = {
             "favor": 1,
             "renqing": 0,
             "gold_run": 0
-          },
-          "battle": "E_GB02"
+          }
         },
         {
           "text": "請雙方茶水間和解，保溫人情",
@@ -17355,8 +17339,7 @@ window.HK_SLICE_DATA = {
             "favor": 2,
             "renqing": 1,
             "gold_run": 0
-          },
-          "battle": "E_GB02"
+          }
         },
         {
           "text": "設局試探，把人當笑料",
@@ -17369,8 +17352,7 @@ window.HK_SLICE_DATA = {
             "favor": -2,
             "renqing": -1,
             "gold_run": 0
-          },
-          "battle": "E_GB02"
+          }
         }
       ],
       "office_node": null,
@@ -17424,8 +17406,7 @@ window.HK_SLICE_DATA = {
             "favor": 2,
             "renqing": 0,
             "gold_run": 1
-          },
-          "battle": "E_GB03"
+          }
         },
         {
           "text": "安撫婆婆，請她在大堂等，你守閘兼聯絡",
@@ -17438,8 +17419,7 @@ window.HK_SLICE_DATA = {
             "favor": 2,
             "renqing": 0,
             "gold_run": 0
-          },
-          "battle": "E_GB03"
+          }
         },
         {
           "text": "自行離崗四處尋，閘口無人",
@@ -17452,8 +17432,7 @@ window.HK_SLICE_DATA = {
             "favor": 1,
             "renqing": 0,
             "gold_run": 0
-          },
-          "battle": "E_GB03"
+          }
         }
       ],
       "office_node": null,
@@ -17508,8 +17487,7 @@ window.HK_SLICE_DATA = {
             "renqing": 0,
             "gold_run": 0
           },
-          "night_shop": true,
-          "battle": "E_GB02"
+          "night_shop": true
         },
         {
           "text": "帶雙方到大堂冷靜傾，嘗試調停",
@@ -17591,8 +17569,7 @@ window.HK_SLICE_DATA = {
             "favor": 0,
             "renqing": 0,
             "gold_run": 0
-          },
-          "battle": "E_GB03"
+          }
         },
         {
           "text": "請同事幫手輪更監看閘口，人情換人手",
@@ -17605,8 +17582,7 @@ window.HK_SLICE_DATA = {
             "favor": 1,
             "renqing": 1,
             "gold_run": 0
-          },
-          "battle": "E_GB03"
+          }
         },
         {
           "text": "假裝正常，等下一更發現",
@@ -17619,8 +17595,7 @@ window.HK_SLICE_DATA = {
             "favor": 0,
             "renqing": 0,
             "gold_run": 0
-          },
-          "battle": "E_GB03"
+          }
         }
       ],
       "office_node": null,
@@ -17675,8 +17650,7 @@ window.HK_SLICE_DATA = {
             "renqing": 0,
             "gold_run": 1
           },
-          "night_shop": true,
-          "battle": "E_GB03"
+          "night_shop": true
         },
         {
           "text": "先封鎖後巷口，再通知同事到場",
@@ -17758,8 +17732,7 @@ window.HK_SLICE_DATA = {
             "favor": -1,
             "renqing": 0,
             "gold_run": 0
-          },
-          "battle": "E_GB04"
+          }
         },
         {
           "text": "好言相勸，給十分鐘收工，再寫記錄",
@@ -17772,8 +17745,7 @@ window.HK_SLICE_DATA = {
             "favor": 1,
             "renqing": 1,
             "gold_run": 0
-          },
-          "battle": "E_GB04"
+          }
         },
         {
           "text": "當作聽唔到，等投訴先算",
@@ -17786,8 +17758,7 @@ window.HK_SLICE_DATA = {
             "favor": 0,
             "renqing": 0,
             "gold_run": 0
-          },
-          "battle": "E_GB04"
+          }
         }
       ],
       "office_node": null,
@@ -17841,8 +17812,7 @@ window.HK_SLICE_DATA = {
             "favor": 1,
             "renqing": 0,
             "gold_run": 2
-          },
-          "battle": "E_GB04"
+          }
         },
         {
           "text": "安撫雙方到大堂冷靜，再補書面",
@@ -17855,8 +17825,7 @@ window.HK_SLICE_DATA = {
             "favor": 2,
             "renqing": 0,
             "gold_run": 0
-          },
-          "battle": "E_GB04"
+          }
         },
         {
           "text": "試圖裁決對錯，令場面更亂",
@@ -17925,8 +17894,7 @@ window.HK_SLICE_DATA = {
             "renqing": 0,
             "gold_run": 1
           },
-          "night_shop": true,
-          "battle": "E_GB05"
+          "night_shop": true
         },
         {
           "text": "引導住戶改道並安撫，同時請同事幫手",
@@ -17939,8 +17907,7 @@ window.HK_SLICE_DATA = {
             "favor": 2,
             "renqing": 1,
             "gold_run": 0
-          },
-          "battle": "E_GB05"
+          }
         },
         {
           "text": "口頭說會跟進，未寫單也未封路",
@@ -17953,8 +17920,7 @@ window.HK_SLICE_DATA = {
             "favor": 0,
             "renqing": 0,
             "gold_run": 0
-          },
-          "battle": "E_GB05"
+          }
         }
       ],
       "office_node": null,
@@ -18008,8 +17974,7 @@ window.HK_SLICE_DATA = {
             "favor": 1,
             "renqing": 0,
             "gold_run": 0
-          },
-          "battle": "E_GB05"
+          }
         },
         {
           "text": "請同事幫手分樓，人情換效率",
@@ -18022,8 +17987,7 @@ window.HK_SLICE_DATA = {
             "favor": 1,
             "renqing": 1,
             "gold_run": 0
-          },
-          "battle": "E_GB05"
+          }
         },
         {
           "text": "只在大堂喊幾句，圖快",
@@ -18036,8 +18000,7 @@ window.HK_SLICE_DATA = {
             "favor": -1,
             "renqing": 0,
             "gold_run": 0
-          },
-          "battle": "E_GB05"
+          }
         }
       ],
       "office_node": null,
@@ -18091,8 +18054,7 @@ window.HK_SLICE_DATA = {
             "favor": -1,
             "renqing": -1,
             "gold_run": 0
-          },
-          "battle": "E_GB01"
+          }
         },
         {
           "text": "限期盯住，要求對方交回並見證",
@@ -18105,8 +18067,7 @@ window.HK_SLICE_DATA = {
             "favor": 1,
             "renqing": 1,
             "gold_run": 0
-          },
-          "battle": "E_GB01"
+          }
         },
         {
           "text": "幫忙隱瞞，當無其事",
@@ -18119,8 +18080,7 @@ window.HK_SLICE_DATA = {
             "favor": 0,
             "renqing": 2,
             "gold_run": 0
-          },
-          "battle": "E_GB01"
+          }
         }
       ],
       "office_node": null,
@@ -18285,8 +18245,7 @@ window.HK_SLICE_DATA = {
             "favor": 0,
             "renqing": 0,
             "gold_run": 0
-          },
-          "battle": "E_GB01"
+          }
         }
       ],
       "office_node": null,
@@ -18341,8 +18300,7 @@ window.HK_SLICE_DATA = {
             "renqing": 0,
             "gold_run": 1
           },
-          "night_shop": true,
-          "battle": "E_GB03"
+          "night_shop": true
         },
         {
           "text": "臨時封鎖並請同事幫手清理",
@@ -18355,8 +18313,7 @@ window.HK_SLICE_DATA = {
             "favor": 1,
             "renqing": 1,
             "gold_run": 0
-          },
-          "battle": "E_GB03"
+          }
         },
         {
           "text": "挪開一點就當完成",
@@ -18369,8 +18326,7 @@ window.HK_SLICE_DATA = {
             "favor": 0,
             "renqing": 0,
             "gold_run": 0
-          },
-          "battle": "E_GB03"
+          }
         }
       ],
       "office_node": null,
@@ -18424,8 +18380,7 @@ window.HK_SLICE_DATA = {
             "favor": 0,
             "renqing": 0,
             "gold_run": 0
-          },
-          "battle": "E_GB04"
+          }
         },
         {
           "text": "請隊長同席說明，補述人情脈絡",
@@ -18438,8 +18393,7 @@ window.HK_SLICE_DATA = {
             "favor": 1,
             "renqing": 1,
             "gold_run": 0
-          },
-          "battle": "E_GB04"
+          }
         },
         {
           "text": "含糊其詞，把缺頁推給上一更",
@@ -18452,8 +18406,7 @@ window.HK_SLICE_DATA = {
             "favor": -1,
             "renqing": 0,
             "gold_run": 0
-          },
-          "battle": "E_GB04"
+          }
         }
       ],
       "office_node": null,
@@ -18521,8 +18474,7 @@ window.HK_SLICE_DATA = {
             "favor": 2,
             "renqing": 1,
             "gold_run": 0
-          },
-          "battle": "E_GB04"
+          }
         },
         {
           "text": "代管理處說可以通融豁免",
@@ -18535,8 +18487,7 @@ window.HK_SLICE_DATA = {
             "favor": 1,
             "renqing": 0,
             "gold_run": 0
-          },
-          "battle": "E_GB04"
+          }
         }
       ],
       "office_node": null,
@@ -18591,8 +18542,7 @@ window.HK_SLICE_DATA = {
             "renqing": 0,
             "gold_run": 0
           },
-          "night_shop": true,
-          "battle": "E_GB05"
+          "night_shop": true
         },
         {
           "text": "安撫同事情緒，但不簽名、不承諾",
@@ -18605,8 +18555,7 @@ window.HK_SLICE_DATA = {
             "favor": 3,
             "renqing": 2,
             "gold_run": 0
-          },
-          "battle": "E_GB05"
+          }
         },
         {
           "text": "帶頭簽名施壓，場面失控",
@@ -18822,7 +18771,8 @@ window.HK_SLICE_DATA = {
             "favor": 0,
             "renqing": 0,
             "gold_run": 0
-          }
+          },
+          "battle": true
         },
         {
           "text": "向同事借電，答應稍後還",
@@ -19126,7 +19076,8 @@ window.HK_SLICE_DATA = {
             "favor": 0,
             "renqing": 0,
             "gold_run": 0
-          }
+          },
+          "battle": true
         },
         {
           "text": "跟雙人當值的同事一齊行",
@@ -23318,41 +23269,31 @@ window.HK_SLICE_DATA = {
         "EV_GB_M01",
         "EV_GB_T01",
         "EV_GB_M02",
-        "EV_GB_T02",
         "EV_GB_M03",
         "EV_GB_T09",
         "EV_GB_M04",
         "EV_GB_T04",
         "EV_GB_M05",
-        "EV_GB_T05",
         "EV_GB_M06",
-        "EV_GB_T06",
-        "EV_GB_M07",
-        "EV_GB_T03",
-        "EV_GB_M08",
-        "EV_GB_T07",
-        "EV_GB_M09",
-        "EV_GB_T08",
-        "EV_GB_M10",
-        "EV_GB_T01",
-        "EV_GB_M11",
         "EV_GB_T02",
-        "EV_GB_M12",
-        "EV_GB_T09",
-        "EV_GB_M13",
-        "EV_GB_T04",
-        "EV_GB_M14",
-        "EV_GB_T05",
-        "EV_GB_M15",
-        "EV_GB_T06",
-        "EV_GB_M16",
+        "EV_GB_M07",
+        "EV_GB_M08",
         "EV_GB_T03",
-        "EV_GB_M17",
+        "EV_GB_M09",
+        "EV_GB_M10",
+        "EV_GB_T06",
+        "EV_GB_M11",
+        "EV_GB_M12",
+        "EV_GB_T05",
+        "EV_GB_M13",
+        "EV_GB_M14",
         "EV_GB_T07",
-        "EV_GB_M18",
+        "EV_GB_M15",
+        "EV_GB_M16",
         "EV_GB_T08",
+        "EV_GB_M17",
+        "EV_GB_M18",
         "EV_GB_M19",
-        "EV_GB_T09",
         "EV_GB_M20"
       ],
       "accident_entry": "EV_GB_M01",
@@ -23484,7 +23425,7 @@ window.HK_SLICE_DATA = {
         "GB_S07",
         "GB_S08"
       ],
-      "minigame": "stair_jump",
+      "minigame": null,
       "roster_duties": [
         {
           "id": "duty_gate",

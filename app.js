@@ -5276,7 +5276,14 @@
     if (gbHasActiveRun() && state.gbRun.phase !== "prep" && state.gbRun.phase !== "ending") {
       state.screen = state.gbRun.phase === "prep" ? "gbPrep" : "gbAccident";
       if (state.gbRun.phase === "shop") state.screen = "gbShop";
-      if (state.gbRun.phase === "stair") state.screen = "gbStair";
+      // 跳樓梯已取消：舊存檔若停在 stair，回到事故鏈
+      if (state.gbRun.phase === "stair") {
+        state.gbRun.phase = state.gbRun.preStairPhase && state.gbRun.preStairPhase !== "stair"
+          ? state.gbRun.preStairPhase
+          : (state.gbRun.nodeId ? "choose" : "prep");
+        state.gbRun.preStairPhase = null;
+        state.screen = state.gbRun.phase === "prep" ? "gbPrep" : "gbAccident";
+      }
       render();
       return;
     }
@@ -5856,51 +5863,33 @@
     return { ok: true, msg };
   }
 
-  /* ----- Stair jump ----- */
-  function gbOpenStair() {
-    if (!gbHasActiveRun() && !(state.gbRun && state.gbRun.phase === "stair")) {
-      // allow from pack detail / home when pack selected — but only inside pack context
-      if (!state.gbRun) {
-        state.gbRun = { packId: GB_PACK_ID, phase: "stair", stairStreak: 0, stairSuccessClaimed: false, hidden: gbEmptyHidden() };
-      } else {
-        state.gbRun.phase = "stair";
-        state.gbRun.stairStreak = 0;
-      }
-    } else if (state.gbRun) {
-      if (state.gbRun.phase && state.gbRun.phase !== "stair") {
-        state.gbRun.preStairPhase = state.gbRun.phase;
-      }
-      state.gbRun.phase = "stair";
-      state.gbRun.stairStreak = state.gbRun.stairStreak | 0;
+  /* ----- Stair jump（已取消） ----- */
+  function gbLeaveStairDisabled() {
+    const run = state.gbRun;
+    if (run && run.phase === "stair") {
+      const back = run.preStairPhase && run.preStairPhase !== "stair" && run.preStairPhase !== "battle"
+        ? run.preStairPhase
+        : (run.nodeId ? "choose" : "prep");
+      run.phase = back;
+      run.preStairPhase = null;
+      run.stairStreak = 0;
     }
-    state.screen = "gbStair";
+    if (run && run.nodeId) state.screen = "gbAccident";
+    else if (run && run.phase === "prep") state.screen = "gbPrep";
+    else {
+      state.screen = "storyPackDetail";
+      state.storyPackDetailId = GB_PACK_ID;
+    }
     render();
   }
 
-  function gbStairJump(ok) {
-    const run = state.gbRun;
-    if (!run) return;
-    const a = gbEnsureAccount();
-    const meta = gbMeta();
-    if (!ok) {
-      run.stairStreak = 0;
-      return { streak: 0, msg: "踏空——連跳歸零" };
-    }
-    run.stairStreak = (run.stairStreak | 0) + 1;
-    const streak = run.stairStreak | 0;
-    let msg = `連續 ${streak}`;
-    if (streak >= (meta.stair_success | 0 || 15) && !run.stairSuccessClaimed) {
-      run.stairSuccessClaimed = true;
-      run.hidden = run.hidden || gbEmptyHidden();
-      run.hidden.gold_run = (run.hidden.gold_run | 0) + 3;
-      msg += " · 完成！局內金幣 +3";
-    }
-    if (streak >= (meta.stair_hidden | 0 || 100) && !a.stair100Claimed) {
-      a.stair100Claimed = true;
-      const got = gbGrantCappedSoul((meta.stair_hidden_soul | 0) || 100, { uncapped: true });
-      msg += ` · 隱藏獎：膠幣 +${got}（只領一次）`;
-    }
-    return { streak, msg };
+  function gbOpenStair() {
+    // 小遊戲「跳樓梯」已下架，不進畫面、不發獎
+    gbLeaveStairDisabled();
+  }
+
+  function gbStairJump() {
+    return { streak: 0, msg: "跳樓梯已取消" };
   }
 
   /* ----- Views ----- */
@@ -6038,7 +6027,6 @@
       <div class="ribbon">你的保安，李步岸 · 第 ${(run.chainIndex | 0) + 1}／${((gbPack() && gbPack().accident_chain) || []).length || 1} 段</div>
       ${body}
       <div class="btn-row">
-        <button class="btn ghost" id="gb-stair" type="button">跳樓梯</button>
         <button class="btn ghost" id="gb-abort" type="button">中止本局</button>
       </div>
     `;
@@ -6075,7 +6063,6 @@
     root.querySelectorAll("[data-ci]").forEach((btn) => {
       btn.onclick = () => gbResolveChoice(btn.getAttribute("data-ci") | 0);
     });
-    $("#gb-stair", root).onclick = () => gbOpenStair();
     $("#gb-abort", root).onclick = () => {
       state.gbRun = null;
       gbRestoreLifeSnap();
@@ -6150,63 +6137,9 @@
   }
 
   function viewGbStair(root) {
-    const run = state.gbRun || { stairStreak: 0 };
-    const streak = run.stairStreak | 0;
-    root.innerHTML = `
-      <div class="hud">
-        <span class="chip year"><span class="dot"></span>跳樓梯</span>
-        <span class="chip soul"><span class="dot"></span>連跳 ${streak}</span>
-      </div>
-      <div class="ribbon">走火梯／後樓梯 · 不限時</div>
-      <div class="soft-panel gb-stair-rules">
-        <b>玩法說明</b>
-        <ul>
-          <li>唔限時，亦冇倒數。由你自己撳「跳上」，一次跳一級。</li>
-          <li>同一局之內連續成功 15 次，即算通關。</li>
-          <li>隱藏獎勵：同一局之內連續成功 100 次，可獲 100 膠幣。每位玩家只可領取第一次。</li>
-          <li>踩空，或者離開，連跳次數都會歸零，要由頭再計。</li>
-        </ul>
-      </div>
-      <div class="soft-panel" id="gb-stair-msg">準備起跳</div>
-      <div class="gb-stair-stage" aria-hidden="true">
-        <div class="gb-stair-step"></div>
-        <div class="gb-stair-step"></div>
-        <div class="gb-stair-step"></div>
-      </div>
-      <div class="btn-row">
-        <button class="btn pink" id="gb-stair-ok" type="button">跳上</button>
-        <button class="btn ghost" id="gb-stair-fail" type="button">踩空（練習）</button>
-      </div>
-      <button class="btn ghost" id="gb-stair-leave" type="button">離開（連跳清零）</button>
-    `;
-    const msg = $("#gb-stair-msg", root);
-    $("#gb-stair-ok", root).onclick = () => {
-      // simple timing-less success with small miss chance if spam? Spec: player controlled — always can succeed
-      const r = gbStairJump(true);
-      if (msg) msg.textContent = r.msg;
-      render();
-    };
-    $("#gb-stair-fail", root).onclick = () => {
-      const r = gbStairJump(false);
-      if (msg) msg.textContent = r.msg;
-      render();
-    };
-    $("#gb-stair-leave", root).onclick = () => {
-      if (run) run.stairStreak = 0;
-      if (run && run.nodeId) {
-        const back = run.preStairPhase && run.preStairPhase !== "stair" && run.preStairPhase !== "battle"
-          ? run.preStairPhase
-          : "choose";
-        run.phase = back;
-        run.preStairPhase = null;
-        state.screen = "gbAccident";
-      } else {
-        state.gbRun = null;
-        state.screen = "storyPackDetail";
-        state.storyPackDetailId = GB_PACK_ID;
-      }
-      render();
-    };
+    // 舊存檔／殘餘路由：立刻離開，不顯示小遊戲
+    root.innerHTML = `<div class="bubble">跳樓梯已取消</div>`;
+    gbLeaveStairDisabled();
   }
 
   function viewGbWheel(root) {
@@ -16941,7 +16874,10 @@
     if (ph === "prep") state.screen = "gbPrep";
     else if (ph === "shop") state.screen = "gbShop";
     else if (ph === "ending") state.screen = "gbEnding";
-    else if (ph === "stair") state.screen = "gbStair";
+    else if (ph === "stair") {
+      state.gbRun.phase = state.gbRun.nodeId ? "choose" : "prep";
+      state.screen = state.gbRun.phase === "prep" ? "gbPrep" : "gbAccident";
+    }
     else if (ph === "battle") state.screen = "encounter";
     else state.screen = "gbAccident";
   } else if (shouldResumeToResult()) state.screen = "result";

@@ -75,7 +75,8 @@ const app = fs.readFileSync(path.join(root, "app.js"), "utf8");
 ok(app.includes("function viewGbPrep"), "viewGbPrep");
 ok(app.includes("applyHiddenDelta"), "applyHiddenDelta");
 ok(app.includes("gbOnBattleEnd"), "gbOnBattleEnd");
-ok(app.includes("stair_jump") || app.includes("gbStair"), "stair");
+ok(app.includes("跳樓梯已取消") || app.includes("gbLeaveStairDisabled"), "stair disabled");
+ok(!/id=\"gb-stair\"/.test(app), "no stair button in accident UI");
 ok(app.includes("viewGbWheel"), "wheel");
 ok(app.includes("viewGbWelfare"), "welfare");
 ok(app.includes("viewGbDuties"), "duties");
@@ -83,7 +84,7 @@ ok(app.includes("pack.engine === \"accident\""), "age gate");
 ok(!/if \(pack\.id === \"guard_baoan\"\) return 7/.test(app), "no hardcoded baoan interval 7");
 
 const idx = fs.readFileSync(path.join(root, "index.html"), "utf8");
-ok(/t45\d-/.test(idx), "cache bust");
+ok(/baoan-no-stair-20261121|t45\d-/.test(idx), "cache bust");
 // t451 locks
 const appSrc = fs.readFileSync(path.join(root, "app.js"), "utf8");
 ok(appSrc.includes("lead: 5, life: 60") || /lead:\s*5,\s*life:\s*60/.test(appSrc), "default lead5 life60");
